@@ -1,5 +1,4 @@
 using Walk.Common.RazorLib.Keys.Models;
-using Walk.Common.RazorLib.Namespaces.Models;
 using Walk.Common.RazorLib.TreeViews.Models;
 using Walk.CompilerServices.DotNetSolution.Models.Project;
 using Walk.Extensions.DotNet.Namespaces.Models;
@@ -27,7 +26,7 @@ public class TreeViewHelperDotNetSolution
             .Select(x =>
             {
                 return (TreeViewNoType)new TreeViewNamespacePath(
-                    new NamespacePath(x.AbsolutePath.NameNoExtension, x.AbsolutePath),
+                    x.AbsolutePath,
                     treeViewSolution.CommonService,
                     true,
                     false)
@@ -35,7 +34,7 @@ public class TreeViewHelperDotNetSolution
                     TreeViewChangedKey = Key<TreeViewChanged>.NewKey()
                 };
             })
-            .OrderBy(x => ((TreeViewNamespacePath)x).Item.AbsolutePath.NameNoExtension)
+            .OrderBy(x => ((TreeViewNamespacePath)x).Item.Name)
             .ToList();
 
         var children = childSolutionFolders.Concat(childProjects).ToList();

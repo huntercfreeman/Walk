@@ -1,15 +1,15 @@
-using Walk.Common.RazorLib.Namespaces.Models;
-
 namespace Walk.Common.RazorLib.FileSystems.Models;
 
 public class FileTemplateResult
 {
-    public FileTemplateResult(NamespacePath fileNamespacePath, string contents)
+    public FileTemplateResult(AbsolutePath fileAbsolutePath, string fileAbsolutePathNamespace, string contents)
     {
-        FileNamespacePath = fileNamespacePath;
+        FileAbsolutePath = fileAbsolutePath;
+        FileAbsolutePathNamespace = fileAbsolutePathNamespace;
         Contents = contents;
     }
 
-    public NamespacePath FileNamespacePath { get; }
+    public AbsolutePath FileAbsolutePath { get; }
+    public string FileAbsolutePathNamespace { get; }
     public string Contents { get; }
 }

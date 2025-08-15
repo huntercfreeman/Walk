@@ -1,6 +1,5 @@
 using Walk.Common.RazorLib.FileSystems.Models;
 using Walk.Common.RazorLib.Keys.Models;
-using Walk.Common.RazorLib.Namespaces.Models;
 using Walk.CompilerServices.DotNetSolution.Models.Project;
 
 namespace Walk.CompilerServices.DotNetSolution.Models;
@@ -19,5 +18,5 @@ public interface IDotNetSolution
     public DotNetSolutionGlobal DotNetSolutionGlobal { get; init; }
     public string SolutionFileContents { get; }
 
-    public NamespacePath NamespacePath => new(string.Empty, AbsolutePath);
+    public string NamespaceString => string.Empty;
 }

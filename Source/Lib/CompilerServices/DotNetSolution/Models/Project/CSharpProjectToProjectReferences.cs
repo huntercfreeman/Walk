@@ -1,13 +1,13 @@
-using Walk.Common.RazorLib.Namespaces.Models;
+using Walk.Common.RazorLib.FileSystems.Models;
 
 namespace Walk.CompilerServices.DotNetSolution.Models.Project;
 
 public class CSharpProjectToProjectReferences
 {
-    public CSharpProjectToProjectReferences(NamespacePath cSharpProjectNamespacePath)
+    public CSharpProjectToProjectReferences(AbsolutePath cSharpProjectAbsolutePath)
     {
-        CSharpProjectNamespacePath = cSharpProjectNamespacePath;
+        CSharpProjectAbsolutePath = cSharpProjectAbsolutePath;
     }
 
-    public NamespacePath CSharpProjectNamespacePath { get; }
+    public AbsolutePath CSharpProjectAbsolutePath { get; }
 }

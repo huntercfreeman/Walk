@@ -58,9 +58,9 @@ public class CSharpProjectFormViewModel
         OptionalParametersValue);
 
     public FormattedCommand FormattedAddExistingProjectToSolutionCommand => DotNetCliCommandFormatter.FormatAddExistingProjectToSolution(
-        DotNetSolutionModel?.NamespacePath.Namespace is null
+        DotNetSolutionModel?.NamespaceString is null
             ? string.Empty
-            : DotNetSolutionModel?.NamespacePath.AbsolutePath.Value,
+            : DotNetSolutionModel?.AbsolutePath.Value,
         $"{CSharpProjectNameValue}{EnvironmentProvider.DirectorySeparatorChar}{CSharpProjectNameValue}.{ExtensionNoPeriodFacts.C_SHARP_PROJECT}");
 
     public bool TryTakeSnapshot(out CSharpProjectFormViewModelImmutable? viewModelImmutable)

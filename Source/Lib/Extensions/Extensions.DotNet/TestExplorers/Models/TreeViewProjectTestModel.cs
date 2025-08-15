@@ -24,7 +24,7 @@ public class TreeViewProjectTestModel : TreeViewWithType<ProjectTestModel>
 
     public override int GetHashCode() => Item.ProjectIdGuid.GetHashCode();
 
-    public override string GetDisplayText() => Item.AbsolutePath.NameWithExtension;
+    public override string GetDisplayText() => Item.AbsolutePath.Name;
 
     /*public override TreeViewRenderer GetTreeViewRenderer()
     {

@@ -3,6 +3,7 @@ using Walk.Common.RazorLib;
 using Walk.Common.RazorLib.TreeViews.Models;
 using Walk.Extensions.DotNet.DotNetSolutions.Models;
 using Walk.Extensions.DotNet.Namespaces.Models;
+using Walk.Common.RazorLib.FileSystems.Models;
 using Walk.TextEditor.RazorLib.TextEditors.Models;
 
 namespace Walk.Extensions.DotNet;
@@ -145,20 +146,18 @@ public partial class DotNetService
                     textEditorViewModel.PersistentState.ResourceUri.Value,
                     false,
                     tokenBuilder: new StringBuilder(),
-                    formattedBuilder: new StringBuilder());
+                    formattedBuilder: new StringBuilder(),
+                    AbsolutePathNameKind.NameWithExtension);
 
-                if (viewModelAbsolutePath.Value ==
-                        treeViewNamespacePath.Item.AbsolutePath.Value)
+                if (viewModelAbsolutePath.Value == treeViewNamespacePath.Item.Value)
                 {
                     _nodeOfViewModel = treeViewNamespacePath;
                 }
             }
 
-            switch (treeViewNamespacePath.Item.AbsolutePath.ExtensionNoPeriod)
+            if (treeViewNamespacePath.Item.Name.EndsWith(ExtensionNoPeriodFacts.C_SHARP_PROJECT))
             {
-                case ExtensionNoPeriodFacts.C_SHARP_PROJECT:
-                    await treeViewNamespacePath.LoadChildListAsync().ConfigureAwait(false);
-                    break;
+                await treeViewNamespacePath.LoadChildListAsync().ConfigureAwait(false);
             }
         }
 

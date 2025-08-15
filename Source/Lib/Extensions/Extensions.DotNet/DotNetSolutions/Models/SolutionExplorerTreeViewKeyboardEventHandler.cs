@@ -5,6 +5,7 @@ using Walk.Common.RazorLib.Menus.Models;
 using Walk.Common.RazorLib.Notifications.Models;
 using Walk.Common.RazorLib.TreeViews.Models;
 using Walk.Common.RazorLib.Keys.Models;
+using Walk.Common.RazorLib.FileSystems.Models;
 using Walk.TextEditor.RazorLib.TextEditors.Models;
 using Walk.Ide.RazorLib;
 using Walk.Extensions.DotNet.DotNetSolutions.Displays.Internals;
@@ -94,10 +95,10 @@ public class SolutionExplorerTreeViewKeyboardEventHandler : TreeViewKeyboardEven
             return Task.CompletedTask;
 
         var copyFileMenuOption = _ideService.CopyFile(
-            treeViewNamespacePath.Item.AbsolutePath,
+            treeViewNamespacePath.Item,
             () =>
             {
-                NotificationHelper.DispatchInformative("Copy Action", $"Copied: {treeViewNamespacePath.Item.AbsolutePath.NameWithExtension}", _ideService.TextEditorService.CommonService, TimeSpan.FromSeconds(7));
+                NotificationHelper.DispatchInformative("Copy Action", $"Copied: {treeViewNamespacePath.Item.Name}", _ideService.TextEditorService.CommonService, TimeSpan.FromSeconds(7));
                 return Task.CompletedTask;
             });
 
@@ -116,10 +117,10 @@ public class SolutionExplorerTreeViewKeyboardEventHandler : TreeViewKeyboardEven
 
         MenuOptionRecord pasteMenuOptionRecord;
 
-        if (treeViewNamespacePath.Item.AbsolutePath.IsDirectory)
+        if (treeViewNamespacePath.Item.IsDirectory)
         {
             pasteMenuOptionRecord = _ideService.PasteClipboard(
-                treeViewNamespacePath.Item.AbsolutePath,
+                treeViewNamespacePath.Item,
                 async () =>
                 {
                     var localParentOfCutFile = SolutionExplorerContextMenu.ParentOfCutFile;
@@ -133,8 +134,16 @@ public class SolutionExplorerTreeViewKeyboardEventHandler : TreeViewKeyboardEven
         }
         else
         {
-            var parentDirectory = treeViewNamespacePath.Item.AbsolutePath.ParentDirectory;
-            var parentDirectoryAbsolutePath = _ideService.TextEditorService.CommonService.EnvironmentProvider.AbsolutePathFactory(parentDirectory, true, tokenBuilder: new StringBuilder(), formattedBuilder: new StringBuilder());
+            var parentDirectory = treeViewNamespacePath.Item.CreateSubstringParentDirectory();
+            if (parentDirectory is null)
+                return Task.CompletedTask;
+            
+            var parentDirectoryAbsolutePath = _ideService.TextEditorService.CommonService.EnvironmentProvider.AbsolutePathFactory(
+                parentDirectory,
+                true,
+                tokenBuilder: new StringBuilder(),
+                formattedBuilder: new StringBuilder(),
+                AbsolutePathNameKind.NameWithExtension);
 
             pasteMenuOptionRecord = _ideService.PasteClipboard(
                 parentDirectoryAbsolutePath,
@@ -166,10 +175,10 @@ public class SolutionExplorerTreeViewKeyboardEventHandler : TreeViewKeyboardEven
         var parent = treeViewNamespacePath.Parent as TreeViewNamespacePath;
 
         MenuOptionRecord cutFileOptionRecord = _ideService.CutFile(
-            treeViewNamespacePath.Item.AbsolutePath,
+            treeViewNamespacePath.Item,
             () =>
             {
-                NotificationHelper.DispatchInformative("Cut Action", $"Cut: {treeViewNamespacePath.Item.AbsolutePath.NameWithExtension}", _ideService.TextEditorService.CommonService, TimeSpan.FromSeconds(7));
+                NotificationHelper.DispatchInformative("Cut Action", $"Cut: {treeViewNamespacePath.Item.Name}", _ideService.TextEditorService.CommonService, TimeSpan.FromSeconds(7));
                 SolutionExplorerContextMenu.ParentOfCutFile = parent;
                 return Task.CompletedTask;
             });
@@ -189,7 +198,7 @@ public class SolutionExplorerTreeViewKeyboardEventHandler : TreeViewKeyboardEven
         {
             await _ideService.TextEditorService.OpenInEditorAsync(
                 editContext,
-                treeViewNamespacePath.Item.AbsolutePath.Value,
+                treeViewNamespacePath.Item.Value,
                 shouldSetFocusToEditor,
                 null,
                 new Category("main"),

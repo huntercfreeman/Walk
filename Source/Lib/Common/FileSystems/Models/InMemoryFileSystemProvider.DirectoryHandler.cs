@@ -183,7 +183,8 @@ public partial class InMemoryFileSystemProvider : IFileSystemProvider
                 absolutePathString,
                 true,
                 tokenBuilder: new StringBuilder(),
-                formattedBuilder: new StringBuilder());
+                formattedBuilder: new StringBuilder(),
+                AbsolutePathNameKind.NameWithExtension);
 
             var outDirectory = new InMemoryFile(
                 string.Empty,
@@ -260,14 +261,15 @@ public partial class InMemoryFileSystemProvider : IFileSystemProvider
                 sourceAbsolutePathString,
                 true,
                 tokenBuilder: new StringBuilder(),
-                formattedBuilder: new StringBuilder());
+                formattedBuilder: new StringBuilder(),
+                AbsolutePathNameKind.NameWithExtension);
 
             var childDirectories = (await GetDirectoriesAsync(sourceAbsolutePathString, cancellationToken).ConfigureAwait(false))
-                .Select(x => _commonService.EnvironmentProvider.AbsolutePathFactory(x, true, tokenBuilder: new StringBuilder(), formattedBuilder: new StringBuilder()))
+                .Select(x => _commonService.EnvironmentProvider.AbsolutePathFactory(x, true, tokenBuilder: new StringBuilder(), formattedBuilder: new StringBuilder(), AbsolutePathNameKind.NameWithExtension))
                 .ToArray();
 
             var childFiles = (await GetFilesAsync(sourceAbsolutePathString, cancellationToken).ConfigureAwait(false))
-                .Select(x => _commonService.EnvironmentProvider.AbsolutePathFactory(x, false, tokenBuilder: new StringBuilder(), formattedBuilder: new StringBuilder()))
+                .Select(x => _commonService.EnvironmentProvider.AbsolutePathFactory(x, false, tokenBuilder: new StringBuilder(), formattedBuilder: new StringBuilder(), AbsolutePathNameKind.NameWithExtension))
                 .ToArray();
 
             var children = childDirectories.Union(childFiles);
@@ -284,7 +286,8 @@ public partial class InMemoryFileSystemProvider : IFileSystemProvider
                     destinationAbsolutePathString,
                     true,
                     tokenBuilder: new StringBuilder(),
-                    formattedBuilder: new StringBuilder());
+                    formattedBuilder: new StringBuilder(),
+                    AbsolutePathNameKind.NameWithExtension);
 
                 var destinationFile = new InMemoryFile(
                     string.Empty,
@@ -299,11 +302,11 @@ public partial class InMemoryFileSystemProvider : IFileSystemProvider
             {
                 var innerDestinationPath = _commonService.EnvironmentProvider.JoinPaths(
                     destinationAbsolutePathString,
-                    sourceAbsolutePath.NameWithExtension);
+                    sourceAbsolutePath.Name);
 
                 var destinationChild = _commonService.EnvironmentProvider.JoinPaths(
                     innerDestinationPath,
-                    child.NameWithExtension);
+                    child.Name);
 
                 if (child.IsDirectory)
                 {

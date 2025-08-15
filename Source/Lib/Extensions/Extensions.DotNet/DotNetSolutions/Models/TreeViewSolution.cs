@@ -33,7 +33,7 @@ public class TreeViewSolution : TreeViewWithType<DotNetSolutionModel>
 
     public override int GetHashCode() => Item.AbsolutePath.Value.GetHashCode();
 
-    public override string GetDisplayText() => Item.AbsolutePath.NameWithExtension;
+    public override string GetDisplayText() => Item.AbsolutePath.Name;
     
     public override Microsoft.AspNetCore.Components.RenderFragment<IconDriver> GetIcon => IconDotNetSolutionFragment.Render;
 

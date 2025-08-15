@@ -105,15 +105,18 @@ public partial class IdeService
             var currentSelection = inState.OpenedTreeViewModelHistoryList[inState.IndexInHistory];
 
             // If has a ParentDirectory select it
-            if (currentSelection.Item.ParentDirectory is not null)
+            if (!currentSelection.Item.IsRootDirectory)
             {
-                var parentDirectory = currentSelection.Item.ParentDirectory;
+                var parentDirectory = currentSelection.Item.CreateSubstringParentDirectory();
+                if (parentDirectory is null)
+                    return;
 
                 var parentDirectoryAbsolutePath = commonService.EnvironmentProvider.AbsolutePathFactory(
                     parentDirectory,
                     true,
                     tokenBuilder: new StringBuilder(),
-                    formattedBuilder: new StringBuilder());
+                    formattedBuilder: new StringBuilder(),
+                    AbsolutePathNameKind.NameWithExtension);
 
                 parentDirectoryTreeViewModel = new TreeViewAbsolutePath(
                     parentDirectoryAbsolutePath,
@@ -170,7 +173,7 @@ public partial class IdeService
             {
                 var treeViewAbsolutePath = (TreeViewAbsolutePath)treeViewModel;
 
-                treeViewModel.IsHidden = !treeViewAbsolutePath.Item.NameWithExtension.Contains(
+                treeViewModel.IsHidden = !treeViewAbsolutePath.Item.Name.Contains(
                     searchQuery,
                     StringComparison.InvariantCultureIgnoreCase);
             }

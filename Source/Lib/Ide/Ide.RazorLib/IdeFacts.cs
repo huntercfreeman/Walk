@@ -1,7 +1,6 @@
 using System.Text;
 using Walk.Common.RazorLib;
 using Walk.Common.RazorLib.Keys.Models;
-using Walk.Common.RazorLib.Namespaces.Models;
 using Walk.TextEditor.RazorLib.TextEditors.Models;
 using Walk.TextEditor.RazorLib.Decorations.Models;
 using Walk.Ide.RazorLib.FileSystems.Models;

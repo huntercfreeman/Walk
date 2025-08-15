@@ -321,7 +321,8 @@ public partial class TextEditorService
                 group.Key.Value,
                 false,
                 tokenBuilder,
-                formattedBuilder);
+                formattedBuilder,
+                AbsolutePathNameKind.NameWithExtension);
 
             return (TreeViewNoType)new TreeViewFindAllGroup(
                 group.Select(textSpan => new TreeViewFindAllTextSpan(

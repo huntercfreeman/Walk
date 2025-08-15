@@ -33,7 +33,7 @@ public class TreeViewCSharpProjectToProjectReferences : TreeViewWithType<CSharpP
         return otherTreeView.GetHashCode() == GetHashCode();
     }
 
-    public override int GetHashCode() => Item.CSharpProjectNamespacePath.AbsolutePath.Value.GetHashCode();
+    public override int GetHashCode() => Item.CSharpProjectAbsolutePath.Value.GetHashCode();
 
     public override string GetDisplayText() => "Project References";
     
@@ -80,13 +80,13 @@ public class TreeViewCSharpProjectToProjectReferences : TreeViewWithType<CSharpP
         var previousChildren = new List<TreeViewNoType>(ChildList);
 
         var content = await CommonService.FileSystemProvider.File.ReadAllTextAsync(
-                Item.CSharpProjectNamespacePath.AbsolutePath.Value)
+                Item.CSharpProjectAbsolutePath.Value)
             .ConfigureAwait(false);
 
         var htmlSyntaxUnit = HtmlSyntaxTree.ParseText(
             textEditorService: null,
             new StringWalker(),
-            new(Item.CSharpProjectNamespacePath.AbsolutePath.Value),
+            new(Item.CSharpProjectAbsolutePath.Value),
             content);
 
         var syntaxNodeRoot = htmlSyntaxUnit.RootTagSyntax;
@@ -108,10 +108,11 @@ public class TreeViewCSharpProjectToProjectReferences : TreeViewWithType<CSharpP
         // "./" is being called the 'sameDirectoryToken'
         var sameDirectoryToken = $".{CommonService.EnvironmentProvider.DirectorySeparatorChar}";
 
-        var projectAncestorDirectoryList = Item.CSharpProjectNamespacePath.AbsolutePath.GetAncestorDirectoryList(
+        var projectAncestorDirectoryList = Item.CSharpProjectAbsolutePath.GetAncestorDirectoryList(
             CommonService.EnvironmentProvider,
             tokenBuilder,
-            formattedBuilder);
+            formattedBuilder,
+            AbsolutePathNameKind.NameWithExtension);
         
         foreach (var projectReference in projectReferences)
         {
@@ -131,7 +132,7 @@ public class TreeViewCSharpProjectToProjectReferences : TreeViewWithType<CSharpP
             var includeAttribute = attributeNameValueTuples.FirstOrDefault(x => x.Item1 == "Include");
 
             var referenceProjectAbsolutePathString = PathHelper.GetAbsoluteFromAbsoluteAndRelative(
-                Item.CSharpProjectNamespacePath.AbsolutePath,
+                Item.CSharpProjectAbsolutePath,
                 includeAttribute.Item2,
                 (IEnvironmentProvider)CommonService.EnvironmentProvider,
                 tokenBuilder,
@@ -144,10 +145,11 @@ public class TreeViewCSharpProjectToProjectReferences : TreeViewWithType<CSharpP
                 referenceProjectAbsolutePathString,
                 false,
                 tokenBuilder,
-                formattedBuilder);
+                formattedBuilder,
+                AbsolutePathNameKind.NameWithExtension);
 
             var cSharpProjectToProjectReference = new CSharpProjectToProjectReference(
-                Item.CSharpProjectNamespacePath,
+                Item.CSharpProjectAbsolutePath,
                 referenceProjectAbsolutePath);
 
             cSharpProjectToProjectReferences.Add(cSharpProjectToProjectReference);

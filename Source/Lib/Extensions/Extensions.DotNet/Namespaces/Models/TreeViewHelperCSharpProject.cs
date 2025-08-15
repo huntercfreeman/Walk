@@ -1,7 +1,7 @@
 using System.Text;
 using Walk.Common.RazorLib;
-using Walk.Common.RazorLib.Namespaces.Models;
 using Walk.Common.RazorLib.TreeViews.Models;
+using Walk.Common.RazorLib.FileSystems.Models;
 using Walk.TextEditor.RazorLib.TextEditors.Models;
 using Walk.CompilerServices.DotNetSolution.Models.Project;
 using Walk.Extensions.DotNet.CSharpProjects.Models;
@@ -14,7 +14,10 @@ public class TreeViewHelperCSharpProject
 {
     public static async Task<List<TreeViewNoType>> LoadChildrenAsync(TreeViewNamespacePath cSharpProjectTreeView)
     {
-        var parentDirectoryOfCSharpProject = cSharpProjectTreeView.Item.AbsolutePath.ParentDirectory;
+        var parentDirectoryOfCSharpProject = cSharpProjectTreeView.Item.CreateSubstringParentDirectory();
+        if (parentDirectoryOfCSharpProject is null)
+            return cSharpProjectTreeView.ChildList;
+        
         var ancestorDirectory = parentDirectoryOfCSharpProject;
         var hiddenFiles = IdeFacts.GetHiddenFilesByContainerFileExtension(ExtensionNoPeriodFacts.C_SHARP_PROJECT);
 
@@ -30,13 +33,10 @@ public class TreeViewHelperCSharpProject
             .Where(x => hiddenFiles.All(hidden => !x.EndsWith(hidden)))
             .Select(x =>
             {
-                var absolutePath = cSharpProjectTreeView.CommonService.EnvironmentProvider.AbsolutePathFactory(x, true, tokenBuilder, formattedBuilder);
+                var absolutePath = cSharpProjectTreeView.CommonService.EnvironmentProvider.AbsolutePathFactory(x, true, tokenBuilder, formattedBuilder, AbsolutePathNameKind.NameNoExtension);
 
-                var namespaceString = cSharpProjectTreeView.Item.Namespace +
-                    TreeViewNamespaceHelper.NAMESPACE_DELIMITER +
-                    absolutePath.NameNoExtension;
-
-                return new TreeViewNamespacePath(new NamespacePath(namespaceString, absolutePath),
+                return new TreeViewNamespacePath(
+                    absolutePath,
                     cSharpProjectTreeView.CommonService,
                     true,
                     false);
@@ -48,14 +48,14 @@ public class TreeViewHelperCSharpProject
 
         foreach (var directoryTreeViewModel in childDirectoryTreeViewModelsList)
         {
-            if (uniqueDirectories.Any(unique => directoryTreeViewModel.Item.AbsolutePath.NameNoExtension == unique))
+            if (uniqueDirectories.Any(unique => directoryTreeViewModel.Item.Name == unique))
                 foundUniqueDirectories.Add(directoryTreeViewModel);
             else
                 foundDefaultDirectories.Add(directoryTreeViewModel);
         }
 
-        foundUniqueDirectories = foundUniqueDirectories.OrderBy(x => x.Item.AbsolutePath.NameNoExtension).ToList();
-        foundDefaultDirectories = foundDefaultDirectories.OrderBy(x => x.Item.AbsolutePath.NameNoExtension).ToList();
+        foundUniqueDirectories = foundUniqueDirectories.OrderBy(x => x.Item.Name).ToList();
+        foundDefaultDirectories = foundDefaultDirectories.OrderBy(x => x.Item.Name).ToList();
 
         var filePathStringsList = await cSharpProjectTreeView.CommonService.FileSystemProvider.Directory
             .GetFilesAsync(ancestorDirectory)
@@ -66,10 +66,10 @@ public class TreeViewHelperCSharpProject
             .Where(x => !x.EndsWith(ExtensionNoPeriodFacts.C_SHARP_PROJECT))
             .Select(x =>
             {
-                var absolutePath = cSharpProjectTreeView.CommonService.EnvironmentProvider.AbsolutePathFactory(x, false, tokenBuilder, formattedBuilder);
-                var namespaceString = cSharpProjectTreeView.Item.Namespace;
+                var absolutePath = cSharpProjectTreeView.CommonService.EnvironmentProvider.AbsolutePathFactory(x, false, tokenBuilder, formattedBuilder, AbsolutePathNameKind.NameWithExtension);
 
-                return (TreeViewNoType)new TreeViewNamespacePath(new NamespacePath(namespaceString, absolutePath),
+                return (TreeViewNoType)new TreeViewNamespacePath(
+                    absolutePath,
                     cSharpProjectTreeView.CommonService,
                     false,
                     false);

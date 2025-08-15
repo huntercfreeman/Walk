@@ -21,7 +21,7 @@ public partial class RemoveCSharpProjectFromSolutionDisplay : ComponentBase
 
     protected override Task OnParametersSetAsync()
     {
-        if (_previousAbsolutePath.ExactInput is null ||
+        if (_previousAbsolutePath.Value is null ||
             _previousAbsolutePath.Value != AbsolutePath.Value)
         {
             _previousAbsolutePath = AbsolutePath;

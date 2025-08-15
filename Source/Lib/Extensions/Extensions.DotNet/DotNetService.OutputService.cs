@@ -57,7 +57,7 @@ public partial class DotNetService
 
         foreach (var group in filePathGrouping)
         {
-            var absolutePath = CommonService.EnvironmentProvider.AbsolutePathFactory(group.Key, false, tokenBuilder, formattedBuilder);
+            var absolutePath = CommonService.EnvironmentProvider.AbsolutePathFactory(group.Key, false, tokenBuilder, formattedBuilder, AbsolutePathNameKind.NameWithExtension);
             var groupEnumerated = group.ToList();
             var groupNameBuilder = new StringBuilder();
 
@@ -68,7 +68,7 @@ public partial class DotNetService
                 ((TreeViewDiagnosticLine)x).Item.DiagnosticLineKind == DiagnosticLineKind.Warning);
 
             groupNameBuilder
-                .Append(absolutePath.NameWithExtension)
+                .Append(absolutePath.Name)
                 .Append(" (")
                 .Append(errorCount)
                 .Append(" errors)")
@@ -76,12 +76,14 @@ public partial class DotNetService
                 .Append(warningCount)
                 .Append(" warnings)");
 
+            var titleText = absolutePath.CreateSubstringParentDirectory() ?? $"{nameof(absolutePath.CreateSubstringParentDirectory)} was null.";
+            
             var treeViewGroup = new TreeViewGroup(
                 groupNameBuilder.ToString(),
                 true,
                 groupEnumerated.Any(x => ((TreeViewDiagnosticLine)x).Item.DiagnosticLineKind == DiagnosticLineKind.Error))
             {
-                TitleText = absolutePath.ParentDirectory ?? $"{nameof(AbsolutePath.ParentDirectory)} was null"
+                TitleText = titleText
             };
 
             treeViewGroup.ChildList = groupEnumerated;
@@ -92,16 +94,16 @@ public partial class DotNetService
             if (firstEntry is not null)
             {
                 var projectText = ((TreeViewDiagnosticLine)firstEntry).Item.ProjectTextSpan.Text;
-                var projectAbsolutePath = CommonService.EnvironmentProvider.AbsolutePathFactory(projectText, false, tokenBuilder, formattedBuilder);
+                var projectAbsolutePath = CommonService.EnvironmentProvider.AbsolutePathFactory(projectText, false, tokenBuilder, formattedBuilder, AbsolutePathNameKind.NameWithExtension);
 
                 if (!projectManualGrouping.ContainsKey(projectText))
                 {
                     var treeViewGroupProject = new TreeViewGroup(
-                        projectAbsolutePath.NameWithExtension,
+                        projectAbsolutePath.Name,
                         true,
                         true)
                     {
-                        TitleText = absolutePath.ParentDirectory ?? $"{nameof(AbsolutePath.ParentDirectory)} was null"
+                        TitleText = absolutePath.CreateSubstringParentDirectory() ?? $"{nameof(AbsolutePath.CreateSubstringParentDirectory)} was null"
                     };
 
                     projectManualGrouping.Add(projectText, treeViewGroupProject);

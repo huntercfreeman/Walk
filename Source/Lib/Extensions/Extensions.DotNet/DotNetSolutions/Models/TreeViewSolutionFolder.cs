@@ -1,5 +1,4 @@
 using Walk.Common.RazorLib;
-using Walk.Common.RazorLib.Namespaces.Models;
 using Walk.Common.RazorLib.TreeViews.Models;
 using Walk.Common.RazorLib.TreeViews.Models.Utils;
 using Walk.Common.RazorLib.Keys.Models;
@@ -204,7 +203,7 @@ public class TreeViewSolutionFolder : TreeViewWithType<SolutionFolder>
         
         childTreeViewList =
             childTreeViewSolutionFolderList.OrderBy(x => x.Item.DisplayName).Select(x => (TreeViewNoType)x)
-            .Union(childTreeViewCSharpProjectList.OrderBy(x => x.Item.AbsolutePath.NameNoExtension).Select(x => (TreeViewNoType)x))
+            .Union(childTreeViewCSharpProjectList.OrderBy(x => x.Item.Name).Select(x => (TreeViewNoType)x))
             .ToList();
             
         for (int siblingsIndex = siblingsAndSelfTreeViews.Count - 1; siblingsIndex >= 0; siblingsIndex--)
@@ -266,12 +265,8 @@ public class TreeViewSolutionFolder : TreeViewWithType<SolutionFolder>
 
     private TreeViewNamespacePath ConstructTreeViewCSharpProject(CSharpProjectModel cSharpProject)
     {
-        var namespacePath = new NamespacePath(
-            cSharpProject.AbsolutePath.NameNoExtension,
-            cSharpProject.AbsolutePath);
-
         return new TreeViewNamespacePath(
-            namespacePath,
+            cSharpProject.AbsolutePath,
             CommonService,
             true,
             false)

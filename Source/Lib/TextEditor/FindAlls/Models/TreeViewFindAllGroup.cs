@@ -27,7 +27,7 @@ public class TreeViewFindAllGroup : TreeViewWithType<List<TreeViewFindAllTextSpa
 
     public override int GetHashCode() => AbsolutePath.Value.GetHashCode();
     
-    public override string GetDisplayText() => AbsolutePath.NameWithExtension;
+    public override string GetDisplayText() => AbsolutePath.Name;
 
     /*public override TreeViewRenderer GetTreeViewRenderer()
     {

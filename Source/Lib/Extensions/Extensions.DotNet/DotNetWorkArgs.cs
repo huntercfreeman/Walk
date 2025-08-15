@@ -1,7 +1,6 @@
 using Walk.Common.RazorLib.Commands.Models;
 using Walk.Common.RazorLib.Keys.Models;
 using Walk.Common.RazorLib.FileSystems.Models;
-using Walk.Common.RazorLib.Namespaces.Models;
 using Walk.CompilerServices.DotNetSolution.Models;
 using Walk.Ide.RazorLib.Terminals.Models;
 using Walk.Extensions.DotNet.TestExplorers.Models;
@@ -37,7 +36,8 @@ public class DotNetWorkArgs
     public TreeViewCSharpProjectToProjectReference TreeViewCSharpProjectToProjectReference { get; set; }
     public TreeViewNamespacePath TreeViewProjectToMove { get; set; }
     public string SolutionFolderPath { get; set; }
-    public NamespacePath ModifyProjectNamespacePath { get; set; }
+    public AbsolutePath ModifyProjectAbsolutePath { get; set; }
+    public string ModifyProjectNamespaceString { get; set; }
     public TreeViewCSharpProjectNugetPackageReference TreeViewCSharpProjectNugetPackageReference { get; set; }
     /* End Menu */
 }

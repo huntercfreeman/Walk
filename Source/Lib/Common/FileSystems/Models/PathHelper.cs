@@ -97,14 +97,11 @@ public static class PathHelper
             }
             else
             {
-                if (absolutePath.ParentDirectory is null)
-                {
+                var parentDirectory = absolutePath.CreateSubstringParentDirectory();
+                if (parentDirectory is null)
                     throw new NotImplementedException();
-                }
                 else
-                {
-                    return absolutePath.ParentDirectory + relativePathString;
-                }
+                    return parentDirectory + relativePathString;
             }
         }
     }
@@ -119,27 +116,28 @@ public static class PathHelper
     /// </summary>
     public static string GetRelativeFromTwoAbsolutes(
         AbsolutePath startingPath,
+        string startingPathParentDirectory,
         AbsolutePath endingPath,
+        string endingPathParentDirectory,
         IEnvironmentProvider environmentProvider,
-        StringBuilder? tokenBuilder,
-        StringBuilder? formattedBuilder)
+        StringBuilder tokenBuilder,
+        StringBuilder formattedBuilder)
     {
         var pathBuilder = new StringBuilder();
         
-        var startingPathAncestorDirectoryList = startingPath.GetAncestorDirectoryList(environmentProvider, tokenBuilder, formattedBuilder);
-        var endingPathAncestorDirectoryList = endingPath.GetAncestorDirectoryList(environmentProvider, tokenBuilder, formattedBuilder);
+        var startingPathAncestorDirectoryList = startingPath.GetAncestorDirectoryList(environmentProvider, tokenBuilder, formattedBuilder, AbsolutePathNameKind.NameWithExtension);
+        var endingPathAncestorDirectoryList = endingPath.GetAncestorDirectoryList(environmentProvider, tokenBuilder, formattedBuilder, AbsolutePathNameKind.NameWithExtension);
         
         var commonPath = startingPathAncestorDirectoryList.First();
 
-        if ((startingPath.ParentDirectory ?? string.Empty) ==
-            (endingPath.ParentDirectory ?? string.Empty))
+        if (startingPathParentDirectory == endingPathParentDirectory)
         {
             // TODO: Will this code break when the mounted drives are different, and parent directories share same name?
 
             // Use './' because they share the same parent directory.
             pathBuilder.Append($".{environmentProvider.DirectorySeparatorChar}");
 
-            commonPath = startingPath.ParentDirectory;
+            commonPath = startingPathParentDirectory;
         }
         else
         {
@@ -156,15 +154,17 @@ public static class PathHelper
                     startingPathAncestorDirectoryList[i],
                     true,
                     tokenBuilder,
-                    formattedBuilder);
+                    formattedBuilder,
+                    AbsolutePathNameKind.NameWithExtension);
 
                 var endingPathAncestor = environmentProvider.AbsolutePathFactory(
                     endingPathAncestorDirectoryList[i],
                     true,
                     tokenBuilder,
-                    formattedBuilder);
+                    formattedBuilder,
+                    AbsolutePathNameKind.NameWithExtension);
 
-                if (startingPathAncestor.NameWithExtension == endingPathAncestor.NameWithExtension)
+                if (startingPathAncestor.Name == endingPathAncestor.Name)
                     commonPath = startingPathAncestor.Value;
                 else
                     break;

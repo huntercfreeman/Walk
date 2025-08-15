@@ -90,7 +90,8 @@ public partial class DotNetService : IBackgroundTaskGroup, IDisposable
             case DotNetWorkKind.PerformRemoveNuGetPackageReferenceFromProject:
             {
                 return Do_PerformRemoveNuGetPackageReferenceFromProject(
-                    workArgs.ModifyProjectNamespacePath,
+                    workArgs.ModifyProjectAbsolutePath,
+                    workArgs.ModifyProjectNamespaceString,
                     workArgs.TreeViewCSharpProjectNugetPackageReference,
                     workArgs.Terminal,
                     CommonService,

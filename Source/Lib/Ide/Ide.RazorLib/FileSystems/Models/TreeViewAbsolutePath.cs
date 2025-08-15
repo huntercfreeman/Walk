@@ -30,7 +30,7 @@ public class TreeViewAbsolutePath : TreeViewWithType<AbsolutePath>
 
     public override int GetHashCode() => Item.Value.GetHashCode();
     
-    public override string GetDisplayText() => Item.NameWithExtension;
+    public override string GetDisplayText() => Item.Name;
 
     public override async Task LoadChildListAsync()
     {

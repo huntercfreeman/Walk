@@ -1,6 +1,7 @@
 using System.Text;
 using Walk.Common.RazorLib.Keys.Models;
 using Walk.Common.RazorLib.TreeViews.Models;
+using Walk.Common.RazorLib.FileSystems.Models;
 
 namespace Walk.Ide.RazorLib.FileSystems.Models;
 
@@ -22,7 +23,7 @@ public class TreeViewHelperAbsolutePathDirectory
             .Select(x =>
             {
                 return (TreeViewNoType)new TreeViewAbsolutePath(
-                    directoryTreeView.CommonService.EnvironmentProvider.AbsolutePathFactory(x, true, tokenBuilder, formattedBuilder),
+                    directoryTreeView.CommonService.EnvironmentProvider.AbsolutePathFactory(x, true, tokenBuilder, formattedBuilder, AbsolutePathNameKind.NameWithExtension),
                     directoryTreeView.CommonService,
                     true,
                     false)
@@ -40,7 +41,7 @@ public class TreeViewHelperAbsolutePathDirectory
             .Select(x =>
             {
                 return (TreeViewNoType)new TreeViewAbsolutePath(
-                    directoryTreeView.CommonService.EnvironmentProvider.AbsolutePathFactory(x, false, tokenBuilder, formattedBuilder),
+                    directoryTreeView.CommonService.EnvironmentProvider.AbsolutePathFactory(x, false, tokenBuilder, formattedBuilder, AbsolutePathNameKind.NameWithExtension),
                     directoryTreeView.CommonService,
                     false,
                     false)

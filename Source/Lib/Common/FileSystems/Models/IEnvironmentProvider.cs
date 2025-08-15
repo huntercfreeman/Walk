@@ -32,6 +32,7 @@ public partial interface IEnvironmentProvider
     public string DriveExecutingFromNoDirectorySeparator { get; }
     public char DirectorySeparatorChar { get; }
     public char AltDirectorySeparatorChar { get; }
+    public string DirectorySeparatorCharToStringResult { get; }
     /// <summary>
     /// Any operation which would delete a file system entry,
     /// is to first check these paths for if that file is allowed
@@ -74,7 +75,7 @@ public partial interface IEnvironmentProvider
 
     public bool IsDirectorySeparator(char input);
     public string GetRandomFileName();
-    public AbsolutePath AbsolutePathFactory(string path, bool isDirectory, StringBuilder? tokenBuilder, StringBuilder? formattedBuilder);
+    public AbsolutePath AbsolutePathFactory(string path, bool isDirectory, StringBuilder tokenBuilder, StringBuilder formattedBuilder, AbsolutePathNameKind nameKind);
     public RelativePath RelativePathFactory(string path, bool isDirectory);
     /// <summary>
     /// Takes two absolute file path strings and makes
@@ -93,8 +94,8 @@ public partial interface IEnvironmentProvider
     /// These steps were taken in order to reduce the chance that one
     /// accidentally uses one method, when meant the other.
     /// </summary>
-    public void DeletionPermittedRegister(SimplePath simplePath, StringBuilder? tokenBuilder, StringBuilder? formattedBuilder);
+    public void DeletionPermittedRegister(SimplePath simplePath, StringBuilder tokenBuilder, StringBuilder formattedBuilder);
     public void DeletionPermittedDispose(SimplePath simplePath);
     public void ProtectedPathsRegister(SimplePath simplePath);
-    public void ProtectedPathsDispose(SimplePath simplePath, StringBuilder? tokenBuilder, StringBuilder? formattedBuilder);
+    public void ProtectedPathsDispose(SimplePath simplePath, StringBuilder tokenBuilder, StringBuilder formattedBuilder);
 }

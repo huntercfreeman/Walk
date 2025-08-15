@@ -13,6 +13,7 @@ using Walk.Common.RazorLib.Keys.Models;
 using Walk.Common.RazorLib.Menus.Models;
 using Walk.Common.RazorLib.Panels.Models;
 using Walk.Common.RazorLib.ListExtensions;
+using Walk.Common.RazorLib.FileSystems.Models;
 using Walk.CompilerServices.CSharp.CompilerServiceCase;
 using Walk.CompilerServices.CSharpProject.CompilerServiceCase;
 using Walk.CompilerServices.Css;
@@ -61,67 +62,6 @@ public static class InitializationHelper
         InitializeMenuFile(DotNetService);
         InitializeMenuTools(DotNetService);
         InitializeMenuView(DotNetService);
-    
-        var menuOptionOpenDotNetSolution = new MenuOptionRecord(
-            ".NET Solution",
-            MenuOptionKind.Other,
-            () =>
-            {
-                DotNetSolutionState.ShowInputFile(DotNetService.IdeService, DotNetService);
-                return Task.CompletedTask;
-            });
-
-        DotNetService.IdeService.Ide_ModifyMenuFile(
-            inMenu =>
-            {
-                var indexMenuOptionOpen = inMenu.MenuOptionList.FindIndex(x => x.DisplayName == "Open");
-
-                if (indexMenuOptionOpen == -1)
-                {
-                    var copyList = new List<MenuOptionRecord>(inMenu.MenuOptionList);
-                    copyList.Add(menuOptionOpenDotNetSolution);
-                    return inMenu with
-                    {
-                        MenuOptionList = copyList
-                    };
-                }
-
-                var menuOptionOpen = inMenu.MenuOptionList[indexMenuOptionOpen];
-
-                if (menuOptionOpen.SubMenu is null)
-                    menuOptionOpen.SubMenu = new MenuRecord(new List<MenuOptionRecord>());
-
-                // UI foreach enumeration was modified nightmare. (2025-02-07)
-                var copySubMenuList = new List<MenuOptionRecord>(menuOptionOpen.SubMenu.MenuOptionList);
-                copySubMenuList.Add(menuOptionOpenDotNetSolution);
-
-                menuOptionOpen.SubMenu = menuOptionOpen.SubMenu with
-                {
-                    MenuOptionList = copySubMenuList
-                };
-
-                // Menu Option New
-                {
-                    var menuOptionNewDotNetSolution = new MenuOptionRecord(
-                        ".NET Solution",
-                        MenuOptionKind.Other,
-                        DotNetService.OpenNewDotNetSolutionDialog);
-
-                    var menuOptionNew = new MenuOptionRecord(
-                        "New",
-                        MenuOptionKind.Other,
-                        subMenu: new MenuRecord(new List<MenuOptionRecord> { menuOptionNewDotNetSolution }));
-
-                    var copyMenuOptionList = new List<MenuOptionRecord>(inMenu.MenuOptionList);
-                    copyMenuOptionList.Insert(0, menuOptionNew);
-
-                    return inMenu with
-                    {
-                        MenuOptionList = copyMenuOptionList
-                    };
-                }
-            });
-
         InitializeMenuRun(DotNetService);
 
         var compilerService = DotNetService.IdeService.TextEditorService.GetCompilerService(ExtensionNoPeriodFacts.C_SHARP_CLASS);
@@ -247,9 +187,14 @@ public static class InitializationHelper
     public static void BuildProjectOnClick(DotNetService DotNetService, string projectAbsolutePathString)
     {
         var formattedCommand = DotNetCliCommandFormatter.FormatDotnetBuildProject(projectAbsolutePathString);
-        var solutionAbsolutePath = DotNetService.CommonService.EnvironmentProvider.AbsolutePathFactory(projectAbsolutePathString, false, tokenBuilder: new StringBuilder(), formattedBuilder: new StringBuilder());
+        var solutionAbsolutePath = DotNetService.CommonService.EnvironmentProvider.AbsolutePathFactory(
+            projectAbsolutePathString,
+            false,
+            tokenBuilder: new StringBuilder(),
+            formattedBuilder: new StringBuilder(),
+            AbsolutePathNameKind.NameWithExtension);
 
-        var localParentDirectory = solutionAbsolutePath.ParentDirectory;
+        var localParentDirectory = solutionAbsolutePath.CreateSubstringParentDirectory();
         if (localParentDirectory is null)
             return;
 
@@ -279,9 +224,9 @@ public static class InitializationHelper
     public static void CleanProjectOnClick(DotNetService DotNetService, string projectAbsolutePathString)
     {
         var formattedCommand = DotNetCliCommandFormatter.FormatDotnetCleanProject(projectAbsolutePathString);
-        var solutionAbsolutePath = DotNetService.CommonService.EnvironmentProvider.AbsolutePathFactory(projectAbsolutePathString, false, tokenBuilder: new StringBuilder(), formattedBuilder: new StringBuilder());
+        var solutionAbsolutePath = DotNetService.CommonService.EnvironmentProvider.AbsolutePathFactory(projectAbsolutePathString, false, tokenBuilder: new StringBuilder(), formattedBuilder: new StringBuilder(), AbsolutePathNameKind.NameWithExtension);
 
-        var localParentDirectory = solutionAbsolutePath.ParentDirectory;
+        var localParentDirectory = solutionAbsolutePath.CreateSubstringParentDirectory();
         if (localParentDirectory is null)
             return;
 
@@ -311,9 +256,9 @@ public static class InitializationHelper
     public static void BuildSolutionOnClick(DotNetService DotNetService, string solutionAbsolutePathString)
     {
         var formattedCommand = DotNetCliCommandFormatter.FormatDotnetBuildSolution(solutionAbsolutePathString);
-        var solutionAbsolutePath = DotNetService.CommonService.EnvironmentProvider.AbsolutePathFactory(solutionAbsolutePathString, false, tokenBuilder: new StringBuilder(), formattedBuilder: new StringBuilder());
+        var solutionAbsolutePath = DotNetService.CommonService.EnvironmentProvider.AbsolutePathFactory(solutionAbsolutePathString, false, tokenBuilder: new StringBuilder(), formattedBuilder: new StringBuilder(), AbsolutePathNameKind.NameWithExtension);
 
-        var localParentDirectory = solutionAbsolutePath.ParentDirectory;
+        var localParentDirectory = solutionAbsolutePath.CreateSubstringParentDirectory();
         if (localParentDirectory is null)
             return;
 
@@ -343,9 +288,9 @@ public static class InitializationHelper
     public static void CleanSolutionOnClick(DotNetService DotNetService, string solutionAbsolutePathString)
     {
         var formattedCommand = DotNetCliCommandFormatter.FormatDotnetCleanSolution(solutionAbsolutePathString);
-        var solutionAbsolutePath = DotNetService.CommonService.EnvironmentProvider.AbsolutePathFactory(solutionAbsolutePathString, false, tokenBuilder: new StringBuilder(), formattedBuilder: new StringBuilder());
+        var solutionAbsolutePath = DotNetService.CommonService.EnvironmentProvider.AbsolutePathFactory(solutionAbsolutePathString, false, tokenBuilder: new StringBuilder(), formattedBuilder: new StringBuilder(), AbsolutePathNameKind.NameWithExtension);
 
-        var localParentDirectory = solutionAbsolutePath.ParentDirectory;
+        var localParentDirectory = solutionAbsolutePath.CreateSubstringParentDirectory();
         if (localParentDirectory is null)
             return;
 
@@ -383,7 +328,8 @@ public static class InitializationHelper
             solutionMostRecent,
             false,
             tokenBuilder: new StringBuilder(),
-            formattedBuilder: new StringBuilder());
+            formattedBuilder: new StringBuilder(),
+            AbsolutePathNameKind.NameWithExtension);
 
         DotNetService.Enqueue(new DotNetWorkArgs
         {
@@ -425,7 +371,29 @@ public static class InitializationHelper
     {
         var menuOptionsList = new List<MenuOptionRecord>();
 
+        // Menu Option New
+        var menuOptionNewDotNetSolution = new MenuOptionRecord(
+            ".NET Solution",
+            MenuOptionKind.Other,
+            DotNetService.OpenNewDotNetSolutionDialog);
+
+        var menuOptionNew = new MenuOptionRecord(
+            "New",
+            MenuOptionKind.Other,
+            subMenu: new MenuRecord(new List<MenuOptionRecord> { menuOptionNewDotNetSolution }));
+
+        menuOptionsList.Add(menuOptionNew);
+        
         // Menu Option Open
+        var menuOptionOpenDotNetSolution = new MenuOptionRecord(
+            ".NET Solution",
+            MenuOptionKind.Other,
+            () =>
+            {
+                DotNetSolutionState.ShowInputFile(DotNetService.IdeService, DotNetService);
+                return Task.CompletedTask;
+            });
+        
         var menuOptionOpenFile = new MenuOptionRecord(
             "File",
             MenuOptionKind.Other,
@@ -449,6 +417,7 @@ public static class InitializationHelper
             MenuOptionKind.Other,
             subMenu: new MenuRecord(new List<MenuOptionRecord>()
             {
+                menuOptionOpenDotNetSolution,
                 menuOptionOpenFile,
                 menuOptionOpenDirectory,
             }));

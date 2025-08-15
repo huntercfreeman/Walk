@@ -7,23 +7,13 @@ namespace Walk.Common.RazorLib.FileSystems.Models;
 /// </summary>
 public struct AbsolutePath
 {
-    private string? _nameWithExtension;
-    
-    public static int _countConsumeTokenAsDirectory;
-    public static int _countAncestorDirectoryAdd;
-    public static int _countConsumeTokenAsRootDrive;
-    public static int _countFileNameAmbiguous;
-    public static int _countSplitFileNameAmbiguous;
-    public static int _countFileNameBuilder;
-    public static int _countSplitFileNameBuilder;
-    public static int _countNameNoExtension;
-    public static int _countDirectorySeparatorCharToString;
-    public static int _countFormattedBuilderToString;
-    public static int _countParentDirectory;
-    
     /// <summary>
     /// If providing tokenBuilder or formattedBuilder, ensure they are '.Clear()'ed prior to invoking the constructor.
     /// Prior to returning from the constructor, tokenBuilder and formattedBuilder will be '.Clear()'ed.
+    /// 
+    /// The invoker of this method must choose between "myFile.txt" or "myFile" as the resulting 'Name' property.
+    /// This is done with the `shouldNameContainsExtension` argument,
+    /// and this argument gets stored on the instance as the `NameContainsExtension` property.
     /// </summary>
     public AbsolutePath(
         string absolutePathString,
@@ -31,9 +21,12 @@ public struct AbsolutePath
         IEnvironmentProvider environmentProvider,
         StringBuilder tokenBuilder,
         StringBuilder formattedBuilder,
+        AbsolutePathNameKind nameKind,
         List<string>? ancestorDirectoryList = null)
     {
-        ExactInput = absolutePathString;
+        NameKind = nameKind;
+        bool seenRootDrive = false;
+
         IsDirectory = isDirectory;
     
         var lengthAbsolutePathString = absolutePathString.Length;
@@ -56,10 +49,7 @@ public struct AbsolutePath
     
             if (environmentProvider.IsDirectorySeparator(currentCharacter))
             {
-                // ++_countConsumeTokenAsDirectory;
-                // ConsumeTokenAsDirectory
-                formattedBuilder
-                    .Append(environmentProvider.DirectorySeparatorChar);
+                formattedBuilder.Append(environmentProvider.DirectorySeparatorChar);
                 
                 tokenBuilder.Clear();
                 
@@ -67,15 +57,15 @@ public struct AbsolutePath
                 
                 if (ancestorDirectoryList is not null)
                 {
-                    // ++_countAncestorDirectoryAdd;
                     ancestorDirectoryList.Add(formattedBuilder.ToString());
                 }
             }
-            else if (currentCharacter == ':' && RootDrive.DriveNameAsIdentifier is null && ParentDirectory is null)
+            else if (currentCharacter == ':' && !seenRootDrive)
             {
-                // ConsumeTokenAsRootDrive
-                // ++_countConsumeTokenAsRootDrive;
-                RootDrive = new FileSystemDrive(tokenBuilder.ToString());
+                // Take all files from the drive the app is executed from
+                // TODO: Look into multi drive scenarios.
+                //
+                seenRootDrive = true;
                 tokenBuilder.Clear();
                 formattedBuilder.Clear();
             }
@@ -85,55 +75,69 @@ public struct AbsolutePath
                 tokenBuilder.Append(currentCharacter);
             }
         }
-    
-        // ++_countFileNameAmbiguous;
-        var fileNameAmbiguous = tokenBuilder.ToString();
-        tokenBuilder.Clear();
-    
-        if (!IsDirectory)
+
+        if (IsDirectory)
         {
-            // ++_countSplitFileNameAmbiguous;
-            var splitFileNameAmbiguous = fileNameAmbiguous.Split('.');
-    
-            if (splitFileNameAmbiguous.Length == 2)
-            {
-                NameNoExtension = splitFileNameAmbiguous[0];
-                ExtensionNoPeriod = splitFileNameAmbiguous[1];
-            }
-            else if (splitFileNameAmbiguous.Length == 1)
-            {
-                NameNoExtension = splitFileNameAmbiguous[0];
-                ExtensionNoPeriod = string.Empty;
-            }
+            // Directories get the ending '/' stripped prior to processing them
+            if (nameKind == AbsolutePathNameKind.NameNoExtension)
+                Name = tokenBuilder.ToString();
+            else if (nameKind == AbsolutePathNameKind.NameWithExtension)
+                Name = tokenBuilder.Append(environmentProvider.DirectorySeparatorChar).ToString();
             else
-            {
-                foreach (var split in splitFileNameAmbiguous.SkipLast(1))
-                {
-                    tokenBuilder.Append(split);
-                    tokenBuilder.Append(".");
-                }
-    
-                tokenBuilder.Remove(tokenBuilder.Length - 1, 1);
-    
-                // ++_countNameNoExtension;
-                NameNoExtension = tokenBuilder.ToString();
-                ExtensionNoPeriod = splitFileNameAmbiguous.Last();
-            }
+                Name = environmentProvider.DirectorySeparatorCharToStringResult;
         }
         else
         {
-            NameNoExtension = fileNameAmbiguous;
+            if (nameKind == AbsolutePathNameKind.NameWithExtension)
+            {
+                Name = tokenBuilder.ToString();
+            }
+            else
+            {
+                string extensionNoPeriod;
+                string nameNoExtension;
             
-            // ++_countDirectorySeparatorCharToString;
-            ExtensionNoPeriod = environmentProvider.DirectorySeparatorChar.ToString();
-        }
+                var fileNameAmbiguous = tokenBuilder.ToString();
+                var splitFileNameAmbiguous = fileNameAmbiguous.Split('.');
         
+                if (splitFileNameAmbiguous.Length == 2)
+                {
+                    nameNoExtension = splitFileNameAmbiguous[0];
+                    extensionNoPeriod = splitFileNameAmbiguous[1];
+                }
+                else if (splitFileNameAmbiguous.Length == 1)
+                {
+                    nameNoExtension = splitFileNameAmbiguous[0];
+                    extensionNoPeriod = string.Empty;
+                }
+                else
+                {
+                    tokenBuilder.Clear();
+                
+                    foreach (var split in splitFileNameAmbiguous.SkipLast(1))
+                    {
+                        tokenBuilder.Append(split);
+                        tokenBuilder.Append(".");
+                    }
+        
+                    tokenBuilder.Remove(tokenBuilder.Length - 1, 1);
+
+                    nameNoExtension = tokenBuilder.ToString();
+                    extensionNoPeriod = splitFileNameAmbiguous.Last();
+                }
+                
+                if (nameKind == AbsolutePathNameKind.NameNoExtension)
+                    Name = nameNoExtension;
+                else if (nameKind == AbsolutePathNameKind.ExtensionNoPeriod)
+                    Name = extensionNoPeriod;
+            }
+        }
+
         if (IsDirectory)
         {
-            formattedBuilder.Append(ExtensionNoPeriod);
+            formattedBuilder.Append(environmentProvider.DirectorySeparatorChar);
         }
-    
-        // ++_countFormattedBuilderToString;
+
         var formattedString = formattedBuilder.ToString();
         
         tokenBuilder.Clear();
@@ -145,47 +149,58 @@ public struct AbsolutePath
             if ((formattedString[0] == environmentProvider.DirectorySeparatorChar && formattedString[1] == environmentProvider.DirectorySeparatorChar) ||
                 (formattedString[0] == environmentProvider.AltDirectorySeparatorChar && formattedString[1] == environmentProvider.AltDirectorySeparatorChar))
             {
-                // ++_countDirectorySeparatorCharToString;
-                Value = environmentProvider.DirectorySeparatorChar.ToString();
+                Value = environmentProvider.DirectorySeparatorCharToStringResult;
                 return;
             }
         }
     
-        if (parentDirectoryEndExclusiveIndex != -1)
-        {
-            // ++_countParentDirectory;
-            ParentDirectory = formattedString[..parentDirectoryEndExclusiveIndex];
-        }
-        
+        ParentDirectoryEndExclusiveIndex = parentDirectoryEndExclusiveIndex;
         Value = formattedString;
     }
 
-    public string? ParentDirectory { get; private set; }
-    public string? ExactInput { get; }
-    public PathType PathType { get; } = PathType.AbsolutePath;
+    // public string? ParentDirectory { get; private set; }
     public bool IsDirectory { get; private set; }
     /// <summary>
     /// The <see cref="NameNoExtension"/> for a directory does NOT end with a directory separator char.
     /// </summary>
-    public string NameNoExtension { get; private set; }
-    /// <summary>
-    /// The <see cref="ExtensionNoPeriod"/> for a directory is the primary directory separator char.
-    /// </summary>
-    public string ExtensionNoPeriod { get; private set; }
-    public FileSystemDrive RootDrive { get; private set; }
+    public string Name { get; private set; }
+    public AbsolutePathNameKind NameKind { get; set; }
 
+    /// <summary>
+    /// TODO: If it is discovered that the provided absolute path is formatted as the app likes...
+    /// ...then don't ToString() the 'formattedBuilder'.
+    /// </summary>
     public string Value { get; }
-    public string NameWithExtension => _nameWithExtension ??= PathHelper.CalculateNameWithExtension(NameNoExtension, ExtensionNoPeriod, IsDirectory);
-    public bool IsRootDirectory => ParentDirectory is null;
     
+    /// <summary>
+    /// If this property is NOT == -1;
+    /// Then the parent directory's string can be calculated with: Value[..ParentDirectoryEndExclusiveIndex];
+    /// </summary>
+    public int ParentDirectoryEndExclusiveIndex { get; }
+    
+    public bool IsRootDirectory => ParentDirectoryEndExclusiveIndex == -1;
+
+    public string? CreateSubstringParentDirectory()
+    {
+        if (ParentDirectoryEndExclusiveIndex == -1)
+            return null;
+        
+        return Value[..ParentDirectoryEndExclusiveIndex];
+    }
+
     /// <summary>
     ///  If providing tokenBuilder or formattedBuilder, ensure they are '.Clear()'ed prior to invoking.
     /// Prior to returning, tokenBuilder and formattedBuilder will be '.Clear()'ed.
+    /// 
+    /// The invoker of this method must choose between "myFile.txt" or "myFile" as the resulting 'Name' property.
+    /// This is done with the `shouldNameContainsExtension` argument,
+    /// and this argument gets stored on the instance as the `NameContainsExtension` property.
     /// </summary>
     public List<string> GetAncestorDirectoryList(
         IEnvironmentProvider environmentProvider,
         StringBuilder tokenBuilder,
-        StringBuilder formattedBuilder)
+        StringBuilder formattedBuilder,
+        AbsolutePathNameKind nameKind)
     {
         var ancestorDirectoryList = new List<string>();
         
@@ -195,7 +210,8 @@ public struct AbsolutePath
             environmentProvider,
             tokenBuilder,
             formattedBuilder,
-            ancestorDirectoryList);
+            nameKind,
+            ancestorDirectoryList: ancestorDirectoryList);
     
         return ancestorDirectoryList;
     }

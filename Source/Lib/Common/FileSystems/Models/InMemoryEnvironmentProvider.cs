@@ -13,24 +13,26 @@ public class InMemoryEnvironmentProvider : IEnvironmentProvider
         var tokenBuilder = new StringBuilder();
         var formattedBuilder = new StringBuilder();
     
-        RootDirectoryAbsolutePath = new AbsolutePath("/", true, this, tokenBuilder, formattedBuilder);
-        HomeDirectoryAbsolutePath = new AbsolutePath("/Repos/", true, this, tokenBuilder, formattedBuilder);
-        ActualRoamingApplicationDataDirectoryAbsolutePath = new AbsolutePath("/AppData/Roaming/", true, this, tokenBuilder, formattedBuilder);
-        ActualLocalApplicationDataDirectoryAbsolutePath = new AbsolutePath("/AppData/Local/", true, this, tokenBuilder, formattedBuilder);
+        RootDirectoryAbsolutePath = new AbsolutePath("/", true, this, tokenBuilder, formattedBuilder, AbsolutePathNameKind.NameWithExtension);
+        HomeDirectoryAbsolutePath = new AbsolutePath("/Repos/", true, this, tokenBuilder, formattedBuilder, AbsolutePathNameKind.NameWithExtension);
+        ActualRoamingApplicationDataDirectoryAbsolutePath = new AbsolutePath("/AppData/Roaming/", true, this, tokenBuilder, formattedBuilder, AbsolutePathNameKind.NameWithExtension);
+        ActualLocalApplicationDataDirectoryAbsolutePath = new AbsolutePath("/AppData/Local/", true, this, tokenBuilder, formattedBuilder, AbsolutePathNameKind.NameWithExtension);
         
         SafeRoamingApplicationDataDirectoryAbsolutePath = new AbsolutePath(
             JoinPaths(ActualRoamingApplicationDataDirectoryAbsolutePath.Value, SafeRelativeDirectory),
             true,
             this,
             tokenBuilder,
-            formattedBuilder);
+            formattedBuilder,
+            AbsolutePathNameKind.NameWithExtension);
             
         SafeLocalApplicationDataDirectoryAbsolutePath = new AbsolutePath(
             JoinPaths(ActualLocalApplicationDataDirectoryAbsolutePath.Value, SafeRelativeDirectory),
             true,
             this,
             tokenBuilder,
-            formattedBuilder);
+            formattedBuilder,
+            AbsolutePathNameKind.NameWithExtension);
         
         ProtectedPathList.Add(new(
             RootDirectoryAbsolutePath.Value,
@@ -77,6 +79,8 @@ public class InMemoryEnvironmentProvider : IEnvironmentProvider
     public char DirectorySeparatorChar => '/';
     public char AltDirectorySeparatorChar => '\\';
 
+    public string DirectorySeparatorCharToStringResult => "/";
+
     public bool IsDirectorySeparator(char character) =>
         character == DirectorySeparatorChar || character == AltDirectorySeparatorChar;
 
@@ -95,7 +99,7 @@ public class InMemoryEnvironmentProvider : IEnvironmentProvider
         PermittanceChecker.AssertDeletionPermitted(this, path, isDirectory);
     }
 
-    public void DeletionPermittedRegister(SimplePath simplePath, StringBuilder? tokenBuilder, StringBuilder? formattedBuilder)
+    public void DeletionPermittedRegister(SimplePath simplePath, StringBuilder tokenBuilder, StringBuilder formattedBuilder)
     {
         lock (_pathLock)
         {
@@ -127,7 +131,7 @@ public class InMemoryEnvironmentProvider : IEnvironmentProvider
         }
     }
     
-    public void ProtectedPathsDispose(SimplePath simplePath, StringBuilder? tokenBuilder, StringBuilder? formattedBuilder)
+    public void ProtectedPathsDispose(SimplePath simplePath, StringBuilder tokenBuilder, StringBuilder formattedBuilder)
     {
         lock (_pathLock)
         {
@@ -143,9 +147,9 @@ public class InMemoryEnvironmentProvider : IEnvironmentProvider
         }
     }
 
-    public AbsolutePath AbsolutePathFactory(string path, bool isDirectory, StringBuilder? tokenBuilder, StringBuilder? formattedBuilder)
+    public AbsolutePath AbsolutePathFactory(string path, bool isDirectory, StringBuilder tokenBuilder, StringBuilder formattedBuilder, AbsolutePathNameKind nameKind)
     {
-        return new AbsolutePath(path, isDirectory, this, tokenBuilder, formattedBuilder);
+        return new AbsolutePath(path, isDirectory, this, tokenBuilder, formattedBuilder, nameKind);
     }
 
     public RelativePath RelativePathFactory(string path, bool isDirectory)

@@ -58,14 +58,15 @@ public static class PermittanceChecker
     public static bool IsRootOrHomeDirectory(
         SimplePath simplePath,
         IEnvironmentProvider environmentProvider,
-        StringBuilder? tokenBuilder,
-        StringBuilder? formattedBuilder)
+        StringBuilder tokenBuilder,
+        StringBuilder formattedBuilder)
     {
         var absolutePath = environmentProvider.AbsolutePathFactory(
             simplePath.AbsolutePath,
             simplePath.IsDirectory,
             tokenBuilder,
-            formattedBuilder);
+            formattedBuilder,
+            AbsolutePathNameKind.NameWithExtension);
 
         if (absolutePath.Value == environmentProvider.RootDirectoryAbsolutePath.Value ||
             absolutePath.Value == environmentProvider.HomeDirectoryAbsolutePath.Value)

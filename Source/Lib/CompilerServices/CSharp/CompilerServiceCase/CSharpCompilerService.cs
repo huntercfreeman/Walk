@@ -1251,8 +1251,12 @@ public sealed class CSharpCompilerService : IExtendedCompilerService
                     .ConfigureAwait(false);
             }
     
-            var resourceAbsolutePath = _textEditorService.CommonService.EnvironmentProvider.AbsolutePathFactory(modelModifier.PersistentState.ResourceUri.Value, false, tokenBuilder: new StringBuilder(), formattedBuilder: new StringBuilder());
-            var parentDirectoryAbsolutePath = _textEditorService.CommonService.EnvironmentProvider.AbsolutePathFactory(resourceAbsolutePath.ParentDirectory, true, tokenBuilder: new StringBuilder(), formattedBuilder: new StringBuilder());
+            var resourceAbsolutePath = _textEditorService.CommonService.EnvironmentProvider.AbsolutePathFactory(
+                modelModifier.PersistentState.ResourceUri.Value,
+                false,
+                tokenBuilder: new StringBuilder(),
+                formattedBuilder: new StringBuilder(),
+                AbsolutePathNameKind.NameWithExtension);
         
             var siblingFileStringList = new List<(string ResourceUriValue, int ScopeIndexKey)>();
             
@@ -1285,10 +1289,10 @@ public sealed class CSharpCompilerService : IExtendedCompilerService
                 var tuple = siblingFileStringList[i];
                 var file = tuple.ResourceUriValue;
                 
-                var siblingAbsolutePath = _textEditorService.CommonService.EnvironmentProvider.AbsolutePathFactory(file, false, tokenBuilder: new StringBuilder(), formattedBuilder: new StringBuilder());
+                var siblingAbsolutePath = _textEditorService.CommonService.EnvironmentProvider.AbsolutePathFactory(file, false, tokenBuilder: new StringBuilder(), formattedBuilder: new StringBuilder(), AbsolutePathNameKind.NameWithExtension);
                 
                 menuOptionList.Add(new MenuOptionRecord(
-                    siblingAbsolutePath.NameWithExtension,
+                    siblingAbsolutePath.Name,
                     MenuOptionKind.Other,
                     onClickFunc: async () => 
                     {
@@ -1340,7 +1344,7 @@ public sealed class CSharpCompilerService : IExtendedCompilerService
                         });
                     }));
                         
-                if (siblingAbsolutePath.NameWithExtension == resourceAbsolutePath.NameWithExtension)
+                if (siblingAbsolutePath.Name == resourceAbsolutePath.Name)
                     initialActiveMenuOptionRecordIndex = i;
             }
             

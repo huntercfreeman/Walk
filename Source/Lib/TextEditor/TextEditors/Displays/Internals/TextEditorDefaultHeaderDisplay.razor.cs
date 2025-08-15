@@ -1,5 +1,6 @@
 using System.Text;
 using Microsoft.AspNetCore.Components;
+using Walk.Common.RazorLib.FileSystems.Models;
 using Walk.TextEditor.RazorLib.TextEditors.Models;
 
 // HeaderDriver.cs
@@ -241,7 +242,7 @@ public partial class TextEditorDefaultHeaderDisplay : ComponentBase, ITextEditor
             
         var menuOptionList = new List<MenuOptionRecord>();
         
-        var absolutePath = TextEditorService.CommonService.EnvironmentProvider.AbsolutePathFactory(virtualizationResult.Model.PersistentState.ResourceUri.Value, false, tokenBuilder: new StringBuilder(), formattedBuilder: new StringBuilder());
+        var absolutePath = TextEditorService.CommonService.EnvironmentProvider.AbsolutePathFactory(virtualizationResult.Model.PersistentState.ResourceUri.Value, false, tokenBuilder: new StringBuilder(), formattedBuilder: new StringBuilder(), AbsolutePathNameKind.NameWithExtension);
 
         menuOptionList.Add(new MenuOptionRecord(
             "Cancel",
@@ -253,7 +254,7 @@ public partial class TextEditorDefaultHeaderDisplay : ComponentBase, ITextEditor
             }));
             
         menuOptionList.Add(new MenuOptionRecord(
-            $"Reset: '{absolutePath.NameWithExtension}'",
+            $"Reset: '{absolutePath.Name}'",
             MenuOptionKind.Delete,
             onClickFunc: () =>
             {

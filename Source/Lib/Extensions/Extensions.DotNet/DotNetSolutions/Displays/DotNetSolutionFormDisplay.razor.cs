@@ -5,6 +5,7 @@ using Walk.Common.RazorLib.Installations.Models;
 using Walk.Common.RazorLib.Notifications.Models;
 using Walk.Common.RazorLib.Keys.Models;
 using Walk.Common.RazorLib.Dynamics.Models;
+using Walk.Common.RazorLib.FileSystems.Models;
 using Walk.TextEditor.RazorLib.TextEditors.Models;
 using Walk.Ide.RazorLib;
 using Walk.Ide.RazorLib.CommandLines.Models;
@@ -52,7 +53,7 @@ public partial class DotNetSolutionFormDisplay : ComponentBase, IDisposable
             StringValue = "Directory for new .NET Solution",
             OnAfterSubmitFunc = async absolutePath =>
             {
-                if (absolutePath.ExactInput is null)
+                if (absolutePath.Value is null)
                     return;
 
                 _parentDirectoryName = absolutePath.Value;
@@ -60,7 +61,7 @@ public partial class DotNetSolutionFormDisplay : ComponentBase, IDisposable
             },
             SelectionIsValidFunc = absolutePath =>
             {
-                if (absolutePath.ExactInput is null || !absolutePath.IsDirectory)
+                if (absolutePath.Value is null || !absolutePath.IsDirectory)
                     return Task.FromResult(false);
 
                 return Task.FromResult(true);
@@ -108,7 +109,8 @@ public partial class DotNetSolutionFormDisplay : ComponentBase, IDisposable
                         localParentDirectoryName,
                         true,
                         tokenBuilder: new StringBuilder(),
-                        formattedBuilder: new StringBuilder());
+                        formattedBuilder: new StringBuilder(),
+                        AbsolutePathNameKind.NameWithExtension);
 
                     var solutionAbsolutePathString =
                         parentDirectoryAbsolutePath.Value +
@@ -122,7 +124,8 @@ public partial class DotNetSolutionFormDisplay : ComponentBase, IDisposable
                         solutionAbsolutePathString,
                         false,
                         tokenBuilder: new StringBuilder(),
-                        formattedBuilder: new StringBuilder());
+                        formattedBuilder: new StringBuilder(),
+                        AbsolutePathNameKind.NameWithExtension);
 
                     DotNetService.Enqueue(new DotNetWorkArgs
                     {
@@ -172,7 +175,8 @@ public partial class DotNetSolutionFormDisplay : ComponentBase, IDisposable
             solutionAbsolutePathString,
             false,
             tokenBuilder: new StringBuilder(),
-            formattedBuilder: new StringBuilder());
+            formattedBuilder: new StringBuilder(),
+            AbsolutePathNameKind.NameWithExtension);
 
         DotNetService.Enqueue(new DotNetWorkArgs
         {

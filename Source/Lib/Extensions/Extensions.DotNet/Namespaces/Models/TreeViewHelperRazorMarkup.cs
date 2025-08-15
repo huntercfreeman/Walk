@@ -1,8 +1,8 @@
 using System.Text;
 using Walk.Common.RazorLib;
-using Walk.Common.RazorLib.Namespaces.Models;
 using Walk.Common.RazorLib.TreeViews.Models;
 using Walk.Common.RazorLib.Keys.Models;
+using Walk.Common.RazorLib.FileSystems.Models;
 using Walk.TextEditor.RazorLib.TextEditors.Models;
 
 namespace Walk.Extensions.DotNet.Namespaces.Models;
@@ -17,10 +17,10 @@ public class TreeViewHelperRazorMarkup
     /// </summary>
     public static async Task<List<TreeViewNoType>> LoadChildrenAsync(TreeViewNamespacePath razorMarkupTreeView)
     {
-        if (razorMarkupTreeView.Item.Namespace is null)
-            return new();
-
-        var parentDirectoryOfRazorMarkup = razorMarkupTreeView.Item.AbsolutePath.ParentDirectory;
+        var parentDirectoryOfRazorMarkup = razorMarkupTreeView.Item.CreateSubstringParentDirectory();
+        if (parentDirectoryOfRazorMarkup is null)
+            return razorMarkupTreeView.ChildList;
+        
         var ancestorDirectory = parentDirectoryOfRazorMarkup;
 
         var filePathStringsList = await razorMarkupTreeView.CommonService.FileSystemProvider.Directory
@@ -33,11 +33,10 @@ public class TreeViewHelperRazorMarkup
         var childFileTreeViewModels = filePathStringsList
             .Select(x =>
             {
-                var absolutePath = razorMarkupTreeView.CommonService.EnvironmentProvider.AbsolutePathFactory(x, false, tokenBuilder, formattedBuilder);
-                var namespaceString = razorMarkupTreeView.Item.Namespace;
+                var absolutePath = razorMarkupTreeView.CommonService.EnvironmentProvider.AbsolutePathFactory(x, false, tokenBuilder, formattedBuilder, AbsolutePathNameKind.NameWithExtension);
 
                 return (TreeViewNoType)new TreeViewNamespacePath(
-                    new NamespacePath(namespaceString, absolutePath),
+                    absolutePath,
                     razorMarkupTreeView.CommonService,
                     false,
                     false);
@@ -62,18 +61,18 @@ public class TreeViewHelperRazorMarkup
         // .razor files look to remove .razor.cs and .razor.css files
         var matches = new[]
         {
-            razorMarkupTreeView.Item.AbsolutePath.NameWithExtension + '.' + ExtensionNoPeriodFacts.C_SHARP_CLASS,
-            razorMarkupTreeView.Item.AbsolutePath.NameWithExtension + '.' + ExtensionNoPeriodFacts.CSS
+            razorMarkupTreeView.Item.Name + '.' + ExtensionNoPeriodFacts.C_SHARP_CLASS,
+            razorMarkupTreeView.Item.Name + '.' + ExtensionNoPeriodFacts.CSS
         };
 
         var relatedFiles = siblingsAndSelfTreeViews
             .Where(x =>
-                x.UntypedItem is NamespacePath namespacePath &&
-                matches.Contains(namespacePath.AbsolutePath.NameWithExtension))
+                x.UntypedItem is AbsolutePath absolutePath &&
+                matches.Contains(absolutePath.Name))
             .OrderBy(x =>
             {
-                if (x.UntypedItem is NamespacePath namespacePath)
-                    return namespacePath.AbsolutePath.NameWithExtension ?? string.Empty;
+                if (x.UntypedItem is AbsolutePath absolutePath)
+                    return absolutePath.Name ?? string.Empty;
                 else
                     return string.Empty;
             })

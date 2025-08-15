@@ -32,7 +32,7 @@ public class TreeViewCSharpProjectNugetPackageReferences : TreeViewWithType<CSha
         return otherTreeView.GetHashCode() == GetHashCode();
     }
 
-    public override int GetHashCode() => Item.CSharpProjectNamespacePath.AbsolutePath.Value.GetHashCode();
+    public override int GetHashCode() => Item.CSharpProjectAbsolutePath.Value.GetHashCode();
 
     public override string GetDisplayText() => "NuGet Packages";
     
@@ -81,13 +81,13 @@ public class TreeViewCSharpProjectNugetPackageReferences : TreeViewWithType<CSha
         var previousChildren = new List<TreeViewNoType>(ChildList);
 
         var content = await CommonService.FileSystemProvider.File.ReadAllTextAsync(
-                Item.CSharpProjectNamespacePath.AbsolutePath.Value)
+                Item.CSharpProjectAbsolutePath.Value)
             .ConfigureAwait(false);
 
         var htmlSyntaxUnit = HtmlSyntaxTree.ParseText(
             textEditorService: null,
             new StringWalker(),
-            new(Item.CSharpProjectNamespacePath.AbsolutePath.Value),
+            new(Item.CSharpProjectAbsolutePath.Value),
             content);
 
         var syntaxNodeRoot = htmlSyntaxUnit.RootTagSyntax;
@@ -128,7 +128,7 @@ public class TreeViewCSharpProjectNugetPackageReferences : TreeViewWithType<CSha
             lightWeightNugetPackageRecords.Add(lightWeightNugetPackageRecord);
         }
 
-        var cSharpProjectAbsolutePathString = Item.CSharpProjectNamespacePath.AbsolutePath.Value;
+        var cSharpProjectAbsolutePathString = Item.CSharpProjectAbsolutePath.Value;
 
         var newChildList = lightWeightNugetPackageRecords.Select(
             npr => (TreeViewNoType)new TreeViewCSharpProjectNugetPackageReference(

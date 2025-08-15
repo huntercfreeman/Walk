@@ -4,6 +4,7 @@ using Walk.Common.RazorLib.Dialogs.Models;
 using Walk.Common.RazorLib.Dynamics.Models;
 using Walk.Common.RazorLib.Keys.Models;
 using Walk.Common.RazorLib.Widgets.Models;
+using Walk.Common.RazorLib.FileSystems.Models;
 using Walk.Ide.RazorLib.CodeSearches.Displays;
 using Walk.Ide.RazorLib.CodeSearches.Models;
 using Walk.TextEditor.RazorLib;
@@ -483,7 +484,7 @@ public partial class IdeService
 
     public async ValueTask CommandFactory_PeekCodeSearchDialog(TextEditorEditContext editContext, string? resourceUriValue, int? indexInclusiveStart)
     {
-        var absolutePath = CommonService.EnvironmentProvider.AbsolutePathFactory(resourceUriValue, isDirectory: false, tokenBuilder: new StringBuilder(), formattedBuilder: new StringBuilder());
+        var absolutePath = CommonService.EnvironmentProvider.AbsolutePathFactory(resourceUriValue, isDirectory: false, tokenBuilder: new StringBuilder(), formattedBuilder: new StringBuilder(), AbsolutePathNameKind.NameWithExtension);
 
         // Duplicated Code: 'OpenCodeSearchDialog(...)'
         CodeSearchDialog ??= new DialogViewModel(
@@ -499,7 +500,7 @@ public partial class IdeService
 
         CodeSearch_With(inState => inState with
         {
-            Query = absolutePath.NameWithExtension,
+            Query = absolutePath.Name,
         });
 
         await CodeSearch_HandleSearchEffect().ConfigureAwait(false);

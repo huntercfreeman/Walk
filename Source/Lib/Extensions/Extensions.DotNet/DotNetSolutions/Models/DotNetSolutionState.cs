@@ -38,7 +38,7 @@ public record DotNetSolutionState(
             StringValue = "Solution Explorer",
             OnAfterSubmitFunc = absolutePath =>
             {
-                if (absolutePath.ExactInput is not null)
+                if (absolutePath.Value is not null)
                     dotNetService.Enqueue(new DotNetWorkArgs
                     {
                         WorkKind = DotNetWorkKind.SetDotNetSolution,
@@ -49,19 +49,19 @@ public record DotNetSolutionState(
             },
             SelectionIsValidFunc = absolutePath =>
             {
-                if (absolutePath.ExactInput is null || absolutePath.IsDirectory)
+                if (absolutePath.Value is null || absolutePath.IsDirectory)
                     return Task.FromResult(false);
 
                 return Task.FromResult(
-                    absolutePath.ExtensionNoPeriod == ExtensionNoPeriodFacts.DOT_NET_SOLUTION ||
-                    absolutePath.ExtensionNoPeriod == ExtensionNoPeriodFacts.DOT_NET_SOLUTION_X);
+                    absolutePath.Name.EndsWith(ExtensionNoPeriodFacts.DOT_NET_SOLUTION) ||
+                    absolutePath.Name.EndsWith(ExtensionNoPeriodFacts.DOT_NET_SOLUTION_X));
             },
             InputFilePatterns = new()
             {
                 new InputFilePattern(
                     ".NET Solution",
-                    absolutePath => absolutePath.ExtensionNoPeriod == ExtensionNoPeriodFacts.DOT_NET_SOLUTION ||
-                                    absolutePath.ExtensionNoPeriod == ExtensionNoPeriodFacts.DOT_NET_SOLUTION_X)
+                    absolutePath => absolutePath.Name.EndsWith(ExtensionNoPeriodFacts.DOT_NET_SOLUTION) ||
+                                    absolutePath.Name.EndsWith(ExtensionNoPeriodFacts.DOT_NET_SOLUTION_X))
             }
         });
     }

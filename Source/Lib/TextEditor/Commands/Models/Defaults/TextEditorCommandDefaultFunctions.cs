@@ -833,8 +833,19 @@ public class TextEditorCommandDefaultFunctions
             .MeasureElementById(componentData.PrimaryCursorContentId)
             .ConfigureAwait(false);
 
-        var resourceAbsolutePath = environmentProvider.AbsolutePathFactory(modelModifier.PersistentState.ResourceUri.Value, false, tokenBuilder: new StringBuilder(), formattedBuilder: new StringBuilder());
-        var parentDirectoryAbsolutePath = environmentProvider.AbsolutePathFactory(resourceAbsolutePath.ParentDirectory, true, tokenBuilder: new StringBuilder(), formattedBuilder: new StringBuilder());
+        var resourceAbsolutePath = new AbsolutePath(
+            modelModifier.PersistentState.ResourceUri.Value,
+            false,
+            environmentProvider,
+            tokenBuilder: new StringBuilder(),
+            formattedBuilder: new StringBuilder(),
+            AbsolutePathNameKind.NameWithExtension);
+        
+        var parentDirectory = resourceAbsolutePath.CreateSubstringParentDirectory();
+        if (parentDirectory is null)
+            return;
+            
+        var parentDirectoryAbsolutePath = environmentProvider.AbsolutePathFactory(parentDirectory, true, tokenBuilder: new StringBuilder(), formattedBuilder: new StringBuilder(), AbsolutePathNameKind.NameWithExtension);
     
         var siblingFileStringList = Array.Empty<string>();
         
@@ -859,10 +870,10 @@ public class TextEditorCommandDefaultFunctions
         {
             var file = siblingFileStringList[i];
             
-            var siblingAbsolutePath = environmentProvider.AbsolutePathFactory(file, false, tokenBuilder: new StringBuilder(), formattedBuilder: new StringBuilder());
+            var siblingAbsolutePath = environmentProvider.AbsolutePathFactory(file, false, tokenBuilder: new StringBuilder(), formattedBuilder: new StringBuilder(), AbsolutePathNameKind.NameWithExtension);
             
             menuOptionList.Add(new MenuOptionRecord(
-                siblingAbsolutePath.NameWithExtension,
+                siblingAbsolutePath.Name,
                 MenuOptionKind.Other,
                 onClickFunc: async () => 
                 {
@@ -878,7 +889,7 @@ public class TextEditorCommandDefaultFunctions
                     });
                 }));
                     
-            if (siblingAbsolutePath.NameWithExtension == resourceAbsolutePath.NameWithExtension)
+            if (siblingAbsolutePath.Name == resourceAbsolutePath.Name)
                 initialActiveMenuOptionRecordIndex = i;
         }
         

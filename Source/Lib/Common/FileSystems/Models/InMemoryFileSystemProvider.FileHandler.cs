@@ -348,7 +348,8 @@ public partial class InMemoryFileSystemProvider : IFileSystemProvider
                 absolutePathString,
                 false,
                 tokenBuilder: new StringBuilder(),
-                formattedBuilder: new StringBuilder());
+                formattedBuilder: new StringBuilder(),
+                AbsolutePathNameKind.NameWithExtension);
 
             var outFile = new InMemoryFile(
                 contents,

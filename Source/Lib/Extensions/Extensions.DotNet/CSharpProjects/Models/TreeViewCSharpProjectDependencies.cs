@@ -29,7 +29,7 @@ public class TreeViewCSharpProjectDependencies : TreeViewWithType<CSharpProjectD
         return otherTreeView.GetHashCode() == GetHashCode();
     }
 
-    public override int GetHashCode() => Item.CSharpProjectNamespacePath.AbsolutePath.Value.GetHashCode();
+    public override int GetHashCode() => Item.CSharpProjectAbsolutePath.Value.GetHashCode();
 
     public override string GetDisplayText() => "Dependencies";
     
@@ -77,7 +77,7 @@ public class TreeViewCSharpProjectDependencies : TreeViewWithType<CSharpProjectD
         var previousChildren = new List<TreeViewNoType>(ChildList);
 
         var treeViewCSharpProjectNugetPackageReferences = new TreeViewCSharpProjectNugetPackageReferences(
-            new CSharpProjectNugetPackageReferences(Item.CSharpProjectNamespacePath),
+            new CSharpProjectNugetPackageReferences(Item.CSharpProjectAbsolutePath),
             CommonService,
             true,
             false)
@@ -86,7 +86,7 @@ public class TreeViewCSharpProjectDependencies : TreeViewWithType<CSharpProjectD
         };
 
         var treeViewCSharpProjectToProjectReferences = new TreeViewCSharpProjectToProjectReferences(
-            new CSharpProjectToProjectReferences(Item.CSharpProjectNamespacePath),
+            new CSharpProjectToProjectReferences(Item.CSharpProjectAbsolutePath),
             CommonService,
             true,
             false)
