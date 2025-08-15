@@ -193,10 +193,10 @@ public partial class DotNetService
         ideService.Enqueue(new IdeWorkArgs
         {
             WorkKind = IdeWorkKind.RequestInputFileStateForm,
-            StringValue = $"Add Project reference to {projectReceivingReference.Item.AbsolutePath.NameWithExtension}",
+            StringValue = $"Add Project reference to {projectReceivingReference.Item.AbsolutePath.Name}",
             OnAfterSubmitFunc = referencedProject =>
             {
-                if (referencedProject.ExactInput is null)
+                if (referencedProject.Value is null)
                     return Task.CompletedTask;
 
                 var formattedCommand = DotNetCliCommandFormatter.FormatAddProjectToProjectReference(
@@ -209,7 +209,7 @@ public partial class DotNetService
                 {
                     ContinueWithFunc = parsedCommand =>
                     {
-                        NotificationHelper.DispatchInformative("Add Project Reference", $"Modified {projectReceivingReference.Item.AbsolutePath.NameWithExtension} to have a reference to {referencedProject.NameWithExtension}", ideService.CommonService, TimeSpan.FromSeconds(7));
+                        NotificationHelper.DispatchInformative("Add Project Reference", $"Modified {projectReceivingReference.Item.AbsolutePath.Name} to have a reference to {referencedProject.Name}", ideService.CommonService, TimeSpan.FromSeconds(7));
                         return onAfterCompletion.Invoke();
                     }
                 };
@@ -219,17 +219,17 @@ public partial class DotNetService
             },
             SelectionIsValidFunc = absolutePath =>
             {
-                if (absolutePath.ExactInput is null || absolutePath.IsDirectory)
+                if (absolutePath.Value is null || absolutePath.IsDirectory)
                     return Task.FromResult(false);
 
                 return Task.FromResult(
-                    absolutePath.ExtensionNoPeriod.EndsWith(ExtensionNoPeriodFacts.C_SHARP_PROJECT));
+                    absolutePath.Name.EndsWith(ExtensionNoPeriodFacts.C_SHARP_PROJECT));
             },
             InputFilePatterns = new()
             {
                 new InputFilePattern(
                     "C# Project",
-                    absolutePath => absolutePath.ExtensionNoPeriod.EndsWith(ExtensionNoPeriodFacts.C_SHARP_PROJECT))
+                    absolutePath => absolutePath.Name.EndsWith(ExtensionNoPeriodFacts.C_SHARP_PROJECT))
             }
         });
     }
@@ -265,7 +265,7 @@ public partial class DotNetService
         {
             ContinueWithFunc = parsedCommand =>
             {
-                NotificationHelper.DispatchInformative("Remove Project Reference", $"Modified {treeViewCSharpProjectToProjectReference.Item.ModifyProjectNamespacePath.AbsolutePath.NameWithExtension} to have a reference to {treeViewCSharpProjectToProjectReference.Item.ReferenceProjectAbsolutePath.NameWithExtension}", commonService, TimeSpan.FromSeconds(7));
+                NotificationHelper.DispatchInformative("Remove Project Reference", $"Modified {treeViewCSharpProjectToProjectReference.Item.ModifyProjectNamespacePath.AbsolutePath.Name} to have a reference to {treeViewCSharpProjectToProjectReference.Item.ReferenceProjectAbsolutePath.Name}", commonService, TimeSpan.FromSeconds(7));
                 return onAfterCompletion.Invoke();
             }
         };
@@ -312,7 +312,7 @@ public partial class DotNetService
         {
             ContinueWithFunc = parsedCommand =>
             {
-                NotificationHelper.DispatchInformative("Move Project To Solution Folder", $"Moved {treeViewProjectToMove.Item.AbsolutePath.NameWithExtension} to the Solution Folder path: {solutionFolderPath}", commonService, TimeSpan.FromSeconds(7));
+                NotificationHelper.DispatchInformative("Move Project To Solution Folder", $"Moved {treeViewProjectToMove.Item.AbsolutePath.Name} to the Solution Folder path: {solutionFolderPath}", commonService, TimeSpan.FromSeconds(7));
                 return onAfterCompletion.Invoke();
             }
         };
@@ -365,7 +365,7 @@ public partial class DotNetService
         {
             ContinueWithFunc = parsedCommand =>
             {
-                NotificationHelper.DispatchInformative("Remove Project Reference", $"Modified {modifyProjectNamespacePath.AbsolutePath.NameWithExtension} to NOT have a reference to {treeViewCSharpProjectNugetPackageReference.Item.LightWeightNugetPackageRecord.Id}", commonService, TimeSpan.FromSeconds(7));
+                NotificationHelper.DispatchInformative("Remove Project Reference", $"Modified {modifyProjectNamespacePath.AbsolutePath.Name} to NOT have a reference to {treeViewCSharpProjectNugetPackageReference.Item.LightWeightNugetPackageRecord.Id}", commonService, TimeSpan.FromSeconds(7));
                 return onAfterCompletion.Invoke();
             }
         };

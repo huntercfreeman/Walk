@@ -22,7 +22,7 @@ public class TreeViewHelperAbsolutePathDirectory
             .Select(x =>
             {
                 return (TreeViewNoType)new TreeViewAbsolutePath(
-                    directoryTreeView.CommonService.EnvironmentProvider.AbsolutePathFactory(x, true, tokenBuilder, formattedBuilder),
+                    directoryTreeView.CommonService.EnvironmentProvider.AbsolutePathFactory(x, true, tokenBuilder, formattedBuilder, shouldNameContainsExtension: true),
                     directoryTreeView.CommonService,
                     true,
                     false)
@@ -40,7 +40,7 @@ public class TreeViewHelperAbsolutePathDirectory
             .Select(x =>
             {
                 return (TreeViewNoType)new TreeViewAbsolutePath(
-                    directoryTreeView.CommonService.EnvironmentProvider.AbsolutePathFactory(x, false, tokenBuilder, formattedBuilder),
+                    directoryTreeView.CommonService.EnvironmentProvider.AbsolutePathFactory(x, false, tokenBuilder, formattedBuilder, shouldNameContainsExtension: true),
                     directoryTreeView.CommonService,
                     false,
                     false)

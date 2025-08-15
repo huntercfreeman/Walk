@@ -511,14 +511,15 @@ public static class CommonFacts
             emptyFileAbsolutePathString,
             false,
             tokenBuilder: new StringBuilder(),
-            formattedBuilder: new StringBuilder());
+            formattedBuilder: new StringBuilder(),
+            shouldNameContainsExtension: false);
 
         var templatedFileContent = GetContent(
-            emptyFileAbsolutePath.NameNoExtension,
+            emptyFileAbsolutePath.Name,
             templateParameter.ParentDirectory.Namespace);
 
         var templatedFileAbsolutePathString = templateParameter.ParentDirectory.AbsolutePath.Value +
-            emptyFileAbsolutePath.NameNoExtension +
+            emptyFileAbsolutePath.Name +
             '.' +
             ExtensionNoPeriodFacts.C_SHARP_CLASS;
 
@@ -526,7 +527,8 @@ public static class CommonFacts
             templatedFileAbsolutePathString,
             false,
             tokenBuilder: new StringBuilder(),
-            formattedBuilder: new StringBuilder());
+            formattedBuilder: new StringBuilder(),
+            shouldNameContainsExtension: true);
 
         var templatedFileNamespacePath = new NamespacePath(
             templateParameter.ParentDirectory.Namespace,
@@ -564,12 +566,13 @@ public class {fileNameNoExtension}
             emptyFileAbsolutePathString,
             false,
             tokenBuilder: new StringBuilder(),
-            formattedBuilder: new StringBuilder());
+            formattedBuilder: new StringBuilder(),
+            shouldNameContainsExtension: false);
 
-        var templatedFileContent = GetContent(emptyFileAbsolutePath.NameNoExtension);
+        var templatedFileContent = GetContent(emptyFileAbsolutePath.Name);
 
         var templatedFileAbsolutePathString = templateParameter.ParentDirectory.AbsolutePath.Value +
-            emptyFileAbsolutePath.NameNoExtension +
+            emptyFileAbsolutePath.Name +
             '.' +
             ExtensionNoPeriodFacts.RAZOR_MARKUP;
 
@@ -577,7 +580,8 @@ public class {fileNameNoExtension}
             templatedFileAbsolutePathString,
             false,
             tokenBuilder: new StringBuilder(),
-            formattedBuilder: new StringBuilder());
+            formattedBuilder: new StringBuilder(),
+            shouldNameContainsExtension: true);
 
         var templatedFileNamespacePath = new NamespacePath(
             templateParameter.ParentDirectory.Namespace,
@@ -631,14 +635,15 @@ public partial class {className} : ComponentBase
             emptyFileAbsolutePathString,
             false,
             tokenBuilder: new StringBuilder(),
-            formattedBuilder: new StringBuilder());
+            formattedBuilder: new StringBuilder(),
+            shouldNameContainsExtension: false);
 
         var templatedFileContent = GetContent(
-            emptyFileAbsolutePath.NameNoExtension,
+            emptyFileAbsolutePath.Name,
             templateParameter.ParentDirectory.Namespace);
 
         var templatedFileAbsolutePathString = templateParameter.ParentDirectory.AbsolutePath.Value +
-            emptyFileAbsolutePath.NameNoExtension;
+            emptyFileAbsolutePath.Name;
 
         if (templatedFileAbsolutePathString.EndsWith('.' + ExtensionNoPeriodFacts.RAZOR_MARKUP))
             templatedFileAbsolutePathString += '.' + ExtensionNoPeriodFacts.C_SHARP_CLASS;
@@ -649,7 +654,8 @@ public partial class {className} : ComponentBase
             templatedFileAbsolutePathString,
             false,
             tokenBuilder: new StringBuilder(),
-            formattedBuilder: new StringBuilder());
+            formattedBuilder: new StringBuilder(),
+            shouldNameContainsExtension: true);
 
         var templatedFileNamespacePath = new NamespacePath(
             templateParameter.ParentDirectory.Namespace,

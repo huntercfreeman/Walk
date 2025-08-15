@@ -33,7 +33,7 @@ public class TreeViewHelperRazorMarkup
         var childFileTreeViewModels = filePathStringsList
             .Select(x =>
             {
-                var absolutePath = razorMarkupTreeView.CommonService.EnvironmentProvider.AbsolutePathFactory(x, false, tokenBuilder, formattedBuilder);
+                var absolutePath = razorMarkupTreeView.CommonService.EnvironmentProvider.AbsolutePathFactory(x, false, tokenBuilder, formattedBuilder, shouldNameContainsExtension: true);
                 var namespaceString = razorMarkupTreeView.Item.Namespace;
 
                 return (TreeViewNoType)new TreeViewNamespacePath(
@@ -62,18 +62,18 @@ public class TreeViewHelperRazorMarkup
         // .razor files look to remove .razor.cs and .razor.css files
         var matches = new[]
         {
-            razorMarkupTreeView.Item.AbsolutePath.NameWithExtension + '.' + ExtensionNoPeriodFacts.C_SHARP_CLASS,
-            razorMarkupTreeView.Item.AbsolutePath.NameWithExtension + '.' + ExtensionNoPeriodFacts.CSS
+            razorMarkupTreeView.Item.AbsolutePath.Name + '.' + ExtensionNoPeriodFacts.C_SHARP_CLASS,
+            razorMarkupTreeView.Item.AbsolutePath.Name + '.' + ExtensionNoPeriodFacts.CSS
         };
 
         var relatedFiles = siblingsAndSelfTreeViews
             .Where(x =>
                 x.UntypedItem is NamespacePath namespacePath &&
-                matches.Contains(namespacePath.AbsolutePath.NameWithExtension))
+                matches.Contains(namespacePath.AbsolutePath.Name))
             .OrderBy(x =>
             {
                 if (x.UntypedItem is NamespacePath namespacePath)
-                    return namespacePath.AbsolutePath.NameWithExtension ?? string.Empty;
+                    return namespacePath.AbsolutePath.Name ?? string.Empty;
                 else
                     return string.Empty;
             })

@@ -52,7 +52,7 @@ public partial class DotNetSolutionFormDisplay : ComponentBase, IDisposable
             StringValue = "Directory for new .NET Solution",
             OnAfterSubmitFunc = async absolutePath =>
             {
-                if (absolutePath.ExactInput is null)
+                if (absolutePath.Value is null)
                     return;
 
                 _parentDirectoryName = absolutePath.Value;
@@ -60,7 +60,7 @@ public partial class DotNetSolutionFormDisplay : ComponentBase, IDisposable
             },
             SelectionIsValidFunc = absolutePath =>
             {
-                if (absolutePath.ExactInput is null || !absolutePath.IsDirectory)
+                if (absolutePath.Value is null || !absolutePath.IsDirectory)
                     return Task.FromResult(false);
 
                 return Task.FromResult(true);
@@ -108,7 +108,8 @@ public partial class DotNetSolutionFormDisplay : ComponentBase, IDisposable
                         localParentDirectoryName,
                         true,
                         tokenBuilder: new StringBuilder(),
-                        formattedBuilder: new StringBuilder());
+                        formattedBuilder: new StringBuilder(),
+                        shouldNameContainsExtension: true);
 
                     var solutionAbsolutePathString =
                         parentDirectoryAbsolutePath.Value +
@@ -122,7 +123,8 @@ public partial class DotNetSolutionFormDisplay : ComponentBase, IDisposable
                         solutionAbsolutePathString,
                         false,
                         tokenBuilder: new StringBuilder(),
-                        formattedBuilder: new StringBuilder());
+                        formattedBuilder: new StringBuilder(),
+                        shouldNameContainsExtension: true);
 
                     DotNetService.Enqueue(new DotNetWorkArgs
                     {
@@ -172,7 +174,8 @@ public partial class DotNetSolutionFormDisplay : ComponentBase, IDisposable
             solutionAbsolutePathString,
             false,
             tokenBuilder: new StringBuilder(),
-            formattedBuilder: new StringBuilder());
+            formattedBuilder: new StringBuilder(),
+            shouldNameContainsExtension: true);
 
         DotNetService.Enqueue(new DotNetWorkArgs
         {

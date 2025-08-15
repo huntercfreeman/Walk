@@ -113,8 +113,8 @@ public partial class IdeService
                 {
                     nameof(Walk.Common.RazorLib.FileSystems.Displays.FileFormDisplay.FileName),
                     sourceAbsolutePath.IsDirectory
-                        ? sourceAbsolutePath.NameNoExtension
-                        : sourceAbsolutePath.NameWithExtension
+                        ? sourceAbsolutePath.Name
+                        : sourceAbsolutePath.Name
                 },
                 { nameof(Walk.Common.RazorLib.FileSystems.Displays.FileFormDisplay.IsDirectory), sourceAbsolutePath.IsDirectory },
                 {
@@ -191,7 +191,8 @@ public partial class IdeService
                 emptyFileAbsolutePathString,
                 false,
                 tokenBuilder: new StringBuilder(),
-                formattedBuilder: new StringBuilder());
+                formattedBuilder: new StringBuilder(),
+                shouldNameContainsExtension: true);
 
             await CommonService.FileSystemProvider.File.WriteAllTextAsync(
                     emptyFileAbsolutePath.Value,
@@ -235,7 +236,7 @@ public partial class IdeService
     private async ValueTask Do_PerformNewDirectory(string directoryName, AbsolutePath parentDirectory, Func<Task> onAfterCompletion)
     {
         var directoryAbsolutePathString = parentDirectory.Value + directoryName;
-        var directoryAbsolutePath = CommonService.EnvironmentProvider.AbsolutePathFactory(directoryAbsolutePathString, true, tokenBuilder: new StringBuilder(), formattedBuilder: new StringBuilder());
+        var directoryAbsolutePath = CommonService.EnvironmentProvider.AbsolutePathFactory(directoryAbsolutePathString, true, tokenBuilder: new StringBuilder(), formattedBuilder: new StringBuilder(), shouldNameContainsExtension: true);
 
         await CommonService.FileSystemProvider.Directory.CreateDirectoryAsync(
                 directoryAbsolutePath.Value,
@@ -351,7 +352,8 @@ public partial class IdeService
                             clipboardPhrase.Value,
                             true,
                             tokenBuilder: new StringBuilder(),
-                            formattedBuilder: new StringBuilder());
+                            formattedBuilder: new StringBuilder(),
+                            shouldNameContainsExtension: true);
                     }
                     else if (await CommonService.FileSystemProvider.File.ExistsAsync(clipboardPhrase.Value).ConfigureAwait(false))
                     {
@@ -359,10 +361,11 @@ public partial class IdeService
                             clipboardPhrase.Value,
                             false,
                             tokenBuilder: new StringBuilder(),
-                            formattedBuilder: new StringBuilder());
+                            formattedBuilder: new StringBuilder(),
+                            shouldNameContainsExtension: true);
                     }
 
-                    if (clipboardAbsolutePath.ExactInput is not null)
+                    if (clipboardAbsolutePath.Value is not null)
                     {
                         var successfullyPasted = true;
 
@@ -378,7 +381,7 @@ public partial class IdeService
                             else
                             {
                                 var destinationAbsolutePathString = receivingDirectory.Value +
-                                    clipboardAbsolutePath.NameWithExtension;
+                                    clipboardAbsolutePath.Name;
 
                                 var sourceAbsolutePathString = clipboardAbsolutePath.Value;
 
@@ -411,7 +414,7 @@ public partial class IdeService
     private AbsolutePath PerformRename(AbsolutePath sourceAbsolutePath, string nextName, CommonService commonService, Func<Task> onAfterCompletion)
     {
         // Check if the current and next name match when compared with case insensitivity
-        if (0 == string.Compare(sourceAbsolutePath.NameWithExtension, nextName, StringComparison.OrdinalIgnoreCase))
+        if (0 == string.Compare(sourceAbsolutePath.Name, nextName, StringComparison.OrdinalIgnoreCase))
         {
             var temporaryNextName = CommonService.EnvironmentProvider.GetRandomFileName();
 
@@ -421,7 +424,7 @@ public partial class IdeService
                 commonService,
                 () => Task.CompletedTask);
 
-            if (temporaryRenameResult.ExactInput is null)
+            if (temporaryRenameResult.Value is null)
             {
                 onAfterCompletion.Invoke();
                 return default;
@@ -452,7 +455,7 @@ public partial class IdeService
 
         onAfterCompletion.Invoke();
 
-        return CommonService.EnvironmentProvider.AbsolutePathFactory(destinationAbsolutePathString, sourceAbsolutePath.IsDirectory, tokenBuilder: new StringBuilder(), formattedBuilder: new StringBuilder());
+        return CommonService.EnvironmentProvider.AbsolutePathFactory(destinationAbsolutePathString, sourceAbsolutePath.IsDirectory, tokenBuilder: new StringBuilder(), formattedBuilder: new StringBuilder(), shouldNameContainsExtension: true);
     }
 
     /// <summary>

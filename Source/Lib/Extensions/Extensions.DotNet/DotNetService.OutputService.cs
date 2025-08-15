@@ -57,7 +57,7 @@ public partial class DotNetService
 
         foreach (var group in filePathGrouping)
         {
-            var absolutePath = CommonService.EnvironmentProvider.AbsolutePathFactory(group.Key, false, tokenBuilder, formattedBuilder);
+            var absolutePath = CommonService.EnvironmentProvider.AbsolutePathFactory(group.Key, false, tokenBuilder, formattedBuilder, shouldNameContainsExtension: true);
             var groupEnumerated = group.ToList();
             var groupNameBuilder = new StringBuilder();
 
@@ -68,7 +68,7 @@ public partial class DotNetService
                 ((TreeViewDiagnosticLine)x).Item.DiagnosticLineKind == DiagnosticLineKind.Warning);
 
             groupNameBuilder
-                .Append(absolutePath.NameWithExtension)
+                .Append(absolutePath.Name)
                 .Append(" (")
                 .Append(errorCount)
                 .Append(" errors)")
@@ -92,12 +92,12 @@ public partial class DotNetService
             if (firstEntry is not null)
             {
                 var projectText = ((TreeViewDiagnosticLine)firstEntry).Item.ProjectTextSpan.Text;
-                var projectAbsolutePath = CommonService.EnvironmentProvider.AbsolutePathFactory(projectText, false, tokenBuilder, formattedBuilder);
+                var projectAbsolutePath = CommonService.EnvironmentProvider.AbsolutePathFactory(projectText, false, tokenBuilder, formattedBuilder, shouldNameContainsExtension: true);
 
                 if (!projectManualGrouping.ContainsKey(projectText))
                 {
                     var treeViewGroupProject = new TreeViewGroup(
-                        projectAbsolutePath.NameWithExtension,
+                        projectAbsolutePath.Name,
                         true,
                         true)
                     {

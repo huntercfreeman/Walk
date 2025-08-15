@@ -8,11 +8,11 @@
 	@<span class="di_ide_solution-explorer-icon-display">
     @if (tuple.AbsolutePath.IsDirectory)
     {
-        if (tuple.AbsolutePath.NameNoExtension == IdeFacts.Properties)
+        if (tuple.AbsolutePath.Name == IdeFacts.Properties)
         {
             @IconPropertiesFragment.Render(tuple.IconDriver)
         }
-        else if (tuple.AbsolutePath.NameNoExtension == IdeFacts.WwwRoot)
+        else if (tuple.AbsolutePath.Name == IdeFacts.WwwRoot)
         {
             @IconWwwRootFragment.Render(tuple.IconDriver)
         }
@@ -23,42 +23,50 @@
     }
     else
     {
-        switch (tuple.AbsolutePath.ExtensionNoPeriod)
+        if (tuple.AbsolutePath.Name.EndsWith(ExtensionNoPeriodFacts.DOT_NET_SOLUTION))
         {
-            case ExtensionNoPeriodFacts.DOT_NET_SOLUTION:
-                @IconDotNetSolutionFragment.Render(tuple.IconDriver)
-                break;
-			case ExtensionNoPeriodFacts.DOT_NET_SOLUTION_X:
-                @IconDotNetSolutionFragment.Render(tuple.IconDriver)
-                break;
-            case ExtensionNoPeriodFacts.C_SHARP_PROJECT:
-                @IconCSharpProjectFragment.Render(tuple.IconDriver)
-                break;
-            case ExtensionNoPeriodFacts.C_SHARP_CLASS:
-            case ExtensionNoPeriodFacts.RAZOR_CODEBEHIND:
-                @IconCSharpClassFragment.Render(tuple.IconDriver)
-                break;
-            case ExtensionNoPeriodFacts.CSHTML_CLASS:
-                @IconCshtmlFragment.Render(tuple.IconDriver)
-                break;
-            case ExtensionNoPeriodFacts.RAZOR_MARKUP:
-                @IconRazorFragment.Render(tuple.IconDriver)
-                break;
-            case ExtensionNoPeriodFacts.JSON:
-                @IconJsonFragment.Render(tuple.IconDriver)
-                break;
-            case ExtensionNoPeriodFacts.CSS:
-                @IconCssFragment.Render(tuple.IconDriver)
-                break;
-            case ExtensionNoPeriodFacts.JAVA_SCRIPT:
-                @IconJsFragment.Render(tuple.IconDriver)
-                break;
-            case ExtensionNoPeriodFacts.TYPE_SCRIPT:
-                @IconTsFragment.Render(tuple.IconDriver)
-                break;
-            default:
-                @IconFileFragment.Render(tuple.IconDriver)
-                break;
+            @IconDotNetSolutionFragment.Render(tuple.IconDriver)
+        }
+		if (tuple.AbsolutePath.Name.EndsWith(ExtensionNoPeriodFacts.DOT_NET_SOLUTION_X))
+        {
+            @IconDotNetSolutionFragment.Render(tuple.IconDriver)
+        }
+        if (tuple.AbsolutePath.Name.EndsWith(ExtensionNoPeriodFacts.C_SHARP_PROJECT))
+        {
+            @IconCSharpProjectFragment.Render(tuple.IconDriver)
+        }
+        if (tuple.AbsolutePath.Name.EndsWith(ExtensionNoPeriodFacts.C_SHARP_CLASS) ||
+            tuple.AbsolutePath.Name.EndsWith(ExtensionNoPeriodFacts.RAZOR_CODEBEHIND))
+        {
+            @IconCSharpClassFragment.Render(tuple.IconDriver)
+        }
+        if (tuple.AbsolutePath.Name.EndsWith(ExtensionNoPeriodFacts.CSHTML_CLASS))
+        {
+            @IconCshtmlFragment.Render(tuple.IconDriver)
+        }
+        if (tuple.AbsolutePath.Name.EndsWith(ExtensionNoPeriodFacts.RAZOR_MARKUP))
+        {
+            @IconRazorFragment.Render(tuple.IconDriver)
+        }
+        if (tuple.AbsolutePath.Name.EndsWith(ExtensionNoPeriodFacts.JSON))
+        {
+            @IconJsonFragment.Render(tuple.IconDriver)
+        }
+        if (tuple.AbsolutePath.Name.EndsWith(ExtensionNoPeriodFacts.CSS))
+        {
+            @IconCssFragment.Render(tuple.IconDriver)
+        }
+        if (tuple.AbsolutePath.Name.EndsWith(ExtensionNoPeriodFacts.JAVA_SCRIPT))
+        {
+            @IconJsFragment.Render(tuple.IconDriver)
+        }
+        if (tuple.AbsolutePath.Name.EndsWith(ExtensionNoPeriodFacts.TYPE_SCRIPT))
+        {
+            @IconTsFragment.Render(tuple.IconDriver)
+        }
+        else
+        {
+            @IconFileFragment.Render(tuple.IconDriver)
         }
     }
 </span>;

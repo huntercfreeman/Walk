@@ -77,23 +77,22 @@ public partial class SolutionExplorerContextMenu : ComponentBase
             }
             else
             {
-                switch (treeViewNamespacePath.Item.AbsolutePath.ExtensionNoPeriod)
+                if (treeViewNamespacePath.Item.AbsolutePath.Name.EndsWith(ExtensionNoPeriodFacts.C_SHARP_PROJECT))
                 {
-                    case ExtensionNoPeriodFacts.C_SHARP_PROJECT:
-                        menuOptionList.AddRange(GetCSharpProjectMenuOptions(treeViewNamespacePath)
-                            .Union(GetDebugMenuOptions(treeViewNamespacePath)));
-                        break;
-                    default:
-                        menuOptionList.AddRange(GetFileMenuOptions(treeViewNamespacePath, parentTreeViewNamespacePath)
-                            .Union(GetDebugMenuOptions(treeViewNamespacePath)));
-                        break;
+                    menuOptionList.AddRange(GetCSharpProjectMenuOptions(treeViewNamespacePath)
+                        .Union(GetDebugMenuOptions(treeViewNamespacePath)));
+                }
+                else
+                {
+                    menuOptionList.AddRange(GetFileMenuOptions(treeViewNamespacePath, parentTreeViewNamespacePath)
+                        .Union(GetDebugMenuOptions(treeViewNamespacePath)));
                 }
             }
         }
         else if (treeViewModel is TreeViewSolution treeViewSolution)
         {
-            if (ExtensionNoPeriodFacts.DOT_NET_SOLUTION == treeViewSolution.Item.NamespacePath.AbsolutePath.ExtensionNoPeriod ||
-                ExtensionNoPeriodFacts.DOT_NET_SOLUTION_X == treeViewSolution.Item.NamespacePath.AbsolutePath.ExtensionNoPeriod)
+            if (treeViewSolution.Item.NamespacePath.AbsolutePath.Name.EndsWith(ExtensionNoPeriodFacts.DOT_NET_SOLUTION) ||
+                treeViewSolution.Item.NamespacePath.AbsolutePath.Name.EndsWith(ExtensionNoPeriodFacts.DOT_NET_SOLUTION_X))
             {
                 if (treeViewSolution.Parent is null || treeViewSolution.Parent is TreeViewAdhoc)
                     menuOptionList.AddRange(GetDotNetSolutionMenuOptions(treeViewSolution));
@@ -136,10 +135,10 @@ public partial class SolutionExplorerContextMenu : ComponentBase
         {
             if (selectedNode is TreeViewNamespacePath treeViewNamespacePath)
             {
-                if (treeViewNamespacePath.Item.AbsolutePath.ExtensionNoPeriod == ExtensionNoPeriodFacts.C_SHARP_PROJECT)
+                if (treeViewNamespacePath.Item.AbsolutePath.Name.EndsWith(ExtensionNoPeriodFacts.C_SHARP_PROJECT))
                     getFileOptions = false;
                 else if (getFileOptions)
-                    filenameList.Add(treeViewNamespacePath.Item.AbsolutePath.NameWithExtension + " __FROM__ " + (treeViewNamespacePath.Item.AbsolutePath.ParentDirectory ?? "null"));
+                    filenameList.Add(treeViewNamespacePath.Item.AbsolutePath.Name + " __FROM__ " + (treeViewNamespacePath.Item.AbsolutePath.ParentDirectory ?? "null"));
             }
             else
             {
@@ -262,7 +261,12 @@ public partial class SolutionExplorerContextMenu : ComponentBase
                 return Array.Empty<MenuOptionRecord>();
         }
 
-        var parentDirectoryAbsolutePath = DotNetService.IdeService.TextEditorService.CommonService.EnvironmentProvider.AbsolutePathFactory(parentDirectory, true, tokenBuilder: new StringBuilder(), formattedBuilder: new StringBuilder());
+        var parentDirectoryAbsolutePath = DotNetService.IdeService.TextEditorService.CommonService.EnvironmentProvider.AbsolutePathFactory(
+                parentDirectory,
+                true,
+                tokenBuilder: new StringBuilder(),
+                formattedBuilder: new StringBuilder(),
+                shouldNameContainsExtension: true);
 
         return new[]
         {
@@ -407,14 +411,14 @@ public partial class SolutionExplorerContextMenu : ComponentBase
             DotNetService.IdeService.CopyFile(
                 treeViewModel.Item.AbsolutePath,
                 (Func<Task>)(() => {
-                    NotificationHelper.DispatchInformative("Copy Action", $"Copied: {treeViewModel.Item.AbsolutePath.NameWithExtension}", DotNetService.IdeService.TextEditorService.CommonService, TimeSpan.FromSeconds(7));
+                    NotificationHelper.DispatchInformative("Copy Action", $"Copied: {treeViewModel.Item.AbsolutePath.Name}", DotNetService.IdeService.TextEditorService.CommonService, TimeSpan.FromSeconds(7));
                     return Task.CompletedTask;
                 })),
             DotNetService.IdeService.CutFile(
                 treeViewModel.Item.AbsolutePath,
                 (Func<Task>)(() => {
                     ParentOfCutFile = parentTreeViewModel;
-                    NotificationHelper.DispatchInformative("Cut Action", $"Cut: {treeViewModel.Item.AbsolutePath.NameWithExtension}", DotNetService.IdeService.TextEditorService.CommonService, TimeSpan.FromSeconds(7));
+                    NotificationHelper.DispatchInformative("Cut Action", $"Cut: {treeViewModel.Item.AbsolutePath.Name}", DotNetService.IdeService.TextEditorService.CommonService, TimeSpan.FromSeconds(7));
                     return Task.CompletedTask;
                 })),
             DotNetService.IdeService.DeleteFile(
@@ -466,7 +470,7 @@ public partial class SolutionExplorerContextMenu : ComponentBase
             StringValue = "Existing C# Project to add to solution",
             OnAfterSubmitFunc = absolutePath =>
             {
-                if (absolutePath.ExactInput is null)
+                if (absolutePath.Value is null)
                     return Task.CompletedTask;
 
                 var localFormattedAddExistingProjectToSolutionCommand = DotNetCliCommandFormatter.FormatAddExistingProjectToSolution(
@@ -493,16 +497,16 @@ public partial class SolutionExplorerContextMenu : ComponentBase
             },
             SelectionIsValidFunc = absolutePath =>
             {
-                if (absolutePath.ExactInput is null || absolutePath.IsDirectory)
+                if (absolutePath.Value is null || absolutePath.IsDirectory)
                     return Task.FromResult(false);
 
-                return Task.FromResult(absolutePath.ExtensionNoPeriod.EndsWith(ExtensionNoPeriodFacts.C_SHARP_PROJECT));
+                return Task.FromResult(absolutePath.Name.EndsWith(ExtensionNoPeriodFacts.C_SHARP_PROJECT));
             },
             InputFilePatterns = new()
             {
                 new InputFilePattern(
                     "C# Project",
-                    absolutePath => absolutePath.ExtensionNoPeriod.EndsWith(ExtensionNoPeriodFacts.C_SHARP_PROJECT))
+                    absolutePath => absolutePath.Name.EndsWith(ExtensionNoPeriodFacts.C_SHARP_PROJECT))
             }
         });
     }

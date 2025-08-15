@@ -241,7 +241,7 @@ public partial class TextEditorDefaultHeaderDisplay : ComponentBase, ITextEditor
             
         var menuOptionList = new List<MenuOptionRecord>();
         
-        var absolutePath = TextEditorService.CommonService.EnvironmentProvider.AbsolutePathFactory(virtualizationResult.Model.PersistentState.ResourceUri.Value, false, tokenBuilder: new StringBuilder(), formattedBuilder: new StringBuilder());
+        var absolutePath = TextEditorService.CommonService.EnvironmentProvider.AbsolutePathFactory(virtualizationResult.Model.PersistentState.ResourceUri.Value, false, tokenBuilder: new StringBuilder(), formattedBuilder: new StringBuilder(), shouldNameContainsExtension: true);
 
         menuOptionList.Add(new MenuOptionRecord(
             "Cancel",
@@ -253,7 +253,7 @@ public partial class TextEditorDefaultHeaderDisplay : ComponentBase, ITextEditor
             }));
             
         menuOptionList.Add(new MenuOptionRecord(
-            $"Reset: '{absolutePath.NameWithExtension}'",
+            $"Reset: '{absolutePath.Name}'",
             MenuOptionKind.Delete,
             onClickFunc: () =>
             {

@@ -49,9 +49,9 @@ public class RazorSyntaxTree
         _cSharpCompilerService = cSharpCompilerService;
         _environmentProvider = environmentProvider;
 
-        var absolutePath = _environmentProvider.AbsolutePathFactory(resourceUri.Value, false, tokenBuilder: new StringBuilder(), formattedBuilder: new StringBuilder());
+        var absolutePath = _environmentProvider.AbsolutePathFactory(resourceUri.Value, false, tokenBuilder: new StringBuilder(), formattedBuilder: new StringBuilder(), shouldNameContainsExtension: false);
 
-        _codebehindClassIdentifier = absolutePath.NameNoExtension;
+        _codebehindClassIdentifier = absolutePath.Name;
         _codebehindRenderFunctionIdentifier = "__DEV_IN_RENDER_FUNCTION__";
 
         _codebehindClassBuilder = new($"public class {_codebehindClassIdentifier}\n{{");

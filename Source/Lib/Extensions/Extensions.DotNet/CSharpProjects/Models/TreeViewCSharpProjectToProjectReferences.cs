@@ -111,7 +111,8 @@ public class TreeViewCSharpProjectToProjectReferences : TreeViewWithType<CSharpP
         var projectAncestorDirectoryList = Item.CSharpProjectNamespacePath.AbsolutePath.GetAncestorDirectoryList(
             CommonService.EnvironmentProvider,
             tokenBuilder,
-            formattedBuilder);
+            formattedBuilder,
+            shouldNameContainsExtension: true);
         
         foreach (var projectReference in projectReferences)
         {
@@ -144,7 +145,8 @@ public class TreeViewCSharpProjectToProjectReferences : TreeViewWithType<CSharpP
                 referenceProjectAbsolutePathString,
                 false,
                 tokenBuilder,
-                formattedBuilder);
+                formattedBuilder,
+                shouldNameContainsExtension: true);
 
             var cSharpProjectToProjectReference = new CSharpProjectToProjectReference(
                 Item.CSharpProjectNamespacePath,

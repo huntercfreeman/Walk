@@ -145,7 +145,8 @@ public partial class DotNetService
                     textEditorViewModel.PersistentState.ResourceUri.Value,
                     false,
                     tokenBuilder: new StringBuilder(),
-                    formattedBuilder: new StringBuilder());
+                    formattedBuilder: new StringBuilder(),
+                    shouldNameContainsExtension: true);
 
                 if (viewModelAbsolutePath.Value ==
                         treeViewNamespacePath.Item.AbsolutePath.Value)
@@ -154,11 +155,9 @@ public partial class DotNetService
                 }
             }
 
-            switch (treeViewNamespacePath.Item.AbsolutePath.ExtensionNoPeriod)
+            if (treeViewNamespacePath.Item.AbsolutePath.Name.EndsWith(ExtensionNoPeriodFacts.C_SHARP_PROJECT))
             {
-                case ExtensionNoPeriodFacts.C_SHARP_PROJECT:
-                    await treeViewNamespacePath.LoadChildListAsync().ConfigureAwait(false);
-                    break;
+                await treeViewNamespacePath.LoadChildListAsync().ConfigureAwait(false);
             }
         }
 

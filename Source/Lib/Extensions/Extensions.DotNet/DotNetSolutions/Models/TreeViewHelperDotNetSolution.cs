@@ -27,7 +27,7 @@ public class TreeViewHelperDotNetSolution
             .Select(x =>
             {
                 return (TreeViewNoType)new TreeViewNamespacePath(
-                    new NamespacePath(x.AbsolutePath.NameNoExtension, x.AbsolutePath),
+                    new NamespacePath(x.AbsolutePath.Name, x.AbsolutePath),
                     treeViewSolution.CommonService,
                     true,
                     false)
@@ -35,7 +35,7 @@ public class TreeViewHelperDotNetSolution
                     TreeViewChangedKey = Key<TreeViewChanged>.NewKey()
                 };
             })
-            .OrderBy(x => ((TreeViewNamespacePath)x).Item.AbsolutePath.NameNoExtension)
+            .OrderBy(x => ((TreeViewNamespacePath)x).Item.AbsolutePath.Name)
             .ToList();
 
         var children = childSolutionFolders.Concat(childProjects).ToList();

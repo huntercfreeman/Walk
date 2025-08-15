@@ -216,7 +216,8 @@ public partial class DotNetService
             dotNetSolutionAbsolutePathString,
             false,
             tokenBuilder,
-            formattedBuilder);
+            formattedBuilder,
+            shouldNameContainsExtension: true);
 
         var solutionNamespacePath = new NamespacePath(
             string.Empty,
@@ -505,7 +506,8 @@ public partial class DotNetService
                 IdeService.TextEditorService.CommonService.EnvironmentProvider,
                 tokenBuilder,
                 formattedBuilder,
-                ancestorDirectoryList);
+                shouldNameContainsExtension: true,
+                ancestorDirectoryList: ancestorDirectoryList);
 
             solutionFolderPathHashSet.Add(absolutePath.Value);
 
@@ -559,10 +561,11 @@ public partial class DotNetService
                 isDirectory: true,
                 IdeService.TextEditorService.CommonService.EnvironmentProvider,
                 tokenBuilder,
-                formattedBuilder);
+                formattedBuilder,
+                shouldNameContainsExtension: false);
 
             solutionFolderList.Add(new SolutionFolder(
-                absolutePath.NameNoExtension,
+                absolutePath.Name,
                 solutionFolderPath));
         }
 
@@ -677,7 +680,8 @@ public partial class DotNetService
         var dotNetSolutionAncestorDirectoryList = dotNetSolutionModel.AbsolutePath.GetAncestorDirectoryList(
             IdeService.TextEditorService.CommonService.EnvironmentProvider,
             tokenBuilder,
-            formattedBuilder);
+            formattedBuilder,
+            shouldNameContainsExtension: true);
     
         for (int i = dotNetSolutionModel.DotNetProjectList.Count - 1; i >= 0; i--)
         {
@@ -706,7 +710,7 @@ public partial class DotNetService
                 moveUpDirectoryToken: moveUpDirectoryToken,
                 sameDirectoryToken: sameDirectoryToken,
                 dotNetSolutionAncestorDirectoryList);
-            projectTuple.AbsolutePath = IdeService.TextEditorService.CommonService.EnvironmentProvider.AbsolutePathFactory(absolutePathString, false, tokenBuilder, formattedBuilder);
+            projectTuple.AbsolutePath = IdeService.TextEditorService.CommonService.EnvironmentProvider.AbsolutePathFactory(absolutePathString, false, tokenBuilder, formattedBuilder, shouldNameContainsExtension: true);
 
             if (!IdeService.TextEditorService.CommonService.FileSystemProvider.File.Exists(projectTuple.AbsolutePath.Value))
             {
@@ -740,7 +744,8 @@ public partial class DotNetService
             var projectAncestorDirectoryList = projectTuple.AbsolutePath.GetAncestorDirectoryList(
                 IdeService.TextEditorService.CommonService.EnvironmentProvider,
                 tokenBuilder,
-                formattedBuilder);
+                formattedBuilder,
+                shouldNameContainsExtension: true);
             
             foreach (var projectReference in projectReferences)
             {
@@ -773,7 +778,8 @@ public partial class DotNetService
                     referenceProjectAbsolutePathString,
                     false,
                     tokenBuilder,
-                    formattedBuilder);
+                    formattedBuilder,
+                    shouldNameContainsExtension: true);
 
                 projectTuple.ReferencedAbsolutePathList.Add(referenceProjectAbsolutePath);
             }
@@ -865,7 +871,7 @@ public partial class DotNetService
         };
 
         NotificationHelper.DispatchProgress(
-            $"Parse: {dotNetSolutionModel.AbsolutePath.NameWithExtension}",
+            $"Parse: {dotNetSolutionModel.AbsolutePath.Name}",
             progressBarModel,
             IdeService.TextEditorService.CommonService,
             TimeSpan.FromMilliseconds(-1));
@@ -919,7 +925,7 @@ public partial class DotNetService
                 // Otherwise an update to message 2 could result in this message 1 update never being written.
                 progressBarModel.SetProgress(
                     currentProgress,
-                    project.AbsolutePath.NameWithExtension);
+                    project.AbsolutePath.Name);
 
                 cancellationToken.ThrowIfCancellationRequested();
 
@@ -927,7 +933,7 @@ public partial class DotNetService
                 projectsParsedCount++;
             }
 
-            progressBarModel.SetProgress(1, $"Finished parsing: {dotNetSolutionModel.AbsolutePath.NameWithExtension}", string.Empty);
+            progressBarModel.SetProgress(1, $"Finished parsing: {dotNetSolutionModel.AbsolutePath.Name}", string.Empty);
             progressBarModel.Dispose();
         }
         catch (Exception e)

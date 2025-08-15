@@ -41,7 +41,7 @@
 			}
 		
 			<div title="@project.AbsolutePath.Value" class="@GetProjectCssClass(projectValid)">
-				@project.AbsolutePath.NameWithExtension
+				@project.AbsolutePath.Name
 			</div>
 			
 			if (project.ReferencedAbsolutePathList is not null)
@@ -49,7 +49,7 @@
 				<ul>
 					@foreach (var referencedAbsolutePath in project.ReferencedAbsolutePathList)
 					{
-						<li title="@referencedAbsolutePath.Value">@referencedAbsolutePath.NameWithExtension</li>
+						<li title="@referencedAbsolutePath.Value">@referencedAbsolutePath.Name</li>
 					}
 				</ul>
 			}

@@ -204,7 +204,7 @@ public class TreeViewSolutionFolder : TreeViewWithType<SolutionFolder>
         
         childTreeViewList =
             childTreeViewSolutionFolderList.OrderBy(x => x.Item.DisplayName).Select(x => (TreeViewNoType)x)
-            .Union(childTreeViewCSharpProjectList.OrderBy(x => x.Item.AbsolutePath.NameNoExtension).Select(x => (TreeViewNoType)x))
+            .Union(childTreeViewCSharpProjectList.OrderBy(x => x.Item.AbsolutePath.Name).Select(x => (TreeViewNoType)x))
             .ToList();
             
         for (int siblingsIndex = siblingsAndSelfTreeViews.Count - 1; siblingsIndex >= 0; siblingsIndex--)
@@ -267,7 +267,7 @@ public class TreeViewSolutionFolder : TreeViewWithType<SolutionFolder>
     private TreeViewNamespacePath ConstructTreeViewCSharpProject(CSharpProjectModel cSharpProject)
     {
         var namespacePath = new NamespacePath(
-            cSharpProject.AbsolutePath.NameNoExtension,
+            cSharpProject.AbsolutePath.Name,
             cSharpProject.AbsolutePath);
 
         return new TreeViewNamespacePath(

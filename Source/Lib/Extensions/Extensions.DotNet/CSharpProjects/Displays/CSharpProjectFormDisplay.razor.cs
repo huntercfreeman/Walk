@@ -55,7 +55,7 @@ public partial class CSharpProjectFormDisplay : ComponentBase, IDisposable
             StringValue = message,
             OnAfterSubmitFunc = async absolutePath =>
             {
-                if (absolutePath.ExactInput is null)
+                if (absolutePath.Value is null)
                     return;
 
                 _viewModel.ParentDirectoryNameValue = absolutePath.Value;
@@ -63,7 +63,7 @@ public partial class CSharpProjectFormDisplay : ComponentBase, IDisposable
             },
             SelectionIsValidFunc = absolutePath =>
             {
-                if (absolutePath.ExactInput is null || !absolutePath.IsDirectory)
+                if (absolutePath.Value is null || !absolutePath.IsDirectory)
                     return Task.FromResult(false);
 
                 return Task.FromResult(true);

@@ -97,7 +97,7 @@ public class SolutionExplorerTreeViewKeyboardEventHandler : TreeViewKeyboardEven
             treeViewNamespacePath.Item.AbsolutePath,
             () =>
             {
-                NotificationHelper.DispatchInformative("Copy Action", $"Copied: {treeViewNamespacePath.Item.AbsolutePath.NameWithExtension}", _ideService.TextEditorService.CommonService, TimeSpan.FromSeconds(7));
+                NotificationHelper.DispatchInformative("Copy Action", $"Copied: {treeViewNamespacePath.Item.AbsolutePath.Name}", _ideService.TextEditorService.CommonService, TimeSpan.FromSeconds(7));
                 return Task.CompletedTask;
             });
 
@@ -134,7 +134,12 @@ public class SolutionExplorerTreeViewKeyboardEventHandler : TreeViewKeyboardEven
         else
         {
             var parentDirectory = treeViewNamespacePath.Item.AbsolutePath.ParentDirectory;
-            var parentDirectoryAbsolutePath = _ideService.TextEditorService.CommonService.EnvironmentProvider.AbsolutePathFactory(parentDirectory, true, tokenBuilder: new StringBuilder(), formattedBuilder: new StringBuilder());
+            var parentDirectoryAbsolutePath = _ideService.TextEditorService.CommonService.EnvironmentProvider.AbsolutePathFactory(
+                parentDirectory,
+                true,
+                tokenBuilder: new StringBuilder(),
+                formattedBuilder: new StringBuilder(),
+                shouldNameContainsExtension: true);
 
             pasteMenuOptionRecord = _ideService.PasteClipboard(
                 parentDirectoryAbsolutePath,
@@ -169,7 +174,7 @@ public class SolutionExplorerTreeViewKeyboardEventHandler : TreeViewKeyboardEven
             treeViewNamespacePath.Item.AbsolutePath,
             () =>
             {
-                NotificationHelper.DispatchInformative("Cut Action", $"Cut: {treeViewNamespacePath.Item.AbsolutePath.NameWithExtension}", _ideService.TextEditorService.CommonService, TimeSpan.FromSeconds(7));
+                NotificationHelper.DispatchInformative("Cut Action", $"Cut: {treeViewNamespacePath.Item.AbsolutePath.Name}", _ideService.TextEditorService.CommonService, TimeSpan.FromSeconds(7));
                 SolutionExplorerContextMenu.ParentOfCutFile = parent;
                 return Task.CompletedTask;
             });

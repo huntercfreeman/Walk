@@ -38,7 +38,7 @@ public class TreeViewCSharpProjectToProjectReference : TreeViewWithType<CSharpPr
         return uniqueAbsolutePathString.GetHashCode();
     }
 
-    public override string GetDisplayText() => Item.ReferenceProjectAbsolutePath.NameWithExtension;
+    public override string GetDisplayText() => Item.ReferenceProjectAbsolutePath.Name;
     
     public override Microsoft.AspNetCore.Components.RenderFragment<IconDriver> GetIcon => IconGoToFileFragment.Render;
 

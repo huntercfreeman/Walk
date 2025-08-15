@@ -30,11 +30,11 @@ public class TreeViewHelperCSharpProject
             .Where(x => hiddenFiles.All(hidden => !x.EndsWith(hidden)))
             .Select(x =>
             {
-                var absolutePath = cSharpProjectTreeView.CommonService.EnvironmentProvider.AbsolutePathFactory(x, true, tokenBuilder, formattedBuilder);
+                var absolutePath = cSharpProjectTreeView.CommonService.EnvironmentProvider.AbsolutePathFactory(x, true, tokenBuilder, formattedBuilder, shouldNameContainsExtension: false);
 
                 var namespaceString = cSharpProjectTreeView.Item.Namespace +
                     TreeViewNamespaceHelper.NAMESPACE_DELIMITER +
-                    absolutePath.NameNoExtension;
+                    absolutePath.Name;
 
                 return new TreeViewNamespacePath(new NamespacePath(namespaceString, absolutePath),
                     cSharpProjectTreeView.CommonService,
@@ -48,14 +48,14 @@ public class TreeViewHelperCSharpProject
 
         foreach (var directoryTreeViewModel in childDirectoryTreeViewModelsList)
         {
-            if (uniqueDirectories.Any(unique => directoryTreeViewModel.Item.AbsolutePath.NameNoExtension == unique))
+            if (uniqueDirectories.Any(unique => directoryTreeViewModel.Item.AbsolutePath.Name == unique))
                 foundUniqueDirectories.Add(directoryTreeViewModel);
             else
                 foundDefaultDirectories.Add(directoryTreeViewModel);
         }
 
-        foundUniqueDirectories = foundUniqueDirectories.OrderBy(x => x.Item.AbsolutePath.NameNoExtension).ToList();
-        foundDefaultDirectories = foundDefaultDirectories.OrderBy(x => x.Item.AbsolutePath.NameNoExtension).ToList();
+        foundUniqueDirectories = foundUniqueDirectories.OrderBy(x => x.Item.AbsolutePath.Name).ToList();
+        foundDefaultDirectories = foundDefaultDirectories.OrderBy(x => x.Item.AbsolutePath.Name).ToList();
 
         var filePathStringsList = await cSharpProjectTreeView.CommonService.FileSystemProvider.Directory
             .GetFilesAsync(ancestorDirectory)
@@ -66,7 +66,7 @@ public class TreeViewHelperCSharpProject
             .Where(x => !x.EndsWith(ExtensionNoPeriodFacts.C_SHARP_PROJECT))
             .Select(x =>
             {
-                var absolutePath = cSharpProjectTreeView.CommonService.EnvironmentProvider.AbsolutePathFactory(x, false, tokenBuilder, formattedBuilder);
+                var absolutePath = cSharpProjectTreeView.CommonService.EnvironmentProvider.AbsolutePathFactory(x, false, tokenBuilder, formattedBuilder, shouldNameContainsExtension: true);
                 var namespaceString = cSharpProjectTreeView.Item.Namespace;
 
                 return (TreeViewNoType)new TreeViewNamespacePath(new NamespacePath(namespaceString, absolutePath),

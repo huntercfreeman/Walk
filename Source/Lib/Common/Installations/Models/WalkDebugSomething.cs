@@ -251,7 +251,6 @@ public static class WalkDebugSomething
         builder.AppendLine();
         
         builder.AppendLine($"_countFileNameBuilder: {AbsolutePath._countFileNameBuilder}");
-        builder.AppendLine($"_countConsumeTokenAsDirectory: {AbsolutePath._countConsumeTokenAsDirectory}");
         builder.AppendLine($"_countAncestorDirectoryAdd: {AbsolutePath._countAncestorDirectoryAdd}");
         builder.AppendLine($"_countParentDirectory: {AbsolutePath._countParentDirectory}");
         builder.AppendLine($"_countDirectorySeparatorCharToString: {AbsolutePath._countDirectorySeparatorCharToString}");
@@ -265,7 +264,6 @@ public static class WalkDebugSomething
         builder.AppendLine("----------------");
         var absolutePathTotalCount = 
             AbsolutePath._countFileNameBuilder +
-            AbsolutePath._countConsumeTokenAsDirectory +
             AbsolutePath._countAncestorDirectoryAdd +
             AbsolutePath._countParentDirectory +
             AbsolutePath._countDirectorySeparatorCharToString +

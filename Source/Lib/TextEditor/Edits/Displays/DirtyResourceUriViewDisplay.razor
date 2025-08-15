@@ -10,7 +10,7 @@
     @{ var localDirtyResourceUriList = dirtyResourceUriState.DirtyResourceUriList; }
     @foreach (var dirtyResourceUri in localDirtyResourceUriList)
     {
-        var absolutePath = TextEditorService.CommonService.EnvironmentProvider.AbsolutePathFactory(dirtyResourceUri.Value, false, tokenBuilder: new StringBuilder(), formattedBuilder: new StringBuilder());
+        var absolutePath = TextEditorService.CommonService.EnvironmentProvider.AbsolutePathFactory(dirtyResourceUri.Value, false, tokenBuilder: new StringBuilder(), formattedBuilder: new StringBuilder(), shouldNameContainsExtension: true);
 
         <div>
             <label>Open in editor:</label>
@@ -18,7 +18,7 @@
                     style="display: inline; margin-bottom: 15px;"
                     title="@absolutePath.Value"
                     @onclick="() => OpenInEditorOnClick(dirtyResourceUri.Value)">
-                @absolutePath.NameWithExtension
+                @absolutePath.Name
             </button>
         </div>
     }

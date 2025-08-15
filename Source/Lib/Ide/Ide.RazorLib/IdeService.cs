@@ -141,7 +141,7 @@ public partial class IdeService : IBackgroundTaskGroup
             },
             SelectionIsValidFunc = absolutePath =>
             {
-                if (absolutePath.ExactInput is null || absolutePath.IsDirectory)
+                if (absolutePath.Value is null || absolutePath.IsDirectory)
                     return Task.FromResult(false);
 
                 return Task.FromResult(true);
@@ -192,14 +192,14 @@ public partial class IdeService : IBackgroundTaskGroup
             .ReadAllTextAsync(resourceUri.Value)
             .ConfigureAwait(false);
 
-        var absolutePath = CommonService.EnvironmentProvider.AbsolutePathFactory(resourceUri.Value, false, tokenBuilder: new StringBuilder(), formattedBuilder: new StringBuilder());
-        var decorationMapper = TextEditorService.GetDecorationMapper(absolutePath.ExtensionNoPeriod);
-        var compilerService = TextEditorService.GetCompilerService(absolutePath.ExtensionNoPeriod);
+        var absolutePath = new AbsolutePath(resourceUri.Value, false, CommonService.EnvironmentProvider, tokenBuilder: new StringBuilder(), formattedBuilder: new StringBuilder(), shouldNameContainsExtension: true, nameShouldBeExtensionNoPeriod: true);
+        var decorationMapper = TextEditorService.GetDecorationMapper(absolutePath.Name);
+        var compilerService = TextEditorService.GetCompilerService(absolutePath.Name);
 
         model = new TextEditorModel(
             resourceUri,
             fileLastWriteTime,
-            absolutePath.ExtensionNoPeriod,
+            absolutePath.Name,
             content,
             decorationMapper,
             compilerService,
@@ -266,10 +266,11 @@ public partial class IdeService : IBackgroundTaskGroup
             registerViewModelArgs.ResourceUri.Value,
             false,
             tokenBuilder: new StringBuilder(),
-            formattedBuilder: new StringBuilder());
+            formattedBuilder: new StringBuilder(),
+            shouldNameContainsExtension: true);
 
         viewModel.PersistentState.OnSaveRequested = Editor_HandleOnSaveRequested;
-        viewModel.PersistentState.GetTabDisplayNameFunc = _ => absolutePath.NameWithExtension;
+        viewModel.PersistentState.GetTabDisplayNameFunc = _ => absolutePath.Name;
         viewModel.PersistentState.FirstPresentationLayerKeysList = firstPresentationLayerKeys;
         
         TextEditorService.ViewModel_Register(registerViewModelArgs.EditContext, viewModel);
@@ -284,7 +285,8 @@ public partial class IdeService : IBackgroundTaskGroup
             innerTextEditor.PersistentState.ResourceUri.Value,
             false,
             tokenBuilder: new StringBuilder(),
-            formattedBuilder: new StringBuilder());
+            formattedBuilder: new StringBuilder(),
+            shouldNameContainsExtension: true);
 
         Enqueue(new IdeWorkArgs
         {
@@ -545,12 +547,12 @@ public partial class IdeService : IBackgroundTaskGroup
             StringValue = "Folder Explorer",
             OnAfterSubmitFunc = async absolutePath =>
             {
-                if (absolutePath.ExactInput is not null)
+                if (absolutePath.Value is not null)
                     await Do_SetFolderExplorerState(absolutePath).ConfigureAwait(false);
             },
             SelectionIsValidFunc = absolutePath =>
             {
-                if (absolutePath.ExactInput is null || !absolutePath.IsDirectory)
+                if (absolutePath.Value is null || !absolutePath.IsDirectory)
                     return Task.FromResult(false);
 
                 return Task.FromResult(true);

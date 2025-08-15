@@ -23,11 +23,11 @@ public class TreeViewHelperNamespacePathDirectory
             .OrderBy(pathString => pathString)
             .Select(x =>
             {
-                var absolutePath = directoryTreeView.CommonService.EnvironmentProvider.AbsolutePathFactory(x, true, tokenBuilder, formattedBuilder);
+                var absolutePath = directoryTreeView.CommonService.EnvironmentProvider.AbsolutePathFactory(x, true, tokenBuilder, formattedBuilder, shouldNameContainsExtension: true);
 
                 var namespaceString = directoryTreeView.Item.Namespace +
                     TreeViewNamespaceHelper.NAMESPACE_DELIMITER +
-                    absolutePath.NameNoExtension;
+                    absolutePath.Name;
 
                 return (TreeViewNoType)new TreeViewNamespacePath(
                     new NamespacePath(namespaceString, absolutePath),
@@ -44,7 +44,7 @@ public class TreeViewHelperNamespacePathDirectory
             .OrderBy(pathString => pathString)
             .Select(x =>
             {
-                var absolutePath = directoryTreeView.CommonService.EnvironmentProvider.AbsolutePathFactory(x, false, tokenBuilder, formattedBuilder);
+                var absolutePath = directoryTreeView.CommonService.EnvironmentProvider.AbsolutePathFactory(x, false, tokenBuilder, formattedBuilder, shouldNameContainsExtension: true);
                 var namespaceString = directoryTreeView.Item.Namespace;
 
                 return (TreeViewNoType)new TreeViewNamespacePath(

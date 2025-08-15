@@ -121,13 +121,13 @@ public static class PathHelper
         AbsolutePath startingPath,
         AbsolutePath endingPath,
         IEnvironmentProvider environmentProvider,
-        StringBuilder? tokenBuilder,
-        StringBuilder? formattedBuilder)
+        StringBuilder tokenBuilder,
+        StringBuilder formattedBuilder)
     {
         var pathBuilder = new StringBuilder();
         
-        var startingPathAncestorDirectoryList = startingPath.GetAncestorDirectoryList(environmentProvider, tokenBuilder, formattedBuilder);
-        var endingPathAncestorDirectoryList = endingPath.GetAncestorDirectoryList(environmentProvider, tokenBuilder, formattedBuilder);
+        var startingPathAncestorDirectoryList = startingPath.GetAncestorDirectoryList(environmentProvider, tokenBuilder, formattedBuilder, shouldNameContainsExtension: true);
+        var endingPathAncestorDirectoryList = endingPath.GetAncestorDirectoryList(environmentProvider, tokenBuilder, formattedBuilder, shouldNameContainsExtension: true);
         
         var commonPath = startingPathAncestorDirectoryList.First();
 
@@ -156,15 +156,17 @@ public static class PathHelper
                     startingPathAncestorDirectoryList[i],
                     true,
                     tokenBuilder,
-                    formattedBuilder);
+                    formattedBuilder,
+                    shouldNameContainsExtension: true);
 
                 var endingPathAncestor = environmentProvider.AbsolutePathFactory(
                     endingPathAncestorDirectoryList[i],
                     true,
                     tokenBuilder,
-                    formattedBuilder);
+                    formattedBuilder,
+                    shouldNameContainsExtension: true);
 
-                if (startingPathAncestor.NameWithExtension == endingPathAncestor.NameWithExtension)
+                if (startingPathAncestor.Name == endingPathAncestor.Name)
                     commonPath = startingPathAncestor.Value;
                 else
                     break;

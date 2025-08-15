@@ -369,7 +369,7 @@ public partial class DotNetService
             };
 
             NotificationHelper.DispatchProgress(
-                $"Test Discovery: {dotNetSolutionModel.AbsolutePath.NameWithExtension}",
+                $"Test Discovery: {dotNetSolutionModel.AbsolutePath.Name}",
                 progressBarModel,
                 IdeService.TextEditorService.CommonService,
                 TimeSpan.FromMilliseconds(-1));
@@ -405,7 +405,7 @@ public partial class DotNetService
                         {
                             progressBarModel.SetProgress(
                                 currentProgress,
-                                $"{projectsHandled + 1}/{dotNetProjectListLength}: {treeViewProjectTestModel.Item.AbsolutePath.NameWithExtension}");
+                                $"{projectsHandled + 1}/{dotNetProjectListLength}: {treeViewProjectTestModel.Item.AbsolutePath.Name}");
                             return Task.CompletedTask;
                         });
 
@@ -417,7 +417,7 @@ public partial class DotNetService
 
                     progressThrottle.Run(_ =>
                     {
-                        progressBarModel.SetProgress(1, $"Finished test discovery: {dotNetSolutionModel.AbsolutePath.NameWithExtension}", string.Empty);
+                        progressBarModel.SetProgress(1, $"Finished test discovery: {dotNetSolutionModel.AbsolutePath.Name}", string.Empty);
                         progressBarModel.Dispose();
                         return Task.CompletedTask;
                     });

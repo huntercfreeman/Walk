@@ -273,7 +273,7 @@ public partial class TestExplorerDetailsDisplay : ComponentBase, IDisposable
             // Decoration text span
             {
                 var startPositionInclusive = textOffset;
-                var endPositionExclusive = textOffset + treeViewProjectTestModel.Item.AbsolutePath.NameWithExtension.Length;
+                var endPositionExclusive = textOffset + treeViewProjectTestModel.Item.AbsolutePath.Name.Length;
 
                 // TODO: Bad idea to use string.Empty here as the source text for the text span...
                 //       ...If one invokes '.GetText()' this will throw and index out of bounds exception.
@@ -286,7 +286,7 @@ public partial class TestExplorerDetailsDisplay : ComponentBase, IDisposable
                     (byte)TerminalDecorationKind.Keyword));
             }
 
-            newContent = $"{treeViewProjectTestModel.Item.AbsolutePath.NameWithExtension}:\n";
+            newContent = $"{treeViewProjectTestModel.Item.AbsolutePath.Name}:\n";
 
             //// (2024-08-02)
             //// =================

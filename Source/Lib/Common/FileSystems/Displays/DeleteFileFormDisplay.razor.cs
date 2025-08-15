@@ -28,9 +28,8 @@ public partial class DeleteFileFormDisplay : ComponentBase
 
     protected override async Task OnParametersSetAsync()
     {
-        if (_previousAbsolutePath.ExactInput is null ||
-            _previousAbsolutePath.Value !=
-            AbsolutePath.Value)
+        if (_previousAbsolutePath.Value is null ||
+            _previousAbsolutePath.Value != AbsolutePath.Value)
         {
             _countOfImmediateChildren = null;
 

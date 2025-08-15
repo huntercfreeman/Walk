@@ -108,7 +108,7 @@ public partial class TestExplorerContextMenu : ComponentBase
         else if (commandArgs.NodeThatReceivedMouseEvent is TreeViewProjectTestModel treeViewProjectTestModel)
         {
             menuRecordsList.Add(new MenuOptionRecord(
-                $"Refresh: {treeViewProjectTestModel.Item.AbsolutePath.NameWithExtension}",
+                $"Refresh: {treeViewProjectTestModel.Item.AbsolutePath.Name}",
                 MenuOptionKind.Other,
                 onClickFunc: async () =>
                 {

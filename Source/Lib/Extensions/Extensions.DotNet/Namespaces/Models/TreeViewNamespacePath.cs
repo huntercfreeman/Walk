@@ -1,12 +1,13 @@
+using System;
 using Walk.Common.RazorLib;
+using Walk.Common.RazorLib.Icons.Displays;
+using Walk.Common.RazorLib.Keys.Models;
 using Walk.Common.RazorLib.Namespaces.Models;
 using Walk.Common.RazorLib.TreeViews.Models;
 using Walk.Common.RazorLib.TreeViews.Models.Utils;
-using Walk.Common.RazorLib.Keys.Models;
-using Walk.Common.RazorLib.Icons.Displays;
-using Walk.TextEditor.RazorLib.TextEditors.Models;
 using Walk.Ide.RazorLib.FileSystems.Displays;
 using Walk.Ide.RazorLib.Namespaces.Models;
+using Walk.TextEditor.RazorLib.TextEditors.Models;
 
 namespace Walk.Extensions.DotNet.Namespaces.Models;
 
@@ -35,7 +36,7 @@ public class TreeViewNamespacePath : TreeViewWithType<NamespacePath>
 
     public override int GetHashCode() => Item.AbsolutePath.Value.GetHashCode();
     
-    public override string GetDisplayText() => Item.AbsolutePath.NameWithExtension;
+    public override string GetDisplayText() => Item.AbsolutePath.Name;
     
     public override Microsoft.AspNetCore.Components.RenderFragment<IconDriver> GetIcon => 
         iconDriver => FileIconStaticRenderFragments.GetRenderFragment((iconDriver, Item.AbsolutePath));
@@ -115,16 +116,17 @@ public class TreeViewNamespacePath : TreeViewWithType<NamespacePath>
             }
             else
             {
-                switch (Item.AbsolutePath.ExtensionNoPeriod)
+                if (Item.AbsolutePath.Name.EndsWith(ExtensionNoPeriodFacts.DOT_NET_SOLUTION))
                 {
-                    case ExtensionNoPeriodFacts.DOT_NET_SOLUTION:
-                        return;
-                    case ExtensionNoPeriodFacts.C_SHARP_PROJECT:
-                        newChildList = await TreeViewHelperCSharpProject.LoadChildrenAsync(this).ConfigureAwait(false);
-                        break;
-                    case ExtensionNoPeriodFacts.RAZOR_MARKUP:
-                        newChildList = await TreeViewHelperRazorMarkup.LoadChildrenAsync(this).ConfigureAwait(false);
-                        break;
+                    return;
+                }
+                else if (Item.AbsolutePath.Name.EndsWith(ExtensionNoPeriodFacts.C_SHARP_PROJECT))
+                {
+                    newChildList = await TreeViewHelperCSharpProject.LoadChildrenAsync(this).ConfigureAwait(false);
+                }
+                else if (Item.AbsolutePath.Name.EndsWith(ExtensionNoPeriodFacts.RAZOR_MARKUP))
+                {
+                    newChildList = await TreeViewHelperRazorMarkup.LoadChildrenAsync(this).ConfigureAwait(false);
                 }
             }
 
@@ -142,11 +144,9 @@ public class TreeViewNamespacePath : TreeViewWithType<NamespacePath>
                 }
                 else
                 {
-                    switch (Item.AbsolutePath.ExtensionNoPeriod)
+                    if (Item.AbsolutePath.Name.EndsWith(ExtensionNoPeriodFacts.C_SHARP_PROJECT))
                     {
-                        case ExtensionNoPeriodFacts.C_SHARP_PROJECT:
-                            shouldPermitChildToTakeSiblingsAsChildren = true;
-                            break;
+                        shouldPermitChildToTakeSiblingsAsChildren = true;
                     }
                 }
                 
@@ -196,7 +196,7 @@ public class TreeViewNamespacePath : TreeViewWithType<NamespacePath>
     /// </summary>
     public override void RemoveRelatedFilesFromParent(List<TreeViewNoType> siblingsAndSelfTreeViews)
     {
-        if (Item.AbsolutePath.ExtensionNoPeriod.EndsWith(ExtensionNoPeriodFacts.RAZOR_MARKUP))
+        if (Item.AbsolutePath.Name.EndsWith(ExtensionNoPeriodFacts.RAZOR_MARKUP))
             TreeViewHelperRazorMarkup.FindRelatedFiles(this, siblingsAndSelfTreeViews);
     }
 }

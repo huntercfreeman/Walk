@@ -483,7 +483,7 @@ public partial class IdeService
 
     public async ValueTask CommandFactory_PeekCodeSearchDialog(TextEditorEditContext editContext, string? resourceUriValue, int? indexInclusiveStart)
     {
-        var absolutePath = CommonService.EnvironmentProvider.AbsolutePathFactory(resourceUriValue, isDirectory: false, tokenBuilder: new StringBuilder(), formattedBuilder: new StringBuilder());
+        var absolutePath = CommonService.EnvironmentProvider.AbsolutePathFactory(resourceUriValue, isDirectory: false, tokenBuilder: new StringBuilder(), formattedBuilder: new StringBuilder(), shouldNameContainsExtension: true);
 
         // Duplicated Code: 'OpenCodeSearchDialog(...)'
         CodeSearchDialog ??= new DialogViewModel(
@@ -499,7 +499,7 @@ public partial class IdeService
 
         CodeSearch_With(inState => inState with
         {
-            Query = absolutePath.NameWithExtension,
+            Query = absolutePath.Name,
         });
 
         await CodeSearch_HandleSearchEffect().ConfigureAwait(false);

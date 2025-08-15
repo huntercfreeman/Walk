@@ -113,7 +113,8 @@ public partial class IdeService
                     parentDirectory,
                     true,
                     tokenBuilder: new StringBuilder(),
-                    formattedBuilder: new StringBuilder());
+                    formattedBuilder: new StringBuilder(),
+                    shouldNameContainsExtension: true);
 
                 parentDirectoryTreeViewModel = new TreeViewAbsolutePath(
                     parentDirectoryAbsolutePath,
@@ -170,7 +171,7 @@ public partial class IdeService
             {
                 var treeViewAbsolutePath = (TreeViewAbsolutePath)treeViewModel;
 
-                treeViewModel.IsHidden = !treeViewAbsolutePath.Item.NameWithExtension.Contains(
+                treeViewModel.IsHidden = !treeViewAbsolutePath.Item.Name.Contains(
                     searchQuery,
                     StringComparison.InvariantCultureIgnoreCase);
             }

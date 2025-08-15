@@ -14,6 +14,8 @@ public class LocalEnvironmentProvider : IEnvironmentProvider
 
     public LocalEnvironmentProvider()
     {
+        DirectorySeparatorCharToStringResult = Path.DirectorySeparatorChar.ToString();
+
         var tokenBuilder = new StringBuilder();
         var formattedBuilder = new StringBuilder();
     
@@ -22,42 +24,48 @@ public class LocalEnvironmentProvider : IEnvironmentProvider
             true,
             this,
             tokenBuilder,
-            formattedBuilder);
+            formattedBuilder,
+            shouldNameContainsExtension: true);
 
         HomeDirectoryAbsolutePath = new AbsolutePath(
             Environment.GetFolderPath(Environment.SpecialFolder.UserProfile),
             true,
             this,
             tokenBuilder,
-            formattedBuilder);
+            formattedBuilder,
+            shouldNameContainsExtension: true);
             
         ActualRoamingApplicationDataDirectoryAbsolutePath = new AbsolutePath(
             Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData),
             true,
             this,
             tokenBuilder,
-            formattedBuilder);
+            formattedBuilder,
+            shouldNameContainsExtension: true);
             
         SafeRoamingApplicationDataDirectoryAbsolutePath = new AbsolutePath(
             JoinPaths(ActualRoamingApplicationDataDirectoryAbsolutePath.Value, SafeRelativeDirectory),
             true,
             this,
             tokenBuilder,
-            formattedBuilder);
+            formattedBuilder,
+            shouldNameContainsExtension: true);
             
         ActualLocalApplicationDataDirectoryAbsolutePath = new AbsolutePath(
             Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData),
             true,
             this,
             tokenBuilder,
-            formattedBuilder);
+            formattedBuilder,
+            shouldNameContainsExtension: true);
         
         SafeLocalApplicationDataDirectoryAbsolutePath = new AbsolutePath(
             JoinPaths(ActualLocalApplicationDataDirectoryAbsolutePath.Value, SafeRelativeDirectory),
             true,
             this,
             tokenBuilder,
-            formattedBuilder);
+            formattedBuilder,
+            shouldNameContainsExtension: true);
 
         ProtectedPathList.Add(new(
             RootDirectoryAbsolutePath.Value,
@@ -138,6 +146,9 @@ public class LocalEnvironmentProvider : IEnvironmentProvider
 
     public char DirectorySeparatorChar => Path.DirectorySeparatorChar;
     public char AltDirectorySeparatorChar => Path.AltDirectorySeparatorChar;
+
+    public string DirectorySeparatorCharToStringResult { get; }
+
     public HashSet<SimplePath> DeletionPermittedPathList { get; private set; } = [];
     public HashSet<SimplePath> ProtectedPathList { get; private set; } = [];
 
@@ -159,7 +170,7 @@ public class LocalEnvironmentProvider : IEnvironmentProvider
         PermittanceChecker.AssertDeletionPermitted(this, path, isDirectory);
     }
 
-    public void DeletionPermittedRegister(SimplePath simplePath, StringBuilder? tokenBuilder, StringBuilder? formattedBuilder)
+    public void DeletionPermittedRegister(SimplePath simplePath, StringBuilder tokenBuilder, StringBuilder formattedBuilder)
     {
         lock (_pathLock)
         {
@@ -191,7 +202,7 @@ public class LocalEnvironmentProvider : IEnvironmentProvider
         }
     }
 
-    public void ProtectedPathsDispose(SimplePath simplePath, StringBuilder? tokenBuilder, StringBuilder? formattedBuilder)
+    public void ProtectedPathsDispose(SimplePath simplePath, StringBuilder tokenBuilder, StringBuilder formattedBuilder)
     {
         lock (_pathLock)
         {
@@ -207,9 +218,9 @@ public class LocalEnvironmentProvider : IEnvironmentProvider
         }
     }
 
-    public AbsolutePath AbsolutePathFactory(string path, bool isDirectory, StringBuilder? tokenBuilder, StringBuilder? formattedBuilder)
+    public AbsolutePath AbsolutePathFactory(string path, bool isDirectory, StringBuilder tokenBuilder, StringBuilder formattedBuilder, bool shouldNameContainsExtension)
     {
-        return new AbsolutePath(path, isDirectory, this, tokenBuilder, formattedBuilder);
+        return new AbsolutePath(path, isDirectory, this, tokenBuilder, formattedBuilder, shouldNameContainsExtension);
     }
 
     public RelativePath RelativePathFactory(string path, bool isDirectory)
