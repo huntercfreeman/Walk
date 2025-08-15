@@ -255,7 +255,7 @@ public static class WalkDebugSomething
         builder.AppendLine($"_countAncestorDirectoryAdd: {AbsolutePath._countAncestorDirectoryAdd}");
         builder.AppendLine($"_countParentDirectory: {AbsolutePath._countParentDirectory}");
         builder.AppendLine($"_countDirectorySeparatorCharToString: {AbsolutePath._countDirectorySeparatorCharToString}");
-        builder.AppendLine($"_formattedBuilderToString: {AbsolutePath._formattedBuilderToString}");
+        builder.AppendLine($"_formattedBuilderToString: {AbsolutePath._countFormattedBuilderToString}");
         builder.AppendLine($"_countNameNoExtension: {AbsolutePath._countNameNoExtension}");
         builder.AppendLine($"_countSplitFileNameBuilder: {AbsolutePath._countSplitFileNameBuilder}");
         builder.AppendLine($"_countSplitFileNameAmbiguous: {AbsolutePath._countSplitFileNameAmbiguous}");
@@ -269,7 +269,7 @@ public static class WalkDebugSomething
             AbsolutePath._countAncestorDirectoryAdd +
             AbsolutePath._countParentDirectory +
             AbsolutePath._countDirectorySeparatorCharToString +
-            AbsolutePath._formattedBuilderToString +
+            AbsolutePath._countFormattedBuilderToString +
             AbsolutePath._countNameNoExtension +
             AbsolutePath._countSplitFileNameBuilder +
             AbsolutePath._countSplitFileNameAmbiguous +
