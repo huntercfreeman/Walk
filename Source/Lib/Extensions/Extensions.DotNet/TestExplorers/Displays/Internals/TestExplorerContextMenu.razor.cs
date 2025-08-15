@@ -193,9 +193,7 @@ public partial class TestExplorerContextMenu : ComponentBase
             MenuOptionKind.Other,
             onClickFunc: () =>
             {
-                Console.WriteLine($"aaa {treeViewProjectTestModel.Item.AbsolutePath.ParentDirectory is null}");
-            
-                if (treeViewProjectTestModel.Item.AbsolutePath.ParentDirectory is not null)
+                if (treeViewProjectTestModel.Item.AbsolutePath.CreateSubstringParentDirectory() is not null)
                 {
                     DotNetService.Enqueue(new DotNetWorkArgs
                     {

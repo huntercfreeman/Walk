@@ -21,7 +21,13 @@ public class TreeViewHelperRazorMarkup
         if (razorMarkupTreeView.Item.Namespace is null)
             return new();
 
-        var parentDirectoryOfRazorMarkup = razorMarkupTreeView.Item.AbsolutePath.ParentDirectory;
+        
+        
+        
+        var parentDirectoryOfRazorMarkup = razorMarkupTreeView.Item.AbsolutePath.CreateSubstringParentDirectory();
+        
+        
+        
         var ancestorDirectory = parentDirectoryOfRazorMarkup;
 
         var filePathStringsList = await razorMarkupTreeView.CommonService.FileSystemProvider.Directory

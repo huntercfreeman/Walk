@@ -77,7 +77,7 @@ public partial class NugetPackageDisplay : ComponentBase, IDisposable
             return;
         }
 
-        var parentDirectory = targetProject.AbsolutePath.ParentDirectory;
+        var parentDirectory = targetProject.AbsolutePath.CreateSubstringParentDirectory();
 
         if (parentDirectory is null)
             return;

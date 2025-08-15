@@ -136,7 +136,7 @@ public partial class SolutionExplorerContextMenu : ComponentBase
                 if (treeViewNamespacePath.Item.AbsolutePath.Name.EndsWith(ExtensionNoPeriodFacts.C_SHARP_PROJECT))
                     getFileOptions = false;
                 else if (getFileOptions)
-                    filenameList.Add(treeViewNamespacePath.Item.AbsolutePath.Name + " __FROM__ " + (treeViewNamespacePath.Item.AbsolutePath.ParentDirectory ?? "null"));
+                    filenameList.Add(treeViewNamespacePath.Item.AbsolutePath.Name + " __FROM__ " + (treeViewNamespacePath.Item.AbsolutePath.CreateSubstringParentDirectory() ?? "null"));
             }
             else
             {
@@ -237,7 +237,7 @@ public partial class SolutionExplorerContextMenu : ComponentBase
 
     private MenuOptionRecord[] GetCSharpProjectMenuOptions(TreeViewNamespacePath treeViewModel)
     {
-        var parentDirectory = treeViewModel.Item.AbsolutePath.ParentDirectory;
+        var parentDirectory = treeViewModel.Item.AbsolutePath.CreateSubstringParentDirectory();
         var treeViewSolution = treeViewModel.Parent as TreeViewSolution;
 
         if (treeViewSolution is null)

@@ -29,7 +29,6 @@ public static class PathHelper
     /// </summary>
     public static string GetAbsoluteFromAbsoluteAndRelative(
         AbsolutePath absolutePath,
-        // string absolutePathParentDirectory,
         string relativePathString,
         IEnvironmentProvider environmentProvider,
         StringBuilder tokenBuilder,
@@ -98,13 +97,13 @@ public static class PathHelper
             }
             else
             {
-                if (absolutePath.ParentDirectory is null)
+                if (absolutePath.IsRootDirectory)
                 {
                     throw new NotImplementedException();
                 }
                 else
                 {
-                    return absolutePath.ParentDirectory + relativePathString;
+                    return absolutePath.CreateSubstringParentDirectory() + relativePathString;
                 }
             }
         }
@@ -120,7 +119,9 @@ public static class PathHelper
     /// </summary>
     public static string GetRelativeFromTwoAbsolutes(
         AbsolutePath startingPath,
+        string startingPathParentDirectory,
         AbsolutePath endingPath,
+        string endingPathParentDirectory,
         IEnvironmentProvider environmentProvider,
         StringBuilder tokenBuilder,
         StringBuilder formattedBuilder)
@@ -132,15 +133,14 @@ public static class PathHelper
         
         var commonPath = startingPathAncestorDirectoryList.First();
 
-        if ((startingPath.ParentDirectory ?? string.Empty) ==
-            (endingPath.ParentDirectory ?? string.Empty))
+        if (startingPathParentDirectory == endingPathParentDirectory)
         {
             // TODO: Will this code break when the mounted drives are different, and parent directories share same name?
 
             // Use './' because they share the same parent directory.
             pathBuilder.Append($".{environmentProvider.DirectorySeparatorChar}");
 
-            commonPath = startingPath.ParentDirectory;
+            commonPath = startingPathParentDirectory;
         }
         else
         {

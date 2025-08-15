@@ -1252,7 +1252,7 @@ public sealed class CSharpCompilerService : IExtendedCompilerService
             }
     
             var resourceAbsolutePath = _textEditorService.CommonService.EnvironmentProvider.AbsolutePathFactory(modelModifier.PersistentState.ResourceUri.Value, false, tokenBuilder: new StringBuilder(), formattedBuilder: new StringBuilder(), AbsolutePathNameKind.NameWithExtension);
-            var parentDirectoryAbsolutePath = _textEditorService.CommonService.EnvironmentProvider.AbsolutePathFactory(resourceAbsolutePath.ParentDirectory, true, tokenBuilder: new StringBuilder(), formattedBuilder: new StringBuilder(), AbsolutePathNameKind.NameWithExtension);
+            var parentDirectoryAbsolutePath = _textEditorService.CommonService.EnvironmentProvider.AbsolutePathFactory(resourceAbsolutePath.CreateSubstringParentDirectory(), true, tokenBuilder: new StringBuilder(), formattedBuilder: new StringBuilder(), AbsolutePathNameKind.NameWithExtension);
         
             var siblingFileStringList = new List<(string ResourceUriValue, int ScopeIndexKey)>();
             

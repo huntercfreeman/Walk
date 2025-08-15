@@ -105,9 +105,9 @@ public partial class IdeService
             var currentSelection = inState.OpenedTreeViewModelHistoryList[inState.IndexInHistory];
 
             // If has a ParentDirectory select it
-            if (currentSelection.Item.ParentDirectory is not null)
+            if (!currentSelection.Item.IsRootDirectory)
             {
-                var parentDirectory = currentSelection.Item.ParentDirectory;
+                var parentDirectory = currentSelection.Item.CreateSubstringParentDirectory();
 
                 var parentDirectoryAbsolutePath = commonService.EnvironmentProvider.AbsolutePathFactory(
                     parentDirectory,

@@ -15,7 +15,7 @@ public class TreeViewHelperCSharpProject
 {
     public static async Task<List<TreeViewNoType>> LoadChildrenAsync(TreeViewNamespacePath cSharpProjectTreeView)
     {
-        var parentDirectoryOfCSharpProject = cSharpProjectTreeView.Item.AbsolutePath.ParentDirectory;
+        var parentDirectoryOfCSharpProject = cSharpProjectTreeView.Item.AbsolutePath.CreateSubstringParentDirectory();
         var ancestorDirectory = parentDirectoryOfCSharpProject;
         var hiddenFiles = IdeFacts.GetHiddenFilesByContainerFileExtension(ExtensionNoPeriodFacts.C_SHARP_PROJECT);
 

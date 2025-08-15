@@ -60,7 +60,7 @@ public struct AbsolutePath
                     ancestorDirectoryList.Add(formattedBuilder.ToString());
                 }
             }
-            else if (currentCharacter == ':' && !seenRootDrive && ParentDirectory is null)
+            else if (currentCharacter == ':' && !seenRootDrive)
             {
                 // Take all files from the drive the app is executed from
                 // TODO: Look into multi drive scenarios.
@@ -154,15 +154,11 @@ public struct AbsolutePath
             }
         }
     
-        if (parentDirectoryEndExclusiveIndex != -1)
-        {
-            ParentDirectory = formattedString[..parentDirectoryEndExclusiveIndex];
-        }
-        
+        ParentDirectoryEndExclusiveIndex = parentDirectoryEndExclusiveIndex;
         Value = formattedString;
     }
 
-    public string? ParentDirectory { get; private set; }
+    // public string? ParentDirectory { get; private set; }
     public bool IsDirectory { get; private set; }
     /// <summary>
     /// The <see cref="NameNoExtension"/> for a directory does NOT end with a directory separator char.
@@ -175,9 +171,22 @@ public struct AbsolutePath
     /// ...then don't ToString() the 'formattedBuilder'.
     /// </summary>
     public string Value { get; }
-    public bool IsRootDirectory => ParentDirectory is null;
+    
+    /// <summary>
+    /// If this property is NOT == -1;
+    /// Then the parent directory's string can be calculated with: Value[..ParentDirectoryEndExclusiveIndex];
+    /// </summary>
+    public int ParentDirectoryEndExclusiveIndex { get; }
+    
+    public bool IsRootDirectory => ParentDirectoryEndExclusiveIndex == -1;
 
-    public bool NameContainsExtension { get; }
+    public string CreateSubstringParentDirectory()
+    {
+        if (IsRootDirectory)
+            return string.Empty;
+        
+        return Value[..ParentDirectoryEndExclusiveIndex];
+    }
 
     /// <summary>
     ///  If providing tokenBuilder or formattedBuilder, ensure they are '.Clear()'ed prior to invoking.

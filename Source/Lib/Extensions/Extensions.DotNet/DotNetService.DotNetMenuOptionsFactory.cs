@@ -167,7 +167,10 @@ public partial class DotNetService
         CommonService commonService,
         Func<Task> onAfterCompletion)
     {
-        var workingDirectory = treeViewSolution.Item.NamespacePath.AbsolutePath.ParentDirectory!;
+        if (treeViewSolution.Item.NamespacePath.AbsolutePath.ParentDirectoryEndExclusiveIndex == -1)
+            return ValueTask.CompletedTask;
+
+        var workingDirectory = treeViewSolution.Item.NamespacePath.AbsolutePath.CreateSubstringParentDirectory();
 
         var formattedCommand = DotNetCliCommandFormatter.FormatRemoveCSharpProjectReferenceFromSolutionAction(
             treeViewSolution.Item.NamespacePath.AbsolutePath.Value,

@@ -76,12 +76,19 @@ public partial class DotNetService
                 .Append(warningCount)
                 .Append(" warnings)");
 
+            string titleText;
+
+            if (absolutePath.ParentDirectoryEndExclusiveIndex == -1)
+                titleText = $"{nameof(absolutePath.ParentDirectoryEndExclusiveIndex)} was equal to -1";
+            else
+                titleText = absolutePath.CreateSubstringParentDirectory();
+            
             var treeViewGroup = new TreeViewGroup(
                 groupNameBuilder.ToString(),
                 true,
                 groupEnumerated.Any(x => ((TreeViewDiagnosticLine)x).Item.DiagnosticLineKind == DiagnosticLineKind.Error))
             {
-                TitleText = absolutePath.ParentDirectory ?? $"{nameof(AbsolutePath.ParentDirectory)} was null"
+                TitleText = titleText
             };
 
             treeViewGroup.ChildList = groupEnumerated;
@@ -101,7 +108,7 @@ public partial class DotNetService
                         true,
                         true)
                     {
-                        TitleText = absolutePath.ParentDirectory ?? $"{nameof(AbsolutePath.ParentDirectory)} was null"
+                        TitleText = absolutePath.CreateSubstringParentDirectory() ?? $"{nameof(AbsolutePath.CreateSubstringParentDirectory)} was null"
                     };
 
                     projectManualGrouping.Add(projectText, treeViewGroupProject);

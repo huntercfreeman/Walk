@@ -255,7 +255,7 @@ public static class InitializationHelper
             formattedBuilder: new StringBuilder(),
             AbsolutePathNameKind.NameWithExtension);
 
-        var localParentDirectory = solutionAbsolutePath.ParentDirectory;
+        var localParentDirectory = solutionAbsolutePath.CreateSubstringParentDirectory();
         if (localParentDirectory is null)
             return;
 
@@ -287,7 +287,7 @@ public static class InitializationHelper
         var formattedCommand = DotNetCliCommandFormatter.FormatDotnetCleanProject(projectAbsolutePathString);
         var solutionAbsolutePath = DotNetService.CommonService.EnvironmentProvider.AbsolutePathFactory(projectAbsolutePathString, false, tokenBuilder: new StringBuilder(), formattedBuilder: new StringBuilder(), AbsolutePathNameKind.NameWithExtension);
 
-        var localParentDirectory = solutionAbsolutePath.ParentDirectory;
+        var localParentDirectory = solutionAbsolutePath.CreateSubstringParentDirectory();
         if (localParentDirectory is null)
             return;
 
@@ -319,7 +319,7 @@ public static class InitializationHelper
         var formattedCommand = DotNetCliCommandFormatter.FormatDotnetBuildSolution(solutionAbsolutePathString);
         var solutionAbsolutePath = DotNetService.CommonService.EnvironmentProvider.AbsolutePathFactory(solutionAbsolutePathString, false, tokenBuilder: new StringBuilder(), formattedBuilder: new StringBuilder(), AbsolutePathNameKind.NameWithExtension);
 
-        var localParentDirectory = solutionAbsolutePath.ParentDirectory;
+        var localParentDirectory = solutionAbsolutePath.CreateSubstringParentDirectory();
         if (localParentDirectory is null)
             return;
 
@@ -351,7 +351,7 @@ public static class InitializationHelper
         var formattedCommand = DotNetCliCommandFormatter.FormatDotnetCleanSolution(solutionAbsolutePathString);
         var solutionAbsolutePath = DotNetService.CommonService.EnvironmentProvider.AbsolutePathFactory(solutionAbsolutePathString, false, tokenBuilder: new StringBuilder(), formattedBuilder: new StringBuilder(), AbsolutePathNameKind.NameWithExtension);
 
-        var localParentDirectory = solutionAbsolutePath.ParentDirectory;
+        var localParentDirectory = solutionAbsolutePath.CreateSubstringParentDirectory();
         if (localParentDirectory is null)
             return;
 
