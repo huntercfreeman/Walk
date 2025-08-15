@@ -29,6 +29,7 @@ public static class PathHelper
     /// </summary>
     public static string GetAbsoluteFromAbsoluteAndRelative(
         AbsolutePath absolutePath,
+        // string absolutePathParentDirectory,
         string relativePathString,
         IEnvironmentProvider environmentProvider,
         StringBuilder tokenBuilder,
