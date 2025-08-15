@@ -121,7 +121,8 @@ public partial class WalkWebsiteInitializer : ComponentBase
             InitialSolutionFacts.SLN_ABSOLUTE_FILE_PATH,
             false,
             tokenBuilder,
-            formattedBuilder);
+            formattedBuilder,
+            AbsolutePathNameKind.NameWithExtension);
         
         TextEditorModel exampleSolutionModel;
         // ExampleSolution.sln
@@ -137,10 +138,10 @@ public partial class WalkWebsiteInitializer : ComponentBase
             exampleSolutionModel = new TextEditorModel(
                 new ResourceUri(InitialSolutionFacts.SLN_ABSOLUTE_FILE_PATH),
                 DateTime.UtcNow,
-                absolutePath.ExtensionNoPeriod,
+                "sln",
                 InitialSolutionFacts.SLN_CONTENTS,
-                DotNetService.TextEditorService.GetDecorationMapper(absolutePath.ExtensionNoPeriod),
-                DotNetService.TextEditorService.GetCompilerService(absolutePath.ExtensionNoPeriod),
+                DotNetService.TextEditorService.GetDecorationMapper("sln"),
+                DotNetService.TextEditorService.GetCompilerService("sln"),
                 DotNetService.TextEditorService);            
         }
 
@@ -239,7 +240,8 @@ public partial class WalkWebsiteInitializer : ComponentBase
                 "/BlazorCrudApp/ConsoleApp/Program.cs",
                 false,
                 tokenBuilder,
-                formattedBuilder);
+                formattedBuilder,
+                AbsolutePathNameKind.NameWithExtension);
         
             await DotNetService.TextEditorService.OpenInEditorAsync(
                 editContext,
@@ -263,7 +265,8 @@ public partial class WalkWebsiteInitializer : ComponentBase
             absolutePathString,
             false,
             tokenBuilder: stringBuilder,
-            formattedBuilder);
+            formattedBuilder,
+            AbsolutePathNameKind.NameWithExtension);
 
         var outFile = new InMemoryFile(
             contents,
