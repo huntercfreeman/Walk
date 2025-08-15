@@ -1,7 +1,6 @@
 using Walk.Common.RazorLib.Keys.Models;
 using Walk.Common.RazorLib.Dynamics.Models;
 using Walk.Common.RazorLib.FileSystems.Models;
-using Walk.Common.RazorLib.Namespaces.Models;
 using Walk.TextEditor.RazorLib.TextEditors.Models;
 using Walk.Ide.RazorLib.FileSystems.Models;
 using Walk.Ide.RazorLib.InputFiles.Models;
@@ -17,7 +16,7 @@ public sealed class IdeWorkArgs
     public Key<IDynamicViewModel> NotificationInformativeKey { get; set; }
     public AbsolutePath AbsolutePath { get; set; }
     public TreeViewAbsolutePath TreeViewAbsolutePath { get; set; }
-    public NamespacePath NamespacePath { get; set; }
+    public string NamespaceString { get; set; }
     public CancellationToken CancellationToken { get; set; }
     public Func<Task> OnAfterCompletion { get; set; }
     public Func<AbsolutePath, Task> OnAfterSubmitFunc { get; set; }

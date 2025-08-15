@@ -205,7 +205,7 @@ public partial class CSharpProjectFormDisplay : ComponentBase, IDisposable
                             DotNetService.Enqueue(new DotNetWorkArgs
                             {
                                 WorkKind = DotNetWorkKind.SetDotNetSolution,
-                                DotNetSolutionAbsolutePath = immutableView.DotNetSolutionModel.NamespacePath.AbsolutePath,
+                                DotNetSolutionAbsolutePath = immutableView.DotNetSolutionModel.AbsolutePath,
                             });
                             return Task.CompletedTask;
                         }

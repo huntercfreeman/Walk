@@ -9,7 +9,6 @@ using Walk.Common.RazorLib.FileSystems.Models;
 using Walk.Common.RazorLib.Keys.Models;
 using Walk.Common.RazorLib.ListExtensions;
 using Walk.Common.RazorLib.Menus.Models;
-using Walk.Common.RazorLib.Namespaces.Models;
 using Walk.Common.RazorLib.Notifications.Models;
 using Walk.Common.RazorLib.Panels.Models;
 using Walk.Common.RazorLib.Reactives.Models;
@@ -57,16 +56,16 @@ public partial class DotNetService
         {
             var treeViewNamespacePath = (TreeViewNamespacePath)node;
 
-            if (treeViewNamespacePath.Item.AbsolutePath.IsDirectory)
+            if (treeViewNamespacePath.Item.IsDirectory)
             {
                 await IdeService.TextEditorService.CommonService.FileSystemProvider.Directory
-                    .DeleteAsync(treeViewNamespacePath.Item.AbsolutePath.Value, true, CancellationToken.None)
+                    .DeleteAsync(treeViewNamespacePath.Item.Value, true, CancellationToken.None)
                     .ConfigureAwait(false);
             }
             else
             {
                 await IdeService.TextEditorService.CommonService.FileSystemProvider.File
-                    .DeleteAsync(treeViewNamespacePath.Item.AbsolutePath.Value)
+                    .DeleteAsync(treeViewNamespacePath.Item.Value)
                     .ConfigureAwait(false);
             }
 
@@ -218,10 +217,6 @@ public partial class DotNetService
             tokenBuilder,
             formattedBuilder,
             AbsolutePathNameKind.NameWithExtension);
-
-        var solutionNamespacePath = new NamespacePath(
-            string.Empty,
-            solutionAbsolutePath);
 
         var resourceUri = new ResourceUri(solutionAbsolutePath.Value);
 

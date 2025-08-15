@@ -95,10 +95,10 @@ public class SolutionExplorerTreeViewKeyboardEventHandler : TreeViewKeyboardEven
             return Task.CompletedTask;
 
         var copyFileMenuOption = _ideService.CopyFile(
-            treeViewNamespacePath.Item.AbsolutePath,
+            treeViewNamespacePath.Item,
             () =>
             {
-                NotificationHelper.DispatchInformative("Copy Action", $"Copied: {treeViewNamespacePath.Item.AbsolutePath.Name}", _ideService.TextEditorService.CommonService, TimeSpan.FromSeconds(7));
+                NotificationHelper.DispatchInformative("Copy Action", $"Copied: {treeViewNamespacePath.Item.Name}", _ideService.TextEditorService.CommonService, TimeSpan.FromSeconds(7));
                 return Task.CompletedTask;
             });
 
@@ -117,10 +117,10 @@ public class SolutionExplorerTreeViewKeyboardEventHandler : TreeViewKeyboardEven
 
         MenuOptionRecord pasteMenuOptionRecord;
 
-        if (treeViewNamespacePath.Item.AbsolutePath.IsDirectory)
+        if (treeViewNamespacePath.Item.IsDirectory)
         {
             pasteMenuOptionRecord = _ideService.PasteClipboard(
-                treeViewNamespacePath.Item.AbsolutePath,
+                treeViewNamespacePath.Item,
                 async () =>
                 {
                     var localParentOfCutFile = SolutionExplorerContextMenu.ParentOfCutFile;
@@ -134,7 +134,7 @@ public class SolutionExplorerTreeViewKeyboardEventHandler : TreeViewKeyboardEven
         }
         else
         {
-            var parentDirectory = treeViewNamespacePath.Item.AbsolutePath.CreateSubstringParentDirectory();
+            var parentDirectory = treeViewNamespacePath.Item.CreateSubstringParentDirectory();
             var parentDirectoryAbsolutePath = _ideService.TextEditorService.CommonService.EnvironmentProvider.AbsolutePathFactory(
                 parentDirectory,
                 true,
@@ -172,10 +172,10 @@ public class SolutionExplorerTreeViewKeyboardEventHandler : TreeViewKeyboardEven
         var parent = treeViewNamespacePath.Parent as TreeViewNamespacePath;
 
         MenuOptionRecord cutFileOptionRecord = _ideService.CutFile(
-            treeViewNamespacePath.Item.AbsolutePath,
+            treeViewNamespacePath.Item,
             () =>
             {
-                NotificationHelper.DispatchInformative("Cut Action", $"Cut: {treeViewNamespacePath.Item.AbsolutePath.Name}", _ideService.TextEditorService.CommonService, TimeSpan.FromSeconds(7));
+                NotificationHelper.DispatchInformative("Cut Action", $"Cut: {treeViewNamespacePath.Item.Name}", _ideService.TextEditorService.CommonService, TimeSpan.FromSeconds(7));
                 SolutionExplorerContextMenu.ParentOfCutFile = parent;
                 return Task.CompletedTask;
             });
@@ -195,7 +195,7 @@ public class SolutionExplorerTreeViewKeyboardEventHandler : TreeViewKeyboardEven
         {
             await _ideService.TextEditorService.OpenInEditorAsync(
                 editContext,
-                treeViewNamespacePath.Item.AbsolutePath.Value,
+                treeViewNamespacePath.Item.Value,
                 shouldSetFocusToEditor,
                 null,
                 new Category("main"),

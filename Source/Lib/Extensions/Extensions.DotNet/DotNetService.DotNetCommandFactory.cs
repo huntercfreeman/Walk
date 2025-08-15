@@ -149,14 +149,13 @@ public partial class DotNetService
                     formattedBuilder: new StringBuilder(),
                     AbsolutePathNameKind.NameWithExtension);
 
-                if (viewModelAbsolutePath.Value ==
-                        treeViewNamespacePath.Item.AbsolutePath.Value)
+                if (viewModelAbsolutePath.Value == treeViewNamespacePath.Item.Value)
                 {
                     _nodeOfViewModel = treeViewNamespacePath;
                 }
             }
 
-            if (treeViewNamespacePath.Item.AbsolutePath.Name.EndsWith(ExtensionNoPeriodFacts.C_SHARP_PROJECT))
+            if (treeViewNamespacePath.Item.Name.EndsWith(ExtensionNoPeriodFacts.C_SHARP_PROJECT))
             {
                 await treeViewNamespacePath.LoadChildListAsync().ConfigureAwait(false);
             }

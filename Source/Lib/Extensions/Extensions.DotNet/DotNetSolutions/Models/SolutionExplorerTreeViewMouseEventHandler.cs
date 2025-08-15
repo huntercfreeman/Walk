@@ -29,7 +29,7 @@ public class SolutionExplorerTreeViewMouseEventHandler : TreeViewMouseEventHandl
         {
             await _ideService.TextEditorService.OpenInEditorAsync(
                 editContext,
-                treeViewNamespacePath.Item.AbsolutePath.Value,
+                treeViewNamespacePath.Item.Value,
                 true,
                 null,
                 new Category("main"),

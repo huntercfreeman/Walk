@@ -1,7 +1,6 @@
 using Walk.Common.RazorLib;
 using Walk.Common.RazorLib.FileSystems.Models;
 using Walk.Common.RazorLib.Menus.Models;
-using Walk.Common.RazorLib.Namespaces.Models;
 using Walk.Common.RazorLib.Notifications.Models;
 using Walk.TextEditor.RazorLib.TextEditors.Models;
 using Walk.Extensions.DotNet.CommandLines.Models;
@@ -31,7 +30,7 @@ public partial class DotNetService
             {
                 {
                     nameof(Walk.Common.RazorLib.FileSystems.Displays.RemoveCSharpProjectFromSolutionDisplay.AbsolutePath),
-                    projectNode.Item.AbsolutePath
+                    projectNode.Item
                 },
                 {
                     nameof(Walk.Common.RazorLib.FileSystems.Displays.RemoveCSharpProjectFromSolutionDisplay.OnAfterSubmitFunc),
@@ -123,7 +122,8 @@ public partial class DotNetService
     }
 
     public MenuOptionRecord RemoveNuGetPackageReferenceFromProject(
-        NamespacePath modifyProjectNamespacePath,
+        AbsolutePath modifyProjectAbsolutePath,
+        string namespaceString,
         TreeViewCSharpProjectNugetPackageReference treeViewCSharpProjectNugetPackageReference,
         ITerminal terminal,
         CommonService commonService,
@@ -133,7 +133,8 @@ public partial class DotNetService
             onClickFunc: () =>
             {
                 Enqueue_PerformRemoveNuGetPackageReferenceFromProject(
-                    modifyProjectNamespacePath,
+                    modifyProjectAbsolutePath,
+                    namespaceString,
                     treeViewCSharpProjectNugetPackageReference,
                     terminal,
                     commonService,
@@ -167,14 +168,14 @@ public partial class DotNetService
         CommonService commonService,
         Func<Task> onAfterCompletion)
     {
-        if (treeViewSolution.Item.NamespacePath.AbsolutePath.ParentDirectoryEndExclusiveIndex == -1)
+        if (treeViewSolution.Item.AbsolutePath.ParentDirectoryEndExclusiveIndex == -1)
             return ValueTask.CompletedTask;
 
-        var workingDirectory = treeViewSolution.Item.NamespacePath.AbsolutePath.CreateSubstringParentDirectory();
+        var workingDirectory = treeViewSolution.Item.AbsolutePath.CreateSubstringParentDirectory();
 
         var formattedCommand = DotNetCliCommandFormatter.FormatRemoveCSharpProjectReferenceFromSolutionAction(
-            treeViewSolution.Item.NamespacePath.AbsolutePath.Value,
-            projectNode.Item.AbsolutePath.Value);
+            treeViewSolution.Item.AbsolutePath.Value,
+            projectNode.Item.Value);
 
         var terminalCommandRequest = new TerminalCommandRequest(
             formattedCommand.Value,
@@ -196,14 +197,14 @@ public partial class DotNetService
         ideService.Enqueue(new IdeWorkArgs
         {
             WorkKind = IdeWorkKind.RequestInputFileStateForm,
-            StringValue = $"Add Project reference to {projectReceivingReference.Item.AbsolutePath.Name}",
+            StringValue = $"Add Project reference to {projectReceivingReference.Item.Name}",
             OnAfterSubmitFunc = referencedProject =>
             {
                 if (referencedProject.Value is null)
                     return Task.CompletedTask;
 
                 var formattedCommand = DotNetCliCommandFormatter.FormatAddProjectToProjectReference(
-                    projectReceivingReference.Item.AbsolutePath.Value,
+                    projectReceivingReference.Item.Value,
                     referencedProject.Value);
 
                 var terminalCommandRequest = new TerminalCommandRequest(
@@ -212,7 +213,7 @@ public partial class DotNetService
                 {
                     ContinueWithFunc = parsedCommand =>
                     {
-                        NotificationHelper.DispatchInformative("Add Project Reference", $"Modified {projectReceivingReference.Item.AbsolutePath.Name} to have a reference to {referencedProject.Name}", ideService.CommonService, TimeSpan.FromSeconds(7));
+                        NotificationHelper.DispatchInformative("Add Project Reference", $"Modified {projectReceivingReference.Item.Name} to have a reference to {referencedProject.Name}", ideService.CommonService, TimeSpan.FromSeconds(7));
                         return onAfterCompletion.Invoke();
                     }
                 };
@@ -259,7 +260,7 @@ public partial class DotNetService
         Func<Task> onAfterCompletion)
     {
         var formattedCommand = DotNetCliCommandFormatter.FormatRemoveProjectToProjectReference(
-            treeViewCSharpProjectToProjectReference.Item.ModifyProjectNamespacePath.AbsolutePath.Value,
+            treeViewCSharpProjectToProjectReference.Item.ModifyProjectAbsolutePath.Value,
             treeViewCSharpProjectToProjectReference.Item.ReferenceProjectAbsolutePath.Value);
 
         var terminalCommandRequest = new TerminalCommandRequest(
@@ -268,7 +269,7 @@ public partial class DotNetService
         {
             ContinueWithFunc = parsedCommand =>
             {
-                NotificationHelper.DispatchInformative("Remove Project Reference", $"Modified {treeViewCSharpProjectToProjectReference.Item.ModifyProjectNamespacePath.AbsolutePath.Name} to have a reference to {treeViewCSharpProjectToProjectReference.Item.ReferenceProjectAbsolutePath.Name}", commonService, TimeSpan.FromSeconds(7));
+                NotificationHelper.DispatchInformative("Remove Project Reference", $"Modified {treeViewCSharpProjectToProjectReference.Item.ModifyProjectAbsolutePath.Name} to have a reference to {treeViewCSharpProjectToProjectReference.Item.ReferenceProjectAbsolutePath.Name}", commonService, TimeSpan.FromSeconds(7));
                 return onAfterCompletion.Invoke();
             }
         };
@@ -305,8 +306,8 @@ public partial class DotNetService
         Func<Task> onAfterCompletion)
     {
         var formattedCommand = DotNetCliCommandFormatter.FormatMoveProjectToSolutionFolder(
-            treeViewSolution.Item.NamespacePath.AbsolutePath.Value,
-            treeViewProjectToMove.Item.AbsolutePath.Value,
+            treeViewSolution.Item.AbsolutePath.Value,
+            treeViewProjectToMove.Item.Value,
             solutionFolderPath);
 
         var terminalCommandRequest = new TerminalCommandRequest(
@@ -315,7 +316,7 @@ public partial class DotNetService
         {
             ContinueWithFunc = parsedCommand =>
             {
-                NotificationHelper.DispatchInformative("Move Project To Solution Folder", $"Moved {treeViewProjectToMove.Item.AbsolutePath.Name} to the Solution Folder path: {solutionFolderPath}", commonService, TimeSpan.FromSeconds(7));
+                NotificationHelper.DispatchInformative("Move Project To Solution Folder", $"Moved {treeViewProjectToMove.Item.Name} to the Solution Folder path: {solutionFolderPath}", commonService, TimeSpan.FromSeconds(7));
                 return onAfterCompletion.Invoke();
             }
         };
@@ -335,7 +336,8 @@ public partial class DotNetService
     }
 
     public void Enqueue_PerformRemoveNuGetPackageReferenceFromProject(
-        NamespacePath modifyProjectNamespacePath,
+        AbsolutePath modifyProjectAbsolutePath,
+        string namespaceString,
         TreeViewCSharpProjectNugetPackageReference treeViewCSharpProjectNugetPackageReference,
         ITerminal terminal,
         CommonService commonService,
@@ -344,7 +346,8 @@ public partial class DotNetService
         Enqueue(new DotNetWorkArgs
         {
             WorkKind = DotNetWorkKind.PerformRemoveNuGetPackageReferenceFromProject,
-            ModifyProjectNamespacePath = modifyProjectNamespacePath,
+            ModifyProjectAbsolutePath = modifyProjectAbsolutePath,
+            ModifyProjectNamespaceString = namespaceString,
             TreeViewCSharpProjectNugetPackageReference = treeViewCSharpProjectNugetPackageReference,
             Terminal = terminal,
             OnAfterCompletion = onAfterCompletion
@@ -352,14 +355,15 @@ public partial class DotNetService
     }
 
     public ValueTask Do_PerformRemoveNuGetPackageReferenceFromProject(
-        NamespacePath modifyProjectNamespacePath,
+        AbsolutePath modifyProjectAbsolutePath,
+        string namespaceString,
         TreeViewCSharpProjectNugetPackageReference treeViewCSharpProjectNugetPackageReference,
         ITerminal terminal,
         CommonService commonService,
         Func<Task> onAfterCompletion)
     {
         var formattedCommand = DotNetCliCommandFormatter.FormatRemoveNugetPackageReferenceFromProject(
-            modifyProjectNamespacePath.AbsolutePath.Value,
+            modifyProjectAbsolutePath.Value,
             treeViewCSharpProjectNugetPackageReference.Item.LightWeightNugetPackageRecord.Id);
 
         var terminalCommandRequest = new TerminalCommandRequest(
@@ -368,7 +372,7 @@ public partial class DotNetService
         {
             ContinueWithFunc = parsedCommand =>
             {
-                NotificationHelper.DispatchInformative("Remove Project Reference", $"Modified {modifyProjectNamespacePath.AbsolutePath.Name} to NOT have a reference to {treeViewCSharpProjectNugetPackageReference.Item.LightWeightNugetPackageRecord.Id}", commonService, TimeSpan.FromSeconds(7));
+                NotificationHelper.DispatchInformative("Remove Project Reference", $"Modified {modifyProjectAbsolutePath.Name} to NOT have a reference to {treeViewCSharpProjectNugetPackageReference.Item.LightWeightNugetPackageRecord.Id}", commonService, TimeSpan.FromSeconds(7));
                 return onAfterCompletion.Invoke();
             }
         };

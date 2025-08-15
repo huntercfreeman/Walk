@@ -87,7 +87,8 @@ public partial class IdeService : IBackgroundTaskGroup
                     workArgs.StringValue,
                     workArgs.ExactMatchFileTemplate,
                     workArgs.RelatedMatchFileTemplatesList,
-                    workArgs.NamespacePath,
+                    workArgs.AbsolutePath,
+                    workArgs.NamespaceString,
                     workArgs.OnAfterCompletion);
             case IdeWorkKind.PerformNewDirectory:
                 return Do_PerformNewDirectory(

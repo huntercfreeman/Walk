@@ -1,6 +1,5 @@
 using System.Text;
 using Walk.Common.RazorLib;
-using Walk.Common.RazorLib.Namespaces.Models;
 using Walk.Common.RazorLib.TreeViews.Models;
 using Walk.Common.RazorLib.Keys.Models;
 using Walk.Common.RazorLib.FileSystems.Models;
@@ -18,15 +17,7 @@ public class TreeViewHelperRazorMarkup
     /// </summary>
     public static async Task<List<TreeViewNoType>> LoadChildrenAsync(TreeViewNamespacePath razorMarkupTreeView)
     {
-        if (razorMarkupTreeView.Item.Namespace is null)
-            return new();
-
-        
-        
-        
-        var parentDirectoryOfRazorMarkup = razorMarkupTreeView.Item.AbsolutePath.CreateSubstringParentDirectory();
-        
-        
+        var parentDirectoryOfRazorMarkup = razorMarkupTreeView.Item.CreateSubstringParentDirectory();
         
         var ancestorDirectory = parentDirectoryOfRazorMarkup;
 
@@ -41,10 +32,9 @@ public class TreeViewHelperRazorMarkup
             .Select(x =>
             {
                 var absolutePath = razorMarkupTreeView.CommonService.EnvironmentProvider.AbsolutePathFactory(x, false, tokenBuilder, formattedBuilder, AbsolutePathNameKind.NameWithExtension);
-                var namespaceString = razorMarkupTreeView.Item.Namespace;
 
                 return (TreeViewNoType)new TreeViewNamespacePath(
-                    new NamespacePath(namespaceString, absolutePath),
+                    absolutePath,
                     razorMarkupTreeView.CommonService,
                     false,
                     false);
@@ -69,18 +59,18 @@ public class TreeViewHelperRazorMarkup
         // .razor files look to remove .razor.cs and .razor.css files
         var matches = new[]
         {
-            razorMarkupTreeView.Item.AbsolutePath.Name + '.' + ExtensionNoPeriodFacts.C_SHARP_CLASS,
-            razorMarkupTreeView.Item.AbsolutePath.Name + '.' + ExtensionNoPeriodFacts.CSS
+            razorMarkupTreeView.Item.Name + '.' + ExtensionNoPeriodFacts.C_SHARP_CLASS,
+            razorMarkupTreeView.Item.Name + '.' + ExtensionNoPeriodFacts.CSS
         };
 
         var relatedFiles = siblingsAndSelfTreeViews
             .Where(x =>
-                x.UntypedItem is NamespacePath namespacePath &&
-                matches.Contains(namespacePath.AbsolutePath.Name))
+                x.UntypedItem is AbsolutePath absolutePath &&
+                matches.Contains(absolutePath.Name))
             .OrderBy(x =>
             {
-                if (x.UntypedItem is NamespacePath namespacePath)
-                    return namespacePath.AbsolutePath.Name ?? string.Empty;
+                if (x.UntypedItem is AbsolutePath absolutePath)
+                    return absolutePath.Name ?? string.Empty;
                 else
                     return string.Empty;
             })

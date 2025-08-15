@@ -2,7 +2,6 @@ using System.Text;
 using Walk.Common.RazorLib;
 using Walk.Common.RazorLib.FileSystems.Models;
 using Walk.Common.RazorLib.Menus.Models;
-using Walk.Common.RazorLib.Namespaces.Models;
 using Walk.Common.RazorLib.Notifications.Models;
 using Walk.Common.RazorLib.Widgets.Models;
 using Walk.Ide.RazorLib.BackgroundTasks.Models;
@@ -29,7 +28,8 @@ public partial class IdeService
                                 fileName,
                                 exactMatchFileTemplate,
                                 relatedMatchFileTemplates,
-                                new NamespacePath(string.Empty, parentDirectory),
+                                parentDirectory,
+                                string.Empty,
                                 onAfterCompletion);
 
                             return Task.CompletedTask;
@@ -38,7 +38,7 @@ public partial class IdeService
             });
     }
 
-    public MenuOptionRecord NewTemplatedFile(NamespacePath parentDirectory, Func<Task> onAfterCompletion)
+    public MenuOptionRecord NewTemplatedFile(AbsolutePath parentDirectory, string parentDirectoryNamespace, Func<Task> onAfterCompletion)
     {
         return new MenuOptionRecord("New Templated File", MenuOptionKind.Create,
             simpleWidgetKind: Walk.Common.RazorLib.Widgets.Models.SimpleWidgetKind.FileForm,
@@ -56,6 +56,7 @@ public partial class IdeService
                                 exactMatchFileTemplate,
                                 relatedMatchFileTemplates,
                                 parentDirectory,
+                                parentDirectoryNamespace,
                                 onAfterCompletion);
 
                             return Task.CompletedTask;
@@ -162,7 +163,8 @@ public partial class IdeService
         string fileName,
         IFileTemplate? exactMatchFileTemplate,
         List<IFileTemplate> relatedMatchFileTemplatesList,
-        NamespacePath namespacePath,
+        AbsolutePath absolutePath,
+        string namespaceString,
         Func<Task> onAfterCompletion)
     {
         Enqueue(new IdeWorkArgs
@@ -171,7 +173,8 @@ public partial class IdeService
             StringValue = fileName,
             ExactMatchFileTemplate = exactMatchFileTemplate,
             RelatedMatchFileTemplatesList = relatedMatchFileTemplatesList,
-            NamespacePath = namespacePath,
+            AbsolutePath = absolutePath,
+            NamespaceString = namespaceString,
             OnAfterCompletion = onAfterCompletion,
         });
     }
@@ -180,12 +183,13 @@ public partial class IdeService
         string fileName,
         IFileTemplate? exactMatchFileTemplate,
         List<IFileTemplate> relatedMatchFileTemplatesList,
-        NamespacePath namespacePath,
+        AbsolutePath absolutePath,
+        string namespaceString,
         Func<Task> onAfterCompletion)
     {
         if (exactMatchFileTemplate is null)
         {
-            var emptyFileAbsolutePathString = namespacePath.AbsolutePath.Value + fileName;
+            var emptyFileAbsolutePathString = absolutePath.Value + fileName;
 
             var emptyFileAbsolutePath = CommonService.EnvironmentProvider.AbsolutePathFactory(
                 emptyFileAbsolutePathString,
@@ -209,10 +213,10 @@ public partial class IdeService
             foreach (var fileTemplate in allTemplates)
             {
                 var templateResult = fileTemplate.ConstructFileContents.Invoke(
-                    new FileTemplateParameter(fileName, namespacePath, CommonService.EnvironmentProvider));
+                    new FileTemplateParameter(fileName, absolutePath, namespaceString, CommonService.EnvironmentProvider));
 
                 await CommonService.FileSystemProvider.File.WriteAllTextAsync(
-                        templateResult.FileNamespacePath.AbsolutePath.Value,
+                        templateResult.FileAbsolutePath.Value,
                         templateResult.Contents,
                         CancellationToken.None)
                     .ConfigureAwait(false);

@@ -1,8 +1,8 @@
 using System;
 using Walk.Common.RazorLib;
 using Walk.Common.RazorLib.Icons.Displays;
+using Walk.Common.RazorLib.FileSystems.Models;
 using Walk.Common.RazorLib.Keys.Models;
-using Walk.Common.RazorLib.Namespaces.Models;
 using Walk.Common.RazorLib.TreeViews.Models;
 using Walk.Common.RazorLib.TreeViews.Models.Utils;
 using Walk.Ide.RazorLib.FileSystems.Displays;
@@ -11,10 +11,10 @@ using Walk.TextEditor.RazorLib.TextEditors.Models;
 
 namespace Walk.Extensions.DotNet.Namespaces.Models;
 
-public class TreeViewNamespacePath : TreeViewWithType<NamespacePath>
+public class TreeViewNamespacePath : TreeViewWithType<AbsolutePath>
 {
     public TreeViewNamespacePath(
-            NamespacePath namespacePath,
+            AbsolutePath namespacePath,
             CommonService commonService,
             bool isExpandable,
             bool isExpanded)
@@ -30,16 +30,15 @@ public class TreeViewNamespacePath : TreeViewWithType<NamespacePath>
         if (obj is not TreeViewNamespacePath treeViewSolutionExplorer)
             return false;
 
-        return treeViewSolutionExplorer.Item.AbsolutePath.Value ==
-               Item.AbsolutePath.Value;
+        return treeViewSolutionExplorer.Item.Value == Item.Value;
     }
 
-    public override int GetHashCode() => Item.AbsolutePath.Value.GetHashCode();
+    public override int GetHashCode() => Item.Value.GetHashCode();
     
-    public override string GetDisplayText() => Item.AbsolutePath.Name;
+    public override string GetDisplayText() => Item.Name;
     
     public override Microsoft.AspNetCore.Components.RenderFragment<IconDriver> GetIcon => 
-        iconDriver => FileIconStaticRenderFragments.GetRenderFragment((iconDriver, Item.AbsolutePath));
+        iconDriver => FileIconStaticRenderFragments.GetRenderFragment((iconDriver, Item));
 
     /*public override TreeViewRenderer GetTreeViewRenderer()
     {
@@ -110,22 +109,17 @@ public class TreeViewNamespacePath : TreeViewWithType<NamespacePath>
             var newChildList = new List<TreeViewNoType>();
 
             // new instance
-            if (Item.AbsolutePath.IsDirectory)
+            if (Item.IsDirectory)
             {
                 newChildList = await TreeViewHelperNamespacePathDirectory.LoadChildrenAsync(this).ConfigureAwait(false);
             }
             else
             {
-                if (Item.AbsolutePath.Name.EndsWith(ExtensionNoPeriodFacts.DOT_NET_SOLUTION))
-                {
-                    return;
-                }
-                else if (Item.AbsolutePath.Name.EndsWith(ExtensionNoPeriodFacts.C_SHARP_PROJECT))
-                {
+                if (Item.Name.EndsWith(ExtensionNoPeriodFacts.DOT_NET_SOLUTION))                {                    return;                }
+                else if (Item.Name.EndsWith(ExtensionNoPeriodFacts.C_SHARP_PROJECT))                {
                     newChildList = await TreeViewHelperCSharpProject.LoadChildrenAsync(this).ConfigureAwait(false);
                 }
-                else if (Item.AbsolutePath.Name.EndsWith(ExtensionNoPeriodFacts.RAZOR_MARKUP))
-                {
+                else if (Item.Name.EndsWith(ExtensionNoPeriodFacts.RAZOR_MARKUP))                {
                     newChildList = await TreeViewHelperRazorMarkup.LoadChildrenAsync(this).ConfigureAwait(false);
                 }
             }
@@ -138,16 +132,13 @@ public class TreeViewNamespacePath : TreeViewWithType<NamespacePath>
             {
                 var shouldPermitChildToTakeSiblingsAsChildren = false;
                 
-                if (Item.AbsolutePath.IsDirectory)
+                if (Item.IsDirectory)
                 {
                     shouldPermitChildToTakeSiblingsAsChildren = true;
                 }
                 else
                 {
-                    if (Item.AbsolutePath.Name.EndsWith(ExtensionNoPeriodFacts.C_SHARP_PROJECT))
-                    {
-                        shouldPermitChildToTakeSiblingsAsChildren = true;
-                    }
+                    if (Item.Name.EndsWith(ExtensionNoPeriodFacts.C_SHARP_PROJECT))                    {                        shouldPermitChildToTakeSiblingsAsChildren = true;                    }
                 }
                 
                 if (shouldPermitChildToTakeSiblingsAsChildren)
@@ -196,7 +187,7 @@ public class TreeViewNamespacePath : TreeViewWithType<NamespacePath>
     /// </summary>
     public override void RemoveRelatedFilesFromParent(List<TreeViewNoType> siblingsAndSelfTreeViews)
     {
-        if (Item.AbsolutePath.Name.EndsWith(ExtensionNoPeriodFacts.RAZOR_MARKUP))
+        if (Item.Name.EndsWith(ExtensionNoPeriodFacts.RAZOR_MARKUP))
             TreeViewHelperRazorMarkup.FindRelatedFiles(this, siblingsAndSelfTreeViews);
     }
 }

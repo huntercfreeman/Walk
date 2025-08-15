@@ -1,5 +1,4 @@
 using System.Text;
-using Walk.Common.RazorLib.Namespaces.Models;
 using Walk.Common.RazorLib.TreeViews.Models;
 using Walk.Common.RazorLib.FileSystems.Models;
 using Walk.Extensions.DotNet.Namespaces.Models;
@@ -11,7 +10,7 @@ public class TreeViewHelperNamespacePathDirectory
     /// <summary>Used with <see cref="TreeViewNamespacePath"/></summary>
     public static async Task<List<TreeViewNoType>> LoadChildrenAsync(TreeViewNamespacePath directoryTreeView)
     {
-        var directoryAbsolutePathString = directoryTreeView.Item.AbsolutePath.Value;
+        var directoryAbsolutePathString = directoryTreeView.Item.Value;
 
         var directoryPathStringsList = await directoryTreeView.CommonService.FileSystemProvider.Directory
             .GetDirectoriesAsync(directoryAbsolutePathString)
@@ -26,12 +25,8 @@ public class TreeViewHelperNamespacePathDirectory
             {
                 var absolutePath = directoryTreeView.CommonService.EnvironmentProvider.AbsolutePathFactory(x, true, tokenBuilder, formattedBuilder, AbsolutePathNameKind.NameWithExtension);
 
-                var namespaceString = directoryTreeView.Item.Namespace +
-                    TreeViewNamespaceHelper.NAMESPACE_DELIMITER +
-                    absolutePath.Name;
-
                 return (TreeViewNoType)new TreeViewNamespacePath(
-                    new NamespacePath(namespaceString, absolutePath),
+                    absolutePath,
                     directoryTreeView.CommonService,
                     true,
                     false);
@@ -46,10 +41,9 @@ public class TreeViewHelperNamespacePathDirectory
             .Select(x =>
             {
                 var absolutePath = directoryTreeView.CommonService.EnvironmentProvider.AbsolutePathFactory(x, false, tokenBuilder, formattedBuilder, AbsolutePathNameKind.NameWithExtension);
-                var namespaceString = directoryTreeView.Item.Namespace;
 
                 return (TreeViewNoType)new TreeViewNamespacePath(
-                    new NamespacePath(namespaceString, absolutePath),
+                    absolutePath,
                     directoryTreeView.CommonService,
                     false,
                     false);
