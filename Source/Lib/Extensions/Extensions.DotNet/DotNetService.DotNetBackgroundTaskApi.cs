@@ -1030,10 +1030,9 @@ public partial class DotNetService
 
         foreach (var file in discoveredFileList)
         {
-            var fileAbsolutePath = IdeService.TextEditorService.CommonService.EnvironmentProvider.AbsolutePathFactory(file, false, tokenBuilder, formattedBuilder);
             var progress = currentProgress + maximumProgressAvailableToProject * (fileParsedCount / (double)discoveredFileList.Count);
             var resourceUri = new ResourceUri(file);
-            var compilerService = IdeService.TextEditorService.GetCompilerService(fileAbsolutePath.ExtensionNoPeriod);
+            var compilerService = IdeService.TextEditorService.GetCompilerService("cs");
 
             compilerService.RegisterResource(
                 resourceUri,
