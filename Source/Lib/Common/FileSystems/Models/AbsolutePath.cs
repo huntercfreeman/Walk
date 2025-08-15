@@ -34,11 +34,10 @@ public struct AbsolutePath
         IEnvironmentProvider environmentProvider,
         StringBuilder tokenBuilder,
         StringBuilder formattedBuilder,
-        bool shouldNameContainsExtension,
-        bool nameShouldBeExtensionNoPeriod = false,
+        AbsolutePathNameKind nameKind,
         List<string>? ancestorDirectoryList = null)
     {
-        NameContainsExtension = shouldNameContainsExtension;
+        NameKind = nameKind;
         bool seenRootDrive = false;
         string extensionNoPeriod;
         string nameNoExtension;
@@ -137,17 +136,17 @@ public struct AbsolutePath
             extensionNoPeriod = environmentProvider.DirectorySeparatorCharToStringResult;
         }
 
-        if (nameShouldBeExtensionNoPeriod)
+        if (nameKind == NameKind.)
         {
             Name = extensionNoPeriod;
         }
-        else if (NameContainsExtension)
+        else if (nameKind == NameKind.) 
         {
-            Name = _nameWithExtension ??= PathHelper.CalculateNameWithExtension(nameNoExtension, extensionNoPeriod, IsDirectory);
+            Name = nameNoExtension;
         }
         else
         {
-            Name = nameNoExtension;
+            Name = _nameWithExtension ??= PathHelper.CalculateNameWithExtension(nameNoExtension, extensionNoPeriod, IsDirectory);
         }
 
         if (IsDirectory)
@@ -183,12 +182,12 @@ public struct AbsolutePath
     }
 
     public string? ParentDirectory { get; private set; }
-    public PathType PathType { get; } = PathType.AbsolutePath;
     public bool IsDirectory { get; private set; }
     /// <summary>
     /// The <see cref="NameNoExtension"/> for a directory does NOT end with a directory separator char.
     /// </summary>
     public string Name { get; private set; }
+    public AbsolutePathNameKind NameKind { get; set; }
 
     /// <summary>
     /// TODO: If it is discovered that the provided absolute path is formatted as the app likes...
