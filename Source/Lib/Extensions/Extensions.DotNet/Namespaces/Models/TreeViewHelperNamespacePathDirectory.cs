@@ -23,7 +23,7 @@ public class TreeViewHelperNamespacePathDirectory
             .OrderBy(pathString => pathString)
             .Select(x =>
             {
-                var absolutePath = directoryTreeView.CommonService.EnvironmentProvider.AbsolutePathFactory(x, true, tokenBuilder, formattedBuilder, AbsolutePathNameKind.NameWithExtension);
+                var absolutePath = directoryTreeView.CommonService.EnvironmentProvider.AbsolutePathFactory(x, true, tokenBuilder, formattedBuilder, AbsolutePathNameKind.NameNoExtension);
 
                 return (TreeViewNoType)new TreeViewNamespacePath(
                     absolutePath,
