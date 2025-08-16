@@ -165,17 +165,13 @@ public class TextEditorKeymapDefault : ITextEditorKeymap
                     break;
                 case "ArrowDown":
                     modelModifier = editContext.GetModelModifier(viewModel.PersistentState.ResourceUri, isReadOnly: true);
-                    TextEditorCommandDefaultFunctions.ScrollLineDown(
-                        editContext,
-                        modelModifier,
-                        viewModel);
+                    viewModel.ScrollWasModified = true;
+                    viewModel.SetScrollTop(viewModel.PersistentState.ScrollTop + viewModel.PersistentState.CharAndLineMeasurements.LineHeight);
                     break;
                 case "ArrowUp":
                     modelModifier = editContext.GetModelModifier(viewModel.PersistentState.ResourceUri, isReadOnly: true);
-                    TextEditorCommandDefaultFunctions.ScrollLineUp(
-                        editContext,
-                        modelModifier,
-                        viewModel);
+                    viewModel.ScrollWasModified = true;
+                    viewModel.SetScrollTop(viewModel.PersistentState.ScrollTop + -1 * viewModel.PersistentState.CharAndLineMeasurements.LineHeight);
                     break;
                 case "PageDown":
                     modelModifier = editContext.GetModelModifier(viewModel.PersistentState.ResourceUri, isReadOnly: true);
