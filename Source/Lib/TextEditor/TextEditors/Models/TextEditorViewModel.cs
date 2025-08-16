@@ -194,8 +194,26 @@ public sealed class TextEditorViewModel : IDisposable
         PreferredColumnIndex = columnIndex;
     }
     
+    /// <summary>
+    /// 'viewModel.ScrollWasModified = true;' must be set by the caller in order for the TextEditorService to update the scrollbar
+    ///
+    /// This isn't set from within this method incase this method is invoked more than once in a single TextEditorEditContext.
+    ///
+    /// More and more I feel like that "don't set from this method" case is a silly and solely a cause for confusion.
+    /// But that is how this was originally written, and at the moment I'm changing different code
+    /// so I'll just keep this in the back of my mind, perhaps to change it later.
+    /// </summary>
     public void MutateScrollLeft(int pixels) => SetScrollLeft(PersistentState.ScrollLeft + pixels);
 
+    /// <summary>
+    /// 'viewModel.ScrollWasModified = true;' must be set by the caller in order for the TextEditorService to update the scrollbar
+    ///
+    /// This isn't set from within this method incase this method is invoked more than once in a single TextEditorEditContext.
+    ///
+    /// More and more I feel like that "don't set from this method" case is a silly and solely a cause for confusion.
+    /// But that is how this was originally written, and at the moment I'm changing different code
+    /// so I'll just keep this in the back of my mind, perhaps to change it later.
+    /// </summary>
     public void SetScrollLeft(int pixels)
     {
         var resultScrollLeft = Math.Max(0, pixels);
@@ -207,8 +225,26 @@ public sealed class TextEditorViewModel : IDisposable
         PersistentState.ScrollLeft = resultScrollLeft;
     }
 
+    /// <summary>
+    /// 'viewModel.ScrollWasModified = true;' must be set by the caller in order for the TextEditorService to update the scrollbar
+    ///
+    /// This isn't set from within this method incase this method is invoked more than once in a single TextEditorEditContext.
+    ///
+    /// More and more I feel like that "don't set from this method" case is a silly and solely a cause for confusion.
+    /// But that is how this was originally written, and at the moment I'm changing different code
+    /// so I'll just keep this in the back of my mind, perhaps to change it later.
+    /// </summary>
     public void MutateScrollTop(int pixels) => SetScrollTop(PersistentState.ScrollTop + pixels);
 
+    /// <summary>
+    /// 'viewModel.ScrollWasModified = true;' must be set by the caller in order for the TextEditorService to update the scrollbar
+    ///
+    /// This isn't set from within this method incase this method is invoked more than once in a single TextEditorEditContext.
+    ///
+    /// More and more I feel like that "don't set from this method" case is a silly and solely a cause for confusion.
+    /// But that is how this was originally written, and at the moment I'm changing different code
+    /// so I'll just keep this in the back of my mind, perhaps to change it later.
+    /// </summary>
     public void SetScrollTop(int pixels)
     {
         var resultScrollTop = Math.Max(0, pixels);

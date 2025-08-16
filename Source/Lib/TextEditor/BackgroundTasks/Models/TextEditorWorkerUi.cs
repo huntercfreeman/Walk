@@ -281,11 +281,9 @@ public class TextEditorWorkerUi : IBackgroundTaskGroup
                 if (viewModelModifier is null)
                     return;
         
-                editContext.TextEditorService.ViewModel_SetScrollPositionLeft(
-                    editContext,
-                    viewModelModifier,
-                    workArgsTuple.WorkerUiArgs.X);
-                    
+                viewModelModifier.ScrollWasModified = true;
+                viewModelModifier.SetScrollLeft((int)workArgsTuple.WorkerUiArgs.X);
+                
                 await editContext.TextEditorService
                     .FinalizePost(editContext)
                     .ConfigureAwait(false);
@@ -300,10 +298,8 @@ public class TextEditorWorkerUi : IBackgroundTaskGroup
                 if (viewModelModifier is null)
                     return;
         
-                editContext.TextEditorService.ViewModel_SetScrollPositionTop(
-                    editContext,
-                    viewModelModifier,
-                    workArgsTuple.WorkerUiArgs.Y);
+                viewModelModifier.ScrollWasModified = true;
+                viewModelModifier.SetScrollTop((int)workArgsTuple.WorkerUiArgs.Y);
                     
                 await editContext.TextEditorService
                     .FinalizePost(editContext)
