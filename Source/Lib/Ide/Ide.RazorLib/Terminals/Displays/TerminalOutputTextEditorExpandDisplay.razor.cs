@@ -247,9 +247,7 @@ public partial class TerminalOutputTextEditorExpandDisplay : ComponentBase, IDis
                     //    (int)viewModelModifier.CharAndLineMeasurements.LineHeight,
                     //    viewModelModifier.TextEditorDimensions);
                     
-                    viewModelModifier.SetScrollLeft(
-                        (int)originalScrollLeft,
-                        viewModelModifier.PersistentState.TextEditorDimensions);
+                    viewModelModifier.SetScrollLeft(originalScrollLeft);
                 }
                 else if (lineIndexOriginal != viewModelModifier.LineIndex ||
                          columnIndexOriginal != viewModelModifier.ColumnIndex)

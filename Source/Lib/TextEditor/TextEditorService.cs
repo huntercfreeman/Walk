@@ -2382,9 +2382,7 @@ public sealed partial class TextEditorService
         if (originalScrollWidth > viewModelModifier.PersistentState.ScrollWidth ||
             textEditorDimensionsChanged)
         {
-            viewModelModifier.SetScrollLeft(
-                (int)viewModelModifier.PersistentState.ScrollLeft,
-                viewModelModifier.PersistentState.TextEditorDimensions);
+            viewModelModifier.SetScrollLeft(viewModelModifier.PersistentState.ScrollLeft);
         }
         
         if (originalScrollHeight > viewModelModifier.PersistentState.ScrollHeight ||

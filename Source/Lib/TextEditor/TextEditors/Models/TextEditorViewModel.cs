@@ -194,13 +194,12 @@ public sealed class TextEditorViewModel : IDisposable
         PreferredColumnIndex = columnIndex;
     }
     
-    public void MutateScrollLeft(int pixels, TextEditorDimensions textEditorDimensions) =>
-        SetScrollLeft(PersistentState.ScrollLeft + pixels, textEditorDimensions);
+    public void MutateScrollLeft(int pixels) => SetScrollLeft(PersistentState.ScrollLeft + pixels);
 
-    public void SetScrollLeft(int pixels, TextEditorDimensions textEditorDimensions)
+    public void SetScrollLeft(int pixels)
     {
         var resultScrollLeft = Math.Max(0, pixels);
-        var maxScrollLeft = (int)Math.Max(0, PersistentState.ScrollWidth - textEditorDimensions.Width);
+        var maxScrollLeft = (int)Math.Max(0, PersistentState.ScrollWidth - PersistentState.TextEditorDimensions.Width);
 
         if (resultScrollLeft > maxScrollLeft)
             resultScrollLeft = maxScrollLeft;

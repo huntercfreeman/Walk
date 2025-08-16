@@ -170,9 +170,7 @@ public partial class TestExplorerDetailsDisplay : ComponentBase, IDisposable
                         viewModelModifier,
                         textSpan);
                         
-                    viewModelModifier.SetScrollLeft(
-                        (int)originalScrollLeft,
-                        viewModelModifier.PersistentState.TextEditorDimensions);
+                    viewModelModifier.SetScrollLeft(originalScrollLeft);
                 }
                 else if (lineIndexOriginal != viewModelModifier.LineIndex ||
                          columnIndexOriginal != viewModelModifier.ColumnIndex)

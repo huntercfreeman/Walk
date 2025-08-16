@@ -143,7 +143,7 @@ public partial class TextEditorService
         double scrollTopInPixels)
     {
         viewModel.ScrollWasModified = true;
-        viewModel.SetScrollLeft((int)Math.Floor(scrollLeftInPixels), viewModel.PersistentState.TextEditorDimensions);
+        viewModel.SetScrollLeft((int)Math.Floor(scrollLeftInPixels));
         viewModel.SetScrollTop((int)Math.Floor(scrollTopInPixels));
     }
 
@@ -153,7 +153,7 @@ public partial class TextEditorService
         double scrollLeftInPixels)
     {
         viewModel.ScrollWasModified = true;
-        viewModel.SetScrollLeft((int)Math.Floor(scrollLeftInPixels), viewModel.PersistentState.TextEditorDimensions);
+        viewModel.SetScrollLeft((int)Math.Floor(scrollLeftInPixels));
     }
 
     public void ViewModel_SetScrollPositionTop(
@@ -180,7 +180,7 @@ public partial class TextEditorService
         double pixels)
     {
         viewModel.ScrollWasModified = true;
-        viewModel.MutateScrollLeft((int)Math.Ceiling(pixels), viewModel.PersistentState.TextEditorDimensions);
+        viewModel.MutateScrollLeft((int)Math.Ceiling(pixels));
     }
 
     /// <summary>
