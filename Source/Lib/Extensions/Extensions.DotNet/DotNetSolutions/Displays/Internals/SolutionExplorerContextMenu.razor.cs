@@ -275,7 +275,7 @@ public partial class SolutionExplorerContextMenu : ComponentBase
                 async () => await ReloadTreeViewModel(treeViewModel).ConfigureAwait(false)),
             DotNetService.IdeService.NewTemplatedFile(
                 parentDirectoryAbsolutePath,
-                string.Empty,
+                () => GetNamespaceString(treeViewModel),
                 async () => await ReloadTreeViewModel(treeViewModel).ConfigureAwait(false)),
             DotNetService.IdeService.NewDirectory(
                 parentDirectoryAbsolutePath,
@@ -385,7 +385,7 @@ public partial class SolutionExplorerContextMenu : ComponentBase
                 async () => await ReloadTreeViewModel(treeViewModel).ConfigureAwait(false)),
             DotNetService.IdeService.NewTemplatedFile(
                 treeViewModel.Item,
-                string.Empty,
+                () => GetNamespaceString(treeViewModel),
                 async () => await ReloadTreeViewModel(treeViewModel).ConfigureAwait(false)),
             DotNetService.IdeService.NewDirectory(
                 treeViewModel.Item,
@@ -403,6 +403,42 @@ public partial class SolutionExplorerContextMenu : ComponentBase
                     await ReloadTreeViewModel(treeViewModel).ConfigureAwait(false);
                 }),
         };
+    }
+    
+    private string GetNamespaceString(TreeViewNamespacePath treeViewModel)
+    {
+        var targetNode = treeViewModel;
+        // This algorithm has a lot of "shifting" due to 0 index insertions and likely is NOT the most optimal solution.
+        var namespaceBuilder = new StringBuilder();
+    
+        // for loop is an arbitrary "while-loop limit" until I prove to myself this won't infinite loop.
+        for (int i = 0; i < 256; i++)
+        {
+            if (targetNode is null)
+                break;
+        
+            // EndsWith check includes the period to ensure a direct match on the extension rather than a substring.
+            if (!targetNode.Item.IsDirectory && targetNode.Item.Name.EndsWith(".csproj"))
+            {
+                if (i != 0)
+                    namespaceBuilder.Insert(0, '.');
+                namespaceBuilder.Insert(0, targetNode.Item.Name.Replace(".csproj", string.Empty));
+                break;
+            }
+            else
+            {
+                if (i != 0)
+                    namespaceBuilder.Insert(0, '.');
+                namespaceBuilder.Insert(0, targetNode.Item.Name);
+                
+                if (targetNode.Parent is TreeViewNamespacePath parent)
+                    targetNode = parent;
+                else
+                    break;
+            }
+        }
+        
+        return namespaceBuilder.ToString();
     }
 
     private MenuOptionRecord[] GetFileMenuOptions(
