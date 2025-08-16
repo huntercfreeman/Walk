@@ -104,29 +104,21 @@ public class TextEditorWorkerUi : IBackgroundTaskGroup
                     : higherColumnIndexExpansion;
         
                 // Move user's cursor position to the higher expansion
-                {
-                    viewModel.LineIndex = lineAndColumnIndex.LineIndex;
-                    viewModel.ColumnIndex = higherColumnIndexExpansion;
-                    viewModel.PreferredColumnIndex = lineAndColumnIndex.ColumnIndex;
-                }
+                viewModel.LineIndex = lineAndColumnIndex.LineIndex;
+                viewModel.ColumnIndex = higherColumnIndexExpansion;
+                viewModel.PreferredColumnIndex = lineAndColumnIndex.ColumnIndex;
         
                 // Set text selection ending to higher expansion
-                {
-                    var cursorPositionOfHigherExpansion = modelModifier.GetPositionIndex(
-                        lineAndColumnIndex.LineIndex,
-                        higherColumnIndexExpansion);
-        
-                    viewModel.SelectionEndingPositionIndex = cursorPositionOfHigherExpansion;
-                }
+                var cursorPositionOfHigherExpansion = modelModifier.GetPositionIndex(
+                    lineAndColumnIndex.LineIndex,
+                    higherColumnIndexExpansion);
+                viewModel.SelectionEndingPositionIndex = cursorPositionOfHigherExpansion;
         
                 // Set text selection anchor to lower expansion
-                {
-                    var cursorPositionOfLowerExpansion = modelModifier.GetPositionIndex(
-                        lineAndColumnIndex.LineIndex,
-                        lowerColumnIndexExpansion);
-        
-                    viewModel.SelectionAnchorPositionIndex = cursorPositionOfLowerExpansion;
-                }
+                var cursorPositionOfLowerExpansion = modelModifier.GetPositionIndex(
+                    lineAndColumnIndex.LineIndex,
+                    lowerColumnIndexExpansion);
+                viewModel.SelectionAnchorPositionIndex = cursorPositionOfLowerExpansion;
                 
                 await editContext.TextEditorService
                     .FinalizePost(editContext)
@@ -315,24 +307,16 @@ public class TextEditorWorkerUi : IBackgroundTaskGroup
                 if (viewModelModifier is null)
                     return;
                     
-                // TODO: Why was this made as 'if' 'else' whereas the OnWheelBatch...
-                //       ...is doing 'if' 'if'.
-                //       |
-                //       The OnWheelBatch doesn't currently batch horizontal with vertical
-                //       the OnWheel events have to be the same axis to batch.
                 if (workArgsTuple.WorkerUiArgs.ShiftKey)
                 {
-                    editContext.TextEditorService.ViewModel_MutateScrollHorizontalPosition(
-                        editContext,
-                        viewModelModifier,
-                        workArgsTuple.WorkerUiArgs.Y / 2);
+                    viewModelModifier.ScrollWasModified = true;
+                    // I find WheelEventArgs.DeltaY has to be used for horizontal scrolling with the mouse wheel.
+                    viewModelModifier.MutateScrollLeft((int)Math.Ceiling(workArgsTuple.WorkerUiArgs.Y / 2));
                 }
                 else
                 {
-                    editContext.TextEditorService.ViewModel_MutateScrollVerticalPosition(
-                        editContext,
-                        viewModelModifier,
-                        workArgsTuple.WorkerUiArgs.Y);
+                    viewModelModifier.ScrollWasModified = true;
+                    viewModelModifier.MutateScrollTop((int)Math.Ceiling(workArgsTuple.WorkerUiArgs.Y));
                 }
                 
                 await editContext.TextEditorService
