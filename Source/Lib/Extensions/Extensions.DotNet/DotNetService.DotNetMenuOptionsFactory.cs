@@ -2,7 +2,6 @@ using Walk.Common.RazorLib;
 using Walk.Common.RazorLib.FileSystems.Models;
 using Walk.Common.RazorLib.Menus.Models;
 using Walk.Common.RazorLib.Notifications.Models;
-using Walk.TextEditor.RazorLib.TextEditors.Models;
 using Walk.Extensions.DotNet.CommandLines.Models;
 using Walk.Extensions.DotNet.CSharpProjects.Models;
 using Walk.Extensions.DotNet.DotNetSolutions.Models;
@@ -10,7 +9,6 @@ using Walk.Extensions.DotNet.Namespaces.Models;
 using Walk.Ide.RazorLib;
 using Walk.Ide.RazorLib.InputFiles.Models;
 using Walk.Ide.RazorLib.BackgroundTasks.Models;
-using Walk.Ide.RazorLib.FileSystems.Models;
 using Walk.Ide.RazorLib.Terminals.Models;
 
 namespace Walk.Extensions.DotNet;

@@ -1,4 +1,3 @@
-using System;
 using Walk.Common.RazorLib;
 using Walk.Common.RazorLib.Icons.Displays;
 using Walk.Common.RazorLib.FileSystems.Models;
@@ -7,7 +6,6 @@ using Walk.Common.RazorLib.TreeViews.Models;
 using Walk.Common.RazorLib.TreeViews.Models.Utils;
 using Walk.Ide.RazorLib.FileSystems.Displays;
 using Walk.Ide.RazorLib.Namespaces.Models;
-using Walk.TextEditor.RazorLib.TextEditors.Models;
 
 namespace Walk.Extensions.DotNet.Namespaces.Models;
 

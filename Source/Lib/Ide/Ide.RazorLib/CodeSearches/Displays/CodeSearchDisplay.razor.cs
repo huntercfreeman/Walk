@@ -6,7 +6,6 @@ using Walk.Common.RazorLib.Dropdowns.Models;
 using Walk.Common.RazorLib.TreeViews.Models;
 using Walk.Common.RazorLib.Dimensions.Models;
 using Walk.Common.RazorLib.Resizes.Models;
-using Walk.Common.RazorLib.Resizes.Displays;
 using Walk.TextEditor.RazorLib.TextEditors.Models.Internals;
 using Walk.TextEditor.RazorLib.Lexers.Models;
 using Walk.Ide.RazorLib.CodeSearches.Models;

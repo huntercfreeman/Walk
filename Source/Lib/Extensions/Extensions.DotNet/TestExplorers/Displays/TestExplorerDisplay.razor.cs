@@ -10,7 +10,6 @@ using Walk.Common.RazorLib;
 using Walk.Common.RazorLib.Keys.Models;
 using Walk.Common.RazorLib.Resizes.Models;
 using Walk.Common.RazorLib.Dimensions.Models;
-using Walk.Common.RazorLib.Resizes.Displays;
 
 namespace Walk.Extensions.DotNet.TestExplorers.Displays;
 

@@ -6,7 +6,6 @@ using Walk.Common.RazorLib.Notifications.Models;
 using Walk.Common.RazorLib.Keys.Models;
 using Walk.Common.RazorLib.Dynamics.Models;
 using Walk.Common.RazorLib.FileSystems.Models;
-using Walk.TextEditor.RazorLib.TextEditors.Models;
 using Walk.Ide.RazorLib;
 using Walk.Ide.RazorLib.CommandLines.Models;
 using Walk.Ide.RazorLib.Terminals.Models;

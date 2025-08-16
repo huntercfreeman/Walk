@@ -1,6 +1,4 @@
-using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Web;
-using Walk.Common.RazorLib.Resizes.Models;
 using Walk.Common.RazorLib.Dimensions.Models;
 
 namespace Walk.Common.RazorLib.Resizes.Models;

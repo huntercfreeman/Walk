@@ -1,4 +1,3 @@
-using Walk.Common.RazorLib.Keys.Models;
 using Walk.Common.RazorLib.FileSystems.Models;
 using Walk.Ide.RazorLib.Terminals.Models;
 
