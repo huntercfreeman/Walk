@@ -1,5 +1,3 @@
-using Walk.Common.RazorLib.FileSystems.Models;
-
 namespace Walk.Common.RazorLib.FileSystems.Models;
 
 public class FileTemplateParameter

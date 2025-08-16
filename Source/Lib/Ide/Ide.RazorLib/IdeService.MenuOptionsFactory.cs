@@ -5,7 +5,6 @@ using Walk.Common.RazorLib.Menus.Models;
 using Walk.Common.RazorLib.Notifications.Models;
 using Walk.Common.RazorLib.Widgets.Models;
 using Walk.Ide.RazorLib.BackgroundTasks.Models;
-using Walk.Ide.RazorLib.FileSystems.Models;
 
 namespace Walk.Ide.RazorLib;
 

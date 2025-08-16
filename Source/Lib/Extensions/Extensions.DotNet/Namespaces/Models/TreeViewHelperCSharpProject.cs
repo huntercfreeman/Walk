@@ -2,11 +2,9 @@ using System.Text;
 using Walk.Common.RazorLib;
 using Walk.Common.RazorLib.TreeViews.Models;
 using Walk.Common.RazorLib.FileSystems.Models;
-using Walk.TextEditor.RazorLib.TextEditors.Models;
 using Walk.CompilerServices.DotNetSolution.Models.Project;
 using Walk.Extensions.DotNet.CSharpProjects.Models;
 using Walk.Ide.RazorLib;
-using Walk.Ide.RazorLib.Namespaces.Models;
 
 namespace Walk.Extensions.DotNet.Namespaces.Models;
 

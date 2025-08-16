@@ -188,25 +188,6 @@ public class TextEditorWorkerUi : IBackgroundTaskGroup
                         workArgsTuple.ComponentData,
                         editContext)
                     .ConfigureAwait(false);
-                    
-                var lineInformation = modelModifier.GetLineInformation(lineAndColumnIndex.LineIndex);
-                
-                var lastValidColumnLeft = lineInformation.LastValidColumnIndex * viewModel.PersistentState.CharAndLineMeasurements.CharacterWidth;
-                
-                // Tab key column offset
-                {
-                    var tabsOnSameLineBeforeCursor = modelModifier.GetTabCountOnSameLineBeforeCursor(
-                        lineAndColumnIndex.LineIndex,
-                        lineInformation.LastValidColumnIndex);
-        
-                    // 1 of the character width is already accounted for
-        
-                    var extraWidthPerTabKey = _textEditorService.Options_GetOptions().TabWidth - 1;
-        
-                    lastValidColumnLeft += extraWidthPerTabKey *
-                        tabsOnSameLineBeforeCursor *
-                        viewModel.PersistentState.CharAndLineMeasurements.CharacterWidth;
-                }
         
                 viewModel.LineIndex = lineAndColumnIndex.LineIndex;
                 viewModel.ColumnIndex = lineAndColumnIndex.ColumnIndex;
@@ -264,17 +245,23 @@ public class TextEditorWorkerUi : IBackgroundTaskGroup
                         workArgsTuple.ComponentData,
                         editContext)
                     .ConfigureAwait(false);
-                    
                 
-                var lineInformation = modelModifier.GetLineInformation(rowAndColumnIndex.LineIndex);
+                var positionIndex = modelModifier.GetPositionIndex(rowAndColumnIndex.LineIndex, rowAndColumnIndex.ColumnIndex);
+                
+                if (viewModel.LineIndex == rowAndColumnIndex.LineIndex &&
+                    viewModel.ColumnIndex == rowAndColumnIndex.ColumnIndex &&
+                    viewModel.PreferredColumnIndex == rowAndColumnIndex.ColumnIndex &&
+                    viewModel.SelectionEndingPositionIndex == positionIndex)
+                {
+                    editContext.TextEditorService.ViewModel_StopCursorBlinking();
+                    return;
+                }
                 
                 viewModel.LineIndex = rowAndColumnIndex.LineIndex;
                 viewModel.ColumnIndex = rowAndColumnIndex.ColumnIndex;
                 viewModel.PreferredColumnIndex = rowAndColumnIndex.ColumnIndex;
         
-                // editContext.TextEditorService.ViewModelApi.SetCursorShouldBlink(false);
-        
-                viewModel.SelectionEndingPositionIndex = modelModifier.GetPositionIndex(viewModel);
+                viewModel.SelectionEndingPositionIndex = positionIndex;
                 
                 finalize:
             
