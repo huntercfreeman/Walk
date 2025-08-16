@@ -2390,9 +2390,7 @@ public sealed partial class TextEditorService
         if (originalScrollHeight > viewModelModifier.PersistentState.ScrollHeight ||
             textEditorDimensionsChanged)
         {
-            viewModelModifier.SetScrollTop(
-                (int)viewModelModifier.PersistentState.ScrollTop,
-                viewModelModifier.PersistentState.TextEditorDimensions);
+            viewModelModifier.SetScrollTop(viewModelModifier.PersistentState.ScrollTop);
             
             // The scrollLeft currently does not have any margin. Therefore subtracting the margin isn't needed.
             //
@@ -2404,9 +2402,7 @@ public sealed partial class TextEditorService
             if (textEditorDimensionsChanged &&
                 viewModelModifier.PersistentState.ScrollTop != viewModelModifier.PersistentState.ScrollTop) // TODO: Why are these comparing eachother?
             {
-                viewModelModifier.SetScrollTop(
-                    (int)viewModelModifier.PersistentState.ScrollTop - (int)viewModelModifier.PersistentState.MarginScrollHeight,
-                    viewModelModifier.PersistentState.TextEditorDimensions);
+                viewModelModifier.SetScrollTop(viewModelModifier.PersistentState.ScrollTop - viewModelModifier.PersistentState.MarginScrollHeight);
             }
         }
         

@@ -172,8 +172,8 @@ public class TextEditorKeymapDefault : ITextEditorKeymap
                             editContext,
                             viewModel,
                             componentData.TextEditorViewModelSlimDisplay.TextEditorService.CommonService);
+                        editContext.TextEditorService.ViewModel_StopCursorBlinking();
                     }
-                    editContext.TextEditorService.ViewModel_StopCursorBlinking();
                     await editContext.TextEditorService
                         .FinalizePost(editContext)
                         .ConfigureAwait(false);
@@ -187,8 +187,8 @@ public class TextEditorKeymapDefault : ITextEditorKeymap
                             editContext,
                             viewModel,
                             componentData.TextEditorViewModelSlimDisplay.TextEditorService.CommonService);
+                        editContext.TextEditorService.ViewModel_StopCursorBlinking();
                     }
-                    editContext.TextEditorService.ViewModel_StopCursorBlinking();
                     await editContext.TextEditorService
                         .FinalizePost(editContext)
                         .ConfigureAwait(false);

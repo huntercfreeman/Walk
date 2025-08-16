@@ -208,39 +208,8 @@ public sealed class TextEditorViewModel : IDisposable
         PersistentState.ScrollLeft = resultScrollLeft;
     }
 
-    public void MutateScrollTop(int pixels, TextEditorDimensions textEditorDimensions) =>
-        SetScrollTop(PersistentState.ScrollTop + pixels, textEditorDimensions);
+    public void MutateScrollTop(int pixels) => SetScrollTop(PersistentState.ScrollTop + pixels);
 
-    /// <summary>
-    /// WARNING: This method has an overload that doesn't take 'TextEditorDimensions'...
-    /// ...and both are duplicates of eachother.
-    ///
-    /// I did this because this overload which takes 'TextEditorDimensions' existed,
-    /// and I wanted to try out the speed difference of not passing the TextEditorDimensions
-    /// in scenarios where the TextEditorDimensions passed were the same as
-    /// the PersistentState.TextEditorDimensions.
-    ///
-    /// I'm a little confused why this 'TextEditorDimensions' receiving overload
-    /// even exists, all in all I just have to look into this more.
-    /// </summary>
-    public void SetScrollTop(int pixels, TextEditorDimensions textEditorDimensions)
-    {
-        var resultScrollTop = Math.Max(0, pixels);
-        var maxScrollTop = (int)Math.Max(0, PersistentState.ScrollHeight - textEditorDimensions.Height);
-
-        if (resultScrollTop > maxScrollTop)
-            resultScrollTop = maxScrollTop;
-
-        PersistentState.ScrollTop = resultScrollTop;
-    }
-    
-    /// <summary>
-    /// WARNING: This method has an overload that takes 'TextEditorDimensions'...
-    /// ...and both are duplicates of eachother.
-    ///
-    /// I'm a little confused why the 'TextEditorDimensions' receiving overload
-    /// even exists, all in all I just have to look into this more.
-    /// </summary>
     public void SetScrollTop(int pixels)
     {
         var resultScrollTop = Math.Max(0, pixels);
