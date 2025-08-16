@@ -4,7 +4,6 @@ namespace Walk.CompilerServices.Xml.Html;
 
 public interface IHtmlSyntaxNode : IHtmlSyntax
 {
-    public IReadOnlyList<IHtmlSyntax> ChildContent { get; }
-    public IReadOnlyList<IHtmlSyntax> Children { get; }
+    public List<IHtmlSyntaxNode> ChildList { get; }
     public TextEditorTextSpan TextEditorTextSpan { get; }
 }

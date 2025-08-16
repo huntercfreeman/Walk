@@ -38,6 +38,7 @@ public class TextEditorXmlLexer
         var htmlSyntaxWalker = new HtmlSyntaxWalker();
         htmlSyntaxWalker.Visit(syntaxNodeRoot);
 
+        /*
         // Tag Names
         SyntaxTokenList.AddRange(
             htmlSyntaxWalker.TagNameNodes.Select(x => new SyntaxToken(SyntaxKind.BadToken, x.TextEditorTextSpan)));
@@ -57,6 +58,7 @@ public class TextEditorXmlLexer
         // Comments
         SyntaxTokenList.AddRange(
             htmlSyntaxWalker.CommentNodes.Select(x => new SyntaxToken(SyntaxKind.BadToken, x.TextEditorTextSpan)));
+        */
             
         var endOfFileTextSpan = new TextEditorTextSpan(
             SourceText.Length,

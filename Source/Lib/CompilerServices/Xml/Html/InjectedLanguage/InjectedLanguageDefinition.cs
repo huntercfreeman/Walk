@@ -11,8 +11,8 @@ public class InjectedLanguageDefinition
         string transitionSubstringEscaped,
         Func<StringWalker, InjectedLanguageDefinition, List<IHtmlSyntaxNode>> parseInjectedLanguageFunc,
         Action<StringWalker, InjectedLanguageDefinition, TextEditorTextSpan>? parseTagName,
-        Func<StringWalker, InjectedLanguageDefinition, AttributeNameNode>? parseAttributeName,
-        Func<StringWalker, InjectedLanguageDefinition, AttributeValueNode>? parseAttributeValue)
+        Func<StringWalker, InjectedLanguageDefinition, TextEditorTextSpan>? parseAttributeName,
+        Func<StringWalker, InjectedLanguageDefinition, TextEditorTextSpan>? parseAttributeValue)
     {
         TransitionSubstring = transitionSubstring;
         TransitionSubstringEscaped = transitionSubstringEscaped;
@@ -31,7 +31,7 @@ public class InjectedLanguageDefinition
 
     public Action<StringWalker, InjectedLanguageDefinition, TextEditorTextSpan>? ParseTagName { get; }
 
-    public Func<StringWalker, InjectedLanguageDefinition, AttributeNameNode>? ParseAttributeName { get; }
+    public Func<StringWalker, InjectedLanguageDefinition, TextEditorTextSpan>? ParseAttributeName { get; }
 
-    public Func<StringWalker, InjectedLanguageDefinition, AttributeValueNode>? ParseAttributeValue { get; }
+    public Func<StringWalker, InjectedLanguageDefinition, TextEditorTextSpan>? ParseAttributeValue { get; }
 }

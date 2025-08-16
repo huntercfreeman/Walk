@@ -78,6 +78,8 @@ public class TreeViewCSharpProjectNugetPackageReferences : TreeViewWithType<CSha
 
     public override async Task LoadChildListAsync()
     {
+        // (2025-08-16) breaking
+        /*
         var previousChildren = new List<TreeViewNoType>(ChildList);
 
         var content = await CommonService.FileSystemProvider.File.ReadAllTextAsync(
@@ -145,6 +147,7 @@ public class TreeViewCSharpProjectNugetPackageReferences : TreeViewWithType<CSha
         ChildList = newChildList;
         LinkChildren(previousChildren, ChildList);
         TreeViewChangedKey = Key<TreeViewChanged>.NewKey();
+        */
     }
 
     public override void RemoveRelatedFilesFromParent(List<TreeViewNoType> siblingsAndSelfTreeViews)

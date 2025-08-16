@@ -78,6 +78,7 @@ public class RazorLexer
 
         htmlSyntaxWalker.Visit(syntaxNodeRoot);
 
+        /*
         // Tag Names
         _syntaxTokenList.AddRange(
             htmlSyntaxWalker.TagNameNodes.Select(tns => new SyntaxToken(SyntaxKind.BadToken, tns.TextEditorTextSpan)));
@@ -97,6 +98,7 @@ public class RazorLexer
         // Comments
         _syntaxTokenList.AddRange(
             htmlSyntaxWalker.CommentNodes.Select(c => new SyntaxToken(SyntaxKind.BadToken, c.TextEditorTextSpan)));
+        */
 
         RazorSyntaxTree.ParseCodebehind();
     }

@@ -7,7 +7,7 @@ public abstract class XmlSyntaxWalker
 {
     public virtual void Visit(IHtmlSyntaxNode node)
     {
-        foreach (var child in node.Children)
+        foreach (var child in node.ChildList)
         {
             if (child is null)
                 continue;
@@ -18,26 +18,8 @@ public abstract class XmlSyntaxWalker
 
         switch (node.HtmlSyntaxKind)
         {
-            case HtmlSyntaxKind.AttributeNameNode:
-                VisitAttributeNameNode((AttributeNameNode)node);
-                break;
-            case HtmlSyntaxKind.AttributeValueNode:
-                VisitAttributeValueNode((AttributeValueNode)node);
-                break;
-            case HtmlSyntaxKind.AttributeNode:
-                VisitAttributeNode((AttributeNode)node);
-                break;
-            case HtmlSyntaxKind.CommentNode:
-                VisitCommentNode((CommentNode)node);
-                break;
             case HtmlSyntaxKind.InjectedLanguageFragmentNode:
                 VisitInjectedLanguageFragmentNode((InjectedLanguageFragmentNode)node);
-                break;
-            case HtmlSyntaxKind.TagNameNode:
-                VisitTagNameNode((TagNameNode)node);
-                break;
-            case HtmlSyntaxKind.TextNode:
-                VisitTextNode((TextNode)node);
                 break;
             case HtmlSyntaxKind.TagOpeningNode:
                 VisitTagOpeningNode((TagNode)node);
@@ -51,37 +33,7 @@ public abstract class XmlSyntaxWalker
         }
     }
 
-    public virtual void VisitAttributeNameNode(AttributeNameNode node)
-    {
-
-    }
-
-    public virtual void VisitAttributeValueNode(AttributeValueNode node)
-    {
-
-    }
-
-    public virtual void VisitAttributeNode(AttributeNode node)
-    {
-
-    }
-
-    public virtual void VisitCommentNode(CommentNode node)
-    {
-
-    }
-
     public virtual void VisitInjectedLanguageFragmentNode(InjectedLanguageFragmentNode node)
-    {
-
-    }
-
-    public virtual void VisitTagNameNode(TagNameNode node)
-    {
-
-    }
-
-    public virtual void VisitTextNode(TextNode node)
     {
 
     }

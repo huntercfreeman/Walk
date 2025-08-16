@@ -263,7 +263,7 @@ public class RazorSyntaxTree
         }
     }
 
-    public static AttributeNameNode ParseAttributeName(
+    public static TextEditorTextSpan ParseAttributeName(
         StringWalker stringWalker,
         //List<TextEditorDiagnostic> diagnosticList,
         InjectedLanguageDefinition injectedLanguageDefinition)
@@ -282,15 +282,13 @@ public class RazorSyntaxTree
             }
         }
 
-        var attributeNameTextSpan = new TextEditorTextSpan(
+        return new TextEditorTextSpan(
             startingPositionIndex,
             stringWalker.PositionIndex,
             (byte)HtmlDecorationKind.InjectedLanguageFragment);
-
-        return new AttributeNameNode(attributeNameTextSpan);
     }
 
-    public static AttributeValueNode ParseAttributeValue(
+    public static TextEditorTextSpan ParseAttributeValue(
         StringWalker stringWalker,
         //List<TextEditorDiagnostic> diagnosticList,
         InjectedLanguageDefinition injectedLanguageDefinition)
@@ -306,14 +304,15 @@ public class RazorSyntaxTree
         bool isClassLevelCodeBlock)
     {
         var injectedLanguageFragmentSyntaxes = new List<IHtmlSyntaxNode>();
-
+        
+        /*
         var startingPositionIndex = stringWalker.PositionIndex;
 
         // Syntax highlight the CODE_BLOCK_START as a razor keyword specifically
         {
             injectedLanguageFragmentSyntaxes.Add(
                 new InjectedLanguageFragmentNode(
-                    Array.Empty<IHtmlSyntax>(),
+                    injectedLanguageFragmentSyntaxes,
                     new TextEditorTextSpan(
                         stringWalker.PositionIndex,
                         stringWalker.PositionIndex +
@@ -455,6 +454,7 @@ public class RazorSyntaxTree
                 }
             }
         }
+        */
 
         return injectedLanguageFragmentSyntaxes;
     }
@@ -486,7 +486,7 @@ public class RazorSyntaxTree
     {
         var injectedLanguageFragmentSyntaxes = new List<IHtmlSyntaxNode>();
 
-        var startingPositionIndex = stringWalker.PositionIndex;
+        /*var startingPositionIndex = stringWalker.PositionIndex;
 
         // Syntax highlight the EXPLICIT_EXPRESSION_START as a razor keyword specifically
         {
@@ -531,7 +531,7 @@ public class RazorSyntaxTree
                     break;
                 }
             }
-        }
+        }*/
 
         // TODO: Syntax highlighting
         return injectedLanguageFragmentSyntaxes;
@@ -580,7 +580,7 @@ public class RazorSyntaxTree
     {
         var injectedLanguageFragmentSyntaxes = new List<IHtmlSyntaxNode>();
 
-        // Syntax highlight the keyword as a razor keyword specifically
+        /*// Syntax highlight the keyword as a razor keyword specifically
         {
             injectedLanguageFragmentSyntaxes.Add(
                 new InjectedLanguageFragmentNode(
@@ -828,7 +828,7 @@ public class RazorSyntaxTree
 
                     break;
                 }
-        }
+        }*/
 
         return injectedLanguageFragmentSyntaxes;
     }
@@ -842,7 +842,7 @@ public class RazorSyntaxTree
     {
         var injectedLanguageFragmentSyntaxes = new List<IHtmlSyntaxNode>();
 
-        // Syntax highlight the keyword as a razor keyword specifically
+        /*// Syntax highlight the keyword as a razor keyword specifically
         {
             injectedLanguageFragmentSyntaxes.Add(
                 new InjectedLanguageFragmentNode(
@@ -897,7 +897,7 @@ public class RazorSyntaxTree
                     // @inherits IconBase
                     break;
                 }
-        }
+        }*/
 
         return injectedLanguageFragmentSyntaxes;
     }
@@ -909,10 +909,13 @@ public class RazorSyntaxTree
         InjectedLanguageDefinition injectedLanguageDefinition)
     {
         var injectedLanguageFragmentSyntaxes = new List<IHtmlSyntaxNode>();
+        /*
 
         // Enters the while loop on the '*'
+        
 
-        // Syntax highlight the '*' the same color as a razor keyword
+        //// Syntax highlight the '*' the same color as a razor keyword
+        /*
         {
             var commentStartTextSpan = new TextEditorTextSpan(
                 stringWalker.PositionIndex,
@@ -951,7 +954,8 @@ public class RazorSyntaxTree
 
         injectedLanguageFragmentSyntaxes.Add(commentValueSyntax);
 
-        // Syntax highlight the '*' the same color as a razor keyword
+        /// Syntax highlight the '*' the same color as a razor keyword
+        /*
         {
             var commentEndTextSpan = new TextEditorTextSpan(
                 stringWalker.PositionIndex,
@@ -963,7 +967,7 @@ public class RazorSyntaxTree
                 commentEndTextSpan);
 
             injectedLanguageFragmentSyntaxes.Add(commentEndSyntax);
-        }
+        }*/
 
         return injectedLanguageFragmentSyntaxes;
     }
@@ -976,7 +980,7 @@ public class RazorSyntaxTree
     {
         var injectedLanguageFragmentSyntaxes = new List<IHtmlSyntaxNode>();
 
-        // Enters the while loop on the ':'
+        /*// Enters the while loop on the ':'
 
         // Syntax highlight the ':' the same color as a razor keyword
         {
@@ -1000,7 +1004,7 @@ public class RazorSyntaxTree
             {
                 break;
             }
-        }
+        }*/
 
         return injectedLanguageFragmentSyntaxes;
     }
@@ -1012,7 +1016,7 @@ public class RazorSyntaxTree
         string keywordText,
         out List<IHtmlSyntaxNode>? tagSyntaxes)
     {
-        while (!stringWalker.IsEof)
+        /*while (!stringWalker.IsEof)
         {
             _ = stringWalker.ReadCharacter();
 
@@ -1043,10 +1047,10 @@ public class RazorSyntaxTree
                     stringWalker.PositionIndex + 1,
                     (byte)HtmlDecorationKind.None,
                     stringWalker.ResourceUri,
-                    stringWalker.SourceText));*/
+                    stringWalker.SourceText));*//*
 
             break;
-        }
+        }*/
 
         tagSyntaxes = null;
         return false;
@@ -1103,7 +1107,7 @@ public class RazorSyntaxTree
     {
         tagSyntaxes = new List<IHtmlSyntaxNode>();
 
-        while (!stringWalker.IsEof)
+        /*while (!stringWalker.IsEof)
         {
             _ = stringWalker.ReadCharacter();
 
@@ -1158,7 +1162,7 @@ public class RazorSyntaxTree
                 continue;
 
             break;
-        }
+        }*/
 
         tagSyntaxes = tagSyntaxes.Any()
             ? tagSyntaxes
@@ -1176,7 +1180,7 @@ public class RazorSyntaxTree
     {
         tagSyntaxes = new List<IHtmlSyntaxNode>();
 
-        while (!stringWalker.IsEof)
+        /*while (!stringWalker.IsEof)
         {
             _ = stringWalker.ReadCharacter();
 
@@ -1215,7 +1219,7 @@ public class RazorSyntaxTree
                 continue;
 
             break;
-        }
+        }*/
 
         tagSyntaxes = null;
         return false;
@@ -1230,7 +1234,7 @@ public class RazorSyntaxTree
     {
         tagSyntaxes = new List<IHtmlSyntaxNode>();
 
-        while (!stringWalker.IsEof)
+        /*while (!stringWalker.IsEof)
         {
             _ = stringWalker.ReadCharacter();
 
@@ -1269,7 +1273,7 @@ public class RazorSyntaxTree
                 continue;
 
             break;
-        }
+        }*/
 
         tagSyntaxes = null;
         return false;

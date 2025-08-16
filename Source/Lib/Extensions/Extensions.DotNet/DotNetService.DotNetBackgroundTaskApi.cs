@@ -446,6 +446,8 @@ public partial class DotNetService
         StringBuilder tokenBuilder,
         StringBuilder formattedBuilder)
     {
+        // (2025-08-16) breaking
+        /*
         var htmlSyntaxUnit = HtmlSyntaxTree.ParseText(
             IdeService.TextEditorService,
             IdeService.TextEditorService.__StringWalker,
@@ -631,6 +633,8 @@ public partial class DotNetService
             stringNestedProjectEntryList,
             dotNetSolutionGlobal,
             content);
+        */
+        throw new NotImplementedException();
     }
 
     public DotNetSolutionModel ParseSln(
@@ -665,6 +669,10 @@ public partial class DotNetService
     /// </summary>
     private List<IDotNetProject> SortProjectReferences(DotNetSolutionModel dotNetSolutionModel, StringBuilder tokenBuilder, StringBuilder formattedBuilder)
     {
+        return dotNetSolutionModel.DotNetProjectList;
+    
+        // (2025-08-16) breaking
+        /*
         var moveUpDirectoryToken = $"..{IdeService.TextEditorService.CommonService.EnvironmentProvider.DirectorySeparatorChar}";
         // "./" is being called the 'sameDirectoryToken'
         var sameDirectoryToken = $".{IdeService.TextEditorService.CommonService.EnvironmentProvider.DirectorySeparatorChar}";
@@ -811,6 +819,7 @@ public partial class DotNetService
         }
 
         return dotNetSolutionModel.DotNetProjectList;
+        */
     }
 
     private void MoveAndShiftList(

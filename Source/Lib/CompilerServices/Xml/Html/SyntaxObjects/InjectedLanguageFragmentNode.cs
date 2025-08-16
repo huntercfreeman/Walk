@@ -6,18 +6,16 @@ namespace Walk.CompilerServices.Xml.Html.SyntaxObjects;
 public class InjectedLanguageFragmentNode : IHtmlSyntaxNode
 {
     public InjectedLanguageFragmentNode(
-        IReadOnlyList<IHtmlSyntax> childHtmlSyntaxes,
+        List<IHtmlSyntaxNode> childList,
         TextEditorTextSpan textEditorTextSpan)
     {
         TextEditorTextSpan = textEditorTextSpan;
 
-        ChildContent = childHtmlSyntaxes;
-        Children = ChildContent;
+        ChildList = childList;
     }
 
     public TextEditorTextSpan TextEditorTextSpan { get; }
-    public IReadOnlyList<IHtmlSyntax> ChildContent { get; }
-    public IReadOnlyList<IHtmlSyntax> Children { get; }
+    public List<IHtmlSyntaxNode> ChildList { get; }
 
     public HtmlSyntaxKind HtmlSyntaxKind => HtmlSyntaxKind.InjectedLanguageFragmentNode;
 }

@@ -95,7 +95,8 @@ public class TreeViewCSharpProjectToProjectReferences : TreeViewWithType<CSharpP
 
         cSharpProjectSyntaxWalker.Visit(syntaxNodeRoot);
 
-        var projectReferences = cSharpProjectSyntaxWalker.TagNodes
+        // (2025-08-16) breaking
+        /*var projectReferences = cSharpProjectSyntaxWalker.TagNodes
             .Where(ts => (ts.OpenTagNameNode?.TextEditorTextSpan.GetText(content, textEditorService: null) ?? string.Empty) == "ProjectReference")
             .ToList();
 
@@ -165,10 +166,13 @@ public class TreeViewCSharpProjectToProjectReferences : TreeViewWithType<CSharpP
                 TreeViewChangedKey = Key<TreeViewChanged>.NewKey()
             })
             .ToList();
+        
 
         ChildList = newChildList;
         LinkChildren(previousChildren, ChildList);
         TreeViewChangedKey = Key<TreeViewChanged>.NewKey();
+        
+        */
     }
 
     public override void RemoveRelatedFilesFromParent(List<TreeViewNoType> siblingsAndSelfTreeViews)
