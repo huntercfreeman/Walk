@@ -44,20 +44,19 @@ public static class HtmlSyntaxTree
                     (byte)HtmlDecorationKind.None)),
         };
 
-        var textEditorHtmlDiagnosticBag = new List<TextEditorDiagnostic>();
+        // var textEditorHtmlDiagnosticBag = new List<TextEditorDiagnostic>();
 
         rootTagSyntaxBuilder.Children = HtmlSyntaxTreeStateMachine
             .ParseTagChildContent(
                 textEditorService,
                 stringWalker,
-                textEditorHtmlDiagnosticBag,
+                // textEditorHtmlDiagnosticBag,
                 injectedLanguageDefinition);
 
-        var htmlSyntaxUnitBuilder = new HtmlSyntaxUnit.HtmlSyntaxUnitBuilder(
-            rootTagSyntaxBuilder.Build(),
-            textEditorHtmlDiagnosticBag);
-
-        return htmlSyntaxUnitBuilder.Build();
+        return new HtmlSyntaxUnit(
+            rootTagSyntaxBuilder.Build()//,
+            // textEditorHtmlDiagnosticBag
+            );
     }
 
     public static class HtmlSyntaxTreeStateMachine
@@ -66,7 +65,7 @@ public static class HtmlSyntaxTree
         public static IHtmlSyntaxNode ParseTag(
             TextEditorService? textEditorService,
             StringWalker stringWalker,
-            List<TextEditorDiagnostic> diagnosticList,
+            /*List<TextEditorDiagnostic> diagnosticList,*/
             InjectedLanguageDefinition? injectedLanguageDefinition)
         {
             if (stringWalker.PeekForSubstring(
@@ -75,7 +74,7 @@ public static class HtmlSyntaxTree
                 return ParseComment(
                     textEditorService,
                     stringWalker,
-                    diagnosticList,
+                    //diagnosticList,
                     injectedLanguageDefinition);
             }
 
@@ -98,7 +97,7 @@ public static class HtmlSyntaxTree
             tagBuilder.OpenTagNameSyntax = ParseTagName(
                 textEditorService,
                 stringWalker,
-                diagnosticList,
+                //diagnosticList,
                 injectedLanguageDefinition);
 
             // Get all html attributes break when see End Of File or closing of the tag
@@ -138,7 +137,7 @@ public static class HtmlSyntaxTree
                     tagBuilder.Children = ParseTagChildContent(
                         textEditorService,
                         stringWalker,
-                        diagnosticList,
+                        // diagnosticList,
                         injectedLanguageDefinition);
 
                     // TODO: check that the closing tag name matches the opening tag
@@ -206,7 +205,7 @@ public static class HtmlSyntaxTree
                 }
                 else
                 {
-                    var attributeSyntax = ParseAttribute(textEditorService, stringWalker, diagnosticList, injectedLanguageDefinition);
+                    var attributeSyntax = ParseAttribute(textEditorService, stringWalker, /*diagnosticList,*/ injectedLanguageDefinition);
                     tagBuilder.AttributeSyntaxes.Add(attributeSyntax);
                 }
             }
@@ -216,7 +215,7 @@ public static class HtmlSyntaxTree
         public static TagNameNode ParseTagName(
             TextEditorService? textEditorService,
             StringWalker stringWalker,
-            List<TextEditorDiagnostic> diagnosticList,
+            //List<TextEditorDiagnostic> diagnosticList,
             InjectedLanguageDefinition? injectedLanguageDefinition)
         {
             var startingPositionIndex = stringWalker.PositionIndex;
@@ -271,7 +270,7 @@ public static class HtmlSyntaxTree
 
             injectedLanguageDefinition?.ParseTagName?.Invoke(
                 stringWalker,
-                diagnosticList,
+                //diagnosticList,
                 injectedLanguageDefinition,
                 tagNameTextSpan);
 
@@ -281,7 +280,7 @@ public static class HtmlSyntaxTree
         public static List<IHtmlSyntax> ParseTagChildContent(
             TextEditorService? textEditorService,
             StringWalker stringWalker,
-            List<TextEditorDiagnostic> diagnosticList,
+            // List<TextEditorDiagnostic> diagnosticList,
             InjectedLanguageDefinition? injectedLanguageDefinition)
         {
             var startingPositionIndex = stringWalker.PositionIndex;
@@ -333,12 +332,12 @@ public static class HtmlSyntaxTree
 
                     if (stringWalker.PeekForSubstring(HtmlFacts.COMMENT_TAG_BEGINNING))
                     {
-                        var node = ParseComment(textEditorService, stringWalker, diagnosticList, injectedLanguageDefinition);
+                        var node = ParseComment(textEditorService, stringWalker, /*diagnosticList,*/ injectedLanguageDefinition);
                         htmlSyntaxes.Add(node);
                     }
                     else
                     {
-                        var node = ParseTag(textEditorService, stringWalker, diagnosticList, injectedLanguageDefinition);
+                        var node = ParseTag(textEditorService, stringWalker, /*diagnosticList,*/ injectedLanguageDefinition);
                         htmlSyntaxes.Add(node);
                     }
 
@@ -350,7 +349,7 @@ public static class HtmlSyntaxTree
                     // If there is text in textNodeBuilder add a new TextNode to the List of TagSyntax
                     AddTextNode();
 
-                    var nodeBag = ParseInjectedLanguageCodeBlock(textEditorService, stringWalker, diagnosticList, injectedLanguageDefinition);
+                    var nodeBag = ParseInjectedLanguageCodeBlock(textEditorService, stringWalker, /*diagnosticList,*/ injectedLanguageDefinition);
                     htmlSyntaxes.AddRange(nodeBag);
 
                     continue;
@@ -373,7 +372,7 @@ public static class HtmlSyntaxTree
         public static List<IHtmlSyntaxNode> ParseInjectedLanguageCodeBlock(
             TextEditorService? textEditorService,
             StringWalker stringWalker,
-            List<TextEditorDiagnostic> diagnosticList,
+            //List<TextEditorDiagnostic> diagnosticList,
             InjectedLanguageDefinition injectedLanguageDefinition)
         {
             var injectedLanguageFragmentSyntaxes = new List<IHtmlSyntaxNode>();
@@ -393,7 +392,7 @@ public static class HtmlSyntaxTree
                 injectedLanguageDefinition.ParseInjectedLanguageFunc
                     .Invoke(
                         stringWalker,
-                        diagnosticList,
+                        //diagnosticList,
                         injectedLanguageDefinition));
 
             return injectedLanguageFragmentSyntaxes;
@@ -402,19 +401,19 @@ public static class HtmlSyntaxTree
         public static AttributeNode ParseAttribute(
             TextEditorService? textEditorService,
             StringWalker stringWalker,
-            List<TextEditorDiagnostic> diagnosticList,
+            //List<TextEditorDiagnostic> diagnosticList,
             InjectedLanguageDefinition? injectedLanguageDefinition)
         {
             var attributeNameSyntax = ParseAttributeName(
                 textEditorService,
                 stringWalker,
-                diagnosticList,
+                //diagnosticList,
                 injectedLanguageDefinition);
 
             _ = TryReadAttributeValue(
                     textEditorService,
                     stringWalker,
-                    diagnosticList,
+                    //diagnosticList,
                     injectedLanguageDefinition,
                     out var attributeValueSyntax);
 
@@ -431,7 +430,7 @@ public static class HtmlSyntaxTree
         public static AttributeNameNode ParseAttributeName(
             TextEditorService? textEditorService,
             StringWalker stringWalker,
-            List<TextEditorDiagnostic> diagnosticList,
+            // List<TextEditorDiagnostic> diagnosticList,
             InjectedLanguageDefinition? injectedLanguageDefinition)
         {
             // When ParseAttributeName is invoked the PositionIndex is always 1 character too far
@@ -456,7 +455,7 @@ public static class HtmlSyntaxTree
                         return injectedLanguageDefinition.ParseAttributeName
                             .Invoke(
                                 stringWalker,
-                                diagnosticList,
+                                // diagnosticList,
                                 injectedLanguageDefinition);
                     }
                 }
@@ -481,7 +480,7 @@ public static class HtmlSyntaxTree
         private static bool TryReadAttributeValue(
             TextEditorService? textEditorService,
             StringWalker stringWalker,
-            List<TextEditorDiagnostic> diagnosticList,
+            // List<TextEditorDiagnostic> diagnosticList,
             InjectedLanguageDefinition? injectedLanguageDefinition,
             out AttributeValueNode attributeValueSyntax)
         {
@@ -502,7 +501,7 @@ public static class HtmlSyntaxTree
                 attributeValueSyntax = ParseAttributeValue(
                     textEditorService,
                     stringWalker,
-                    diagnosticList,
+                    // diagnosticList,
                     injectedLanguageDefinition);
 
                 return true;
@@ -522,11 +521,11 @@ public static class HtmlSyntaxTree
         public static AttributeValueNode ParseAttributeValue(
             TextEditorService? textEditorService,
             StringWalker stringWalker,
-            List<TextEditorDiagnostic> diagnosticList,
+            //List<TextEditorDiagnostic> diagnosticList,
             InjectedLanguageDefinition? injectedLanguageDefinition)
         {
             // Suppress these unused parameters because all 'Parse...()' methods should take them for consistency.
-            _ = diagnosticList;
+            //_ = diagnosticList;
             _ = injectedLanguageDefinition;
 
             var startingPositionIndex = stringWalker.PositionIndex;
@@ -632,11 +631,11 @@ public static class HtmlSyntaxTree
         public static CommentNode ParseComment(
             TextEditorService? textEditorService,
             StringWalker stringWalker,
-            List<TextEditorDiagnostic> diagnosticList,
+            /*List<TextEditorDiagnostic> diagnosticList,*/
             InjectedLanguageDefinition? injectedLanguageDefinition)
         {
             // Suppress these unused parameters because all 'Parse...()' methods should take them for consistency.
-            _ = diagnosticList;
+            //_ = diagnosticList;
             _ = injectedLanguageDefinition;
 
             var startingPositionIndex = stringWalker.PositionIndex;
