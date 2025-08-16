@@ -38,7 +38,7 @@ public partial class IdeService
             });
     }
 
-    public MenuOptionRecord NewTemplatedFile(AbsolutePath parentDirectory, string parentDirectoryNamespace, Func<Task> onAfterCompletion)
+    public MenuOptionRecord NewTemplatedFile(AbsolutePath parentDirectory, Func<string> getParentDirectoryNamespaceFunc, Func<Task> onAfterCompletion)
     {
         return new MenuOptionRecord("New Templated File", MenuOptionKind.Create,
             simpleWidgetKind: Walk.Common.RazorLib.Widgets.Models.SimpleWidgetKind.FileForm,
@@ -56,7 +56,7 @@ public partial class IdeService
                                 exactMatchFileTemplate,
                                 relatedMatchFileTemplates,
                                 parentDirectory,
-                                parentDirectoryNamespace,
+                                getParentDirectoryNamespaceFunc.Invoke(),
                                 onAfterCompletion);
 
                             return Task.CompletedTask;
