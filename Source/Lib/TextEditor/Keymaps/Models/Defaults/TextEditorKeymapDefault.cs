@@ -164,35 +164,15 @@ public class TextEditorKeymapDefault : ITextEditorKeymap
                     shouldApplySyntaxHighlighting = true;
                     break;
                 case "ArrowDown":
+                    modelModifier = editContext.GetModelModifier(viewModel.PersistentState.ResourceUri, isReadOnly: true);
                     viewModel.ScrollWasModified = true;
                     viewModel.SetScrollTop(viewModel.PersistentState.ScrollTop + viewModel.PersistentState.CharAndLineMeasurements.LineHeight);
-                    if (viewModel.PersistentState.MenuKind != MenuKind.None)
-                    {
-                        TextEditorCommandDefaultFunctions.RemoveDropdown(
-                            editContext,
-                            viewModel,
-                            componentData.TextEditorViewModelSlimDisplay.TextEditorService.CommonService);
-                        editContext.TextEditorService.ViewModel_StopCursorBlinking();
-                    }
-                    await editContext.TextEditorService
-                        .FinalizePost(editContext)
-                        .ConfigureAwait(false);
-                    return;
+                    break;
                 case "ArrowUp":
+                    modelModifier = editContext.GetModelModifier(viewModel.PersistentState.ResourceUri, isReadOnly: true);
                     viewModel.ScrollWasModified = true;
                     viewModel.SetScrollTop(viewModel.PersistentState.ScrollTop + -1 * viewModel.PersistentState.CharAndLineMeasurements.LineHeight);
-                    if (viewModel.PersistentState.MenuKind != MenuKind.None)
-                    {
-                        TextEditorCommandDefaultFunctions.RemoveDropdown(
-                            editContext,
-                            viewModel,
-                            componentData.TextEditorViewModelSlimDisplay.TextEditorService.CommonService);
-                        editContext.TextEditorService.ViewModel_StopCursorBlinking();
-                    }
-                    await editContext.TextEditorService
-                        .FinalizePost(editContext)
-                        .ConfigureAwait(false);
-                    return;
+                    break;
                 case "PageDown":
                     modelModifier = editContext.GetModelModifier(viewModel.PersistentState.ResourceUri, isReadOnly: true);
                     TextEditorCommandDefaultFunctions.CursorMovePageBottom(
@@ -777,14 +757,6 @@ public class TextEditorKeymapDefault : ITextEditorKeymap
         //       their keydown code takes a long time?
         editContext.TextEditorService.ViewModel_StopCursorBlinking();
         
-        // WARNING: { 'Ctrl' + 'ArrowDown' } and { 'Ctrl' + 'ArrowUp' }...
-        // ...are being experimented with.
-        //
-        // They will return from this method early unlike every other case.
-        //
-        // Long term, if this is extremely effective, likely
-        // some other more clear conditional branching should be made.
-        //
         await editContext.TextEditorService
             .FinalizePost(editContext)
             .ConfigureAwait(false);

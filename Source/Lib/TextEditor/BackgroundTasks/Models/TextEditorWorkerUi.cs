@@ -1,6 +1,7 @@
 using System.Collections.Concurrent;
 using Walk.Common.RazorLib.BackgroundTasks.Models;
 using Walk.Common.RazorLib.Keys.Models;
+using Walk.TextEditor.RazorLib.Characters.Models;
 using Walk.TextEditor.RazorLib.JavaScriptObjects.Models;
 using Walk.TextEditor.RazorLib.Commands.Models.Defaults;
 using Walk.TextEditor.RazorLib.Cursors.Models;
@@ -103,6 +104,43 @@ public class TextEditorWorkerUi : IBackgroundTaskGroup
                     ? modelModifier.GetLineLength(lineAndColumnIndex.LineIndex)
                     : higherColumnIndexExpansion;
         
+                CharacterKind lowerKind;
+                CharacterKind upperKind;
+        
+                if (viewModel.ColumnIndex > 0)
+                {
+                    var positionIndex = modelModifier.GetPositionIndex(viewModel.LineIndex, viewModel.ColumnIndex - 1);
+                    lowerKind = modelModifier.GetCharacterKind(positionIndex);
+                }
+                else
+                {
+                    lowerKind = CharacterKind.Bad;
+                }
+                
+                if (viewModel.ColumnIndex <= modelModifier.GetLineLength(lineAndColumnIndex.LineIndex))
+                {
+                    var positionIndex = modelModifier.GetPositionIndex(viewModel.LineIndex, viewModel.ColumnIndex);
+                    upperKind = modelModifier.GetCharacterKind(positionIndex);
+                }
+                else
+                {
+                    upperKind = CharacterKind.Bad;
+                }
+                
+                var lowerGolfPriority = CharacterKindHelper.GetPriorityGolfRank(lowerKind);
+                var upperGolfPriority = CharacterKindHelper.GetPriorityGolfRank(upperKind);
+                
+                if (lowerGolfPriority < upperGolfPriority)
+                {
+                    if (lowerKind != upperKind)
+                        higherColumnIndexExpansion = viewModel.ColumnIndex;
+                }
+                else if (upperGolfPriority < lowerGolfPriority)
+                {
+                    if (upperKind != lowerKind)
+                        lowerColumnIndexExpansion = viewModel.ColumnIndex;
+                }
+                
                 // Move user's cursor position to the higher expansion
                 viewModel.LineIndex = lineAndColumnIndex.LineIndex;
                 viewModel.ColumnIndex = higherColumnIndexExpansion;
@@ -311,12 +349,16 @@ public class TextEditorWorkerUi : IBackgroundTaskGroup
                 {
                     viewModelModifier.ScrollWasModified = true;
                     // I find WheelEventArgs.DeltaY has to be used for horizontal scrolling with the mouse wheel.
-                    viewModelModifier.MutateScrollLeft((int)Math.Ceiling(workArgsTuple.WorkerUiArgs.Y / 2));
+                    viewModelModifier.SetScrollLeft(
+                        viewModelModifier.PersistentState.ScrollLeft +
+                            (int)Math.Ceiling(workArgsTuple.WorkerUiArgs.Y / 2));
                 }
                 else
                 {
                     viewModelModifier.ScrollWasModified = true;
-                    viewModelModifier.MutateScrollTop((int)Math.Ceiling(workArgsTuple.WorkerUiArgs.Y));
+                    viewModelModifier.SetScrollTop(
+                        viewModelModifier.PersistentState.ScrollTop +
+                            (int)Math.Ceiling(workArgsTuple.WorkerUiArgs.Y));
                 }
                 
                 await editContext.TextEditorService

@@ -14,4 +14,28 @@ public static class CharacterKindHelper
             return CharacterKind.Bad;
         return CharacterKind.LetterOrDigit;
     }
+    
+    public static int GetPriorityGolfRank(CharacterKind characterKind)
+    {
+        if (characterKind == CharacterKind.LetterOrDigit)
+        {
+            return 0;
+        }
+        else if (characterKind == CharacterKind.Punctuation)
+        {
+            return 1;
+        }
+        else if (characterKind == CharacterKind.Whitespace)
+        {
+            return 2;
+        }
+        else if (characterKind == CharacterKind.Bad)
+        {
+            return 3;
+        }
+        else
+        {
+            return 4;
+        }
+    }
 }
