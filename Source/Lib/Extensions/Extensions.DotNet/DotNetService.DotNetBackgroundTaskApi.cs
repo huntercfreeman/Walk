@@ -669,10 +669,6 @@ public partial class DotNetService
     /// </summary>
     private List<IDotNetProject> SortProjectReferences(DotNetSolutionModel dotNetSolutionModel, StringBuilder tokenBuilder, StringBuilder formattedBuilder)
     {
-        return dotNetSolutionModel.DotNetProjectList;
-    
-        // (2025-08-16) breaking
-        /*
         var moveUpDirectoryToken = $"..{IdeService.TextEditorService.CommonService.EnvironmentProvider.DirectorySeparatorChar}";
         // "./" is being called the 'sameDirectoryToken'
         var sameDirectoryToken = $".{IdeService.TextEditorService.CommonService.EnvironmentProvider.DirectorySeparatorChar}";
@@ -728,7 +724,8 @@ public partial class DotNetService
                 IdeService.TextEditorService.CommonService.EnvironmentProvider.DeletionPermittedRegister(new(innerParentDirectory, true), tokenBuilder, formattedBuilder);
             }
 
-            var content = IdeService.TextEditorService.CommonService.FileSystemProvider.File.ReadAllText(projectTuple.AbsolutePath.Value);
+            // (2025-08-16) breaking
+            /*var content = IdeService.TextEditorService.CommonService.FileSystemProvider.File.ReadAllText(projectTuple.AbsolutePath.Value);
 
             var htmlSyntaxUnit = HtmlSyntaxTree.ParseText(
                 IdeService.TextEditorService,
@@ -786,7 +783,7 @@ public partial class DotNetService
                     AbsolutePathNameKind.NameWithExtension);
 
                 projectTuple.ReferencedAbsolutePathList.Add(referenceProjectAbsolutePath);
-            }
+            }*/
         }
 
         var upperLimit = dotNetSolutionModel.DotNetProjectList.Count > 4 // Extremely arbitrary number being used here.
@@ -819,7 +816,6 @@ public partial class DotNetService
         }
 
         return dotNetSolutionModel.DotNetProjectList;
-        */
     }
 
     private void MoveAndShiftList(

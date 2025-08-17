@@ -59,7 +59,19 @@ public class TextEditorXmlLexer
         SyntaxTokenList.AddRange(
             htmlSyntaxWalker.CommentNodes.Select(x => new SyntaxToken(SyntaxKind.BadToken, x.TextEditorTextSpan)));
         */
+        
+        SyntaxTokenList.AddRange(
+            htmlSyntaxWalker.CommentList.Select(x => new SyntaxToken(SyntaxKind.BadToken, x)));
             
+        SyntaxTokenList.AddRange(
+            htmlSyntaxWalker.AttributeNameList.Select(x => new SyntaxToken(SyntaxKind.BadToken, x)));
+            
+        SyntaxTokenList.AddRange(
+            htmlSyntaxWalker.AttributeValueList.Select(x => new SyntaxToken(SyntaxKind.BadToken, x)));
+            
+        SyntaxTokenList.AddRange(
+            htmlSyntaxWalker.NameTextSpan.Select(x => new SyntaxToken(SyntaxKind.BadToken, x)));
+        
         var endOfFileTextSpan = new TextEditorTextSpan(
             SourceText.Length,
             SourceText.Length,

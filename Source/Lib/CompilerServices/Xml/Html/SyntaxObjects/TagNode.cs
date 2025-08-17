@@ -8,9 +8,9 @@ public class TagNode : IHtmlSyntaxNode
 {
     public TextEditorTextSpan OpenNameTextSpan { get; set; }
     public TextEditorTextSpan CloseNameTextSpan { get; set; }
-    public List<AttributeEntry> AttributeEntryList { get; set; }
-    public List<IHtmlSyntaxNode> ChildList { get; set; }
-    public List<TextEditorTextSpan> TextSpanList { get; set; }
+    public List<AttributeEntry> AttributeEntryList { get; set; } = new();
+    public List<IHtmlSyntaxNode> ChildList { get; set; } = new();
+    public List<TextEditorTextSpan> TextSpanList { get; set; } = new();
     public HtmlSyntaxKind HtmlSyntaxKind { get; set; }
     public bool HasSpecialHtmlCharacter { get; set; }
 
