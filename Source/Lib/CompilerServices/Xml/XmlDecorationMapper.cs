@@ -2,18 +2,18 @@ using Walk.TextEditor.RazorLib.Decorations.Models;
 
 namespace Walk.CompilerServices.Xml.Html.Decoration;
 
-public class TextEditorHtmlDecorationMapper : IDecorationMapper
+public class XmlDecorationMapper : IDecorationMapper
 {
     public string Map(byte decorationByte)
     {
         var decoration = (XmlDecorationKind)decorationByte;
-        Console.WriteLine(decorationByte);
 
         return decoration switch
         {
             XmlDecorationKind.None => string.Empty,
             XmlDecorationKind.AttributeName => "di_attribute-name",
             XmlDecorationKind.AttributeValue => "di_attribute-value",
+            XmlDecorationKind.TagNameNone => "di_tag-name",
             XmlDecorationKind.TagNameOpen => "di_tag-name",
             XmlDecorationKind.TagNameClose => "di_tag-name",
             XmlDecorationKind.TagNameSelf => "di_tag-name",

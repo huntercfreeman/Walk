@@ -4,7 +4,7 @@ namespace Walk.CompilerServices.Xml;
 
 public static class XmlLexer
 {
-    public enum XmlLexerContext
+    public enum XmlLexerContextKind
     {
         Expect_TagOrText,
         // Expect_TagName, // There is no expect tag name, you can't have whitespace here
@@ -18,9 +18,7 @@ public static class XmlLexer
 
     public static XmlLexerOutput Lex(StreamReaderWrap streamReaderWrap)
     {
-        Console.WriteLine("public static XmlLexerOutput Lex()");
-        
-        var context = XmlLexerContext.Expect_TagOrText;
+        var context = XmlLexerContextKind.Expect_TagOrText;
         var output = new XmlLexerOutput();
         
         // This gets updated throughout the loop
@@ -86,6 +84,49 @@ public static class XmlLexer
                 case 'Z':
                 /* Underscore */
                 case '_':
+                    if (context == XmlLexerContextKind.Expect_AttributeName)
+                    {
+                        var attributeNameStartPosition = streamReaderWrap.PositionIndex;
+                        while (!streamReaderWrap.IsEof)
+                        {
+                            if (!char.IsLetterOrDigit(streamReaderWrap.CurrentCharacter) &&
+                                streamReaderWrap.CurrentCharacter != '_' &&
+                                streamReaderWrap.CurrentCharacter != '-' &&
+                                streamReaderWrap.CurrentCharacter != ':')
+                            {
+                                break;
+                            }
+                            _ = streamReaderWrap.ReadCharacter();
+                        }
+                        output.TextSpanList.Add(new TextEditorTextSpan(
+                            attributeNameStartPosition,
+                            streamReaderWrap.PositionIndex,
+                            (byte)XmlDecorationKind.AttributeName));
+                        context = XmlLexerContextKind.Expect_AttributeValue;
+                        break;
+                    }
+                    else if (context == XmlLexerContextKind.Expect_AttributeValue)
+                    {
+                        var attributeValueStartPosition = streamReaderWrap.PositionIndex;
+                        while (!streamReaderWrap.IsEof)
+                        {
+                            if (!char.IsLetterOrDigit(streamReaderWrap.CurrentCharacter) &&
+                                streamReaderWrap.CurrentCharacter != '_' &&
+                                streamReaderWrap.CurrentCharacter != '-' &&
+                                streamReaderWrap.CurrentCharacter != ':')
+                            {
+                                break;
+                            }
+                            _ = streamReaderWrap.ReadCharacter();
+                        }
+                        output.TextSpanList.Add(new TextEditorTextSpan(
+                            attributeValueStartPosition,
+                            streamReaderWrap.PositionIndex,
+                            (byte)XmlDecorationKind.AttributeValue));
+                        context = XmlLexerContextKind.Expect_AttributeName;
+                        break;
+                    }
+                    
                     goto default;
                 case '0':
                 case '1':
@@ -99,8 +140,50 @@ public static class XmlLexer
                 case '9':
                     goto default;
                 case '\'':
+                    if (context == XmlLexerContextKind.Expect_AttributeValue)
+                    {
+                        var attributeValueStartPosition = streamReaderWrap.PositionIndex;
+                        _ = streamReaderWrap.ReadCharacter();
+                        while (!streamReaderWrap.IsEof)
+                        {
+                            if (streamReaderWrap.CurrentCharacter == '\'')
+                            {
+                                // Inclusive
+                                _ = streamReaderWrap.ReadCharacter();
+                                break;
+                            }
+                            _ = streamReaderWrap.ReadCharacter();
+                        }
+                        output.TextSpanList.Add(new TextEditorTextSpan(
+                            attributeValueStartPosition,
+                            streamReaderWrap.PositionIndex,
+                            (byte)XmlDecorationKind.AttributeValue));
+                        context = XmlLexerContextKind.Expect_AttributeName;
+                        break;
+                    }
                     goto default;
                 case '"':
+                    if (context == XmlLexerContextKind.Expect_AttributeValue)
+                    {
+                        var attributeValueStartPosition = streamReaderWrap.PositionIndex;
+                        _ = streamReaderWrap.ReadCharacter();
+                        while (!streamReaderWrap.IsEof)
+                        {
+                            if (streamReaderWrap.CurrentCharacter == '"')
+                            {
+                                // Inclusive
+                                _ = streamReaderWrap.ReadCharacter();
+                                break;
+                            }
+                            _ = streamReaderWrap.ReadCharacter();
+                        }
+                        output.TextSpanList.Add(new TextEditorTextSpan(
+                            attributeValueStartPosition,
+                            streamReaderWrap.PositionIndex,
+                            (byte)XmlDecorationKind.AttributeValue));
+                        context = XmlLexerContextKind.Expect_AttributeName;
+                        break;
+                    }
                     goto default;
                 case '/':
                     if (streamReaderWrap.PeekCharacter(1) == '/')
@@ -137,6 +220,17 @@ public static class XmlLexer
                     }
                     break;
                 case '=':
+                    if (context == XmlLexerContextKind.Expect_AttributeValue)
+                    {
+                        var attributeValueStartPosition = streamReaderWrap.PositionIndex;
+                        _ = streamReaderWrap.ReadCharacter();
+                        output.TextSpanList.Add(new TextEditorTextSpan(
+                            attributeValueStartPosition,
+                            streamReaderWrap.PositionIndex,
+                            (byte)XmlDecorationKind.AttributeValue));
+                        break;
+                    }
+                
                     if (streamReaderWrap.PeekCharacter(1) == '=')
                     {
                         goto default;
@@ -229,30 +323,40 @@ public static class XmlLexer
                         goto default;
                     }
                     
-                    if (context == XmlLexerContext.Expect_TagOrText)
+                    if (context == XmlLexerContextKind.Expect_TagOrText)
                     {
                         _ = streamReaderWrap.ReadCharacter();
                         
-                        if (streamReaderWrap.CurrentCharacter == '/')
+                        if (streamReaderWrap.CurrentCharacter == '/' || streamReaderWrap.CurrentCharacter == '!')
                             _ = streamReaderWrap.ReadCharacter();
                         
                         var tagNameStartPosition = streamReaderWrap.PositionIndex;
                         while (!streamReaderWrap.IsEof)
                         {
                             if (!char.IsLetterOrDigit(streamReaderWrap.CurrentCharacter) &&
-                                streamReaderWrap.CurrentCharacter != '_')
+                                streamReaderWrap.CurrentCharacter != '_' &&
+                                streamReaderWrap.CurrentCharacter != '-' &&
+                                streamReaderWrap.CurrentCharacter != ':')
                             {
                                 break;
                             }
-                
                             _ = streamReaderWrap.ReadCharacter();
                         }
-                        Console.WriteLine((byte)XmlDecorationKind.TagNameOpen);
                         output.TextSpanList.Add(new TextEditorTextSpan(
                             tagNameStartPosition,
                             streamReaderWrap.PositionIndex,
                             (byte)XmlDecorationKind.TagNameOpen));
-                        Console.WriteLine($"({tagNameStartPosition}, {streamReaderWrap.PositionIndex})");
+
+                        if (streamReaderWrap.CurrentCharacter == '/' && streamReaderWrap.PeekCharacter(1) == '>' ||
+                            streamReaderWrap.CurrentCharacter == '>')
+                        {
+                            context = XmlLexerContextKind.Expect_TagOrText;
+                        }
+                        else
+                        {
+                            context = XmlLexerContextKind.Expect_AttributeName;
+                        }
+                        
                         break;
                     }
                     else
@@ -262,6 +366,11 @@ public static class XmlLexer
                 }
                 case '>':
                 {
+                    if (context != XmlLexerContextKind.Current_AttributeValue && context != XmlLexerContextKind.Current_Text)
+                    {
+                        context = XmlLexerContextKind.Expect_TagOrText;
+                    }
+                
                     if (streamReaderWrap.PeekCharacter(1) == '=')
                     {
                         goto default;
