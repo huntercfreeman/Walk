@@ -7,20 +7,22 @@ public class TextEditorHtmlDecorationMapper : IDecorationMapper
     public string Map(byte decorationByte)
     {
         var decoration = (XmlDecorationKind)decorationByte;
+        Console.WriteLine(decorationByte);
 
         return decoration switch
         {
             XmlDecorationKind.None => string.Empty,
             XmlDecorationKind.AttributeName => "di_attribute-name",
             XmlDecorationKind.AttributeValue => "di_attribute-value",
+            XmlDecorationKind.TagNameOpen => "di_tag-name",
+            XmlDecorationKind.TagNameClose => "di_tag-name",
+            XmlDecorationKind.TagNameSelf => "di_tag-name",
             XmlDecorationKind.Comment => "di_comment",
             XmlDecorationKind.CustomTagName => "di_te_custom-tag-name",
             XmlDecorationKind.EntityReference => "di_te_entity-reference",
             XmlDecorationKind.HtmlCode => "di_te_html-code",
             XmlDecorationKind.InjectedLanguageFragment => "di_injected-language-fragment",
             XmlDecorationKind.InjectedLanguageComponent => "di_injected-language-component",
-            XmlDecorationKind.TagName => "di_tag-name",
-            XmlDecorationKind.Tag => "di_te_tag",
             XmlDecorationKind.Error => "di_te_error",
             XmlDecorationKind.InjectedLanguageCodeBlock => "di_te_injected-language-code-block",
             XmlDecorationKind.InjectedLanguageCodeBlockTag => "di_te_injected-language-code-block-tag",

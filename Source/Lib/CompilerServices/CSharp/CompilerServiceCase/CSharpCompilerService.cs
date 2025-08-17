@@ -29,7 +29,7 @@ public sealed class CSharpCompilerService : IExtendedCompilerService
 {
     // <summary>Public because the RazorCompilerService uses it.</summary>
     public readonly CSharpBinder __CSharpBinder;
-    private readonly CSharpLexer.StreamReaderWrap _streamReaderWrap = new();
+    private readonly StreamReaderWrap _streamReaderWrap = new();
     
     // Service dependencies
     private readonly TextEditorService _textEditorService;

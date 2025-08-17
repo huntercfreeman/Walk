@@ -4,10 +4,10 @@ namespace Walk.CompilerServices.Xml;
 
 public struct XmlLexerOutput
 {
-    public XmlLexerOutput(List<TextEditorTextSpan> textSpanList)
+    public XmlLexerOutput()
     {
-        TextSpanList = textSpanList;
+        TextSpanList = new();
     }
     
-    public List<TextEditorTextSpan> TextSpanList { get; set; }
+    public List<TextEditorTextSpan> TextSpanList { get; }
 }

@@ -145,7 +145,8 @@ public sealed class CSharpProjectCompilerService : ICompilerService
 
     public ValueTask ParseAsync(TextEditorEditContext editContext, TextEditorModel modelModifier, bool shouldApplySyntaxHighlighting)
     {
-        var lexerOutput = XmlLexer.Lex();
+        using StreamReader sr = new StreamReader(modelModifier.PersistentState.ResourceUri.Value);
+        var lexerOutput = XmlLexer.Lex(new StreamReaderWrap(sr));
     
         lock (_resourceMapLock)
         {

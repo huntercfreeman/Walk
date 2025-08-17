@@ -151,7 +151,8 @@ public sealed class DotNetSolutionCompilerService : ICompilerService
     
         if (modelModifier.PersistentState.ResourceUri.Value.EndsWith(ExtensionNoPeriodFacts.DOT_NET_SOLUTION_X))
         {
-            var lexerOutput = XmlLexer.Lex();
+            using StreamReader sr = new StreamReader(modelModifier.PersistentState.ResourceUri.Value);
+            var lexerOutput = XmlLexer.Lex(new StreamReaderWrap(sr));
             syntaxTokenList = lexerOutput.TextSpanList.Select(x => new SyntaxToken(SyntaxKind.NotApplicable, x)).ToList();
         }
         else

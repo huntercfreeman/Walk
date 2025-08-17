@@ -3,7 +3,7 @@ using Walk.TextEditor.RazorLib.Decorations.Models;
 using Walk.Extensions.CompilerServices;
 using Walk.Extensions.CompilerServices.Syntax;
 using Walk.CompilerServices.DotNetSolution.Facts;
-using Walk.CompilerServices.Xml.Html.Decoration;
+using Walk.CompilerServices.Xml;
 
 namespace Walk.CompilerServices.DotNetSolution.SyntaxActors;
 
@@ -157,7 +157,7 @@ public class DotNetSolutionLexer
         var startPosition = _stringWalker.PositionIndex;
         _stringWalker.SkipRange(LexSolutionFacts.Project.PROJECT_DEFINITION_START_TOKEN.Length);
 
-        var textSpan = new TextEditorTextSpan(startPosition, _stringWalker.PositionIndex, (byte)XmlDecorationKind.TagName);
+        var textSpan = new TextEditorTextSpan(startPosition, _stringWalker.PositionIndex, (byte)XmlDecorationKind.TagNameNone);
         _syntaxTokenList.Add(new SyntaxToken(SyntaxKind.OpenAssociatedGroupToken, textSpan));
 
         while (!_stringWalker.IsEof)
@@ -174,7 +174,7 @@ public class DotNetSolutionLexer
                 startPosition = _stringWalker.PositionIndex;
                 _stringWalker.SkipRange(LexSolutionFacts.Project.PROJECT_DEFINITION_END_TOKEN.Length);
 
-                textSpan = new TextEditorTextSpan(startPosition, _stringWalker.PositionIndex, (byte)XmlDecorationKind.TagName);
+                textSpan = new TextEditorTextSpan(startPosition, _stringWalker.PositionIndex, (byte)XmlDecorationKind.TagNameNone);
                 _syntaxTokenList.Add(new SyntaxToken(SyntaxKind.CloseAssociatedGroupToken, textSpan));
                 break;
             }
@@ -238,7 +238,7 @@ public class DotNetSolutionLexer
         var startPosition = _stringWalker.PositionIndex;
         _stringWalker.SkipRange(LexSolutionFacts.Global.START_TOKEN.Length);
 
-        var textSpan = new TextEditorTextSpan(startPosition, _stringWalker.PositionIndex, (byte)XmlDecorationKind.TagName);
+        var textSpan = new TextEditorTextSpan(startPosition, _stringWalker.PositionIndex, (byte)XmlDecorationKind.TagNameNone);
         _syntaxTokenList.Add(new SyntaxToken(SyntaxKind.OpenAssociatedGroupToken, textSpan));
 
         bool BreakPredicate() => _stringWalker.PeekForSubstring(LexSolutionFacts.Global.END_TOKEN);
@@ -250,7 +250,7 @@ public class DotNetSolutionLexer
                 startPosition = _stringWalker.PositionIndex;
                 _stringWalker.SkipRange(LexSolutionFacts.Global.END_TOKEN.Length);
 
-                textSpan = new TextEditorTextSpan(startPosition, _stringWalker.PositionIndex, (byte)XmlDecorationKind.TagName);
+                textSpan = new TextEditorTextSpan(startPosition, _stringWalker.PositionIndex, (byte)XmlDecorationKind.TagNameNone);
                 _syntaxTokenList.Add(new SyntaxToken(SyntaxKind.CloseAssociatedGroupToken, textSpan));
                 break;
             }
@@ -268,7 +268,7 @@ public class DotNetSolutionLexer
         var startPosition = _stringWalker.PositionIndex;
         _stringWalker.SkipRange(LexSolutionFacts.GlobalSection.START_TOKEN.Length);
 
-        var textSpan = new TextEditorTextSpan(startPosition, _stringWalker.PositionIndex, (byte)XmlDecorationKind.TagName);
+        var textSpan = new TextEditorTextSpan(startPosition, _stringWalker.PositionIndex, (byte)XmlDecorationKind.TagNameNone);
         _syntaxTokenList.Add(new SyntaxToken(SyntaxKind.OpenAssociatedGroupToken, textSpan));
 
         bool BreakPredicate() => _stringWalker.PeekForSubstring(LexSolutionFacts.GlobalSection.END_TOKEN);
@@ -280,7 +280,7 @@ public class DotNetSolutionLexer
                 startPosition = _stringWalker.PositionIndex;
                 _stringWalker.SkipRange(LexSolutionFacts.GlobalSection.END_TOKEN.Length);
 
-                textSpan = new TextEditorTextSpan(startPosition, _stringWalker.PositionIndex, (byte)XmlDecorationKind.TagName);
+                textSpan = new TextEditorTextSpan(startPosition, _stringWalker.PositionIndex, (byte)XmlDecorationKind.TagNameNone);
                 _syntaxTokenList.Add(new SyntaxToken(SyntaxKind.CloseAssociatedGroupToken, textSpan));
                 break;
             }
