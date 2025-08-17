@@ -11,8 +11,8 @@ using Walk.Extensions.CompilerServices;
 using Walk.Extensions.CompilerServices.Syntax;
 using Walk.Extensions.CompilerServices.Syntax.Nodes;
 using Walk.Extensions.CompilerServices.Syntax.Nodes.Interfaces;
-using Walk.CompilerServices.Xml.Html.SyntaxActors;
 using Walk.CompilerServices.DotNetSolution.SyntaxActors;
+using Walk.CompilerServices.Xml;
 
 namespace Walk.CompilerServices.DotNetSolution.CompilerServiceCase;
 
@@ -151,10 +151,8 @@ public sealed class DotNetSolutionCompilerService : ICompilerService
     
         if (modelModifier.PersistentState.ResourceUri.Value.EndsWith(ExtensionNoPeriodFacts.DOT_NET_SOLUTION_X))
         {
-            var lexer = new TextEditorXmlLexer(_textEditorService, modelModifier.PersistentState.ResourceUri, modelModifier.GetAllText());
-            lexer.Lex();
-            
-            syntaxTokenList = lexer.SyntaxTokenList;
+            var lexerOutput = XmlLexer.Lex();
+            syntaxTokenList = lexerOutput.TextSpanList.Select(x => new SyntaxToken(SyntaxKind.NotApplicable, x)).ToList();
         }
         else
         {

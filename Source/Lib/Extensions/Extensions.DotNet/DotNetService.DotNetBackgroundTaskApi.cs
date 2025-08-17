@@ -14,9 +14,6 @@ using Walk.CompilerServices.DotNetSolution.CompilerServiceCase;
 using Walk.CompilerServices.DotNetSolution.Models;
 using Walk.CompilerServices.DotNetSolution.Models.Project;
 using Walk.CompilerServices.DotNetSolution.SyntaxActors;
-using Walk.CompilerServices.Xml.Html.SyntaxActors;
-using Walk.CompilerServices.Xml.Html.SyntaxEnums;
-using Walk.CompilerServices.Xml.Html.SyntaxObjects;
 using Walk.CompilerServices.CSharp.CompilerServiceCase;
 using Walk.Extensions.DotNet.AppDatas.Models;
 using Walk.Extensions.DotNet.CommandLines.Models;
@@ -673,7 +670,7 @@ public partial class DotNetService
         // "./" is being called the 'sameDirectoryToken'
         var sameDirectoryToken = $".{IdeService.TextEditorService.CommonService.EnvironmentProvider.DirectorySeparatorChar}";
         
-        var cSharpProjectSyntaxWalker = new CSharpProjectSyntaxWalker();
+        // var cSharpProjectSyntaxWalker = new CSharpProjectSyntaxWalker();
         
         var dotNetSolutionAncestorDirectoryList = dotNetSolutionModel.AbsolutePath.GetAncestorDirectoryList(
             IdeService.TextEditorService.CommonService.EnvironmentProvider,

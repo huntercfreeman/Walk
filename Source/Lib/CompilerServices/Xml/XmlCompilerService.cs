@@ -10,7 +10,6 @@ using Walk.Extensions.CompilerServices;
 using Walk.Extensions.CompilerServices.Syntax;
 using Walk.Extensions.CompilerServices.Syntax.Nodes;
 using Walk.Extensions.CompilerServices.Syntax.Nodes.Interfaces;
-using Walk.CompilerServices.Xml.Html.SyntaxActors;
 
 namespace Walk.CompilerServices.Xml;
 
@@ -145,8 +144,7 @@ public sealed class XmlCompilerService : ICompilerService
     
     public ValueTask ParseAsync(TextEditorEditContext editContext, TextEditorModel modelModifier, bool shouldApplySyntaxHighlighting)
     {
-        var lexer = new TextEditorXmlLexer(_textEditorService, modelModifier.PersistentState.ResourceUri, modelModifier.GetAllText());
-        lexer.Lex();
+        var lexerOutput = XmlLexer.Lex();
     
         lock (_resourceMapLock)
         {
@@ -154,9 +152,9 @@ public sealed class XmlCompilerService : ICompilerService
             {
                 var resource = (CompilerServiceResource)_resourceMap[modelModifier.PersistentState.ResourceUri];
                 
-                resource.CompilationUnit = new ExtendedCompilationUnit
+                resource.CompilationUnit = new XmlCompilationUnit
                 {
-                    TokenList = lexer.SyntaxTokenList
+                    TextSpanList = lexerOutput.TextSpanList
                 };
             }
         }
@@ -164,7 +162,7 @@ public sealed class XmlCompilerService : ICompilerService
         editContext.TextEditorService.Model_ApplySyntaxHighlighting(
             editContext,
             modelModifier,
-            lexer.SyntaxTokenList.Select(x => x.TextSpan));
+            lexerOutput.TextSpanList);
 
         ResourceParsed?.Invoke();
         

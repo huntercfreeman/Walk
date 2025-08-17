@@ -7,7 +7,6 @@ using Walk.Common.RazorLib.Icons.Displays;
 using Walk.Common.RazorLib.Icons.Displays.Codicon;
 using Walk.TextEditor.RazorLib.Lexers.Models;
 using Walk.CompilerServices.DotNetSolution.Models.Project;
-using Walk.CompilerServices.Xml.Html.SyntaxActors;
 
 namespace Walk.Extensions.DotNet.CSharpProjects.Models;
 
@@ -83,7 +82,8 @@ public class TreeViewCSharpProjectToProjectReferences : TreeViewWithType<CSharpP
                 Item.CSharpProjectAbsolutePath.Value)
             .ConfigureAwait(false);
 
-        var htmlSyntaxUnit = HtmlSyntaxTree.ParseText(
+        // (2025-08-16) breaking
+        /*var htmlSyntaxUnit = HtmlSyntaxTree.ParseText(
             textEditorService: null,
             new StringWalker(),
             new(Item.CSharpProjectAbsolutePath.Value),
@@ -95,8 +95,8 @@ public class TreeViewCSharpProjectToProjectReferences : TreeViewWithType<CSharpP
 
         cSharpProjectSyntaxWalker.Visit(syntaxNodeRoot);
 
-        // (2025-08-16) breaking
-        /*var projectReferences = cSharpProjectSyntaxWalker.TagNodes
+        
+        var projectReferences = cSharpProjectSyntaxWalker.TagNodes
             .Where(ts => (ts.OpenTagNameNode?.TextEditorTextSpan.GetText(content, textEditorService: null) ?? string.Empty) == "ProjectReference")
             .ToList();
 

@@ -1,6 +1,6 @@
 namespace Walk.CompilerServices.Xml.Html.Decoration;
 
-public enum HtmlDecorationKind
+public enum XmlDecorationKind
 {
     None,
     AttributeName,

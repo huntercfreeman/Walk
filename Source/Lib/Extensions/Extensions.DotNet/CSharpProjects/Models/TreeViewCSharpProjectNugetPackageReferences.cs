@@ -5,7 +5,6 @@ using Walk.Common.RazorLib.Icons.Displays;
 using Walk.Common.RazorLib.Icons.Displays.Codicon;
 using Walk.TextEditor.RazorLib.Lexers.Models;
 using Walk.CompilerServices.DotNetSolution.Models.Project;
-using Walk.CompilerServices.Xml.Html.SyntaxActors;
 using Walk.Extensions.DotNet.Nugets.Models;
 
 namespace Walk.Extensions.DotNet.CSharpProjects.Models;
