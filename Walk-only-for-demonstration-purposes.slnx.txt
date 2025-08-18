@@ -1,0 +1,29 @@
+<Solution>
+  <Folder Name="/CompilerServices/">
+      <Project Path="Source\Lib\CompilerServices\CSharp\Walk.CompilerServices.CSharp.csproj" />
+      <Project Path="Source\Lib\CompilerServices\CSharpProject\Walk.CompilerServices.CSharpProject.csproj" />
+      <Project Path="Source\Lib\CompilerServices\Css\Walk.CompilerServices.Css.csproj" />
+      <Project Path="Source\Lib\CompilerServices\DotNetSolution\Walk.CompilerServices.DotNetSolution.csproj" />
+      <Project Path="Source\Lib\CompilerServices\JavaScript\Walk.CompilerServices.JavaScript\Walk.CompilerServices.JavaScript.csproj" />
+      <Project Path="Source\Lib\CompilerServices\Json\Walk.CompilerServices.Json.csproj" />
+      <Project Path="Source\Lib\CompilerServices\Razor\Walk.CompilerServices.Razor.csproj" />
+      <Project Path="Source\Lib\CompilerServices\Xml\Walk.CompilerServices.Xml.csproj" />
+  </Folder>
+  <Folder Name="/Extensions/">
+      <Project Path="Source\Lib\Extensions\Extensions.CompilerServices\Walk.Extensions.CompilerServices.csproj" />
+      <Project Path="Source\Lib\Extensions\Extensions.Config\Walk.Extensions.Config.csproj" />
+      <Project Path="Source\Lib\Extensions\Extensions.DotNet\Walk.Extensions.DotNet.csproj" />
+      <Project Path="Source\Lib\Extensions\Extensions.Tests\Walk.Tests.csproj.csproj" />
+      <Project Path="Source\Lib\Extensions\Extensions.Website\Walk.Website.RazorLib.csproj" />
+  </Folder>
+  <Folder Name="/Hosts/">
+      <Project Path="Source\Lib\Ide\Host.Photino\Walk.Ide.Photino.csproj" />
+      <Project Path="Source\Lib\Ide\Host.BlazorServerSide\Walk.Ide.ServerSide.csproj" />
+      <Project Path="Source\Lib\Ide\Host.BlazorWebAssembly\Walk.Ide.Wasm.csproj" />
+  </Folder>
+  <Folder Name="/Libs/">
+      <Project Path="Source\Lib\Common\Walk.Common.RazorLib.csproj" />
+      <Project Path="Source\Lib\Ide\Ide.RazorLib\Walk.Ide.RazorLib.csproj" />
+      <Project Path="Source\Lib\TextEditor\Walk.TextEditor.RazorLib.csproj" />
+  </Folder>
+</Solution>

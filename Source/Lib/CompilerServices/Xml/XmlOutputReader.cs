@@ -538,7 +538,7 @@ public struct XmlOutputReader
                 }
                 var tagName = stringBuilder.ToString();
             
-                if (tagName == childTagName)
+                if (tagName == parentTagName)
                     return indexTextSpan;
             }
         }
