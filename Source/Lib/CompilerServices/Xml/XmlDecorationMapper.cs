@@ -1,6 +1,6 @@
 using Walk.TextEditor.RazorLib.Decorations.Models;
 
-namespace Walk.CompilerServices.Xml.Html.Decoration;
+namespace Walk.CompilerServices.Xml;
 
 public class XmlDecorationMapper : IDecorationMapper
 {

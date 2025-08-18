@@ -83,49 +83,102 @@ public static class RazorLexer
                 case 'Z':
                 /* Underscore */
                 case '_':
+                /* At */
+                case '@':
                     if (context == RazorLexerContextKind.Expect_AttributeName)
                     {
-                        var attributeNameStartPosition = streamReaderWrap.PositionIndex;
-                        var attributeNameStartByte = streamReaderWrap.ByteIndex;
-                        while (!streamReaderWrap.IsEof)
+                        if (streamReaderWrap.CurrentCharacter == '@')
                         {
-                            if (!char.IsLetterOrDigit(streamReaderWrap.CurrentCharacter) &&
-                                streamReaderWrap.CurrentCharacter != '_' &&
-                                streamReaderWrap.CurrentCharacter != '-' &&
-                                streamReaderWrap.CurrentCharacter != ':')
-                            {
-                                break;
-                            }
+                            var atCharStartPosition = streamReaderWrap.PositionIndex;
+                            var atCharStartByte = streamReaderWrap.ByteIndex;
                             _ = streamReaderWrap.ReadCharacter();
+                            SkipCSharpdentifier(streamReaderWrap);
+                            output.TextSpanList.Add(new TextEditorTextSpan(
+                                atCharStartPosition,
+                                streamReaderWrap.PositionIndex,
+                                (byte)RazorDecorationKind.AttributeNameInjectedLanguageFragment,
+                                atCharStartByte));
                         }
-                        output.TextSpanList.Add(new TextEditorTextSpan(
-                            attributeNameStartPosition,
-                            streamReaderWrap.PositionIndex,
-                            (byte)RazorDecorationKind.AttributeName,
-                            attributeNameStartByte));
+                        else
+                        {
+                            var attributeNameStartPosition = streamReaderWrap.PositionIndex;
+                            var attributeNameStartByte = streamReaderWrap.ByteIndex;
+                            var wasInjectedLanguageFragment = false;
+                            while (!streamReaderWrap.IsEof)
+                            {
+                                if (!char.IsLetterOrDigit(streamReaderWrap.CurrentCharacter))
+                                {
+                                    if (streamReaderWrap.CurrentCharacter != '_' &&
+                                             streamReaderWrap.CurrentCharacter != '-' &&
+                                             streamReaderWrap.CurrentCharacter != ':')
+                                    {
+                                        break;
+                                    }
+                                }
+                                _ = streamReaderWrap.ReadCharacter();
+                            }
+                            
+                            output.TextSpanList.Add(new TextEditorTextSpan(
+                                attributeNameStartPosition,
+                                streamReaderWrap.PositionIndex,
+                                (byte)RazorDecorationKind.AttributeName,
+                                attributeNameStartByte));
+                        }
+                        
                         context = RazorLexerContextKind.Expect_AttributeValue;
                         break;
                     }
                     else if (context == RazorLexerContextKind.Expect_AttributeValue)
                     {
-                        var attributeValueStartPosition = streamReaderWrap.PositionIndex;
-                        var attributeValueStartByte = streamReaderWrap.ByteIndex;
-                        while (!streamReaderWrap.IsEof)
+                        if (streamReaderWrap.CurrentCharacter == '@')
                         {
-                            if (!char.IsLetterOrDigit(streamReaderWrap.CurrentCharacter) &&
-                                streamReaderWrap.CurrentCharacter != '_' &&
-                                streamReaderWrap.CurrentCharacter != '-' &&
-                                streamReaderWrap.CurrentCharacter != ':')
-                            {
-                                break;
-                            }
+                            var atCharStartPosition = streamReaderWrap.PositionIndex;
+                            var atCharStartByte = streamReaderWrap.ByteIndex;
                             _ = streamReaderWrap.ReadCharacter();
+                            SkipCSharpdentifier(streamReaderWrap);
+                            output.TextSpanList.Add(new TextEditorTextSpan(
+                                atCharStartPosition,
+                                streamReaderWrap.PositionIndex,
+                                (byte)RazorDecorationKind.AttributeValueInjectedLanguageFragment,
+                                atCharStartByte));
                         }
-                        output.TextSpanList.Add(new TextEditorTextSpan(
-                            attributeValueStartPosition,
-                            streamReaderWrap.PositionIndex,
-                            (byte)RazorDecorationKind.AttributeValue,
-                            attributeValueStartByte));
+                        else
+                        {
+                            var attributeValueStartPosition = streamReaderWrap.PositionIndex;
+                            var attributeValueStartByte = streamReaderWrap.ByteIndex;
+                            while (!streamReaderWrap.IsEof)
+                            {
+                                if (!char.IsLetterOrDigit(streamReaderWrap.CurrentCharacter))
+                                {
+                                    if (streamReaderWrap.CurrentCharacter == '@')
+                                    {
+                                        var atCharStartPosition = streamReaderWrap.PositionIndex;
+                                        var atCharStartByte = streamReaderWrap.ByteIndex;
+                                        _ = streamReaderWrap.ReadCharacter();
+                                        SkipCSharpdentifier(streamReaderWrap);
+                                        output.TextSpanList.Add(new TextEditorTextSpan(
+                                            atCharStartPosition,
+                                            streamReaderWrap.PositionIndex,
+                                            (byte)RazorDecorationKind.InjectedLanguageFragment,
+                                            atCharStartByte));
+                                        break;
+                                    }
+                                    else if (streamReaderWrap.CurrentCharacter != '_' &&
+                                             streamReaderWrap.CurrentCharacter != '-' &&
+                                             streamReaderWrap.CurrentCharacter != ':')
+                                    {
+                                        break;
+                                    }
+                                }
+                                _ = streamReaderWrap.ReadCharacter();
+                            }
+                            output.TextSpanList.Add(new TextEditorTextSpan(
+                                attributeValueStartPosition,
+                                streamReaderWrap.PositionIndex,
+                                (byte)RazorDecorationKind.AttributeValue,
+                                attributeValueStartByte));
+                        }
+                        
                         context = RazorLexerContextKind.Expect_AttributeName;
                         break;
                     }
@@ -138,6 +191,26 @@ public static class RazorLexer
                             if (streamReaderWrap.CurrentCharacter == '<')
                             {
                                 break;
+                            }
+                            else if (streamReaderWrap.CurrentCharacter == '@')
+                            {
+                                output.TextSpanList.Add(new TextEditorTextSpan(
+                                    textStartPosition,
+                                    streamReaderWrap.PositionIndex,
+                                    (byte)RazorDecorationKind.Text,
+                                    textStartByte));
+                                var atCharStartPosition = streamReaderWrap.PositionIndex;
+                                var atCharStartByte = streamReaderWrap.ByteIndex;
+                                _ = streamReaderWrap.ReadCharacter();
+                                SkipCSharpdentifier(streamReaderWrap);
+                                output.TextSpanList.Add(new TextEditorTextSpan(
+                                    atCharStartPosition,
+                                    streamReaderWrap.PositionIndex,
+                                    (byte)RazorDecorationKind.InjectedLanguageFragment,
+                                    atCharStartByte));
+                                textStartPosition = streamReaderWrap.PositionIndex;
+                                textStartByte = streamReaderWrap.ByteIndex;
+                                continue;
                             }
                             _ = streamReaderWrap.ReadCharacter();
                         }
@@ -537,19 +610,6 @@ public static class RazorLexer
                         goto default;
                     }
                     break;
-                case '@':
-                    if (streamReaderWrap.NextCharacter == '"')
-                    {
-                        goto default;
-                    }
-                    else if (streamReaderWrap.PeekCharacter(1) == '$' && streamReaderWrap.PeekCharacter(2) == '"')
-                    {
-                        goto default;
-                    }
-                    else
-                    {
-                        goto default;
-                    }
                 case ':':
                 {
                     goto default;
@@ -572,5 +632,33 @@ public static class RazorLexer
 
         forceExit:
         return output;
+    }
+    
+    private static void SkipHtmlIdentifier(StreamReaderWrap streamReaderWrap)
+    {
+        while (!streamReaderWrap.IsEof)
+        {
+            if (!char.IsLetterOrDigit(streamReaderWrap.CurrentCharacter) &&
+                streamReaderWrap.CurrentCharacter != '_' &&
+                streamReaderWrap.CurrentCharacter != '-' &&
+                streamReaderWrap.CurrentCharacter != ':')
+            {
+                break;
+            }
+            _ = streamReaderWrap.ReadCharacter();
+        }
+    }
+    
+    private static void SkipCSharpdentifier(StreamReaderWrap streamReaderWrap)
+    {
+        while (!streamReaderWrap.IsEof)
+        {
+            if (!char.IsLetterOrDigit(streamReaderWrap.CurrentCharacter) &&
+                streamReaderWrap.CurrentCharacter != '_')
+            {
+                break;
+            }
+            _ = streamReaderWrap.ReadCharacter();
+        }
     }
 }

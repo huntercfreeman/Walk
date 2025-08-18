@@ -5,6 +5,16 @@ public enum RazorDecorationKind
     None,
     AttributeName,
     AttributeValue,
+    AttributeValueInterpolationStart,
+    AttributeValueInterpolationContinue,
+    AttributeValueInterpolationEnd,
+    AttributeNameInjectedLanguageFragment,
+    // For when:
+    //     class=@myClass
+    //
+    // i.e.: no deliminating double quotes or single quotes
+    // but the attribute value is a C# expression.
+    AttributeValueInjectedLanguageFragment,
     AttributeOperator,
     AttributeDelimiter,
     TagNameNone,
