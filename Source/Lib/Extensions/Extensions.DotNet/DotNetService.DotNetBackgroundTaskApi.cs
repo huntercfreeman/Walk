@@ -14,9 +14,6 @@ using Walk.CompilerServices.DotNetSolution.CompilerServiceCase;
 using Walk.CompilerServices.DotNetSolution.Models;
 using Walk.CompilerServices.DotNetSolution.Models.Project;
 using Walk.CompilerServices.DotNetSolution.SyntaxActors;
-using Walk.CompilerServices.Xml.Html.SyntaxActors;
-using Walk.CompilerServices.Xml.Html.SyntaxEnums;
-using Walk.CompilerServices.Xml.Html.SyntaxObjects;
 using Walk.CompilerServices.CSharp.CompilerServiceCase;
 using Walk.Extensions.DotNet.AppDatas.Models;
 using Walk.Extensions.DotNet.CommandLines.Models;
@@ -25,6 +22,7 @@ using Walk.Extensions.DotNet.DotNetSolutions.Models;
 using Walk.Extensions.DotNet.Namespaces.Models;
 using Walk.Extensions.DotNet.Nugets.Models;
 using Walk.Extensions.DotNet.TestExplorers.Models;
+using Walk.CompilerServices.Xml;
 using Walk.Ide.RazorLib;
 using Walk.Ide.RazorLib.Shareds.Models;
 using Walk.Ide.RazorLib.Terminals.Models;
@@ -446,56 +444,43 @@ public partial class DotNetService
         StringBuilder tokenBuilder,
         StringBuilder formattedBuilder)
     {
-        var htmlSyntaxUnit = HtmlSyntaxTree.ParseText(
-            IdeService.TextEditorService,
-            IdeService.TextEditorService.__StringWalker,
-            new(solutionAbsolutePath.Value),
-            content);
-
-        var syntaxNodeRoot = htmlSyntaxUnit.RootTagSyntax;
-
-        var cSharpProjectSyntaxWalker = new CSharpProjectSyntaxWalker();
-
-        cSharpProjectSyntaxWalker.Visit(syntaxNodeRoot);
-
         var dotNetProjectList = new List<IDotNetProject>();
         var solutionFolderList = new List<SolutionFolder>();
-
-        var folderTagList = cSharpProjectSyntaxWalker.TagNodes
-            .Where(ts => (ts.OpenTagNameNode?.TextEditorTextSpan.GetText(content, IdeService.TextEditorService) ?? string.Empty) == "Folder")
-            .ToList();
-
-        var projectTagList = cSharpProjectSyntaxWalker.TagNodes
-            .Where(ts => (ts.OpenTagNameNode?.TextEditorTextSpan.GetText(content, IdeService.TextEditorService) ?? string.Empty) == "Project")
-            .ToList();
+    
+        using StreamReader sr = new StreamReader(solutionAbsolutePath.Value);
+        var lexerOutput = XmlLexer.Lex(new StreamReaderWrap(sr));
+        
+        var stringBuilder = new StringBuilder();
+        var getTextBuffer = new char[1];
+        
+        var xmlOutputReader = new XmlOutputReader(lexerOutput.TextSpanList);
+        
+        List<(string Name, List<string> ChildProjectRelativePathList)> folderTupleList = new();
+        
+        xmlOutputReader.CollectParentChildrenRelationship(
+            parentTagName: "Folder",
+            parentAttributeName: "Name",
+            childTagName: "Project",
+            childAttributeName: "Path",
+            sr,
+            stringBuilder,
+            getTextBuffer,
+            folderTupleList);
+        
+        var childProjectRelativePathList = new List<string>();
 
         var solutionFolderPathHashSet = new HashSet<string>();
 
         var stringNestedProjectEntryList = new List<StringNestedProjectEntry>();
 
-        foreach (var folder in folderTagList)
+        // Folder Name
+
+        foreach (var folderTuple in folderTupleList)
         {
-            var attributeNameValueTuples = folder
-                .AttributeNodes
-                .Select(x => (
-                    x.AttributeNameSyntax.TextEditorTextSpan
-                        .GetText(content, IdeService.TextEditorService)
-                        .Trim(),
-                    x.AttributeValueSyntax.TextEditorTextSpan
-                        .GetText(content, IdeService.TextEditorService)
-                        .Replace("\"", string.Empty)
-                        .Replace("=", string.Empty)
-                        .Trim()))
-                .ToArray();
-
-            var attribute = attributeNameValueTuples.FirstOrDefault(x => x.Item1 == "Name");
-            if (attribute.Item2 is null)
-                continue;
-
             var ancestorDirectoryList = new List<string>();
 
             var absolutePath = new AbsolutePath(
-                attribute.Item2,
+                folderTuple.Name,
                 isDirectory: true,
                 IdeService.TextEditorService.CommonService.EnvironmentProvider,
                 tokenBuilder,
@@ -513,35 +498,12 @@ public partial class DotNetService
                 solutionFolderPathHashSet.Add(ancestorDirectoryList[i]);
             }
 
-            foreach (var child in folder.ChildContent)
+            foreach (var childRelativePath in folderTuple.ChildProjectRelativePathList)
             {
-                if (child.HtmlSyntaxKind == HtmlSyntaxKind.TagSelfClosingNode ||
-                    child.HtmlSyntaxKind == HtmlSyntaxKind.TagClosingNode)
-                {
-                    var tagNode = (TagNode)child;
-
-                    attributeNameValueTuples = tagNode
-                        .AttributeNodes
-                        .Select(x => (
-                            x.AttributeNameSyntax.TextEditorTextSpan
-                                .GetText(content, IdeService.TextEditorService)
-                                .Trim(),
-                            x.AttributeValueSyntax.TextEditorTextSpan
-                                .GetText(content, IdeService.TextEditorService)
-                                .Replace("\"", string.Empty)
-                                .Replace("=", string.Empty)
-                                .Trim()))
-                        .ToArray();
-
-                    attribute = attributeNameValueTuples.FirstOrDefault(x => x.Item1 == "Path");
-                    if (attribute.Item2 is null)
-                        continue;
-
-                    stringNestedProjectEntryList.Add(new StringNestedProjectEntry(
-                        ChildIsSolutionFolder: false,
-                        attribute.Item2,
-                        absolutePath.Value));
-                }
+                stringNestedProjectEntryList.Add(new StringNestedProjectEntry(
+                    ChildIsSolutionFolder: false,
+                    childRelativePath,
+                    absolutePath.Value));
             }
         }
 
@@ -562,32 +524,27 @@ public partial class DotNetService
                 absolutePath.Name,
                 solutionFolderPath));
         }
+        
+        var relativePathProjectTagList = new List<string>();
+        
+        xmlOutputReader.FindTagGetAttributeValue(
+            targetTagName: "Project",
+            targetAttributeOne: "Path",
+            shouldIncludeFullMissLines: false,
+            sr,
+            stringBuilder,
+            getTextBuffer,
+            relativePathProjectTagList,
+            attributeValueMustEndsWith: ".csproj");
 
-        foreach (var project in projectTagList)
+        foreach (var relativePathProject in relativePathProjectTagList)
         {
-            var attributeNameValueTuples = project
-                .AttributeNodes
-                .Select(x => (
-                    x.AttributeNameSyntax.TextEditorTextSpan
-                        .GetText(content, IdeService.TextEditorService)
-                        .Trim(),
-                    x.AttributeValueSyntax.TextEditorTextSpan
-                        .GetText(content, IdeService.TextEditorService)
-                        .Replace("\"", string.Empty)
-                        .Replace("=", string.Empty)
-                        .Trim()))
-                .ToArray();
-
-            var attribute = attributeNameValueTuples.FirstOrDefault(x => x.Item1 == "Path");
-            if (attribute.Item2 is null)
-                continue;
-
-            var relativePath = new RelativePath(attribute.Item2, isDirectory: false, IdeService.TextEditorService.CommonService.EnvironmentProvider);
+            var relativePath = new RelativePath(relativePathProject, isDirectory: false, IdeService.TextEditorService.CommonService.EnvironmentProvider);
 
             dotNetProjectList.Add(new CSharpProjectModel(
                 relativePath.NameNoExtension,
                 Guid.Empty,
-                attribute.Item2,
+                relativePathProject,
                 Guid.Empty,
                 new(),
                 new(),
@@ -669,8 +626,6 @@ public partial class DotNetService
         // "./" is being called the 'sameDirectoryToken'
         var sameDirectoryToken = $".{IdeService.TextEditorService.CommonService.EnvironmentProvider.DirectorySeparatorChar}";
         
-        var cSharpProjectSyntaxWalker = new CSharpProjectSyntaxWalker();
-        
         var dotNetSolutionAncestorDirectoryList = dotNetSolutionModel.AbsolutePath.GetAncestorDirectoryList(
             IdeService.TextEditorService.CommonService.EnvironmentProvider,
             tokenBuilder,
@@ -720,22 +675,24 @@ public partial class DotNetService
                 IdeService.TextEditorService.CommonService.EnvironmentProvider.DeletionPermittedRegister(new(innerParentDirectory, true), tokenBuilder, formattedBuilder);
             }
 
-            var content = IdeService.TextEditorService.CommonService.FileSystemProvider.File.ReadAllText(projectTuple.AbsolutePath.Value);
-
-            var htmlSyntaxUnit = HtmlSyntaxTree.ParseText(
-                IdeService.TextEditorService,
-                IdeService.TextEditorService.__StringWalker,
-                new(projectTuple.AbsolutePath.Value),
-                content);
-
-            var syntaxNodeRoot = htmlSyntaxUnit.RootTagSyntax;
-
-            cSharpProjectSyntaxWalker.TagNodes.Clear();
-            cSharpProjectSyntaxWalker.Visit(syntaxNodeRoot);
-
-            var projectReferences = cSharpProjectSyntaxWalker.TagNodes
-                .Where(ts => (ts.OpenTagNameNode?.TextEditorTextSpan.GetText(content, IdeService.TextEditorService) ?? string.Empty) == "ProjectReference")
-                .ToList();
+            using StreamReader sr = new StreamReader(projectTuple.AbsolutePath.Value);
+            var lexerOutput = XmlLexer.Lex(new StreamReaderWrap(sr));
+            
+            var stringBuilder = new StringBuilder();
+            var getTextBuffer = new char[1];
+            
+            List<string> relativePathReferenceList = new();
+        
+            var outputReader = new XmlOutputReader(lexerOutput.TextSpanList);
+            
+            outputReader.FindTagGetAttributeValue(
+                targetTagName: "ProjectReference",
+                targetAttributeOne: "Include",
+                shouldIncludeFullMissLines: false,
+                sr,
+                stringBuilder,
+                getTextBuffer,
+                relativePathReferenceList);
 
             var projectAncestorDirectoryList = projectTuple.AbsolutePath.GetAncestorDirectoryList(
                 IdeService.TextEditorService.CommonService.EnvironmentProvider,
@@ -743,26 +700,11 @@ public partial class DotNetService
                 formattedBuilder,
                 AbsolutePathNameKind.NameWithExtension);
             
-            foreach (var projectReference in projectReferences)
+            foreach (var projectReference in relativePathReferenceList)
             {
-                var attributeNameValueTuples = projectReference
-                    .AttributeNodes
-                    .Select(x => (
-                        x.AttributeNameSyntax.TextEditorTextSpan
-                            .GetText(content, IdeService.TextEditorService)
-                            .Trim(),
-                        x.AttributeValueSyntax.TextEditorTextSpan
-                            .GetText(content, IdeService.TextEditorService)
-                            .Replace("\"", string.Empty)
-                            .Replace("=", string.Empty)
-                            .Trim()))
-                    .ToArray();
-
-                var includeAttribute = attributeNameValueTuples.FirstOrDefault(x => x.Item1 == "Include");
-
                 var referenceProjectAbsolutePathString = PathHelper.GetAbsoluteFromAbsoluteAndRelative(
                     projectTuple.AbsolutePath,
-                    includeAttribute.Item2,
+                    projectReference,
                     IdeService.TextEditorService.CommonService.EnvironmentProvider,
                     tokenBuilder,
                     formattedBuilder,

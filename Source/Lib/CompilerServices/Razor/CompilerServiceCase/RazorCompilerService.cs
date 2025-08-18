@@ -10,6 +10,7 @@ using Walk.Extensions.CompilerServices.Syntax;
 using Walk.Extensions.CompilerServices.Syntax.Nodes;
 using Walk.Extensions.CompilerServices.Syntax.Nodes.Interfaces;
 using Walk.CompilerServices.CSharp.CompilerServiceCase;
+using Walk.CompilerServices.Xml;
 
 namespace Walk.CompilerServices.Razor.CompilerServiceCase;
 
@@ -153,55 +154,27 @@ public sealed class RazorCompilerService : ICompilerService
 
     public ValueTask ParseAsync(TextEditorEditContext editContext, TextEditorModel modelModifier, bool shouldApplySyntaxHighlighting)
     {
+        using StreamReader sr = new StreamReader(modelModifier.PersistentState.ResourceUri.Value);
+        var lexerOutput = XmlLexer.Lex(new StreamReaderWrap(sr));
+    
         lock (_resourceMapLock)
         {
             if (_resourceMap.ContainsKey(modelModifier.PersistentState.ResourceUri))
             {
-                var resource = _resourceMap[modelModifier.PersistentState.ResourceUri];
-                resource.HtmlSymbols.Clear();
-            }
-        }
-    
-        var lexer = new RazorLexer(
-            _textEditorService,
-            _htmlStringWalker,
-            modelModifier.PersistentState.ResourceUri,
-            modelModifier.GetAllText(),
-            this,
-            _cSharpCompilerService,
-            _textEditorService.CommonService.EnvironmentProvider);
-            
-        lexer.Lex();
-    
-        IEnumerable<TextEditorTextSpan>? textTextSpanList = null;
-        
-        lock (_resourceMapLock)
-        {
-            if (_resourceMap.ContainsKey(modelModifier.PersistentState.ResourceUri))
-            {
-                var resource = _resourceMap[modelModifier.PersistentState.ResourceUri];
+                var resource = (RazorResource)_resourceMap[modelModifier.PersistentState.ResourceUri];
                 
-                resource.RazorSyntaxTree = lexer.RazorSyntaxTree;
-                
-                resource.CompilationUnit = new RazorCompilationUnit
+                resource.CompilationUnit = new XmlCompilationUnit
                 {
-                    TokenList = lexer.SyntaxTokenList,
-                    RazorResource = resource,
+                    TextSpanList = lexerOutput.TextSpanList
                 };
-                
-                textTextSpanList = lexer.SyntaxTokenList.Select(x => x.TextSpan)
-                    .Concat(resource.GetSymbols().Select(x => x.TextSpan));
             }
         }
         
-        if (textTextSpanList is not null)
-        {
-            editContext.TextEditorService.Model_ApplySyntaxHighlighting(
-                editContext,
-                modelModifier,
-                textTextSpanList);
-        }
-        
+        editContext.TextEditorService.Model_ApplySyntaxHighlighting(
+            editContext,
+            modelModifier,
+            lexerOutput.TextSpanList);
+
         ResourceParsed?.Invoke();
         
         return ValueTask.CompletedTask;

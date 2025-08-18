@@ -1,18 +1,23 @@
-namespace Walk.CompilerServices.Xml.Html.Decoration;
+namespace Walk.CompilerServices.Xml;
 
-public enum HtmlDecorationKind
+public enum XmlDecorationKind
 {
     None,
     AttributeName,
     AttributeValue,
+    AttributeOperator,
+    AttributeDelimiter,
+    TagNameNone,
+    TagNameOpen,
+    TagNameClose,
+    TagNameSelf,
     Comment,
+    Text,
     CustomTagName,
     EntityReference,
     HtmlCode,
     InjectedLanguageFragment,
     InjectedLanguageComponent,
-    TagName,
-    Tag,
     Error,
     InjectedLanguageCodeBlock,
     InjectedLanguageCodeBlockTag,

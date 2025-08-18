@@ -7,7 +7,7 @@ using Walk.Common.RazorLib.Icons.Displays;
 using Walk.Common.RazorLib.Icons.Displays.Codicon;
 using Walk.TextEditor.RazorLib.Lexers.Models;
 using Walk.CompilerServices.DotNetSolution.Models.Project;
-using Walk.CompilerServices.Xml.Html.SyntaxActors;
+using Walk.CompilerServices.Xml;
 
 namespace Walk.Extensions.DotNet.CSharpProjects.Models;
 
@@ -79,26 +79,25 @@ public class TreeViewCSharpProjectToProjectReferences : TreeViewWithType<CSharpP
     {
         var previousChildren = new List<TreeViewNoType>(ChildList);
 
-        var content = await CommonService.FileSystemProvider.File.ReadAllTextAsync(
-                Item.CSharpProjectAbsolutePath.Value)
-            .ConfigureAwait(false);
-
-        var htmlSyntaxUnit = HtmlSyntaxTree.ParseText(
-            textEditorService: null,
-            new StringWalker(),
-            new(Item.CSharpProjectAbsolutePath.Value),
-            content);
-
-        var syntaxNodeRoot = htmlSyntaxUnit.RootTagSyntax;
-
-        var cSharpProjectSyntaxWalker = new CSharpProjectSyntaxWalker();
-
-        cSharpProjectSyntaxWalker.Visit(syntaxNodeRoot);
-
-        var projectReferences = cSharpProjectSyntaxWalker.TagNodes
-            .Where(ts => (ts.OpenTagNameNode?.TextEditorTextSpan.GetText(content, textEditorService: null) ?? string.Empty) == "ProjectReference")
-            .ToList();
-
+        using StreamReader sr = new StreamReader(Item.CSharpProjectAbsolutePath.Value);
+        var lexerOutput = XmlLexer.Lex(new StreamReaderWrap(sr));
+        
+        var stringBuilder = new StringBuilder();
+        var getTextBuffer = new char[1];
+        
+        List<string> relativePathReferenceList = new();
+        
+        var outputReader = new XmlOutputReader(lexerOutput.TextSpanList);
+        
+        outputReader.FindTagGetAttributeValue(
+            targetTagName: "ProjectReference",
+            targetAttributeOne: "Include",
+            shouldIncludeFullMissLines: false,
+            sr,
+            stringBuilder,
+            getTextBuffer,
+            relativePathReferenceList);
+        
         List<CSharpProjectToProjectReference> cSharpProjectToProjectReferences = new();
         
         var tokenBuilder = new StringBuilder();
@@ -114,26 +113,11 @@ public class TreeViewCSharpProjectToProjectReferences : TreeViewWithType<CSharpP
             formattedBuilder,
             AbsolutePathNameKind.NameWithExtension);
         
-        foreach (var projectReference in projectReferences)
+        foreach (var projectReference in relativePathReferenceList)
         {
-            var attributeNameValueTuples = projectReference
-                .AttributeNodes
-                .Select(x => (
-                    x.AttributeNameSyntax.TextEditorTextSpan
-                        .GetText(content, textEditorService: null)
-                        .Trim(),
-                    x.AttributeValueSyntax.TextEditorTextSpan
-                        .GetText(content, textEditorService: null)
-                        .Replace("\"", string.Empty)
-                        .Replace("=", string.Empty)
-                        .Trim()))
-                .ToArray();
-
-            var includeAttribute = attributeNameValueTuples.FirstOrDefault(x => x.Item1 == "Include");
-
             var referenceProjectAbsolutePathString = PathHelper.GetAbsoluteFromAbsoluteAndRelative(
                 Item.CSharpProjectAbsolutePath,
-                includeAttribute.Item2,
+                projectReference,
                 (IEnvironmentProvider)CommonService.EnvironmentProvider,
                 tokenBuilder,
                 formattedBuilder,
@@ -165,6 +149,7 @@ public class TreeViewCSharpProjectToProjectReferences : TreeViewWithType<CSharpP
                 TreeViewChangedKey = Key<TreeViewChanged>.NewKey()
             })
             .ToList();
+        
 
         ChildList = newChildList;
         LinkChildren(previousChildren, ChildList);

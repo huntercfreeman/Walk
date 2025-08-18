@@ -3,7 +3,7 @@ using Walk.TextEditor.RazorLib.Decorations.Models;
 using Walk.Extensions.CompilerServices;
 using Walk.Extensions.CompilerServices.Syntax;
 using Walk.CompilerServices.DotNetSolution.Facts;
-using Walk.CompilerServices.Xml.Html.Decoration;
+using Walk.CompilerServices.Xml;
 
 namespace Walk.CompilerServices.DotNetSolution.SyntaxActors;
 
@@ -62,7 +62,7 @@ public class DotNetSolutionLexer
 
         _stringWalker.SkipRange(LexSolutionFacts.Header.FORMAT_VERSION_START_TOKEN.Length);
 
-        var formatVersionTextSpan = new TextEditorTextSpan(startingPosition, _stringWalker.PositionIndex, (byte)HtmlDecorationKind.AttributeName);
+        var formatVersionTextSpan = new TextEditorTextSpan(startingPosition, _stringWalker.PositionIndex, (byte)XmlDecorationKind.AttributeName);
         _syntaxTokenList.Add(new SyntaxToken(SyntaxKind.AssociatedNameToken, formatVersionTextSpan));
 
         _stringWalker.SkipWhitespace();
@@ -70,7 +70,7 @@ public class DotNetSolutionLexer
         var numericLiteralTextSpan = _stringWalker.ReadUnsignedNumericLiteral();
         var associatedValueToken = new SyntaxToken(SyntaxKind.AssociatedValueToken, numericLiteralTextSpan with
         {
-            DecorationByte = (byte)HtmlDecorationKind.AttributeValue
+            DecorationByte = (byte)XmlDecorationKind.AttributeValue
         });
 
         _syntaxTokenList.Add(associatedValueToken);
@@ -82,7 +82,7 @@ public class DotNetSolutionLexer
 
         _stringWalker.SkipRange(LexSolutionFacts.Header.HASHTAG_VISUAL_STUDIO_VERSION_START_TOKEN.Length);
 
-        var vSVersionTextSpan = new TextEditorTextSpan(startingPosition, _stringWalker.PositionIndex, (byte)HtmlDecorationKind.AttributeName);
+        var vSVersionTextSpan = new TextEditorTextSpan(startingPosition, _stringWalker.PositionIndex, (byte)XmlDecorationKind.AttributeName);
         _syntaxTokenList.Add(new SyntaxToken(SyntaxKind.AssociatedNameToken, vSVersionTextSpan));
 
         _stringWalker.SkipWhitespace();
@@ -90,7 +90,7 @@ public class DotNetSolutionLexer
         var numericLiteralTextSpan = _stringWalker.ReadUnsignedNumericLiteral();
         var associatedValueToken = new SyntaxToken(SyntaxKind.AssociatedValueToken, numericLiteralTextSpan with
         {
-            DecorationByte = (byte)HtmlDecorationKind.AttributeValue
+            DecorationByte = (byte)XmlDecorationKind.AttributeValue
         });
 
         _syntaxTokenList.Add(associatedValueToken);
@@ -102,7 +102,7 @@ public class DotNetSolutionLexer
 
         _stringWalker.SkipRange(LexSolutionFacts.Header.EXACT_VISUAL_STUDIO_VERSION_START_TOKEN.Length);
 
-        var versionStringTextSpan = new TextEditorTextSpan(stringStartingPosition, _stringWalker.PositionIndex, (byte)HtmlDecorationKind.AttributeName);
+        var versionStringTextSpan = new TextEditorTextSpan(stringStartingPosition, _stringWalker.PositionIndex, (byte)XmlDecorationKind.AttributeName);
         _syntaxTokenList.Add(new SyntaxToken(SyntaxKind.AssociatedNameToken, versionStringTextSpan));
 
         _stringWalker.SkipWhitespace();
@@ -120,7 +120,7 @@ public class DotNetSolutionLexer
             _ = _stringWalker.ReadCharacter();
         }
 
-        var versionTextSpan = new TextEditorTextSpan(versionIdentifierStartingPosition, _stringWalker.PositionIndex, (byte)HtmlDecorationKind.AttributeValue);
+        var versionTextSpan = new TextEditorTextSpan(versionIdentifierStartingPosition, _stringWalker.PositionIndex, (byte)XmlDecorationKind.AttributeValue);
         _syntaxTokenList.Add(new SyntaxToken(SyntaxKind.AssociatedValueToken, versionTextSpan));
     }
 
@@ -130,7 +130,7 @@ public class DotNetSolutionLexer
 
         _stringWalker.SkipRange(LexSolutionFacts.Header.MINIMUM_VISUAL_STUDIO_VERSION_START_TOKEN.Length);
 
-        var versionStringTextSpan = new TextEditorTextSpan(stringStartingPosition, _stringWalker.PositionIndex, (byte)HtmlDecorationKind.AttributeName);
+        var versionStringTextSpan = new TextEditorTextSpan(stringStartingPosition, _stringWalker.PositionIndex, (byte)XmlDecorationKind.AttributeName);
         _syntaxTokenList.Add(new SyntaxToken(SyntaxKind.AssociatedNameToken, versionStringTextSpan));
 
         _stringWalker.SkipWhitespace();
@@ -148,7 +148,7 @@ public class DotNetSolutionLexer
             _ = _stringWalker.ReadCharacter();
         }
 
-        var versionTextSpan = new TextEditorTextSpan(versionIdentifierStartingPosition, _stringWalker.PositionIndex, (byte)HtmlDecorationKind.AttributeValue);
+        var versionTextSpan = new TextEditorTextSpan(versionIdentifierStartingPosition, _stringWalker.PositionIndex, (byte)XmlDecorationKind.AttributeValue);
         _syntaxTokenList.Add(new SyntaxToken(SyntaxKind.AssociatedValueToken, versionTextSpan));
     }
 
@@ -157,7 +157,7 @@ public class DotNetSolutionLexer
         var startPosition = _stringWalker.PositionIndex;
         _stringWalker.SkipRange(LexSolutionFacts.Project.PROJECT_DEFINITION_START_TOKEN.Length);
 
-        var textSpan = new TextEditorTextSpan(startPosition, _stringWalker.PositionIndex, (byte)HtmlDecorationKind.TagName);
+        var textSpan = new TextEditorTextSpan(startPosition, _stringWalker.PositionIndex, (byte)XmlDecorationKind.TagNameNone);
         _syntaxTokenList.Add(new SyntaxToken(SyntaxKind.OpenAssociatedGroupToken, textSpan));
 
         while (!_stringWalker.IsEof)
@@ -174,7 +174,7 @@ public class DotNetSolutionLexer
                 startPosition = _stringWalker.PositionIndex;
                 _stringWalker.SkipRange(LexSolutionFacts.Project.PROJECT_DEFINITION_END_TOKEN.Length);
 
-                textSpan = new TextEditorTextSpan(startPosition, _stringWalker.PositionIndex, (byte)HtmlDecorationKind.TagName);
+                textSpan = new TextEditorTextSpan(startPosition, _stringWalker.PositionIndex, (byte)XmlDecorationKind.TagNameNone);
                 _syntaxTokenList.Add(new SyntaxToken(SyntaxKind.CloseAssociatedGroupToken, textSpan));
                 break;
             }
@@ -197,7 +197,7 @@ public class DotNetSolutionLexer
 
         // "{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}"
         //                                       ^
-        var guidTextSpan = new TextEditorTextSpan(startPosition, _stringWalker.PositionIndex, (byte)HtmlDecorationKind.AttributeValue);
+        var guidTextSpan = new TextEditorTextSpan(startPosition, _stringWalker.PositionIndex, (byte)XmlDecorationKind.AttributeValue);
 
         // guidTextSpan.GetText() == "FAE04EC0-301F-11D3-BF4B-00C04F79EFBC"
         _syntaxTokenList.Add(new SyntaxToken(SyntaxKind.AssociatedValueToken, guidTextSpan));
@@ -222,7 +222,7 @@ public class DotNetSolutionLexer
 
         // "ConsoleApp2"
         //             ^
-        var textSpan = new TextEditorTextSpan(startPosition, _stringWalker.PositionIndex, (byte)HtmlDecorationKind.AttributeValue);
+        var textSpan = new TextEditorTextSpan(startPosition, _stringWalker.PositionIndex, (byte)XmlDecorationKind.AttributeValue);
 
         // textSpan.GetText() == "ConsoleApp2"
         _syntaxTokenList.Add(new SyntaxToken(SyntaxKind.AssociatedValueToken, textSpan));
@@ -238,7 +238,7 @@ public class DotNetSolutionLexer
         var startPosition = _stringWalker.PositionIndex;
         _stringWalker.SkipRange(LexSolutionFacts.Global.START_TOKEN.Length);
 
-        var textSpan = new TextEditorTextSpan(startPosition, _stringWalker.PositionIndex, (byte)HtmlDecorationKind.TagName);
+        var textSpan = new TextEditorTextSpan(startPosition, _stringWalker.PositionIndex, (byte)XmlDecorationKind.TagNameNone);
         _syntaxTokenList.Add(new SyntaxToken(SyntaxKind.OpenAssociatedGroupToken, textSpan));
 
         bool BreakPredicate() => _stringWalker.PeekForSubstring(LexSolutionFacts.Global.END_TOKEN);
@@ -250,7 +250,7 @@ public class DotNetSolutionLexer
                 startPosition = _stringWalker.PositionIndex;
                 _stringWalker.SkipRange(LexSolutionFacts.Global.END_TOKEN.Length);
 
-                textSpan = new TextEditorTextSpan(startPosition, _stringWalker.PositionIndex, (byte)HtmlDecorationKind.TagName);
+                textSpan = new TextEditorTextSpan(startPosition, _stringWalker.PositionIndex, (byte)XmlDecorationKind.TagNameNone);
                 _syntaxTokenList.Add(new SyntaxToken(SyntaxKind.CloseAssociatedGroupToken, textSpan));
                 break;
             }
@@ -268,7 +268,7 @@ public class DotNetSolutionLexer
         var startPosition = _stringWalker.PositionIndex;
         _stringWalker.SkipRange(LexSolutionFacts.GlobalSection.START_TOKEN.Length);
 
-        var textSpan = new TextEditorTextSpan(startPosition, _stringWalker.PositionIndex, (byte)HtmlDecorationKind.TagName);
+        var textSpan = new TextEditorTextSpan(startPosition, _stringWalker.PositionIndex, (byte)XmlDecorationKind.TagNameNone);
         _syntaxTokenList.Add(new SyntaxToken(SyntaxKind.OpenAssociatedGroupToken, textSpan));
 
         bool BreakPredicate() => _stringWalker.PeekForSubstring(LexSolutionFacts.GlobalSection.END_TOKEN);
@@ -280,7 +280,7 @@ public class DotNetSolutionLexer
                 startPosition = _stringWalker.PositionIndex;
                 _stringWalker.SkipRange(LexSolutionFacts.GlobalSection.END_TOKEN.Length);
 
-                textSpan = new TextEditorTextSpan(startPosition, _stringWalker.PositionIndex, (byte)HtmlDecorationKind.TagName);
+                textSpan = new TextEditorTextSpan(startPosition, _stringWalker.PositionIndex, (byte)XmlDecorationKind.TagNameNone);
                 _syntaxTokenList.Add(new SyntaxToken(SyntaxKind.CloseAssociatedGroupToken, textSpan));
                 break;
             }
@@ -294,7 +294,7 @@ public class DotNetSolutionLexer
                 var globalSectionParameterStartPosition = _stringWalker.PositionIndex;
                 var globalSectionParameter = _stringWalker.ReadUntil(')');
 
-                textSpan = new TextEditorTextSpan(globalSectionParameterStartPosition, _stringWalker.PositionIndex, (byte)HtmlDecorationKind.AttributeValue);
+                textSpan = new TextEditorTextSpan(globalSectionParameterStartPosition, _stringWalker.PositionIndex, (byte)XmlDecorationKind.AttributeValue);
                 _syntaxTokenList.Add(new SyntaxToken(SyntaxKind.AssociatedValueToken, textSpan));
 
                 // START_TOKEN_ORDER: 'preSolution' OR 'postSolution'
@@ -310,7 +310,7 @@ public class DotNetSolutionLexer
                     var startOrderTuple = _stringWalker.ReadWordTuple();
                     _syntaxTokenList.Add(new SyntaxToken(SyntaxKind.AssociatedValueToken, startOrderTuple.textSpan with
                     {
-                        DecorationByte = (byte)HtmlDecorationKind.AttributeValue
+                        DecorationByte = (byte)XmlDecorationKind.AttributeValue
                     }));
                 }
 
@@ -340,7 +340,7 @@ public class DotNetSolutionLexer
 
             var nameTrailingWhitespaceCount = name.Length - nameNoWhitespace.Length;
 
-            var propertyNameTextSpan = new TextEditorTextSpan(propertyNameStartPosition, _stringWalker.PositionIndex, (byte)HtmlDecorationKind.AttributeName);
+            var propertyNameTextSpan = new TextEditorTextSpan(propertyNameStartPosition, _stringWalker.PositionIndex, (byte)XmlDecorationKind.AttributeName);
             propertyNameTextSpan = propertyNameTextSpan with
             {
                 EndExclusiveIndex = propertyNameTextSpan.EndExclusiveIndex - nameTrailingWhitespaceCount
@@ -361,7 +361,7 @@ public class DotNetSolutionLexer
 
             var valueTrailingWhitespaceCount = value.Length - valueNoWhitespace.Length;
 
-            var propertyValueTextSpan = new TextEditorTextSpan(propertyValueStartPosition, _stringWalker.PositionIndex, (byte)HtmlDecorationKind.AttributeValue);
+            var propertyValueTextSpan = new TextEditorTextSpan(propertyValueStartPosition, _stringWalker.PositionIndex, (byte)XmlDecorationKind.AttributeValue);
 
             propertyValueTextSpan = propertyValueTextSpan with
             {

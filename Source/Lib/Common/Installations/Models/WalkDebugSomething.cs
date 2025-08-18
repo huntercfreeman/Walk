@@ -93,6 +93,8 @@ public static class WalkDebugSomething
     }
     #endif
     
+    // public static int TagNode { get; set; }
+    
     public static string CreateText()
     {
         var builder = new StringBuilder();
@@ -274,6 +276,9 @@ public static class WalkDebugSomething
             AbsolutePath._countConsumeTokenAsRootDrive;
         
         builder.AppendLine($"AbsolutePathTotalCount: {absolutePathTotalCount:N0}");*/
+        
+        //builder.AppendLine($"TagNode: {TagNode}");
+        //TagNodeBuilder
         
         return builder.ToString();
     }

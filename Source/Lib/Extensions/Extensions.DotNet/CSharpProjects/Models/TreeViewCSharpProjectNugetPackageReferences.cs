@@ -1,3 +1,4 @@
+using System.Text;
 using Walk.Common.RazorLib;
 using Walk.Common.RazorLib.TreeViews.Models;
 using Walk.Common.RazorLib.Keys.Models;
@@ -5,7 +6,7 @@ using Walk.Common.RazorLib.Icons.Displays;
 using Walk.Common.RazorLib.Icons.Displays.Codicon;
 using Walk.TextEditor.RazorLib.Lexers.Models;
 using Walk.CompilerServices.DotNetSolution.Models.Project;
-using Walk.CompilerServices.Xml.Html.SyntaxActors;
+using Walk.CompilerServices.Xml;
 using Walk.Extensions.DotNet.Nugets.Models;
 
 namespace Walk.Extensions.DotNet.CSharpProjects.Models;
@@ -80,59 +81,31 @@ public class TreeViewCSharpProjectNugetPackageReferences : TreeViewWithType<CSha
     {
         var previousChildren = new List<TreeViewNoType>(ChildList);
 
-        var content = await CommonService.FileSystemProvider.File.ReadAllTextAsync(
-                Item.CSharpProjectAbsolutePath.Value)
-            .ConfigureAwait(false);
-
-        var htmlSyntaxUnit = HtmlSyntaxTree.ParseText(
-            textEditorService: null,
-            new StringWalker(),
-            new(Item.CSharpProjectAbsolutePath.Value),
-            content);
-
-        var syntaxNodeRoot = htmlSyntaxUnit.RootTagSyntax;
-
-        var cSharpProjectSyntaxWalker = new CSharpProjectSyntaxWalker();
-
-        cSharpProjectSyntaxWalker.Visit(syntaxNodeRoot);
-
-        var packageReferences = cSharpProjectSyntaxWalker.TagNodes
-            .Where(ts => (ts.OpenTagNameNode?.TextEditorTextSpan.GetText(content, textEditorService: null) ?? string.Empty) == "PackageReference")
-            .ToList();
-
-        List<LightWeightNugetPackageRecord> lightWeightNugetPackageRecords = new();
-
-        foreach (var packageReference in packageReferences)
-        {
-            var attributeNameValueTuples = packageReference
-                .AttributeNodes
-                .Select(x => (
-                    x.AttributeNameSyntax.TextEditorTextSpan
-                        .GetText(content, textEditorService: null)
-                        .Trim(),
-                    x.AttributeValueSyntax.TextEditorTextSpan
-                        .GetText(content, textEditorService: null)
-                        .Replace("\"", string.Empty)
-                        .Replace("=", string.Empty)
-                        .Trim()))
-                .ToArray();
-
-            var includeAttribute = attributeNameValueTuples.FirstOrDefault(x => x.Item1 == "Include");
-            var versionAttribute = attributeNameValueTuples.FirstOrDefault(x => x.Item1 == "Version");
-
-            var lightWeightNugetPackageRecord = new LightWeightNugetPackageRecord(
-                includeAttribute.Item2,
-                includeAttribute.Item2,
-                versionAttribute.Item2);
-
-            lightWeightNugetPackageRecords.Add(lightWeightNugetPackageRecord);
-        }
+        using StreamReader sr = new StreamReader(Item.CSharpProjectAbsolutePath.Value);
+        var lexerOutput = XmlLexer.Lex(new StreamReaderWrap(sr));
+        
+        var stringBuilder = new StringBuilder();
+        var getTextBuffer = new char[1];
+        
+        List<(string ValueAttributeOne, string ValueAttributeTwo)> lightWeightNugetPackageRecords = new();
+        
+        var outputReader = new XmlOutputReader(lexerOutput.TextSpanList);
+        
+        outputReader.FindTagGetEitherOrBothAttributeValue(
+            targetTagName: "PackageReference",
+            targetAttributeOne: "Include",
+            targetAttributeTwo: "Version",
+            shouldIncludeFullMissLines: false,
+            sr,
+            stringBuilder,
+            getTextBuffer,
+            lightWeightNugetPackageRecords);
 
         var cSharpProjectAbsolutePathString = Item.CSharpProjectAbsolutePath.Value;
 
         var newChildList = lightWeightNugetPackageRecords.Select(
             npr => (TreeViewNoType)new TreeViewCSharpProjectNugetPackageReference(
-                new(cSharpProjectAbsolutePathString, npr),
+                new(cSharpProjectAbsolutePathString, new LightWeightNugetPackageRecord(npr.ValueAttributeOne, npr.ValueAttributeOne, npr.ValueAttributeTwo)),
                 CommonService,
                 false,
                 false)
@@ -140,7 +113,6 @@ public class TreeViewCSharpProjectNugetPackageReferences : TreeViewWithType<CSha
                 TreeViewChangedKey = Key<TreeViewChanged>.NewKey()
             })
             .ToList();
-
 
         ChildList = newChildList;
         LinkChildren(previousChildren, ChildList);
