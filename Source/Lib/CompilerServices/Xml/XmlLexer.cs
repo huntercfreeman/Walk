@@ -366,12 +366,21 @@ public static class XmlLexer
                         goto default;
                     }
                     
+                    var tagDecoration = (byte)XmlDecorationKind.TagNameOpen;
+                    
                     if (context == XmlLexerContextKind.Expect_TagOrText)
                     {
                         _ = streamReaderWrap.ReadCharacter();
                         
-                        if (streamReaderWrap.CurrentCharacter == '/' || streamReaderWrap.CurrentCharacter == '!')
+                        if (streamReaderWrap.CurrentCharacter == '/')
+                        {
+                            tagDecoration = (byte)XmlDecorationKind.TagNameClose;
                             _ = streamReaderWrap.ReadCharacter();
+                        }
+                        else if (streamReaderWrap.CurrentCharacter == '!')
+                        {
+                            _ = streamReaderWrap.ReadCharacter();
+                        }
                         
                         var tagNameStartPosition = streamReaderWrap.PositionIndex;
                         var tagNameStartByte = streamReaderWrap.ByteIndex;
@@ -389,7 +398,7 @@ public static class XmlLexer
                         output.TextSpanList.Add(new TextEditorTextSpan(
                             tagNameStartPosition,
                             streamReaderWrap.PositionIndex,
-                            (byte)XmlDecorationKind.TagNameOpen,
+                            tagDecoration,
                             tagNameStartByte));
 
                         if (streamReaderWrap.CurrentCharacter == '/' && streamReaderWrap.PeekCharacter(1) == '>' ||

@@ -453,7 +453,52 @@ public partial class DotNetService
         var stringBuilder = new StringBuilder();
         var getTextBuffer = new char[1];
         
+        /*foreach (var textSpan in lexerOutput.TextSpanList)
+        {
+            sr.BaseStream.Seek(textSpan.ByteIndex, SeekOrigin.Begin);
+            sr.DiscardBufferedData();
+        
+            stringBuilder.Clear();
+        
+            for (int i = 0; i < textSpan.Length; i++)
+            {
+                sr.Read(getTextBuffer, 0, 1);
+                stringBuilder.Append(getTextBuffer[0]);
+            }
+        
+            var decorationKind = (XmlDecorationKind)textSpan.DecorationByte;
+                    
+            switch (decorationKind)
+            {
+                case XmlDecorationKind.TagNameOpen:
+                    Console.Write(decorationKind + "       ");
+                    break;
+                case XmlDecorationKind.TagNameClose:
+                    Console.Write(decorationKind + "      ");
+                    break;
+                case XmlDecorationKind.AttributeName:
+                    Console.Write(decorationKind + "     ");
+                    break;
+                case XmlDecorationKind.AttributeValue:
+                    Console.Write(decorationKind + "    ");
+                    break;
+                case XmlDecorationKind.AttributeOperator:
+                    Console.Write(decorationKind + " ");
+                    break;
+                case XmlDecorationKind.AttributeDelimiter:
+                    Console.Write(decorationKind);
+                    break;
+                default:
+                    Console.Write(decorationKind);
+                    break;
+            }
+        
+            Console.WriteLine($" | {stringBuilder.ToString()}");
+        }*/
+        
         List<(string Name, List<string> ChildProjectRelativePathList)> folderTupleList = new();
+        
+        var childProjectRelativePathList = new List<string>();
         
         for (int indexTextSpan = 0; indexTextSpan < lexerOutput.TextSpanList.Count; indexTextSpan++)
         {
@@ -471,11 +516,15 @@ public partial class DotNetService
                     stringBuilder.Append(getTextBuffer[0]);
                 }
                 var tagNameOpenString = stringBuilder.ToString();
-            
+
+                var nameValue = string.Empty;
+
                 if (tagNameOpenString == "Folder")
                 {
-                    var nameValue = string.Empty;
-                    var childProjectRelativePathList = new List<string>();
+                    // This gets declared outside the loop so it is accessible
+                    // by the inner project listings.
+                    //
+                    // var childProjectRelativePathList = new List<string>();
                 
                     while (indexTextSpan < lexerOutput.TextSpanList.Count - 1)
                     {
@@ -519,7 +568,7 @@ public partial class DotNetService
                                         stringBuilder.Append(getTextBuffer[0]);
                                     }
                                     
-                                    if (attributeNameString == "Include")
+                                    if (attributeNameString == "Name")
                                     {
                                         if (nameValue == string.Empty)
                                             nameValue = stringBuilder.ToString();
@@ -549,6 +598,114 @@ public partial class DotNetService
                     
                     if (nameValue != string.Empty)
                         folderTupleList.Add((nameValue, childProjectRelativePathList));
+                }
+
+                if (nameValue != string.Empty)
+                {
+                    while (indexTextSpan < lexerOutput.TextSpanList.Count)
+                    {
+                        textSpan = lexerOutput.TextSpanList[indexTextSpan];
+                        decorationKind = (XmlDecorationKind)textSpan.DecorationByte;
+
+                        if (decorationKind == XmlDecorationKind.TagNameOpen)
+                        {
+                            sr.BaseStream.Seek(textSpan.ByteIndex, SeekOrigin.Begin);
+                            sr.DiscardBufferedData();
+                            stringBuilder.Clear();
+                            for (int i = 0; i < textSpan.Length; i++)
+                            {
+                                sr.Read(getTextBuffer, 0, 1);
+                                stringBuilder.Append(getTextBuffer[0]);
+                            }
+                            tagNameOpenString = stringBuilder.ToString();
+
+                            if (tagNameOpenString == "Project")
+                            {
+                                var pathValue = string.Empty;
+
+                                while (indexTextSpan < lexerOutput.TextSpanList.Count - 1)
+                                {
+                                    if ((XmlDecorationKind)lexerOutput.TextSpanList[indexTextSpan + 1].DecorationByte == XmlDecorationKind.AttributeName)
+                                    {
+                                        var attributeNameTextSpan = lexerOutput.TextSpanList[indexTextSpan + 1];
+                                        ++indexTextSpan;
+
+                                        sr.BaseStream.Seek(attributeNameTextSpan.ByteIndex, SeekOrigin.Begin);
+                                        sr.DiscardBufferedData();
+                                        stringBuilder.Clear();
+                                        for (int i = 0; i < attributeNameTextSpan.Length; i++)
+                                        {
+                                            sr.Read(getTextBuffer, 0, 1);
+                                            stringBuilder.Append(getTextBuffer[0]);
+                                        }
+                                        var attributeNameString = stringBuilder.ToString();
+
+                                        while (indexTextSpan < lexerOutput.TextSpanList.Count - 1)
+                                        {
+                                            var nextDecorationKind = (XmlDecorationKind)lexerOutput.TextSpanList[indexTextSpan + 1].DecorationByte;
+
+                                            if (nextDecorationKind == XmlDecorationKind.AttributeOperator)
+                                            {
+                                                ++indexTextSpan;
+                                            }
+                                            else if (nextDecorationKind == XmlDecorationKind.AttributeDelimiter)
+                                            {
+                                                ++indexTextSpan;
+                                            }
+                                            else if (nextDecorationKind == XmlDecorationKind.AttributeValue)
+                                            {
+                                                var attributeValueTextSpan = lexerOutput.TextSpanList[indexTextSpan + 1];
+
+                                                sr.BaseStream.Seek(attributeValueTextSpan.ByteIndex, SeekOrigin.Begin);
+                                                sr.DiscardBufferedData();
+                                                stringBuilder.Clear();
+                                                for (int i = 0; i < attributeValueTextSpan.Length; i++)
+                                                {
+                                                    sr.Read(getTextBuffer, 0, 1);
+                                                    stringBuilder.Append(getTextBuffer[0]);
+                                                }
+
+                                                if (attributeNameString == "Name")
+                                                {
+                                                    if (pathValue == string.Empty)
+                                                        pathValue = stringBuilder.ToString();
+                                                }
+
+                                                ++indexTextSpan;
+                                                break;
+                                            }
+                                            else
+                                            {
+                                                break;
+                                            }
+                                        }
+                                    }
+                                    else
+                                    {
+                                        if ((XmlDecorationKind)lexerOutput.TextSpanList[indexTextSpan + 1].DecorationByte == XmlDecorationKind.AttributeDelimiter)
+                                        {
+                                            ++indexTextSpan;
+                                        }
+                                        else
+                                        {
+                                            break;
+                                        }
+                                    }
+                                }
+
+                                if (pathValue != string.Empty)
+                                    childProjectRelativePathList.Add(pathValue);
+                            }
+                            else
+                            {
+                                break;
+                            }
+                        }
+                        else
+                        {
+                            ++indexTextSpan;
+                        }
+                    }
                 }
             }
         }
