@@ -413,6 +413,8 @@ public struct XmlOutputReader
                             childProjectRelativePathList,
                             indexTextSpan);
                     }
+                    
+                    childProjectRelativePathList = new List<string>();
                 }
             }
         }
@@ -537,7 +539,7 @@ public struct XmlOutputReader
                 var tagName = stringBuilder.ToString();
             
                 if (tagName == childTagName)
-                    break;
+                    return indexTextSpan;
             }
         }
         
