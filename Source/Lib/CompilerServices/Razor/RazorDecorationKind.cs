@@ -1,0 +1,31 @@
+namespace Walk.CompilerServices.Razor;
+
+public enum RazorDecorationKind
+{
+    None,
+    AttributeName,
+    AttributeValue,
+    AttributeOperator,
+    AttributeDelimiter,
+    TagNameNone,
+    TagNameOpen,
+    TagNameClose,
+    TagNameSelf,
+    Comment,
+    Text,
+    CustomTagName,
+    EntityReference,
+    HtmlCode,
+    InjectedLanguageFragment,
+    InjectedLanguageComponent,
+    Error,
+    InjectedLanguageCodeBlock,
+    InjectedLanguageCodeBlockTag,
+    InjectedLanguageKeyword,
+    InjectedLanguageTagHelperAttribute,
+    InjectedLanguageTagHelperElement,
+    InjectedLanguageMethod,
+    InjectedLanguageVariable,
+    InjectedLanguageType,
+    InjectedLanguageStringLiteral,
+}

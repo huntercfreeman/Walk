@@ -12,7 +12,7 @@ using Walk.Extensions.CompilerServices.Syntax.Nodes.Interfaces;
 using Walk.CompilerServices.CSharp.CompilerServiceCase;
 using Walk.CompilerServices.Xml;
 
-namespace Walk.CompilerServices.Razor.CompilerServiceCase;
+namespace Walk.CompilerServices.Razor;
 
 public sealed class RazorCompilerService : ICompilerService
 {
@@ -50,7 +50,7 @@ public sealed class RazorCompilerService : ICompilerService
             if (_resourceMap.ContainsKey(resourceUri))
                 return;
 
-            _resourceMap.Add(resourceUri, new RazorResource(resourceUri, this, _textEditorService));
+            _resourceMap.Add(resourceUri, new RazorResource(resourceUri, this));
         }
 
         if (shouldTriggerResourceWasModified)
