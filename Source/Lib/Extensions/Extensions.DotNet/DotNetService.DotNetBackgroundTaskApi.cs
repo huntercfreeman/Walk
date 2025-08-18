@@ -444,58 +444,127 @@ public partial class DotNetService
         StringBuilder tokenBuilder,
         StringBuilder formattedBuilder)
     {
-        // (2025-08-16) breaking
-        /*
-        var htmlSyntaxUnit = HtmlSyntaxTree.ParseText(
-            IdeService.TextEditorService,
-            IdeService.TextEditorService.__StringWalker,
-            new(solutionAbsolutePath.Value),
-            content);
-
-        var syntaxNodeRoot = htmlSyntaxUnit.RootTagSyntax;
-
-        var cSharpProjectSyntaxWalker = new CSharpProjectSyntaxWalker();
-
-        cSharpProjectSyntaxWalker.Visit(syntaxNodeRoot);
-
         var dotNetProjectList = new List<IDotNetProject>();
         var solutionFolderList = new List<SolutionFolder>();
-
-        var folderTagList = cSharpProjectSyntaxWalker.TagNodes
-            .Where(ts => (ts.OpenTagNameNode?.TextEditorTextSpan.GetText(content, IdeService.TextEditorService) ?? string.Empty) == "Folder")
-            .ToList();
-
-        var projectTagList = cSharpProjectSyntaxWalker.TagNodes
-            .Where(ts => (ts.OpenTagNameNode?.TextEditorTextSpan.GetText(content, IdeService.TextEditorService) ?? string.Empty) == "Project")
-            .ToList();
+    
+        using StreamReader sr = new StreamReader(solutionAbsolutePath.Value);
+        var lexerOutput = XmlLexer.Lex(new StreamReaderWrap(sr));
+        
+        var stringBuilder = new StringBuilder();
+        var getTextBuffer = new char[1];
+        
+        List<(string Name, List<string> ChildProjectRelativePathList)> folderTupleList = new();
+        
+        for (int indexTextSpan = 0; indexTextSpan < lexerOutput.TextSpanList.Count; indexTextSpan++)
+        {
+            var textSpan = lexerOutput.TextSpanList[indexTextSpan];
+            var decorationKind = (XmlDecorationKind)textSpan.DecorationByte;
+            
+            if (decorationKind == XmlDecorationKind.TagNameOpen)
+            {
+                sr.BaseStream.Seek(textSpan.ByteIndex, SeekOrigin.Begin);
+                sr.DiscardBufferedData();
+                stringBuilder.Clear();
+                for (int i = 0; i < textSpan.Length; i++)
+                {
+                    sr.Read(getTextBuffer, 0, 1);
+                    stringBuilder.Append(getTextBuffer[0]);
+                }
+                var tagNameOpenString = stringBuilder.ToString();
+            
+                if (tagNameOpenString == "Folder")
+                {
+                    var nameValue = string.Empty;
+                    var childProjectRelativePathList = new List<string>();
+                
+                    while (indexTextSpan < lexerOutput.TextSpanList.Count - 1)
+                    {
+                        if ((XmlDecorationKind)lexerOutput.TextSpanList[indexTextSpan + 1].DecorationByte == XmlDecorationKind.AttributeName)
+                        {
+                            var attributeNameTextSpan = lexerOutput.TextSpanList[indexTextSpan + 1];
+                            ++indexTextSpan;
+                            
+                            sr.BaseStream.Seek(attributeNameTextSpan.ByteIndex, SeekOrigin.Begin);
+                            sr.DiscardBufferedData();
+                            stringBuilder.Clear();
+                            for (int i = 0; i < attributeNameTextSpan.Length; i++)
+                            {
+                                sr.Read(getTextBuffer, 0, 1);
+                                stringBuilder.Append(getTextBuffer[0]);
+                            }
+                            var attributeNameString = stringBuilder.ToString();
+                            
+                            while (indexTextSpan < lexerOutput.TextSpanList.Count - 1)
+                            {
+                                var nextDecorationKind = (XmlDecorationKind)lexerOutput.TextSpanList[indexTextSpan + 1].DecorationByte;
+                                
+                                if (nextDecorationKind == XmlDecorationKind.AttributeOperator)
+                                {
+                                    ++indexTextSpan;
+                                }
+                                else if (nextDecorationKind == XmlDecorationKind.AttributeDelimiter)
+                                {
+                                    ++indexTextSpan;
+                                }
+                                else if (nextDecorationKind == XmlDecorationKind.AttributeValue)
+                                {
+                                    var attributeValueTextSpan = lexerOutput.TextSpanList[indexTextSpan + 1];
+                                    
+                                    sr.BaseStream.Seek(attributeValueTextSpan.ByteIndex, SeekOrigin.Begin);
+                                    sr.DiscardBufferedData();
+                                    stringBuilder.Clear();
+                                    for (int i = 0; i < attributeValueTextSpan.Length; i++)
+                                    {
+                                        sr.Read(getTextBuffer, 0, 1);
+                                        stringBuilder.Append(getTextBuffer[0]);
+                                    }
+                                    
+                                    if (attributeNameString == "Include")
+                                    {
+                                        if (nameValue == string.Empty)
+                                            nameValue = stringBuilder.ToString();
+                                    }
+                                    
+                                    ++indexTextSpan;
+                                    break;
+                                }
+                                else
+                                {
+                                    break;
+                                }
+                            }
+                        }
+                        else
+                        {
+                            if ((XmlDecorationKind)lexerOutput.TextSpanList[indexTextSpan + 1].DecorationByte == XmlDecorationKind.AttributeDelimiter)
+                            {
+                                ++indexTextSpan;
+                            }
+                            else
+                            {
+                                break;
+                            }
+                        }
+                    }
+                    
+                    if (nameValue != string.Empty)
+                        folderTupleList.Add((nameValue, childProjectRelativePathList));
+                }
+            }
+        }
 
         var solutionFolderPathHashSet = new HashSet<string>();
 
         var stringNestedProjectEntryList = new List<StringNestedProjectEntry>();
 
-        foreach (var folder in folderTagList)
+        // Folder Name
+
+        foreach (var folderTuple in folderTupleList)
         {
-            var attributeNameValueTuples = folder
-                .AttributeNodes
-                .Select(x => (
-                    x.AttributeNameSyntax.TextEditorTextSpan
-                        .GetText(content, IdeService.TextEditorService)
-                        .Trim(),
-                    x.AttributeValueSyntax.TextEditorTextSpan
-                        .GetText(content, IdeService.TextEditorService)
-                        .Replace("\"", string.Empty)
-                        .Replace("=", string.Empty)
-                        .Trim()))
-                .ToArray();
-
-            var attribute = attributeNameValueTuples.FirstOrDefault(x => x.Item1 == "Name");
-            if (attribute.Item2 is null)
-                continue;
-
             var ancestorDirectoryList = new List<string>();
 
             var absolutePath = new AbsolutePath(
-                attribute.Item2,
+                folderTuple.Name,
                 isDirectory: true,
                 IdeService.TextEditorService.CommonService.EnvironmentProvider,
                 tokenBuilder,
@@ -513,35 +582,12 @@ public partial class DotNetService
                 solutionFolderPathHashSet.Add(ancestorDirectoryList[i]);
             }
 
-            foreach (var child in folder.ChildContent)
+            foreach (var childRelativePath in folderTuple.ChildProjectRelativePathList)
             {
-                if (child.HtmlSyntaxKind == HtmlSyntaxKind.TagSelfClosingNode ||
-                    child.HtmlSyntaxKind == HtmlSyntaxKind.TagClosingNode)
-                {
-                    var tagNode = (TagNode)child;
-
-                    attributeNameValueTuples = tagNode
-                        .AttributeNodes
-                        .Select(x => (
-                            x.AttributeNameSyntax.TextEditorTextSpan
-                                .GetText(content, IdeService.TextEditorService)
-                                .Trim(),
-                            x.AttributeValueSyntax.TextEditorTextSpan
-                                .GetText(content, IdeService.TextEditorService)
-                                .Replace("\"", string.Empty)
-                                .Replace("=", string.Empty)
-                                .Trim()))
-                        .ToArray();
-
-                    attribute = attributeNameValueTuples.FirstOrDefault(x => x.Item1 == "Path");
-                    if (attribute.Item2 is null)
-                        continue;
-
-                    stringNestedProjectEntryList.Add(new StringNestedProjectEntry(
-                        ChildIsSolutionFolder: false,
-                        attribute.Item2,
-                        absolutePath.Value));
-                }
+                stringNestedProjectEntryList.Add(new StringNestedProjectEntry(
+                    ChildIsSolutionFolder: false,
+                    childRelativePath,
+                    absolutePath.Value));
             }
         }
 
@@ -562,32 +608,118 @@ public partial class DotNetService
                 absolutePath.Name,
                 solutionFolderPath));
         }
-
-        foreach (var project in projectTagList)
+        
+        var relativePathProjectTagList = new List<string>();
+        
+        for (int indexTextSpan = 0; indexTextSpan < lexerOutput.TextSpanList.Count; indexTextSpan++)
         {
-            var attributeNameValueTuples = project
-                .AttributeNodes
-                .Select(x => (
-                    x.AttributeNameSyntax.TextEditorTextSpan
-                        .GetText(content, IdeService.TextEditorService)
-                        .Trim(),
-                    x.AttributeValueSyntax.TextEditorTextSpan
-                        .GetText(content, IdeService.TextEditorService)
-                        .Replace("\"", string.Empty)
-                        .Replace("=", string.Empty)
-                        .Trim()))
-                .ToArray();
+            var textSpan = lexerOutput.TextSpanList[indexTextSpan];
+            var decorationKind = (XmlDecorationKind)textSpan.DecorationByte;
+            
+            if (decorationKind == XmlDecorationKind.TagNameOpen)
+            {
+                sr.BaseStream.Seek(textSpan.ByteIndex, SeekOrigin.Begin);
+                sr.DiscardBufferedData();
+                stringBuilder.Clear();
+                for (int i = 0; i < textSpan.Length; i++)
+                {
+                    sr.Read(getTextBuffer, 0, 1);
+                    stringBuilder.Append(getTextBuffer[0]);
+                }
+                var tagNameOpenString = stringBuilder.ToString();
+            
+                if (tagNameOpenString == "Project")
+                {
+                    var pathValue = string.Empty;
+                
+                    while (indexTextSpan < lexerOutput.TextSpanList.Count - 1)
+                    {
+                        if ((XmlDecorationKind)lexerOutput.TextSpanList[indexTextSpan + 1].DecorationByte == XmlDecorationKind.AttributeName)
+                        {
+                            var attributeNameTextSpan = lexerOutput.TextSpanList[indexTextSpan + 1];
+                            ++indexTextSpan;
+                            
+                            sr.BaseStream.Seek(attributeNameTextSpan.ByteIndex, SeekOrigin.Begin);
+                            sr.DiscardBufferedData();
+                            stringBuilder.Clear();
+                            for (int i = 0; i < attributeNameTextSpan.Length; i++)
+                            {
+                                sr.Read(getTextBuffer, 0, 1);
+                                stringBuilder.Append(getTextBuffer[0]);
+                            }
+                            var attributeNameString = stringBuilder.ToString();
+                            
+                            while (indexTextSpan < lexerOutput.TextSpanList.Count - 1)
+                            {
+                                var nextDecorationKind = (XmlDecorationKind)lexerOutput.TextSpanList[indexTextSpan + 1].DecorationByte;
+                                
+                                if (nextDecorationKind == XmlDecorationKind.AttributeOperator)
+                                {
+                                    ++indexTextSpan;
+                                }
+                                else if (nextDecorationKind == XmlDecorationKind.AttributeDelimiter)
+                                {
+                                    ++indexTextSpan;
+                                }
+                                else if (nextDecorationKind == XmlDecorationKind.AttributeValue)
+                                {
+                                    var attributeValueTextSpan = lexerOutput.TextSpanList[indexTextSpan + 1];
+                                    
+                                    sr.BaseStream.Seek(attributeValueTextSpan.ByteIndex, SeekOrigin.Begin);
+                                    sr.DiscardBufferedData();
+                                    stringBuilder.Clear();
+                                    for (int i = 0; i < attributeValueTextSpan.Length; i++)
+                                    {
+                                        sr.Read(getTextBuffer, 0, 1);
+                                        stringBuilder.Append(getTextBuffer[0]);
+                                    }
+                                    
+                                    if (attributeNameString == "Path")
+                                    {
+                                        if (pathValue == string.Empty)
+                                        {
+                                            var temporaryPathValue = stringBuilder.ToString();
+                                            if (temporaryPathValue.EndsWith(".csproj"))
+                                                pathValue = temporaryPathValue;
+                                        }
+                                    }
+                                    
+                                    ++indexTextSpan;
+                                    break;
+                                }
+                                else
+                                {
+                                    break;
+                                }
+                            }
+                        }
+                        else
+                        {
+                            if ((XmlDecorationKind)lexerOutput.TextSpanList[indexTextSpan + 1].DecorationByte == XmlDecorationKind.AttributeDelimiter)
+                            {
+                                ++indexTextSpan;
+                            }
+                            else
+                            {
+                                break;
+                            }
+                        }
+                    }
+                    
+                    if (pathValue != string.Empty)
+                        relativePathProjectTagList.Add(pathValue);
+                }
+            }
+        }
 
-            var attribute = attributeNameValueTuples.FirstOrDefault(x => x.Item1 == "Path");
-            if (attribute.Item2 is null)
-                continue;
-
-            var relativePath = new RelativePath(attribute.Item2, isDirectory: false, IdeService.TextEditorService.CommonService.EnvironmentProvider);
+        foreach (var relativePathProject in relativePathProjectTagList)
+        {
+            var relativePath = new RelativePath(relativePathProject, isDirectory: false, IdeService.TextEditorService.CommonService.EnvironmentProvider);
 
             dotNetProjectList.Add(new CSharpProjectModel(
                 relativePath.NameNoExtension,
                 Guid.Empty,
-                attribute.Item2,
+                relativePathProject,
                 Guid.Empty,
                 new(),
                 new(),
@@ -631,8 +763,6 @@ public partial class DotNetService
             stringNestedProjectEntryList,
             dotNetSolutionGlobal,
             content);
-        */
-        throw new NotImplementedException();
     }
 
     public DotNetSolutionModel ParseSln(
