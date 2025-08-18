@@ -1017,103 +1017,17 @@ public partial class DotNetService
             var getTextBuffer = new char[1];
             
             List<string> relativePathReferenceList = new();
+        
+            var outputReader = new XmlOutputReader(lexerOutput.TextSpanList);
             
-            for (int indexTextSpan = 0; indexTextSpan < lexerOutput.TextSpanList.Count; indexTextSpan++)
-            {
-                var textSpan = lexerOutput.TextSpanList[indexTextSpan];
-                var decorationKind = (XmlDecorationKind)textSpan.DecorationByte;
-                
-                if (decorationKind == XmlDecorationKind.TagNameOpen)
-                {
-                    sr.BaseStream.Seek(textSpan.ByteIndex, SeekOrigin.Begin);
-                    sr.DiscardBufferedData();
-                    stringBuilder.Clear();
-                    for (int bufferRead = 0; bufferRead < textSpan.Length; bufferRead++)
-                    {
-                        sr.Read(getTextBuffer, 0, 1);
-                        stringBuilder.Append(getTextBuffer[0]);
-                    }
-                    var tagNameOpenString = stringBuilder.ToString();
-                
-                    if (tagNameOpenString == "ProjectReference")
-                    {
-                        var includeValue = string.Empty;
-                    
-                        while (indexTextSpan < lexerOutput.TextSpanList.Count - 1)
-                        {
-                            if ((XmlDecorationKind)lexerOutput.TextSpanList[indexTextSpan + 1].DecorationByte == XmlDecorationKind.AttributeName)
-                            {
-                                var attributeNameTextSpan = lexerOutput.TextSpanList[indexTextSpan + 1];
-                                ++indexTextSpan;
-                                
-                                sr.BaseStream.Seek(attributeNameTextSpan.ByteIndex, SeekOrigin.Begin);
-                                sr.DiscardBufferedData();
-                                stringBuilder.Clear();
-                                for (int bufferRead = 0; bufferRead < attributeNameTextSpan.Length; bufferRead++)
-                                {
-                                    sr.Read(getTextBuffer, 0, 1);
-                                    stringBuilder.Append(getTextBuffer[0]);
-                                }
-                                var attributeNameString = stringBuilder.ToString();
-                                
-                                while (indexTextSpan < lexerOutput.TextSpanList.Count - 1)
-                                {
-                                    var nextDecorationKind = (XmlDecorationKind)lexerOutput.TextSpanList[indexTextSpan + 1].DecorationByte;
-                                    
-                                    if (nextDecorationKind == XmlDecorationKind.AttributeOperator)
-                                    {
-                                        ++indexTextSpan;
-                                    }
-                                    else if (nextDecorationKind == XmlDecorationKind.AttributeDelimiter)
-                                    {
-                                        ++indexTextSpan;
-                                    }
-                                    else if (nextDecorationKind == XmlDecorationKind.AttributeValue)
-                                    {
-                                        var attributeValueTextSpan = lexerOutput.TextSpanList[indexTextSpan + 1];
-                                        
-                                        sr.BaseStream.Seek(attributeValueTextSpan.ByteIndex, SeekOrigin.Begin);
-                                        sr.DiscardBufferedData();
-                                        stringBuilder.Clear();
-                                        for (int bufferRead = 0; bufferRead < attributeValueTextSpan.Length; bufferRead++)
-                                        {
-                                            sr.Read(getTextBuffer, 0, 1);
-                                            stringBuilder.Append(getTextBuffer[0]);
-                                        }
-                                        
-                                        if (attributeNameString == "Include")
-                                        {
-                                            if (includeValue == string.Empty)
-                                                includeValue = stringBuilder.ToString();
-                                        }
-                                        
-                                        ++indexTextSpan;
-                                        break;
-                                    }
-                                    else
-                                    {
-                                        break;
-                                    }
-                                }
-                            }
-                            else
-                            {
-                                if ((XmlDecorationKind)lexerOutput.TextSpanList[indexTextSpan + 1].DecorationByte == XmlDecorationKind.AttributeDelimiter)
-                                {
-                                    ++indexTextSpan;
-                                }
-                                else
-                                {
-                                    break;
-                                }
-                            }
-                        }
-                        
-                        if (includeValue != string.Empty)
-                            relativePathReferenceList.Add(includeValue);
-                    }
-                }
-            }
+            outputReader.FindTagGetAttributeValue(
+                targetTagName: "ProjectReference",
+                targetAttributeOne: "Include",
+                shouldIncludeFullMissLines: false,
+                sr,
+                stringBuilder,
+                getTextBuffer,
+                relativePathReferenceList);
 
             var projectAncestorDirectoryList = projectTuple.AbsolutePath.GetAncestorDirectoryList(
                 IdeService.TextEditorService.CommonService.EnvironmentProvider,

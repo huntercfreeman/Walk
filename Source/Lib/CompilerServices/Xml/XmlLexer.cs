@@ -133,6 +133,26 @@ public static class XmlLexer
                         context = XmlLexerContextKind.Expect_AttributeName;
                         break;
                     }
+                    else if (context == XmlLexerContextKind.Expect_TagOrText)
+                    {
+                        var textStartPosition = streamReaderWrap.PositionIndex;
+                        var textStartByte = streamReaderWrap.ByteIndex;
+                        while (!streamReaderWrap.IsEof)
+                        {
+                            if (streamReaderWrap.CurrentCharacter == '<')
+                            {
+                                break;
+                            }
+                            _ = streamReaderWrap.ReadCharacter();
+                        }
+                        output.TextSpanList.Add(new TextEditorTextSpan(
+                            textStartPosition,
+                            streamReaderWrap.PositionIndex,
+                            (byte)XmlDecorationKind.Text,
+                            textStartByte));
+                        context = XmlLexerContextKind.Expect_TagOrText;
+                        break;
+                    }
                     
                     goto default;
                 case '0':

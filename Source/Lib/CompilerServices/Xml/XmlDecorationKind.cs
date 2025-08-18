@@ -12,6 +12,7 @@ public enum XmlDecorationKind
     TagNameClose,
     TagNameSelf,
     Comment,
+    Text,
     CustomTagName,
     EntityReference,
     HtmlCode,
