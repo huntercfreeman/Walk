@@ -309,7 +309,7 @@ public struct XmlOutputReader
             var textSpan = TextSpanList[indexTextSpan];
             var decorationKind = (XmlDecorationKind)textSpan.DecorationByte;
             
-            if (!withinFolder && decorationKind == XmlDecorationKind.TagNameOpen || decorationKind == XmlDecorationKind.TagNameSelf)
+            if (decorationKind == XmlDecorationKind.TagNameOpen || decorationKind == XmlDecorationKind.TagNameSelf)
             {
                 sr.BaseStream.Seek(textSpan.ByteIndex, SeekOrigin.Begin);
                 sr.DiscardBufferedData();
@@ -319,13 +319,13 @@ public struct XmlOutputReader
                     sr.Read(getTextBuffer, 0, 1);
                     stringBuilder.Append(getTextBuffer[0]);
                 }
-                var tagNameOpenString = stringBuilder.ToString();
-
-                var nameValue = string.Empty;
-
-                if (tagNameOpenString != parentTagName)
+                var tagName = stringBuilder.ToString();
+            
+                if (tagName != parentTagName)
                     continue;
                 
+                string? valueAttributeOne = null;
+            
                 while (indexTextSpan < TextSpanList.Count - 1)
                 {
                     if ((XmlDecorationKind)TextSpanList[indexTextSpan + 1].DecorationByte == XmlDecorationKind.AttributeName)
@@ -343,19 +343,19 @@ public struct XmlOutputReader
                         }
                         var attributeNameString = stringBuilder.ToString();
                         
-                        if (attributeNameString == parentAttributeName)
+                        while (indexTextSpan < TextSpanList.Count - 1)
                         {
-                            if ((XmlDecorationKind)TextSpanList[indexTextSpan + 1].DecorationByte == XmlDecorationKind.AttributeOperator)
+                            var nextDecorationKind = (XmlDecorationKind)TextSpanList[indexTextSpan + 1].DecorationByte;
+                            
+                            if (nextDecorationKind == XmlDecorationKind.AttributeOperator)
+                            {
                                 ++indexTextSpan;
-                            else if ((XmlDecorationKind)TextSpanList[indexTextSpan + 1].DecorationByte == XmlDecorationKind.AttributeDelimiter)
+                            }
+                            else if (nextDecorationKind == XmlDecorationKind.AttributeDelimiter)
+                            {
                                 ++indexTextSpan;
-                                
-                            if ((XmlDecorationKind)TextSpanList[indexTextSpan + 1].DecorationByte == XmlDecorationKind.AttributeOperator)
-                                ++indexTextSpan;
-                            else if ((XmlDecorationKind)TextSpanList[indexTextSpan + 1].DecorationByte == XmlDecorationKind.AttributeDelimiter)
-                                ++indexTextSpan;
-                        
-                            if (nameValue == string.Empty)
+                            }
+                            else if (nextDecorationKind == XmlDecorationKind.AttributeValue)
                             {
                                 var attributeValueTextSpan = TextSpanList[indexTextSpan + 1];
                                 
@@ -367,31 +367,181 @@ public struct XmlOutputReader
                                     sr.Read(getTextBuffer, 0, 1);
                                     stringBuilder.Append(getTextBuffer[0]);
                                 }
-                            
-                                nameValue = stringBuilder.ToString();
+                                
+                                if (attributeNameString == parentAttributeName)
+                                {
+                                    if (valueAttributeOne is null)
+                                        valueAttributeOne = stringBuilder.ToString();
+                                }
+                                
                                 ++indexTextSpan;
+                                break;
+                            }
+                            else
+                            {
                                 break;
                             }
                         }
                     }
-                    else if ((XmlDecorationKind)TextSpanList[indexTextSpan + 1].DecorationByte == XmlDecorationKind.AttributeOperator)
-                    {
-                        ++indexTextSpan;
-                    }
-                    else if ((XmlDecorationKind)TextSpanList[indexTextSpan + 1].DecorationByte == XmlDecorationKind.AttributeDelimiter)
-                    {
-                        ++indexTextSpan;
-                    }
                     else
                     {
-                        break;
+                        if ((XmlDecorationKind)TextSpanList[indexTextSpan + 1].DecorationByte == XmlDecorationKind.AttributeDelimiter)
+                        {
+                            ++indexTextSpan;
+                        }
+                        else
+                        {
+                            break;
+                        }
                     }
                 }
                 
-                if (nameValue != string.Empty)
-                    folderTupleList.Add((nameValue, childProjectRelativePathList));
+                if (valueAttributeOne is not null)
+                {
+                    folderTupleList.Add((valueAttributeOne, childProjectRelativePathList));
+                    
+                    if (decorationKind == XmlDecorationKind.TagNameOpen)
+                    {
+                        indexTextSpan = Until(
+                            parentTagName,
+                            parentAttributeName,
+                            childTagName,
+                            childAttributeName,
+                            sr,
+                            stringBuilder,
+                            getTextBuffer,
+                            childProjectRelativePathList,
+                            indexTextSpan);
+                    }
+                }
             }
         }
+    }
+    
+    private int Until(
+        string parentTagName,
+        string parentAttributeName,
+        string childTagName,
+        string childAttributeName,
+        StreamReader sr,
+        StringBuilder stringBuilder,
+        char[] getTextBuffer,
+        List<string> childProjectRelativePathList,
+        int indexTextSpan)
+    {
+        for (; indexTextSpan < TextSpanList.Count; indexTextSpan++)
+        {
+            var textSpan = TextSpanList[indexTextSpan];
+            var decorationKind = (XmlDecorationKind)textSpan.DecorationByte;
+            
+            if (decorationKind == XmlDecorationKind.TagNameOpen || decorationKind == XmlDecorationKind.TagNameSelf)
+            {
+                sr.BaseStream.Seek(textSpan.ByteIndex, SeekOrigin.Begin);
+                sr.DiscardBufferedData();
+                stringBuilder.Clear();
+                for (int i = 0; i < textSpan.Length; i++)
+                {
+                    sr.Read(getTextBuffer, 0, 1);
+                    stringBuilder.Append(getTextBuffer[0]);
+                }
+                var tagName = stringBuilder.ToString();
+            
+                if (tagName != childTagName)
+                    continue;
+                
+                string? valueAttributeOne = null;
+            
+                while (indexTextSpan < TextSpanList.Count - 1)
+                {
+                    if ((XmlDecorationKind)TextSpanList[indexTextSpan + 1].DecorationByte == XmlDecorationKind.AttributeName)
+                    {
+                        var attributeNameTextSpan = TextSpanList[indexTextSpan + 1];
+                        ++indexTextSpan;
+                        
+                        sr.BaseStream.Seek(attributeNameTextSpan.ByteIndex, SeekOrigin.Begin);
+                        sr.DiscardBufferedData();
+                        stringBuilder.Clear();
+                        for (int i = 0; i < attributeNameTextSpan.Length; i++)
+                        {
+                            sr.Read(getTextBuffer, 0, 1);
+                            stringBuilder.Append(getTextBuffer[0]);
+                        }
+                        var attributeNameString = stringBuilder.ToString();
+                        
+                        while (indexTextSpan < TextSpanList.Count - 1)
+                        {
+                            var nextDecorationKind = (XmlDecorationKind)TextSpanList[indexTextSpan + 1].DecorationByte;
+                            
+                            if (nextDecorationKind == XmlDecorationKind.AttributeOperator)
+                            {
+                                ++indexTextSpan;
+                            }
+                            else if (nextDecorationKind == XmlDecorationKind.AttributeDelimiter)
+                            {
+                                ++indexTextSpan;
+                            }
+                            else if (nextDecorationKind == XmlDecorationKind.AttributeValue)
+                            {
+                                var attributeValueTextSpan = TextSpanList[indexTextSpan + 1];
+                                
+                                sr.BaseStream.Seek(attributeValueTextSpan.ByteIndex, SeekOrigin.Begin);
+                                sr.DiscardBufferedData();
+                                stringBuilder.Clear();
+                                for (int i = 0; i < attributeValueTextSpan.Length; i++)
+                                {
+                                    sr.Read(getTextBuffer, 0, 1);
+                                    stringBuilder.Append(getTextBuffer[0]);
+                                }
+                                
+                                if (attributeNameString == childAttributeName)
+                                {
+                                    if (valueAttributeOne is null)
+                                        valueAttributeOne = stringBuilder.ToString();
+                                }
+                                
+                                ++indexTextSpan;
+                                break;
+                            }
+                            else
+                            {
+                                break;
+                            }
+                        }
+                    }
+                    else
+                    {
+                        if ((XmlDecorationKind)TextSpanList[indexTextSpan + 1].DecorationByte == XmlDecorationKind.AttributeDelimiter)
+                        {
+                            ++indexTextSpan;
+                        }
+                        else
+                        {
+                            break;
+                        }
+                    }
+                }
+                
+                if (valueAttributeOne is not null)
+                    childProjectRelativePathList.Add(valueAttributeOne);
+            }
+            else if (decorationKind == XmlDecorationKind.TagNameClose)
+            {
+                sr.BaseStream.Seek(textSpan.ByteIndex, SeekOrigin.Begin);
+                sr.DiscardBufferedData();
+                stringBuilder.Clear();
+                for (int i = 0; i < textSpan.Length; i++)
+                {
+                    sr.Read(getTextBuffer, 0, 1);
+                    stringBuilder.Append(getTextBuffer[0]);
+                }
+                var tagName = stringBuilder.ToString();
+            
+                if (tagName == childTagName)
+                    break;
+            }
+        }
+        
+        return indexTextSpan;
     }
     
     public void ConsoleWriteFormatted(
