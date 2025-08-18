@@ -453,7 +453,7 @@ public partial class DotNetService
         var stringBuilder = new StringBuilder();
         var getTextBuffer = new char[1];
         
-        /*foreach (var textSpan in lexerOutput.TextSpanList)
+        foreach (var textSpan in lexerOutput.TextSpanList)
         {
             sr.BaseStream.Seek(textSpan.ByteIndex, SeekOrigin.Begin);
             sr.DiscardBufferedData();
@@ -476,6 +476,9 @@ public partial class DotNetService
                 case XmlDecorationKind.TagNameClose:
                     Console.Write(decorationKind + "      ");
                     break;
+                case XmlDecorationKind.TagNameSelf:
+                    Console.Write(decorationKind + "       ");
+                    break;
                 case XmlDecorationKind.AttributeName:
                     Console.Write(decorationKind + "     ");
                     break;
@@ -494,7 +497,7 @@ public partial class DotNetService
             }
         
             Console.WriteLine($" | {stringBuilder.ToString()}");
-        }*/
+        }
         
         List<(string Name, List<string> ChildProjectRelativePathList)> folderTupleList = new();
         

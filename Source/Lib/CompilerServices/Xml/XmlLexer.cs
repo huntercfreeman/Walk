@@ -25,6 +25,8 @@ public static class XmlLexer
         var startPosition = streamReaderWrap.PositionIndex;
         var startByte = streamReaderWrap.ByteIndex;
         
+        var indexOfMostRecentTagOpen = -1;
+        
         while (!streamReaderWrap.IsEof)
         {
             switch (streamReaderWrap.CurrentCharacter)
@@ -227,6 +229,23 @@ public static class XmlLexer
                     }
                     goto default;
                 case '/':
+                
+                    if (streamReaderWrap.PeekCharacter(1) == '>')
+                    {
+                        if (context == XmlLexerContextKind.Expect_AttributeName || context == XmlLexerContextKind.Expect_AttributeValue)
+                        {
+                            if (indexOfMostRecentTagOpen != -1)
+                            {
+                                output.TextSpanList[indexOfMostRecentTagOpen] = output.TextSpanList[indexOfMostRecentTagOpen] with
+                                {
+                                    DecorationByte = (byte)XmlDecorationKind.TagNameSelf,
+                                };
+                                indexOfMostRecentTagOpen = -1;
+                            }
+                            context = XmlLexerContextKind.Expect_TagOrText;
+                        }
+                    }
+                
                     if (streamReaderWrap.PeekCharacter(1) == '/')
                     {
                         goto default;
@@ -395,14 +414,17 @@ public static class XmlLexer
                             }
                             _ = streamReaderWrap.ReadCharacter();
                         }
+                        if (tagDecoration == (byte)XmlDecorationKind.TagNameOpen)
+                        {
+                            indexOfMostRecentTagOpen = output.TextSpanList.Count;
+                        }
                         output.TextSpanList.Add(new TextEditorTextSpan(
                             tagNameStartPosition,
                             streamReaderWrap.PositionIndex,
                             tagDecoration,
                             tagNameStartByte));
 
-                        if (streamReaderWrap.CurrentCharacter == '/' && streamReaderWrap.PeekCharacter(1) == '>' ||
-                            streamReaderWrap.CurrentCharacter == '>')
+                        if (streamReaderWrap.CurrentCharacter == '>')
                         {
                             context = XmlLexerContextKind.Expect_TagOrText;
                         }
