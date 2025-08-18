@@ -1,3 +1,4 @@
+using System.Text;
 using Walk.Common.RazorLib;
 using Walk.Common.RazorLib.TreeViews.Models;
 using Walk.Common.RazorLib.Keys.Models;
@@ -5,6 +6,7 @@ using Walk.Common.RazorLib.Icons.Displays;
 using Walk.Common.RazorLib.Icons.Displays.Codicon;
 using Walk.TextEditor.RazorLib.Lexers.Models;
 using Walk.CompilerServices.DotNetSolution.Models.Project;
+using Walk.CompilerServices.Xml;
 using Walk.Extensions.DotNet.Nugets.Models;
 
 namespace Walk.Extensions.DotNet.CSharpProjects.Models;
@@ -77,15 +79,56 @@ public class TreeViewCSharpProjectNugetPackageReferences : TreeViewWithType<CSha
 
     public override async Task LoadChildListAsync()
     {
-        // (2025-08-16) breaking
-        /*
         var previousChildren = new List<TreeViewNoType>(ChildList);
 
-        var content = await CommonService.FileSystemProvider.File.ReadAllTextAsync(
-                Item.CSharpProjectAbsolutePath.Value)
-            .ConfigureAwait(false);
+        using StreamReader sr = new StreamReader(Item.CSharpProjectAbsolutePath.Value);
+        var lexerOutput = XmlLexer.Lex(new StreamReaderWrap(sr));
+        
+        var stringBuilder = new StringBuilder();
+        var getTextBuffer = new char[1];
+        
+        foreach (var textSpan in lexerOutput.TextSpanList)
+        {
+            sr.BaseStream.Seek(textSpan.ByteIndex, SeekOrigin.Begin);
+            sr.DiscardBufferedData();
 
-        var htmlSyntaxUnit = HtmlSyntaxTree.ParseText(
+            stringBuilder.Clear();
+
+            for (int i = 0; i < textSpan.Length; i++)
+            {
+                sr.Read(getTextBuffer, 0, 1);
+                stringBuilder.Append(getTextBuffer[0]);
+            }
+
+            var decorationKind = (XmlDecorationKind)textSpan.DecorationByte;
+            
+            switch (decorationKind)
+            {
+                case XmlDecorationKind.TagNameOpen:
+                    Console.Write(decorationKind + "       ");
+                    break;
+                case XmlDecorationKind.AttributeName:
+                    Console.Write(decorationKind + "     ");
+                    break;
+                case XmlDecorationKind.AttributeValue:
+                    Console.Write(decorationKind + "    ");
+                    break;
+                case XmlDecorationKind.AttributeOperator:
+                    Console.Write(decorationKind + " ");
+                    break;
+                case XmlDecorationKind.AttributeDelimiter:
+                    Console.Write(decorationKind);
+                    break;
+                default:
+                    Console.Write(decorationKind);
+                    break;
+            }
+
+            Console.WriteLine($" | {stringBuilder.ToString()}");
+        }
+
+        /*
+        var output = XmlLexer.Lex().ParseText(
             textEditorService: null,
             new StringWalker(),
             new(Item.CSharpProjectAbsolutePath.Value),

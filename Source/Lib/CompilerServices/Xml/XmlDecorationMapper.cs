@@ -13,6 +13,8 @@ public class XmlDecorationMapper : IDecorationMapper
             XmlDecorationKind.None => string.Empty,
             XmlDecorationKind.AttributeName => "di_attribute-name",
             XmlDecorationKind.AttributeValue => "di_attribute-value",
+            XmlDecorationKind.AttributeOperator => "di_attribute-value",
+            XmlDecorationKind.AttributeDelimiter => "di_attribute-value",
             XmlDecorationKind.TagNameNone => "di_tag-name",
             XmlDecorationKind.TagNameOpen => "di_tag-name",
             XmlDecorationKind.TagNameClose => "di_tag-name",

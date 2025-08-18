@@ -5,6 +5,8 @@ public enum XmlDecorationKind
     None,
     AttributeName,
     AttributeValue,
+    AttributeOperator,
+    AttributeDelimiter,
     TagNameNone,
     TagNameOpen,
     TagNameClose,

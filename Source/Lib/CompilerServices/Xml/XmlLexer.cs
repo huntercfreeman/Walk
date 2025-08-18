@@ -23,6 +23,7 @@ public static class XmlLexer
         
         // This gets updated throughout the loop
         var startPosition = streamReaderWrap.PositionIndex;
+        var startByte = streamReaderWrap.ByteIndex;
         
         while (!streamReaderWrap.IsEof)
         {
@@ -87,6 +88,7 @@ public static class XmlLexer
                     if (context == XmlLexerContextKind.Expect_AttributeName)
                     {
                         var attributeNameStartPosition = streamReaderWrap.PositionIndex;
+                        var attributeNameStartByte = streamReaderWrap.ByteIndex;
                         while (!streamReaderWrap.IsEof)
                         {
                             if (!char.IsLetterOrDigit(streamReaderWrap.CurrentCharacter) &&
@@ -101,13 +103,15 @@ public static class XmlLexer
                         output.TextSpanList.Add(new TextEditorTextSpan(
                             attributeNameStartPosition,
                             streamReaderWrap.PositionIndex,
-                            (byte)XmlDecorationKind.AttributeName));
+                            (byte)XmlDecorationKind.AttributeName,
+                            attributeNameStartByte));
                         context = XmlLexerContextKind.Expect_AttributeValue;
                         break;
                     }
                     else if (context == XmlLexerContextKind.Expect_AttributeValue)
                     {
                         var attributeValueStartPosition = streamReaderWrap.PositionIndex;
+                        var attributeValueStartByte = streamReaderWrap.ByteIndex;
                         while (!streamReaderWrap.IsEof)
                         {
                             if (!char.IsLetterOrDigit(streamReaderWrap.CurrentCharacter) &&
@@ -122,7 +126,8 @@ public static class XmlLexer
                         output.TextSpanList.Add(new TextEditorTextSpan(
                             attributeValueStartPosition,
                             streamReaderWrap.PositionIndex,
-                            (byte)XmlDecorationKind.AttributeValue));
+                            (byte)XmlDecorationKind.AttributeValue,
+                            attributeValueStartByte));
                         context = XmlLexerContextKind.Expect_AttributeName;
                         break;
                     }
@@ -142,13 +147,25 @@ public static class XmlLexer
                 case '\'':
                     if (context == XmlLexerContextKind.Expect_AttributeValue)
                     {
-                        var attributeValueStartPosition = streamReaderWrap.PositionIndex;
+                        var delimiterStartPosition = streamReaderWrap.PositionIndex;
+                        var delimiterStartByte = streamReaderWrap.ByteIndex;
                         _ = streamReaderWrap.ReadCharacter();
+                        output.TextSpanList.Add(new TextEditorTextSpan(
+                            delimiterStartPosition,
+                            streamReaderWrap.PositionIndex,
+                            (byte)XmlDecorationKind.AttributeDelimiter,
+                            delimiterStartByte));
+                            
+                        var attributeValueStartPosition = streamReaderWrap.PositionIndex;
+                        var attributeValueStartByte = streamReaderWrap.ByteIndex;
+                        var attributeValueEnd = streamReaderWrap.PositionIndex;
                         while (!streamReaderWrap.IsEof)
                         {
                             if (streamReaderWrap.CurrentCharacter == '\'')
                             {
-                                // Inclusive
+                                attributeValueEnd = streamReaderWrap.PositionIndex;
+                                delimiterStartPosition = streamReaderWrap.PositionIndex;
+                                delimiterStartByte = streamReaderWrap.ByteIndex;
                                 _ = streamReaderWrap.ReadCharacter();
                                 break;
                             }
@@ -156,8 +173,14 @@ public static class XmlLexer
                         }
                         output.TextSpanList.Add(new TextEditorTextSpan(
                             attributeValueStartPosition,
+                            attributeValueEnd,
+                            (byte)XmlDecorationKind.AttributeValue,
+                            attributeValueStartByte));
+                        output.TextSpanList.Add(new TextEditorTextSpan(
+                            delimiterStartPosition,
                             streamReaderWrap.PositionIndex,
-                            (byte)XmlDecorationKind.AttributeValue));
+                            (byte)XmlDecorationKind.AttributeDelimiter,
+                            delimiterStartByte));
                         context = XmlLexerContextKind.Expect_AttributeName;
                         break;
                     }
@@ -165,13 +188,25 @@ public static class XmlLexer
                 case '"':
                     if (context == XmlLexerContextKind.Expect_AttributeValue)
                     {
-                        var attributeValueStartPosition = streamReaderWrap.PositionIndex;
+                        var delimiterStartPosition = streamReaderWrap.PositionIndex;
+                        var delimiterStartByte = streamReaderWrap.ByteIndex;
                         _ = streamReaderWrap.ReadCharacter();
+                        output.TextSpanList.Add(new TextEditorTextSpan(
+                            delimiterStartPosition,
+                            streamReaderWrap.PositionIndex,
+                            (byte)XmlDecorationKind.AttributeDelimiter,
+                            delimiterStartByte));
+                        
+                        var attributeValueStartPosition = streamReaderWrap.PositionIndex;
+                        var attributeValueStartByte = streamReaderWrap.ByteIndex;
+                        var attributeValueEnd = streamReaderWrap.PositionIndex;
                         while (!streamReaderWrap.IsEof)
                         {
                             if (streamReaderWrap.CurrentCharacter == '"')
                             {
-                                // Inclusive
+                                attributeValueEnd = streamReaderWrap.PositionIndex;
+                                delimiterStartPosition = streamReaderWrap.PositionIndex;
+                                delimiterStartByte = streamReaderWrap.ByteIndex;
                                 _ = streamReaderWrap.ReadCharacter();
                                 break;
                             }
@@ -179,8 +214,14 @@ public static class XmlLexer
                         }
                         output.TextSpanList.Add(new TextEditorTextSpan(
                             attributeValueStartPosition,
+                            attributeValueEnd,
+                            (byte)XmlDecorationKind.AttributeValue,
+                            attributeValueStartByte));
+                        output.TextSpanList.Add(new TextEditorTextSpan(
+                            delimiterStartPosition,
                             streamReaderWrap.PositionIndex,
-                            (byte)XmlDecorationKind.AttributeValue));
+                            (byte)XmlDecorationKind.AttributeDelimiter,
+                            delimiterStartByte));
                         context = XmlLexerContextKind.Expect_AttributeName;
                         break;
                     }
@@ -223,11 +264,13 @@ public static class XmlLexer
                     if (context == XmlLexerContextKind.Expect_AttributeValue)
                     {
                         var attributeValueStartPosition = streamReaderWrap.PositionIndex;
+                        var attributeValueStartByte = streamReaderWrap.ByteIndex;
                         _ = streamReaderWrap.ReadCharacter();
                         output.TextSpanList.Add(new TextEditorTextSpan(
                             attributeValueStartPosition,
                             streamReaderWrap.PositionIndex,
-                            (byte)XmlDecorationKind.AttributeValue));
+                            (byte)XmlDecorationKind.AttributeOperator,
+                            attributeValueStartByte));
                         break;
                     }
                 
@@ -331,6 +374,7 @@ public static class XmlLexer
                             _ = streamReaderWrap.ReadCharacter();
                         
                         var tagNameStartPosition = streamReaderWrap.PositionIndex;
+                        var tagNameStartByte = streamReaderWrap.ByteIndex;
                         while (!streamReaderWrap.IsEof)
                         {
                             if (!char.IsLetterOrDigit(streamReaderWrap.CurrentCharacter) &&
@@ -345,7 +389,8 @@ public static class XmlLexer
                         output.TextSpanList.Add(new TextEditorTextSpan(
                             tagNameStartPosition,
                             streamReaderWrap.PositionIndex,
-                            (byte)XmlDecorationKind.TagNameOpen));
+                            (byte)XmlDecorationKind.TagNameOpen,
+                            tagNameStartByte));
 
                         if (streamReaderWrap.CurrentCharacter == '/' && streamReaderWrap.PeekCharacter(1) == '>' ||
                             streamReaderWrap.CurrentCharacter == '>')
