@@ -453,51 +453,7 @@ public partial class DotNetService
         var stringBuilder = new StringBuilder();
         var getTextBuffer = new char[1];
         
-        foreach (var textSpan in lexerOutput.TextSpanList)
-        {
-            sr.BaseStream.Seek(textSpan.ByteIndex, SeekOrigin.Begin);
-            sr.DiscardBufferedData();
-        
-            stringBuilder.Clear();
-        
-            for (int i = 0; i < textSpan.Length; i++)
-            {
-                sr.Read(getTextBuffer, 0, 1);
-                stringBuilder.Append(getTextBuffer[0]);
-            }
-        
-            var decorationKind = (XmlDecorationKind)textSpan.DecorationByte;
-                    
-            switch (decorationKind)
-            {
-                case XmlDecorationKind.TagNameOpen:
-                    Console.Write(decorationKind + "       ");
-                    break;
-                case XmlDecorationKind.TagNameClose:
-                    Console.Write(decorationKind + "      ");
-                    break;
-                case XmlDecorationKind.TagNameSelf:
-                    Console.Write(decorationKind + "       ");
-                    break;
-                case XmlDecorationKind.AttributeName:
-                    Console.Write(decorationKind + "     ");
-                    break;
-                case XmlDecorationKind.AttributeValue:
-                    Console.Write(decorationKind + "    ");
-                    break;
-                case XmlDecorationKind.AttributeOperator:
-                    Console.Write(decorationKind + " ");
-                    break;
-                case XmlDecorationKind.AttributeDelimiter:
-                    Console.Write(decorationKind);
-                    break;
-                default:
-                    Console.Write(decorationKind);
-                    break;
-            }
-        
-            Console.WriteLine($" | {stringBuilder.ToString()}");
-        }
+        var xmlOutputReader = new XmlOutputReader(lexerOutput.TextSpanList);
         
         List<(string Name, List<string> ChildProjectRelativePathList)> folderTupleList = new();
         

@@ -89,11 +89,6 @@ public class TreeViewCSharpProjectToProjectReferences : TreeViewWithType<CSharpP
         
         var outputReader = new XmlOutputReader(lexerOutput.TextSpanList);
         
-        outputReader.ConsoleWriteFormatted(
-            sr,
-            stringBuilder,
-            getTextBuffer);
-        
         outputReader.FindTagGetAttributeValue(
             targetTagName: "ProjectReference",
             targetAttributeOne: "Include",

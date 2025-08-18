@@ -91,11 +91,6 @@ public class TreeViewCSharpProjectNugetPackageReferences : TreeViewWithType<CSha
         
         var outputReader = new XmlOutputReader(lexerOutput.TextSpanList);
         
-        outputReader.ConsoleWriteFormatted(
-            sr,
-            stringBuilder,
-            getTextBuffer);
-        
         outputReader.FindTagGetEitherOrBothAttributeValue(
             targetTagName: "PackageReference",
             targetAttributeOne: "Include",
