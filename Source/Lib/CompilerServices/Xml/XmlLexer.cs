@@ -145,6 +145,30 @@ public static class XmlLexer
                 case '7':
                 case '8':
                 case '9':
+                    if (context == XmlLexerContextKind.Expect_AttributeValue)
+                    {
+                        var attributeValueStartPosition = streamReaderWrap.PositionIndex;
+                        var attributeValueStartByte = streamReaderWrap.ByteIndex;
+                        while (!streamReaderWrap.IsEof)
+                        {
+                            if (!char.IsLetterOrDigit(streamReaderWrap.CurrentCharacter) &&
+                                streamReaderWrap.CurrentCharacter != '_' &&
+                                streamReaderWrap.CurrentCharacter != '-' &&
+                                streamReaderWrap.CurrentCharacter != ':')
+                            {
+                                break;
+                            }
+                            _ = streamReaderWrap.ReadCharacter();
+                        }
+                        output.TextSpanList.Add(new TextEditorTextSpan(
+                            attributeValueStartPosition,
+                            streamReaderWrap.PositionIndex,
+                            (byte)XmlDecorationKind.AttributeValue,
+                            attributeValueStartByte));
+                        context = XmlLexerContextKind.Expect_AttributeName;
+                        break;
+                    }
+                    
                     goto default;
                 case '\'':
                     if (context == XmlLexerContextKind.Expect_AttributeValue)
