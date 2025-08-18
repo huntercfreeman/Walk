@@ -102,7 +102,7 @@ public struct XmlOutputReader
                                     {
                                         var temporaryValue = stringBuilder.ToString();
                                     
-                                        if (attributeValueMustEndsWith is not null)
+                                        if (attributeValueMustEndsWith is null)
                                         {
                                             valueAttributeOne = temporaryValue;
                                         }
