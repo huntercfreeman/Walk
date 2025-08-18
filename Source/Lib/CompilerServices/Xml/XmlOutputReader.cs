@@ -29,7 +29,8 @@ public struct XmlOutputReader
         StreamReader sr,
         StringBuilder stringBuilder,
         char[] getTextBuffer,
-        List<string> output)
+        List<string> output,
+        string? attributeValueMustEndsWith = null)
     {
         for (int indexTextSpan = 0; indexTextSpan < TextSpanList.Count; indexTextSpan++)
         {
@@ -48,72 +49,73 @@ public struct XmlOutputReader
                 }
                 var tagName = stringBuilder.ToString();
             
-                if (tagName == targetTagName)
-                {
-                    string? valueAttributeOne = null;
+                if (tagName != targetTagName)
+                    continue;
                 
-                    while (indexTextSpan < TextSpanList.Count - 1)
+                string? valueAttributeOne = null;
+            
+                while (indexTextSpan < TextSpanList.Count - 1)
+                {
+                    if ((XmlDecorationKind)TextSpanList[indexTextSpan + 1].DecorationByte == XmlDecorationKind.AttributeName)
                     {
-                        if ((XmlDecorationKind)TextSpanList[indexTextSpan + 1].DecorationByte == XmlDecorationKind.AttributeName)
+                        var attributeNameTextSpan = TextSpanList[indexTextSpan + 1];
+                        ++indexTextSpan;
+                        
+                        sr.BaseStream.Seek(attributeNameTextSpan.ByteIndex, SeekOrigin.Begin);
+                        sr.DiscardBufferedData();
+                        stringBuilder.Clear();
+                        for (int i = 0; i < attributeNameTextSpan.Length; i++)
                         {
-                            var attributeNameTextSpan = TextSpanList[indexTextSpan + 1];
-                            ++indexTextSpan;
-                            
-                            sr.BaseStream.Seek(attributeNameTextSpan.ByteIndex, SeekOrigin.Begin);
-                            sr.DiscardBufferedData();
-                            stringBuilder.Clear();
-                            for (int i = 0; i < attributeNameTextSpan.Length; i++)
-                            {
-                                sr.Read(getTextBuffer, 0, 1);
-                                stringBuilder.Append(getTextBuffer[0]);
-                            }
-                            var attributeNameString = stringBuilder.ToString();
-                            
-                            while (indexTextSpan < TextSpanList.Count - 1)
-                            {
-                                var nextDecorationKind = (XmlDecorationKind)TextSpanList[indexTextSpan + 1].DecorationByte;
-                                
-                                if (nextDecorationKind == XmlDecorationKind.AttributeOperator)
-                                {
-                                    ++indexTextSpan;
-                                }
-                                else if (nextDecorationKind == XmlDecorationKind.AttributeDelimiter)
-                                {
-                                    ++indexTextSpan;
-                                }
-                                else if (nextDecorationKind == XmlDecorationKind.AttributeValue)
-                                {
-                                    var attributeValueTextSpan = TextSpanList[indexTextSpan + 1];
-                                    
-                                    sr.BaseStream.Seek(attributeValueTextSpan.ByteIndex, SeekOrigin.Begin);
-                                    sr.DiscardBufferedData();
-                                    stringBuilder.Clear();
-                                    for (int i = 0; i < attributeValueTextSpan.Length; i++)
-                                    {
-                                        sr.Read(getTextBuffer, 0, 1);
-                                        stringBuilder.Append(getTextBuffer[0]);
-                                    }
-                                    
-                                    if (attributeNameString == targetAttributeOne)
-                                    {
-                                        if (valueAttributeOne is null)
-                                            valueAttributeOne = stringBuilder.ToString();
-                                    }
-                                    
-                                    ++indexTextSpan;
-                                    break;
-                                }
-                                else
-                                {
-                                    break;
-                                }
-                            }
+                            sr.Read(getTextBuffer, 0, 1);
+                            stringBuilder.Append(getTextBuffer[0]);
                         }
-                        else
+                        var attributeNameString = stringBuilder.ToString();
+                        
+                        while (indexTextSpan < TextSpanList.Count - 1)
                         {
-                            if ((XmlDecorationKind)TextSpanList[indexTextSpan + 1].DecorationByte == XmlDecorationKind.AttributeDelimiter)
+                            var nextDecorationKind = (XmlDecorationKind)TextSpanList[indexTextSpan + 1].DecorationByte;
+                            
+                            if (nextDecorationKind == XmlDecorationKind.AttributeOperator)
                             {
                                 ++indexTextSpan;
+                            }
+                            else if (nextDecorationKind == XmlDecorationKind.AttributeDelimiter)
+                            {
+                                ++indexTextSpan;
+                            }
+                            else if (nextDecorationKind == XmlDecorationKind.AttributeValue)
+                            {
+                                var attributeValueTextSpan = TextSpanList[indexTextSpan + 1];
+                                
+                                sr.BaseStream.Seek(attributeValueTextSpan.ByteIndex, SeekOrigin.Begin);
+                                sr.DiscardBufferedData();
+                                stringBuilder.Clear();
+                                for (int i = 0; i < attributeValueTextSpan.Length; i++)
+                                {
+                                    sr.Read(getTextBuffer, 0, 1);
+                                    stringBuilder.Append(getTextBuffer[0]);
+                                }
+                                
+                                if (attributeNameString == targetAttributeOne)
+                                {
+                                    if (valueAttributeOne is null)
+                                    {
+                                        var temporaryValue = stringBuilder.ToString();
+                                    
+                                        if (attributeValueMustEndsWith is not null)
+                                        {
+                                            valueAttributeOne = temporaryValue;
+                                        }
+                                        else
+                                        {
+                                            if (temporaryValue.EndsWith(attributeValueMustEndsWith))
+                                                valueAttributeOne = temporaryValue;
+                                        }
+                                    }
+                                }
+                                
+                                ++indexTextSpan;
+                                break;
                             }
                             else
                             {
@@ -121,10 +123,21 @@ public struct XmlOutputReader
                             }
                         }
                     }
-                    
-                    if (valueAttributeOne is not null || shouldIncludeFullMissLines)
-                        output.Add(valueAttributeOne);
+                    else
+                    {
+                        if ((XmlDecorationKind)TextSpanList[indexTextSpan + 1].DecorationByte == XmlDecorationKind.AttributeDelimiter)
+                        {
+                            ++indexTextSpan;
+                        }
+                        else
+                        {
+                            break;
+                        }
+                    }
                 }
+                
+                if (valueAttributeOne is not null || shouldIncludeFullMissLines)
+                    output.Add(valueAttributeOne);
             }
         }
     }
@@ -164,78 +177,67 @@ public struct XmlOutputReader
                 }
                 var tagName = stringBuilder.ToString();
             
-                if (tagName == targetTagName)
-                {
-                    string? valueAttributeOne = null;
-                    string? valueAttributeTwo = null;
+                if (tagName != targetTagName)
+                    continue;
                 
-                    while (indexTextSpan < TextSpanList.Count - 1)
+                string? valueAttributeOne = null;
+                string? valueAttributeTwo = null;
+            
+                while (indexTextSpan < TextSpanList.Count - 1)
+                {
+                    if ((XmlDecorationKind)TextSpanList[indexTextSpan + 1].DecorationByte == XmlDecorationKind.AttributeName)
                     {
-                        if ((XmlDecorationKind)TextSpanList[indexTextSpan + 1].DecorationByte == XmlDecorationKind.AttributeName)
+                        var attributeNameTextSpan = TextSpanList[indexTextSpan + 1];
+                        ++indexTextSpan;
+                        
+                        sr.BaseStream.Seek(attributeNameTextSpan.ByteIndex, SeekOrigin.Begin);
+                        sr.DiscardBufferedData();
+                        stringBuilder.Clear();
+                        for (int i = 0; i < attributeNameTextSpan.Length; i++)
                         {
-                            var attributeNameTextSpan = TextSpanList[indexTextSpan + 1];
-                            ++indexTextSpan;
-                            
-                            sr.BaseStream.Seek(attributeNameTextSpan.ByteIndex, SeekOrigin.Begin);
-                            sr.DiscardBufferedData();
-                            stringBuilder.Clear();
-                            for (int i = 0; i < attributeNameTextSpan.Length; i++)
-                            {
-                                sr.Read(getTextBuffer, 0, 1);
-                                stringBuilder.Append(getTextBuffer[0]);
-                            }
-                            var attributeNameString = stringBuilder.ToString();
-                            
-                            while (indexTextSpan < TextSpanList.Count - 1)
-                            {
-                                var nextDecorationKind = (XmlDecorationKind)TextSpanList[indexTextSpan + 1].DecorationByte;
-                                
-                                if (nextDecorationKind == XmlDecorationKind.AttributeOperator)
-                                {
-                                    ++indexTextSpan;
-                                }
-                                else if (nextDecorationKind == XmlDecorationKind.AttributeDelimiter)
-                                {
-                                    ++indexTextSpan;
-                                }
-                                else if (nextDecorationKind == XmlDecorationKind.AttributeValue)
-                                {
-                                    var attributeValueTextSpan = TextSpanList[indexTextSpan + 1];
-                                    
-                                    sr.BaseStream.Seek(attributeValueTextSpan.ByteIndex, SeekOrigin.Begin);
-                                    sr.DiscardBufferedData();
-                                    stringBuilder.Clear();
-                                    for (int i = 0; i < attributeValueTextSpan.Length; i++)
-                                    {
-                                        sr.Read(getTextBuffer, 0, 1);
-                                        stringBuilder.Append(getTextBuffer[0]);
-                                    }
-                                    
-                                    if (attributeNameString == targetAttributeOne)
-                                    {
-                                        if (valueAttributeOne is null)
-                                            valueAttributeOne = stringBuilder.ToString();
-                                    }
-                                    else if (attributeNameString == targetAttributeTwo)
-                                    {
-                                        if (valueAttributeTwo is null)
-                                            valueAttributeTwo = stringBuilder.ToString();
-                                    }
-                                    
-                                    ++indexTextSpan;
-                                    break;
-                                }
-                                else
-                                {
-                                    break;
-                                }
-                            }
+                            sr.Read(getTextBuffer, 0, 1);
+                            stringBuilder.Append(getTextBuffer[0]);
                         }
-                        else
+                        var attributeNameString = stringBuilder.ToString();
+                        
+                        while (indexTextSpan < TextSpanList.Count - 1)
                         {
-                            if ((XmlDecorationKind)TextSpanList[indexTextSpan + 1].DecorationByte == XmlDecorationKind.AttributeDelimiter)
+                            var nextDecorationKind = (XmlDecorationKind)TextSpanList[indexTextSpan + 1].DecorationByte;
+                            
+                            if (nextDecorationKind == XmlDecorationKind.AttributeOperator)
                             {
                                 ++indexTextSpan;
+                            }
+                            else if (nextDecorationKind == XmlDecorationKind.AttributeDelimiter)
+                            {
+                                ++indexTextSpan;
+                            }
+                            else if (nextDecorationKind == XmlDecorationKind.AttributeValue)
+                            {
+                                var attributeValueTextSpan = TextSpanList[indexTextSpan + 1];
+                                
+                                sr.BaseStream.Seek(attributeValueTextSpan.ByteIndex, SeekOrigin.Begin);
+                                sr.DiscardBufferedData();
+                                stringBuilder.Clear();
+                                for (int i = 0; i < attributeValueTextSpan.Length; i++)
+                                {
+                                    sr.Read(getTextBuffer, 0, 1);
+                                    stringBuilder.Append(getTextBuffer[0]);
+                                }
+                                
+                                if (attributeNameString == targetAttributeOne)
+                                {
+                                    if (valueAttributeOne is null)
+                                        valueAttributeOne = stringBuilder.ToString();
+                                }
+                                else if (attributeNameString == targetAttributeTwo)
+                                {
+                                    if (valueAttributeTwo is null)
+                                        valueAttributeTwo = stringBuilder.ToString();
+                                }
+                                
+                                ++indexTextSpan;
+                                break;
                             }
                             else
                             {
@@ -243,10 +245,151 @@ public struct XmlOutputReader
                             }
                         }
                     }
-                    
-                    if (valueAttributeOne is not null || valueAttributeTwo is not null || shouldIncludeFullMissLines)
-                        output.Add(new(valueAttributeOne, valueAttributeTwo));
+                    else
+                    {
+                        if ((XmlDecorationKind)TextSpanList[indexTextSpan + 1].DecorationByte == XmlDecorationKind.AttributeDelimiter)
+                        {
+                            ++indexTextSpan;
+                        }
+                        else
+                        {
+                            break;
+                        }
+                    }
                 }
+                
+                if (valueAttributeOne is not null || valueAttributeTwo is not null || shouldIncludeFullMissLines)
+                    output.Add(new(valueAttributeOne, valueAttributeTwo));
+            }
+        }
+    }
+    
+    /// <summary>
+    /// ---------------------------------------------------------------------------
+    /// <Folder Name="/eng/" />
+    /// ---------------------------------------------------------------------------
+    /// The above XML which is demarcated by dashed lines will output a tuple entry of:
+    ///     ("/eng/", new List<string> { /* an empty list */ })
+    ///
+    ///
+    /// ===========================================================================
+    /// ===========================================================================
+    ///
+    ///
+    /// ---------------------------------------------------------------------------
+    /// <Folder Name="/eng/tools/" Id="daae2ffb-70a9-dcef-23a0-0abaed0a9720">
+    ///     <Project Path="eng/tools/BaselineGenerator/BaselineGenerator.csproj" />
+    ///     <Project Path="eng/tools/RepoTasks/RepoTasks.csproj" />
+    /// </Folder>
+    /// ---------------------------------------------------------------------------
+    /// The above XML which is demarcated by dashed lines will output a tuple entry of:
+    ///     ("/eng/", new List<string> { "eng/tools/BaselineGenerator/BaselineGenerator.csproj", "eng/tools/RepoTasks/RepoTasks.csproj" })
+    ///
+    ///
+    /// ===========================================================================
+    /// ===========================================================================
+    ///
+    /// A parent tag that is nested inside a parent tag will not be traversed. It will just be skipped over.
+    /// </summary>
+    public void CollectParentChildrenRelationship(
+        string parentTagName,
+        string parentAttributeName,
+        string childTagName,
+        string childAttributeName,
+        StreamReader sr,
+        StringBuilder stringBuilder,
+        char[] getTextBuffer,
+        List<(string Name, List<string> ChildProjectRelativePathList)> folderTupleList)
+    {
+        var withinFolder = false;
+        var childProjectRelativePathList = new List<string>();
+    
+        for (int indexTextSpan = 0; indexTextSpan < TextSpanList.Count; indexTextSpan++)
+        {
+            var textSpan = TextSpanList[indexTextSpan];
+            var decorationKind = (XmlDecorationKind)textSpan.DecorationByte;
+            
+            if (!withinFolder && decorationKind == XmlDecorationKind.TagNameOpen || decorationKind == XmlDecorationKind.TagNameSelf)
+            {
+                sr.BaseStream.Seek(textSpan.ByteIndex, SeekOrigin.Begin);
+                sr.DiscardBufferedData();
+                stringBuilder.Clear();
+                for (int i = 0; i < textSpan.Length; i++)
+                {
+                    sr.Read(getTextBuffer, 0, 1);
+                    stringBuilder.Append(getTextBuffer[0]);
+                }
+                var tagNameOpenString = stringBuilder.ToString();
+
+                var nameValue = string.Empty;
+
+                if (tagNameOpenString != parentTagName)
+                    continue;
+                
+                while (indexTextSpan < TextSpanList.Count - 1)
+                {
+                    if ((XmlDecorationKind)TextSpanList[indexTextSpan + 1].DecorationByte == XmlDecorationKind.AttributeName)
+                    {
+                        var attributeNameTextSpan = TextSpanList[indexTextSpan + 1];
+                        ++indexTextSpan;
+                        
+                        sr.BaseStream.Seek(attributeNameTextSpan.ByteIndex, SeekOrigin.Begin);
+                        sr.DiscardBufferedData();
+                        stringBuilder.Clear();
+                        for (int i = 0; i < attributeNameTextSpan.Length; i++)
+                        {
+                            sr.Read(getTextBuffer, 0, 1);
+                            stringBuilder.Append(getTextBuffer[0]);
+                        }
+                        var attributeNameString = stringBuilder.ToString();
+                        
+                        if (attributeNameString == parentAttributeName)
+                        {
+                            if ((XmlDecorationKind)TextSpanList[indexTextSpan + 1].DecorationByte == XmlDecorationKind.AttributeOperator)
+                                ++indexTextSpan;
+                            else if ((XmlDecorationKind)TextSpanList[indexTextSpan + 1].DecorationByte == XmlDecorationKind.AttributeDelimiter)
+                                ++indexTextSpan;
+                                
+                            if ((XmlDecorationKind)TextSpanList[indexTextSpan + 1].DecorationByte == XmlDecorationKind.AttributeOperator)
+                                ++indexTextSpan;
+                            else if ((XmlDecorationKind)TextSpanList[indexTextSpan + 1].DecorationByte == XmlDecorationKind.AttributeDelimiter)
+                                ++indexTextSpan;
+                        
+                            if (nameValue == string.Empty)
+                            {
+                                var attributeValueTextSpan = TextSpanList[indexTextSpan + 1];
+                                
+                                sr.BaseStream.Seek(attributeValueTextSpan.ByteIndex, SeekOrigin.Begin);
+                                sr.DiscardBufferedData();
+                                stringBuilder.Clear();
+                                for (int i = 0; i < attributeValueTextSpan.Length; i++)
+                                {
+                                    sr.Read(getTextBuffer, 0, 1);
+                                    stringBuilder.Append(getTextBuffer[0]);
+                                }
+                            
+                                nameValue = stringBuilder.ToString();
+                                ++indexTextSpan;
+                                break;
+                            }
+                        }
+                    }
+                    else if ((XmlDecorationKind)TextSpanList[indexTextSpan + 1].DecorationByte == XmlDecorationKind.AttributeOperator)
+                    {
+                        ++indexTextSpan;
+                    }
+                    else if ((XmlDecorationKind)TextSpanList[indexTextSpan + 1].DecorationByte == XmlDecorationKind.AttributeDelimiter)
+                    {
+                        ++indexTextSpan;
+                    }
+                    else
+                    {
+                        break;
+                    }
+                }
+                
+                if (nameValue != string.Empty)
+                    folderTupleList.Add((nameValue, childProjectRelativePathList));
             }
         }
     }
