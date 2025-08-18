@@ -150,22 +150,10 @@ public static class RazorLexer
                             {
                                 if (!char.IsLetterOrDigit(streamReaderWrap.CurrentCharacter))
                                 {
-                                    if (streamReaderWrap.CurrentCharacter == '@')
-                                    {
-                                        var atCharStartPosition = streamReaderWrap.PositionIndex;
-                                        var atCharStartByte = streamReaderWrap.ByteIndex;
-                                        _ = streamReaderWrap.ReadCharacter();
-                                        SkipCSharpdentifier(streamReaderWrap);
-                                        output.TextSpanList.Add(new TextEditorTextSpan(
-                                            atCharStartPosition,
-                                            streamReaderWrap.PositionIndex,
-                                            (byte)RazorDecorationKind.InjectedLanguageFragment,
-                                            atCharStartByte));
-                                        break;
-                                    }
-                                    else if (streamReaderWrap.CurrentCharacter != '_' &&
-                                             streamReaderWrap.CurrentCharacter != '-' &&
-                                             streamReaderWrap.CurrentCharacter != ':')
+                                    if (streamReaderWrap.CurrentCharacter == '@' &&
+                                        streamReaderWrap.CurrentCharacter != '_' &&
+                                        streamReaderWrap.CurrentCharacter != '-' &&
+                                        streamReaderWrap.CurrentCharacter != ':')
                                     {
                                         break;
                                     }
@@ -274,6 +262,7 @@ public static class RazorLexer
                         var attributeValueStartPosition = streamReaderWrap.PositionIndex;
                         var attributeValueStartByte = streamReaderWrap.ByteIndex;
                         var attributeValueEnd = streamReaderWrap.PositionIndex;
+                        var hasSeenInterpolation = false;
                         while (!streamReaderWrap.IsEof)
                         {
                             if (streamReaderWrap.CurrentCharacter == '\'')
@@ -284,18 +273,72 @@ public static class RazorLexer
                                 _ = streamReaderWrap.ReadCharacter();
                                 break;
                             }
+                            else if (streamReaderWrap.CurrentCharacter == '@')
+                            {
+                                if (!hasSeenInterpolation)
+                                {
+                                    hasSeenInterpolation = true;
+                                    output.TextSpanList.Add(new TextEditorTextSpan(
+                                        attributeValueStartPosition,
+                                        streamReaderWrap.PositionIndex,
+                                        (byte)RazorDecorationKind.AttributeValueInterpolationStart,
+                                        attributeValueStartByte));
+                                }
+                                else
+                                {
+                                    output.TextSpanList.Add(new TextEditorTextSpan(
+                                        attributeValueStartPosition,
+                                        streamReaderWrap.PositionIndex,
+                                        (byte)RazorDecorationKind.AttributeValueInterpolationContinue,
+                                        attributeValueStartByte));
+                                }
+                                
+                                var interpolationStartPosition = streamReaderWrap.PositionIndex;
+                                var interpolationStartByte = streamReaderWrap.ByteIndex;
+                                _ = streamReaderWrap.ReadCharacter();
+                                SkipCSharpdentifier(streamReaderWrap);
+                                output.TextSpanList.Add(new TextEditorTextSpan(
+                                    interpolationStartPosition,
+                                    streamReaderWrap.PositionIndex,
+                                    (byte)RazorDecorationKind.AttributeValueInjectedLanguageFragment,
+                                    interpolationStartByte));
+                                
+                                attributeValueStartPosition = streamReaderWrap.PositionIndex;
+                                attributeValueStartByte = streamReaderWrap.ByteIndex;
+                                continue;
+                            }
                             _ = streamReaderWrap.ReadCharacter();
                         }
-                        output.TextSpanList.Add(new TextEditorTextSpan(
-                            attributeValueStartPosition,
-                            attributeValueEnd,
-                            (byte)RazorDecorationKind.AttributeValue,
-                            attributeValueStartByte));
+                        
+                        if (hasSeenInterpolation)
+                        {
+                            output.TextSpanList.Add(new TextEditorTextSpan(
+                                attributeValueStartPosition,
+                                attributeValueEnd,
+                                (byte)RazorDecorationKind.AttributeValueInterpolationContinue,
+                                attributeValueStartByte));
+                        
+                            output.TextSpanList.Add(new TextEditorTextSpan(
+                                delimiterStartPosition,
+                                delimiterStartPosition,
+                                (byte)RazorDecorationKind.AttributeValueInterpolationEnd,
+                                delimiterStartByte));
+                        }
+                        else
+                        {
+                            output.TextSpanList.Add(new TextEditorTextSpan(
+                                attributeValueStartPosition,
+                                attributeValueEnd,
+                                (byte)RazorDecorationKind.AttributeValue,
+                                attributeValueStartByte));
+                        }
+                        
                         output.TextSpanList.Add(new TextEditorTextSpan(
                             delimiterStartPosition,
                             streamReaderWrap.PositionIndex,
                             (byte)RazorDecorationKind.AttributeDelimiter,
                             delimiterStartByte));
+                            
                         context = RazorLexerContextKind.Expect_AttributeName;
                         break;
                     }

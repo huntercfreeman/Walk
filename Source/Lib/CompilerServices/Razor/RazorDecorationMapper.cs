@@ -17,6 +17,8 @@ public class RazorDecorationMapper : IDecorationMapper
             RazorDecorationKind.AttributeDelimiter => "di_attribute-value",
             RazorDecorationKind.AttributeNameInjectedLanguageFragment => "di_injected-language-fragment",
             RazorDecorationKind.AttributeValueInjectedLanguageFragment => "di_injected-language-fragment",
+            RazorDecorationKind.AttributeValueInterpolationStart => "di_attribute-value",
+            RazorDecorationKind.AttributeValueInterpolationContinue => "di_attribute-value",
             RazorDecorationKind.TagNameNone => "di_tag-name",
             RazorDecorationKind.TagNameOpen => "di_tag-name",
             RazorDecorationKind.TagNameClose => "di_tag-name",
