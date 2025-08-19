@@ -191,12 +191,60 @@ public static class RazorLexer
                                 var atCharStartPosition = streamReaderWrap.PositionIndex;
                                 var atCharStartByte = streamReaderWrap.ByteIndex;
                                 _ = streamReaderWrap.ReadCharacter();
-                                SkipCSharpdentifier(streamReaderWrap);
-                                output.TextSpanList.Add(new TextEditorTextSpan(
-                                    atCharStartPosition,
-                                    streamReaderWrap.PositionIndex,
-                                    (byte)RazorDecorationKind.InjectedLanguageFragment,
-                                    atCharStartByte));
+                            
+                                if (streamReaderWrap.CurrentCharacter == '*')
+                                {
+                                    _ = streamReaderWrap.ReadCharacter();
+                                    output.TextSpanList.Add(new TextEditorTextSpan(
+                                        atCharStartPosition,
+                                        streamReaderWrap.PositionIndex,
+                                        (byte)RazorDecorationKind.InjectedLanguageFragment,
+                                        atCharStartByte));
+                                        
+                                    var commentStartPosition = streamReaderWrap.PositionIndex;
+                                    var commentStartByte = streamReaderWrap.ByteIndex;
+                                    
+                                    while (!streamReaderWrap.IsEof)
+                                    {
+                                        if (streamReaderWrap.CurrentCharacter == '*' && streamReaderWrap.PeekCharacter(1) == '@')
+                                        {
+                                            break;
+                                        }
+                                    
+                                        _ = streamReaderWrap.ReadCharacter();
+                                    }
+                                    
+                                    output.TextSpanList.Add(new TextEditorTextSpan(
+                                        commentStartPosition,
+                                        streamReaderWrap.PositionIndex,
+                                        (byte)RazorDecorationKind.Comment,
+                                        commentStartByte));
+                                    
+                                    // The while loop has 2 break cases, thus !IsEof means "*@" was the break cause.
+                                    if (!streamReaderWrap.IsEof)
+                                    {
+                                        var starStartPosition = streamReaderWrap.PositionIndex;
+                                        var starStartByte = streamReaderWrap.ByteIndex;
+                                        
+                                        _ = streamReaderWrap.ReadCharacter();
+                                        _ = streamReaderWrap.ReadCharacter();
+                                        output.TextSpanList.Add(new TextEditorTextSpan(
+                                            starStartPosition,
+                                            streamReaderWrap.PositionIndex,
+                                            (byte)RazorDecorationKind.InjectedLanguageFragment,
+                                            starStartByte));
+                                    }
+                                }
+                                else
+                                {
+                                    SkipCSharpdentifier(streamReaderWrap);
+                                    output.TextSpanList.Add(new TextEditorTextSpan(
+                                        atCharStartPosition,
+                                        streamReaderWrap.PositionIndex,
+                                        (byte)RazorDecorationKind.InjectedLanguageFragment,
+                                        atCharStartByte));
+                                }
+                                
                                 textStartPosition = streamReaderWrap.PositionIndex;
                                 textStartByte = streamReaderWrap.ByteIndex;
                                 continue;
