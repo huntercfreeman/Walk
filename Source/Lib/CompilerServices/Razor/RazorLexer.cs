@@ -820,60 +820,49 @@ public static class RazorLexer
     private static void SkipCSharpdentifierOrKeyword(StreamReaderWrap streamReaderWrap)
     {
         /*
-            Flat G
+        
+        
             
-            https://learn.microsoft.com/en-us/aspnet/core/mvc/views/razor?view=aspnetcore-9.0
-            =================================================================================
-            
-            ad
-            at
-             
-            ca
-            cl
-            co
-             
-            de
-            do // 'do' was a word itself
-              
-             
-            for // 'for' was a word itself
-               each
-            fu
-             
-            la
-            lo
-             
-            m
-             
-            pa
-            pr
-             
-            if // 'if' was a word itself
-            im
-            inh
-            inj
-             
-            n
-             
-            rem
-            ren
-             
-            se
-            sw
-             
-            ta
-            tr
-            ty
-             
-            u
-             
-            w
-            
-            Flat H
-            
-            https://learn.microsoft.com/en-us/aspnet/core/mvc/views/razor?view=aspnetcore-9.0
-            =================================================================================
-            
+        
+            a97 + d100                = 197
+            a97 + t116                = 213
+            c99 + a97                 = 196
+            c99 + l108                = 207
+            c99 + o111                = 210
+            d100 + e101               = 201
+            d100 + o111^              = 211
+            f102 + o111 + r114^       = 327
+            f102 + o111 + r114 + e101 = 428
+            f102 + u117               = 219
+            l108 + a97                = 205
+            l108 + o111               = 219
+            m109                      = 109
+            p112 + a97                = 209
+            p112 + r114               = 226
+            i105 + f102^              = 207
+            i105 + m109               = 214
+            i105 + n110 + h104        = 319
+            i105 + n110 + j106        = 321
+            n110                      = 110
+            r114 + e101 + m109        = 324
+            r114 + e101 + n110        = 325
+            s115 + e101               = 216
+            s115 + w119               = 234
+            t116 + a97                = 213
+            t116 + r114               = 230
+            t116 + y121               = 237
+            u117                      = 117
+            w119                      = 119
+        
+        
+        
+        ================================================
+        ================================================
+        
+        
+        
+        
+        
             ad
             at
             ca
@@ -1515,6 +1504,88 @@ public static class RazorLexer
     w
      hile
     
+    Flat G
+            
+    https://learn.microsoft.com/en-us/aspnet/core/mvc/views/razor?view=aspnetcore-9.0
+    =================================================================================
     
+    ad
+    at
+     
+    ca
+    cl
+    co
+     
+    de
+    do // 'do' was a word itself
+      
+     
+    for // 'for' was a word itself
+       each
+    fu
+     
+    la
+    lo
+     
+    m
+     
+    pa
+    pr
+     
+    if // 'if' was a word itself
+    im
+    inh
+    inj
+     
+    n
+     
+    rem
+    ren
+     
+    se
+    sw
+     
+    ta
+    tr
+    ty
+     
+    u
+     
+    w
+    
+    Flat H
+            
+    https://learn.microsoft.com/en-us/aspnet/core/mvc/views/razor?view=aspnetcore-9.0
+    =================================================================================
+    
+    ad
+    at
+    ca
+    cl
+    co
+    de
+    do^
+    for^
+    fore
+    fu
+    la
+    lo
+    m
+    pa
+    pr
+    if^
+    im
+    inh
+    inj
+    n
+    rem
+    ren
+    se
+    sw
+    ta
+    tr
+    ty
+    u
+    w
     */
 }
