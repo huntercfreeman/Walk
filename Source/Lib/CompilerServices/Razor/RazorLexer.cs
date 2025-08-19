@@ -354,6 +354,70 @@ public static class RazorLexer
                     using
                     while
                     */
+                    
+                    /*
+                    Flat D
+                    
+                    https://learn.microsoft.com/en-us/aspnet/core/mvc/views/razor?view=aspnetcore-9.0
+                    =================================================================================
+                    
+                    a
+                     ddTagHelper
+                     ttribute
+                     
+                    c
+                     ase
+                     lass
+                     ode { }
+                     
+                    d
+                     efault
+                     o
+                     
+                    f
+                     or
+                     oreach
+                     unctions { }
+                     
+                    l
+                     ayout
+                     ock
+                     
+                    m
+                     odel
+                     
+                    p
+                     age
+                     reservewhitespace
+                     
+                    i
+                     f
+                     mplements
+                     nherits
+                     nject
+                     
+                    n
+                     amespace
+                     
+                    r
+                     emoveTagHelper
+                     endermode
+                     
+                    s
+                     ection
+                     witch
+                     
+                    t
+                     agHelperPrefix
+                     ry
+                     ypeparam
+                     
+                    u
+                     sing
+                     
+                    w
+                     hile
+                    */
                 
                     if (context == RazorLexerContextKind.Expect_AttributeName)
                     {
