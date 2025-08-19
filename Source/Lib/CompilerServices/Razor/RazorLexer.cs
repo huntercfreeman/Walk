@@ -235,112 +235,13 @@ public static class RazorLexer
                                 }
                                 else if (streamReaderWrap.CurrentCharacter == '{')
                                 {
-                                    _ = streamReaderWrap.ReadCharacter();
                                     output.TextSpanList.Add(new TextEditorTextSpan(
                                         atCharStartPosition,
                                         streamReaderWrap.PositionIndex,
                                         (byte)RazorDecorationKind.InjectedLanguageFragment,
                                         atCharStartByte));
                                         
-                                    var cSharpStartPosition = streamReaderWrap.PositionIndex;
-                                    var cSharpStartByte = streamReaderWrap.ByteIndex;
-                                    
-                                    var braceMatch = 1;
-                                    
-                                    var isSingleLineComment = false;
-                                    var isMultiLineComment = false;
-                                    var isString = false;
-                                    
-                                    var previousCharWasForwardSlash = false;
-                                    
-                                    while (!streamReaderWrap.IsEof)
-                                    {
-                                        var localPreviousCharWasForwardSlash = previousCharWasForwardSlash;
-                                        
-                                        if (streamReaderWrap.CurrentCharacter == '/')
-                                        {
-                                            previousCharWasForwardSlash = true;
-                                        }
-                                        else
-                                        {
-                                            previousCharWasForwardSlash = false;
-                                        }
-                                    
-                                        if (isMultiLineComment)
-                                        {
-                                            if (streamReaderWrap.CurrentCharacter == '*' && streamReaderWrap.PeekCharacter(1) == '/')
-                                            {
-                                                _ = streamReaderWrap.ReadCharacter();
-                                                _ = streamReaderWrap.ReadCharacter();
-                                                isMultiLineComment = false;
-                                                continue;
-                                            }
-                                        }
-                                        else if (isSingleLineComment)
-                                        {
-                                            if (streamReaderWrap.CurrentCharacter == '\r' ||
-                                                streamReaderWrap.CurrentCharacter == '\n')
-                                            {
-                                                isSingleLineComment = false;
-                                            }
-                                        }
-                                        else if (isString)
-                                        {
-                                            if (streamReaderWrap.CurrentCharacter == '"')
-                                            {
-                                                isString = false;
-                                            }
-                                        }
-                                        else if (streamReaderWrap.CurrentCharacter == '"')
-                                        {
-                                            isString = true;
-                                        }
-                                        else if (streamReaderWrap.CurrentCharacter == '/')
-                                        {
-                                            if (localPreviousCharWasForwardSlash)
-                                            {
-                                                isSingleLineComment = true;
-                                            }
-                                        }
-                                        else if (streamReaderWrap.CurrentCharacter == '*')
-                                        {
-                                            if (localPreviousCharWasForwardSlash)
-                                            {
-                                                isMultiLineComment = true;
-                                            }
-                                        }
-                                        else if (streamReaderWrap.CurrentCharacter == '}')
-                                        {
-                                            if (--braceMatch == 0)
-                                                break;
-                                        }
-                                        else if (streamReaderWrap.CurrentCharacter == '{')
-                                        {
-                                            ++braceMatch;
-                                        }
-                                    
-                                        _ = streamReaderWrap.ReadCharacter();
-                                    }
-                                    
-                                    output.TextSpanList.Add(new TextEditorTextSpan(
-                                        cSharpStartPosition,
-                                        streamReaderWrap.PositionIndex,
-                                        (byte)RazorDecorationKind.CSharpMarker,
-                                        cSharpStartByte));
-                                    
-                                    // The while loop has 2 break cases, thus !IsEof means "*@" was the break cause.
-                                    if (!streamReaderWrap.IsEof)
-                                    {
-                                        var closeBraceStartPosition = streamReaderWrap.PositionIndex;
-                                        var closeBraceStartByte = streamReaderWrap.ByteIndex;
-                                        
-                                        _ = streamReaderWrap.ReadCharacter();
-                                        output.TextSpanList.Add(new TextEditorTextSpan(
-                                            closeBraceStartPosition,
-                                            streamReaderWrap.PositionIndex,
-                                            (byte)RazorDecorationKind.InjectedLanguageFragment,
-                                            closeBraceStartByte));
-                                    }
+                                    LexCSharpCodeBlock(streamReaderWrap, output.TextSpanList);
                                 }
                                 else
                                 {
@@ -913,6 +814,134 @@ public static class RazorLexer
                 break;
             }
             _ = streamReaderWrap.ReadCharacter();
+        }
+    }
+    
+    /// <summary>
+    /// Current character ought to be the open brace, and the syntax highlighting for the open brace will be made as part of this method.
+    ///
+    /// The C# simply gets syntax highlighted as one single color for now during the outlining process.
+    /// This method is intended to handle all false positives for brace matching:
+    /// - Single line comment
+    /// - Multi line comment
+    /// - String
+    /// But, when it comes to 'string' only the simple case of one pair of double quotes deliminating the string is being explicitly handled.
+    /// Anything else relating to 'string' might by coincidence lex correctly, or it might not.
+    /// TODO: Handle raw string literals and check whether verbatim and interpolated strings lex correctly.
+    ///
+    /// This method returns 1 character after the close brace, or EOF.
+    /// </summary>
+    private static void LexCSharpCodeBlock(StreamReaderWrap streamReaderWrap, List<TextEditorTextSpan> textSpanList)
+    {
+        Console.WriteLine("LexCSharpCodeBlock");
+    
+        var openBraceStartPosition = streamReaderWrap.PositionIndex;
+        var openBraceStartByte = streamReaderWrap.ByteIndex;
+        _ = streamReaderWrap.ReadCharacter();
+        textSpanList.Add(new TextEditorTextSpan(
+            openBraceStartPosition,
+            streamReaderWrap.PositionIndex,
+            (byte)RazorDecorationKind.InjectedLanguageFragment,
+            openBraceStartByte));
+        
+        var cSharpStartPosition = streamReaderWrap.PositionIndex;
+        var cSharpStartByte = streamReaderWrap.ByteIndex;
+        
+        var braceMatch = 1;
+        
+        var isSingleLineComment = false;
+        var isMultiLineComment = false;
+        var isString = false;
+        
+        var previousCharWasForwardSlash = false;
+        
+        while (!streamReaderWrap.IsEof)
+        {
+            var localPreviousCharWasForwardSlash = previousCharWasForwardSlash;
+            
+            if (streamReaderWrap.CurrentCharacter == '/')
+            {
+                previousCharWasForwardSlash = true;
+            }
+            else
+            {
+                previousCharWasForwardSlash = false;
+            }
+        
+            if (isMultiLineComment)
+            {
+                if (streamReaderWrap.CurrentCharacter == '*' && streamReaderWrap.PeekCharacter(1) == '/')
+                {
+                    _ = streamReaderWrap.ReadCharacter();
+                    _ = streamReaderWrap.ReadCharacter();
+                    isMultiLineComment = false;
+                    continue;
+                }
+            }
+            else if (isSingleLineComment)
+            {
+                if (streamReaderWrap.CurrentCharacter == '\r' ||
+                    streamReaderWrap.CurrentCharacter == '\n')
+                {
+                    isSingleLineComment = false;
+                }
+            }
+            else if (isString)
+            {
+                if (streamReaderWrap.CurrentCharacter == '"')
+                {
+                    isString = false;
+                }
+            }
+            else if (streamReaderWrap.CurrentCharacter == '"')
+            {
+                isString = true;
+            }
+            else if (streamReaderWrap.CurrentCharacter == '/')
+            {
+                if (localPreviousCharWasForwardSlash)
+                {
+                    isSingleLineComment = true;
+                }
+            }
+            else if (streamReaderWrap.CurrentCharacter == '*')
+            {
+                if (localPreviousCharWasForwardSlash)
+                {
+                    isMultiLineComment = true;
+                }
+            }
+            else if (streamReaderWrap.CurrentCharacter == '}')
+            {
+                if (--braceMatch == 0)
+                    break;
+            }
+            else if (streamReaderWrap.CurrentCharacter == '{')
+            {
+                ++braceMatch;
+            }
+        
+            _ = streamReaderWrap.ReadCharacter();
+        }
+        
+        textSpanList.Add(new TextEditorTextSpan(
+            cSharpStartPosition,
+            streamReaderWrap.PositionIndex,
+            (byte)RazorDecorationKind.CSharpMarker,
+            cSharpStartByte));
+        
+        // The while loop has 2 break cases, thus !IsEof means "*@" was the break cause.
+        if (!streamReaderWrap.IsEof)
+        {
+            var closeBraceStartPosition = streamReaderWrap.PositionIndex;
+            var closeBraceStartByte = streamReaderWrap.ByteIndex;
+            
+            _ = streamReaderWrap.ReadCharacter();
+            textSpanList.Add(new TextEditorTextSpan(
+                closeBraceStartPosition,
+                streamReaderWrap.PositionIndex,
+                (byte)RazorDecorationKind.InjectedLanguageFragment,
+                closeBraceStartByte));
         }
     }
 }
