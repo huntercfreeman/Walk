@@ -894,6 +894,8 @@ public static class CSharpLexer
                 {
                 }
                 else if (firstCharacter == '')
+                {
+                }
                 // byte
                 throw new NotImplementedException();
                 textSpan = textSpan with { DecorationByte = (byte)GenericDecorationKind.Keyword };
