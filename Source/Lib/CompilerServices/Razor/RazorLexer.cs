@@ -185,6 +185,82 @@ public static class RazorLexer
                     ------------------
                     
                     */
+                    
+                    /*
+                    Flat A
+                    
+                    https://learn.microsoft.com/en-us/aspnet/core/mvc/views/razor?view=aspnetcore-9.0
+                    =================================================================================
+                    
+                    @if, else if, else
+                    @switch
+                    @for,
+                    @foreach,
+                    @while,
+                    @do while
+                    @using
+                    @try, catch, finally
+                    @lock
+                    @attribute [Authorize]                    
+                    @page "/counter"
+                    @code { } // More than one @code block is permissible.
+                    @functions { }  // More than one @functions block is permissible.
+                    // In Razor components, use @code over @functions to add C# members.
+                    @implements IDisposable
+                    @inherits TypeNameOfClassToInheritFrom
+                    @inherits CustomRazorPage<TModel>
+                    @model and @inherits can be used in the same view. @inherits can be in a _ViewImports.cshtml file that the view imports:
+                    @inherits CustomRazorPage<TModel>
+                    @inject
+                    @layout
+                    @model // CSHTML
+                    @namespace
+                    @page
+                    @preservewhitespace
+                    @rendermode
+                    @section
+                    @typeparam
+                    @using
+                    @<tag>...</tag>
+                    @{ Func<dynamic, object> petTemplate = @<p>You have a pet named <strong>@item.Name</strong>.</p>; }
+                    @addTagHelper
+                    @removeTagHelper
+                    @tagHelperPrefix
+                    page
+                    namespace
+                    functions
+                    inherits
+                    model
+                    section
+                    helper (Not currently supported by ASP.NET Core)
+                    case
+                    do
+                    default
+                    for
+                    foreach
+                    if
+                    else
+                    lock
+                    switch
+                    try
+                    catch
+                    finally
+                    using
+                    while
+                    class
+                    
+                    Directive attributes
+                    --------------------
+                    @attributes
+                    @bind
+                    @bind:culture
+                    @formname
+                    @on{EVENT}
+                    @on{EVENT}:preventDefault
+                    @on{EVENT}:stopPropagation
+                    @key
+                    @ref
+                    */
                 
                     if (context == RazorLexerContextKind.Expect_AttributeName)
                     {
