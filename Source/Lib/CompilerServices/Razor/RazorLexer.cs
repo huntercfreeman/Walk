@@ -85,6 +85,107 @@ public static class RazorLexer
                 case '_':
                 /* At */
                 case '@':
+                
+                    /*
+                    https://learn.microsoft.com/en-us/aspnet/core/mvc/views/razor?view=aspnetcore-9.0
+                    =================================================================================
+                    
+                    Conditionals: @if, else if, else, and @switch
+                    
+                    Looping: @for, @foreach, @while, and @do while
+                    
+                    Compound: @using
+                    
+                    ...: @try, catch, finally
+                    
+                    ...: @lock
+                    
+                    Directives
+                    ----------
+                    @attribute [Authorize]                    
+                    @page "/counter"
+                    @code { } // More than one @code block is permissible.
+                    @functions { }  // More than one @functions block is permissible.
+                    // In Razor components, use @code over @functions to add C# members.
+                    @implements IDisposable
+                    @inherits TypeNameOfClassToInheritFrom
+                    @inherits CustomRazorPage<TModel>
+                    @model and @inherits can be used in the same view. @inherits can be in a _ViewImports.cshtml file that the view imports:
+                    @inherits CustomRazorPage<TModel>
+                    @inject
+                    @layout
+                    @model // CSHTML
+                    @namespace
+                    @page
+                    @preservewhitespace
+                    @rendermode
+                    @section
+                    @typeparam
+                    @using
+                    
+                    Directive attributes
+                    --------------------
+                    @attributes
+                    @bind
+                    @bind:culture
+                    @formname
+                    @on{EVENT}
+                    @on{EVENT}:preventDefault
+                    @on{EVENT}:stopPropagation
+                    @key
+                    @ref
+                    
+                    Templated Razor delegates
+                    -------------------------
+                    @<tag>...</tag>
+                    @{ Func<dynamic, object> petTemplate = @<p>You have a pet named <strong>@item.Name</strong>.</p>; }
+                    
+                    Tag Helpers // MVC
+                    ------------------
+                    @addTagHelper
+                    @removeTagHelper
+                    @tagHelperPrefix
+                    
+                    Razor reserved keywords
+                    -----------------------
+                    page
+                    namespace
+                    functions
+                    inherits
+                    model
+                    section
+                    helper (Not currently supported by ASP.NET Core)
+                    // Razor keywords are escaped with @(Razor Keyword) (for example, @(functions)).
+
+                    C# Razor keywords
+                    -----------------
+                    case
+                    do
+                    default
+                    for
+                    foreach
+                    if
+                    else
+                    lock
+                    switch
+                    try
+                    catch
+                    finally
+                    using
+                    while
+                    C# Razor keywords must be double-escaped with @(@C# Razor Keyword) (for example, @(@case)).
+                        The first @ escapes the Razor parser.
+                        The second @ escapes the C# parser.
+                    
+                    Reserved keywords not used by Razor
+                    -----------------------------------
+                    class
+                    
+                    Templating methods
+                    ------------------
+                    
+                    */
+                
                     if (context == RazorLexerContextKind.Expect_AttributeName)
                     {
                         if (streamReaderWrap.CurrentCharacter == '@')
