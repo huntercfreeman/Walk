@@ -14,99 +14,6 @@ public static class RazorLexer
 
     public static RazorLexerOutput Lex(StreamReaderWrap streamReaderWrap)
     {
-        /*
-        =======================
-        =======================
-        1189 // addTagHelper
-        980 // attribute
-        412 // case
-        534 // class
-        411 // code
-        741 // default
-        211 // do
-        327 // for
-        728 // foreach
-        985 // functions
-        670 // layout
-        425 // lock
-        529 // model
-        413 // page
-        1945 // preservewhitespace
-        207 // if
-        1086 // implements
-        870 // inherits
-        637 // inject
-        941 // namespace
-        1546 // removeTagHelper
-        1061 // rendermode
-        757 // section
-        658 // switch
-        !DUPLICATE!:1546/tagHelperPrefix
-        1546 // tagHelperPrefix
-        351 // try
-        979 // typeparam
-        550 // using
-        537 // while
-        =======================
-        =======================
-    
-        var keywordList = new List<string>
-        {
-            "addTagHelper",
-            "attribute",
-            "case",
-            "class",
-            "code",
-            "default",
-            "do",
-            "for",
-            "foreach",
-            "functions",
-            "layout",
-            "lock",
-            "model",
-            "page",
-            "preservewhitespace",
-            "if",
-            "implements",
-            "inherits",
-            "inject",
-            "namespace",
-            "removeTagHelper",
-            "rendermode",
-            "section",
-            "switch",
-            "tagHelperPrefix",
-            "try",
-            "typeparam",
-            "using",
-            "while",
-        };
-        
-        Console.WriteLine("=======================");
-        Console.WriteLine("=======================");
-        
-        var hashSet = new HashSet<int>();
-        
-        foreach (var keyword in keywordList)
-        {
-            var sum = 0;
-            foreach (var character in keyword)
-            {
-                sum += (int)character;
-            }
-            
-            if (!hashSet.Add(sum))
-            {
-                Console.WriteLine($"!DUPLICATE!:{sum}/{keyword}");
-            }
-            Console.WriteLine($"{sum} // {keyword}");
-        }
-        
-        Console.WriteLine("=======================");
-        Console.WriteLine("=======================");
-        */
-    
         var context = RazorLexerContextKind.Expect_TagOrText;
         var output = new RazorLexerOutput();
         
@@ -338,12 +245,15 @@ public static class RazorLexer
                                 }
                                 else
                                 {
-                                    SkipCSharpdentifier(streamReaderWrap);
-                                    output.TextSpanList.Add(new TextEditorTextSpan(
-                                        atCharStartPosition,
-                                        streamReaderWrap.PositionIndex,
-                                        (byte)RazorDecorationKind.InjectedLanguageFragment,
-                                        atCharStartByte));
+                                    var everythingWasHandledForMe = SkipCSharpdentifierOrKeyword(streamReaderWrap);
+                                    if (!everythingWasHandledForMe)
+                                    {
+                                        output.TextSpanList.Add(new TextEditorTextSpan(
+                                            atCharStartPosition,
+                                            streamReaderWrap.PositionIndex,
+                                            (byte)RazorDecorationKind.InjectedLanguageFragment,
+                                            atCharStartByte));
+                                    }
                                 }
                                 
                                 textStartPosition = streamReaderWrap.PositionIndex;
@@ -910,114 +820,15 @@ public static class RazorLexer
         }
     }
     
-    private static void SkipCSharpdentifierOrKeyword(StreamReaderWrap streamReaderWrap)
+    /// <summary>
+    /// When this returns true, then the state of the lexer has entirely changed
+    /// and the invoker should disregard any of their previous state and reset it.
+    ///
+    /// This method when finding a brace deliminated code blocked keyword will entirely lex to the close brace.
+    /// </summary>
+    private static bool SkipCSharpdentifierOrKeyword(StreamReaderWrap streamReaderWrap)
     {
-        /*
-        
-        
-            
-        
-            a97 + d100                = 197
-            a97 + t116                = 213
-            c99 + a97                 = 196
-            c99 + l108                = 207
-            c99 + o111                = 210
-            d100 + e101               = 201
-            d100 + o111^              = 211
-            f102 + o111 + r114^       = 327
-            f102 + o111 + r114 + e101 = 428
-            f102 + u117               = 219
-            l108 + a97                = 205
-            l108 + o111               = 219
-            m109                      = 109
-            p112 + a97                = 209
-            p112 + r114               = 226
-            i105 + f102^              = 207
-            i105 + m109               = 214
-            i105 + n110 + h104        = 319
-            i105 + n110 + j106        = 321
-            n110                      = 110
-            r114 + e101 + m109        = 324
-            r114 + e101 + n110        = 325
-            s115 + e101               = 216
-            s115 + w119               = 234
-            t116 + a97                = 213
-            t116 + r114               = 230
-            t116 + y121               = 237
-            u117                      = 117
-            w119                      = 119
-        
-        
-        
-        ================================================
-        ================================================
-        
-        
-        
-        
-        
-            ad
-            at
-            ca
-            cl
-            co
-            de
-            do^
-            for^
-            fore
-            fu
-            la
-            lo
-            m
-            pa
-            pr
-            if^
-            im
-            inh
-            inj
-            n
-            rem
-            ren
-            se
-            sw
-            ta
-            tr
-            ty
-            u
-            w
-        */
-        
-        /*
-            addTagHelper
-            attribute
-            case
-            class
-            code { }
-            default
-            do
-            for
-            foreach
-            functions { }
-            layout
-            lock
-            model
-            page
-            preservewhitespace
-            if
-            implements
-            inherits
-            inject
-            namespace
-            removeTagHelper
-            rendermode
-            section
-            switch
-            tagHelperPrefix
-            try
-            typeparam
-            using
-            while
-        */
+        var characterIntSum = 0;
     
         while (!streamReaderWrap.IsEof)
         {
@@ -1026,8 +837,77 @@ public static class RazorLexer
             {
                 break;
             }
+            
+            characterIntSum += (int)streamReaderWrap.CurrentCharacter;
             _ = streamReaderWrap.ReadCharacter();
         }
+        
+        switch (characterIntSum)
+        {
+            case 1189: // addTagHelper
+                break;
+            case 980: // attribute
+                break;
+            case 412: // case
+                break;
+            case 534: // class
+                break;
+            case 411: // code
+                break;
+            case 741: // default
+                break;
+            case 211: // do
+                break;
+            case 327: // for
+                break;
+            case 728: // foreach
+                break;
+            case 985: // functions
+                break;
+            case 670: // layout
+                break;
+            case 425: // lock
+                break;
+            case 529: // model
+                break;
+            case 413: // page
+                break;
+            case 1945: // preservewhitespace
+                break;
+            case 207: // if
+                break;
+            case 1086: // implements
+                break;
+            case 870: // inherits
+                break;
+            case 637: // inject
+                break;
+            case 941: // namespace
+                break;
+            // !DUPLICATE!:1546/tagHelperPrefix
+                case 1546: // removeTagHelper
+                    break;
+                case 1546: // tagHelperPrefix
+                    break;
+            case 1061: // rendermode
+                break;
+            case 757: // section
+                break;
+            case 658: // switch
+                break;
+            case 351: // try
+                break;
+            case 979: // typeparam
+                break;
+            case 550: // using
+                break;
+            case 537: // while
+                break;
+            default:
+                break;
+        }
+        
+        return false;
     }
     
     /// <summary>
@@ -1155,6 +1035,206 @@ public static class RazorLexer
                 closeBraceStartByte));
         }
     }
+    
+    /*
+        =======================
+        =======================
+        1189 // addTagHelper
+        980 // attribute
+        412 // case
+        534 // class
+        411 // code
+        741 // default
+        211 // do
+        327 // for
+        728 // foreach
+        985 // functions
+        670 // layout
+        425 // lock
+        529 // model
+        413 // page
+        1945 // preservewhitespace
+        207 // if
+        1086 // implements
+        870 // inherits
+        637 // inject
+        941 // namespace
+        !DUPLICATE!:1546/tagHelperPrefix
+            1546 // removeTagHelper
+            1546 // tagHelperPrefix
+        1061 // rendermode
+        757 // section
+        658 // switch
+        351 // try
+        979 // typeparam
+        550 // using
+        537 // while
+        =======================
+        =======================
+    
+        var keywordList = new List<string>
+        {
+            "addTagHelper",
+            "attribute",
+            "case",
+            "class",
+            "code",
+            "default",
+            "do",
+            "for",
+            "foreach",
+            "functions",
+            "layout",
+            "lock",
+            "model",
+            "page",
+            "preservewhitespace",
+            "if",
+            "implements",
+            "inherits",
+            "inject",
+            "namespace",
+            "removeTagHelper",
+            "rendermode",
+            "section",
+            "switch",
+            "tagHelperPrefix",
+            "try",
+            "typeparam",
+            "using",
+            "while",
+        };
+        
+        Console.WriteLine("=======================");
+        Console.WriteLine("=======================");
+        
+        var hashSet = new HashSet<int>();
+        
+        foreach (var keyword in keywordList)
+        {
+            var sum = 0;
+            foreach (var character in keyword)
+            {
+                sum += (int)character;
+            }
+            
+            if (!hashSet.Add(sum))
+            {
+                Console.WriteLine($"!DUPLICATE!:{sum}/{keyword}");
+            }
+            Console.WriteLine($"{sum} // {keyword}");
+        }
+        
+        Console.WriteLine("=======================");
+        Console.WriteLine("=======================");
+        */
+    
+    /*
+        
+        
+            
+        
+            a97 + d100                = 197
+            a97 + t116                = 213
+            c99 + a97                 = 196
+            c99 + l108                = 207
+            c99 + o111                = 210
+            d100 + e101               = 201
+            d100 + o111^              = 211
+            f102 + o111 + r114^       = 327
+            f102 + o111 + r114 + e101 = 428
+            f102 + u117               = 219
+            l108 + a97                = 205
+            l108 + o111               = 219
+            m109                      = 109
+            p112 + a97                = 209
+            p112 + r114               = 226
+            i105 + f102^              = 207
+            i105 + m109               = 214
+            i105 + n110 + h104        = 319
+            i105 + n110 + j106        = 321
+            n110                      = 110
+            r114 + e101 + m109        = 324
+            r114 + e101 + n110        = 325
+            s115 + e101               = 216
+            s115 + w119               = 234
+            t116 + a97                = 213
+            t116 + r114               = 230
+            t116 + y121               = 237
+            u117                      = 117
+            w119                      = 119
+        
+        
+        
+        ================================================
+        ================================================
+        
+        
+        
+        
+        
+            ad
+            at
+            ca
+            cl
+            co
+            de
+            do^
+            for^
+            fore
+            fu
+            la
+            lo
+            m
+            pa
+            pr
+            if^
+            im
+            inh
+            inj
+            n
+            rem
+            ren
+            se
+            sw
+            ta
+            tr
+            ty
+            u
+            w
+        */
+        
+        /*
+            addTagHelper
+            attribute
+            case
+            class
+            code { }
+            default
+            do
+            for
+            foreach
+            functions { }
+            layout
+            lock
+            model
+            page
+            preservewhitespace
+            if
+            implements
+            inherits
+            inject
+            namespace
+            removeTagHelper
+            rendermode
+            section
+            switch
+            tagHelperPrefix
+            try
+            typeparam
+            using
+            while
+        */
     
     /*
     https://learn.microsoft.com/en-us/aspnet/core/mvc/views/razor?view=aspnetcore-9.0
