@@ -245,7 +245,7 @@ public static class RazorLexer
                                 }
                                 else
                                 {
-                                    var everythingWasHandledForMe = SkipCSharpdentifierOrKeyword(streamReaderWrap);
+                                    var everythingWasHandledForMe = SkipCSharpdentifierOrKeyword(streamReaderWrap, output.TextSpanList);
                                     if (!everythingWasHandledForMe)
                                     {
                                         output.TextSpanList.Add(new TextEditorTextSpan(
@@ -826,8 +826,11 @@ public static class RazorLexer
     ///
     /// This method when finding a brace deliminated code blocked keyword will entirely lex to the close brace.
     /// </summary>
-    private static bool SkipCSharpdentifierOrKeyword(StreamReaderWrap streamReaderWrap)
+    private static bool SkipCSharpdentifierOrKeyword(StreamReaderWrap streamReaderWrap, List<TextEditorTextSpan> textSpanList)
     {
+        var wordStartPosition = streamReaderWrap.PositionIndex;
+        var wordStartByte = streamReaderWrap.ByteIndex;
+        
         var characterIntSum = 0;
     
         while (!streamReaderWrap.IsEof)
@@ -853,7 +856,31 @@ public static class RazorLexer
             case 534: // class
                 break;
             case 411: // code
-                break;
+                textSpanList.Add(new TextEditorTextSpan(
+                    wordStartPosition,
+                    streamReaderWrap.PositionIndex,
+                    (byte)RazorDecorationKind.InjectedLanguageFragment,
+                    wordStartByte));
+                    
+                while (!streamReaderWrap.IsEof)
+                {
+                    if (!char.IsWhiteSpace(streamReaderWrap.CurrentCharacter))
+                    {
+                        break;
+                    }
+                    
+                    _ = streamReaderWrap.ReadCharacter();
+                }
+                
+                if (streamReaderWrap.CurrentCharacter == '{')
+                {
+                    LexCSharpCodeBlock(streamReaderWrap, textSpanList);
+                    return true;
+                }
+                else
+                {
+                    return true;
+                }
             case 741: // default
                 break;
             case 211: // do
@@ -884,10 +911,10 @@ public static class RazorLexer
                 break;
             case 941: // namespace
                 break;
-            // !DUPLICATE!:1546/tagHelperPrefix
-                case 1546: // removeTagHelper
-                    break;
-                case 1546: // tagHelperPrefix
+            // !DUPLICATE!:1546
+                case 1546:
+                    // removeTagHelper
+                    // tagHelperPrefix
                     break;
             case 1061: // rendermode
                 break;
