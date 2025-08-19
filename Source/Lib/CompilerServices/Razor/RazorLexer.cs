@@ -85,582 +85,6 @@ public static class RazorLexer
                 case '_':
                 /* At */
                 case '@':
-                
-                    /*
-                    https://learn.microsoft.com/en-us/aspnet/core/mvc/views/razor?view=aspnetcore-9.0
-                    =================================================================================
-                    
-                    Conditionals: @if, else if, else, and @switch
-                    
-                    Looping: @for, @foreach, @while, and @do while
-                    
-                    Compound: @using
-                    
-                    ...: @try, catch, finally
-                    
-                    ...: @lock
-                    
-                    Directives
-                    ----------
-                    @attribute [Authorize]                    
-                    @page "/counter"
-                    @code { } // More than one @code block is permissible.
-                    @functions { }  // More than one @functions block is permissible.
-                    // In Razor components, use @code over @functions to add C# members.
-                    @implements IDisposable
-                    @inherits TypeNameOfClassToInheritFrom
-                    @inherits CustomRazorPage<TModel>
-                    @model and @inherits can be used in the same view. @inherits can be in a _ViewImports.cshtml file that the view imports:
-                    @inherits CustomRazorPage<TModel>
-                    @inject
-                    @layout
-                    @model // CSHTML
-                    @namespace
-                    @page
-                    @preservewhitespace
-                    @rendermode
-                    @section
-                    @typeparam
-                    @using
-                    
-                    Directive attributes
-                    --------------------
-                    @attributes
-                    @bind
-                    @bind:culture
-                    @formname
-                    @on{EVENT}
-                    @on{EVENT}:preventDefault
-                    @on{EVENT}:stopPropagation
-                    @key
-                    @ref
-                    
-                    Templated Razor delegates
-                    -------------------------
-                    @<tag>...</tag>
-                    @{ Func<dynamic, object> petTemplate = @<p>You have a pet named <strong>@item.Name</strong>.</p>; }
-                    
-                    Tag Helpers // MVC
-                    ------------------
-                    @addTagHelper
-                    @removeTagHelper
-                    @tagHelperPrefix
-                    
-                    Razor reserved keywords
-                    -----------------------
-                    page
-                    namespace
-                    functions
-                    inherits
-                    model
-                    section
-                    helper (Not currently supported by ASP.NET Core)
-                    // Razor keywords are escaped with @(Razor Keyword) (for example, @(functions)).
-
-                    C# Razor keywords
-                    -----------------
-                    case
-                    do
-                    default
-                    for
-                    foreach
-                    if
-                    else
-                    lock
-                    switch
-                    try
-                    catch
-                    finally
-                    using
-                    while
-                    C# Razor keywords must be double-escaped with @(@C# Razor Keyword) (for example, @(@case)).
-                        The first @ escapes the Razor parser.
-                        The second @ escapes the C# parser.
-                    
-                    Reserved keywords not used by Razor
-                    -----------------------------------
-                    class
-                    
-                    Templating methods
-                    ------------------
-                    
-                    */
-                    
-                    /*
-                    Flat A
-                    
-                    https://learn.microsoft.com/en-us/aspnet/core/mvc/views/razor?view=aspnetcore-9.0
-                    =================================================================================
-                    
-                    @if, else if, else
-                    @switch
-                    @for,
-                    @foreach,
-                    @while,
-                    @do while
-                    @using
-                    @try, catch, finally
-                    @lock
-                    @attribute [Authorize]                    
-                    @page "/counter"
-                    @code { } // More than one @code block is permissible.
-                    @functions { }  // More than one @functions block is permissible.
-                    // In Razor components, use @code over @functions to add C# members.
-                    @implements IDisposable
-                    @inherits TypeNameOfClassToInheritFrom
-                    @inherits CustomRazorPage<TModel>
-                    @model and @inherits can be used in the same view. @inherits can be in a _ViewImports.cshtml file that the view imports:
-                    @inherits CustomRazorPage<TModel>
-                    @inject
-                    @layout
-                    @model // CSHTML
-                    @namespace
-                    @page
-                    @preservewhitespace
-                    @rendermode
-                    @section
-                    @typeparam
-                    @using
-                    @<tag>...</tag>
-                    @{ Func<dynamic, object> petTemplate = @<p>You have a pet named <strong>@item.Name</strong>.</p>; }
-                    @addTagHelper
-                    @removeTagHelper
-                    @tagHelperPrefix
-                    page
-                    namespace
-                    functions
-                    inherits
-                    model
-                    section
-                    helper (Not currently supported by ASP.NET Core)
-                    case
-                    do
-                    default
-                    for
-                    foreach
-                    if
-                    else
-                    lock
-                    switch
-                    try
-                    catch
-                    finally
-                    using
-                    while
-                    class
-                    
-                    Directive attributes
-                    --------------------
-                    @attributes
-                    @bind
-                    @bind:culture
-                    @formname
-                    @on{EVENT}
-                    @on{EVENT}:preventDefault
-                    @on{EVENT}:stopPropagation
-                    @key
-                    @ref
-                    */
-                    
-                    /*
-                    Flat B
-                    
-                    https://learn.microsoft.com/en-us/aspnet/core/mvc/views/razor?view=aspnetcore-9.0
-                    =================================================================================
-                    
-                    if
-                    switch
-                    for
-                    foreach
-                    while
-                    do
-                    using
-                    try
-                    lock
-                    attribute
-                    page
-                    code { }
-                    functions { }
-                    implements
-                    inherits
-                    inject
-                    layout
-                    namespace
-                    page
-                    preservewhitespace
-                    rendermode
-                    section
-                    typeparam
-                    using
-                    addTagHelper
-                    removeTagHelper
-                    tagHelperPrefix
-                    page
-                    namespace
-                    functions
-                    inherits
-                    model
-                    section
-                    case
-                    do
-                    default
-                    for
-                    foreach
-                    if
-                    else
-                    lock
-                    switch
-                    try
-                    catch
-                    finally
-                    using
-                    while
-                    class
-                    */
-                    
-                    /*
-                    Flat C
-                    
-                    https://learn.microsoft.com/en-us/aspnet/core/mvc/views/razor?view=aspnetcore-9.0
-                    =================================================================================
-                    
-                    addTagHelper
-                    attribute
-                    case
-                    class
-                    code { }
-                    default
-                    do
-                    for
-                    foreach
-                    functions { }
-                    layout
-                    lock
-                    model
-                    page
-                    preservewhitespace
-                    if
-                    implements
-                    inherits
-                    inject
-                    namespace
-                    removeTagHelper
-                    rendermode
-                    section
-                    switch
-                    tagHelperPrefix
-                    try
-                    typeparam
-                    using
-                    while
-                    */
-                    
-                    /*
-                    Flat D
-                    
-                    https://learn.microsoft.com/en-us/aspnet/core/mvc/views/razor?view=aspnetcore-9.0
-                    =================================================================================
-                    
-                    a
-                     ddTagHelper
-                     ttribute
-                     
-                    c
-                     ase
-                     lass
-                     ode { }
-                     
-                    d
-                     efault
-                     o
-                     
-                    f
-                     or
-                     oreach
-                     unctions { }
-                     
-                    l
-                     ayout
-                     ock
-                     
-                    m
-                     odel
-                     
-                    p
-                     age
-                     reservewhitespace
-                     
-                    i
-                     f
-                     mplements
-                     nherits
-                     nject
-                     
-                    n
-                     amespace
-                     
-                    r
-                     emoveTagHelper
-                     endermode
-                     
-                    s
-                     ection
-                     witch
-                     
-                    t
-                     agHelperPrefix
-                     ry
-                     ypeparam
-                     
-                    u
-                     sing
-                     
-                    w
-                     hile
-                    */
-                    
-                    /*
-                    Flat E
-                    
-                    https://learn.microsoft.com/en-us/aspnet/core/mvc/views/razor?view=aspnetcore-9.0
-                    =================================================================================
-                    
-                    ad
-                      dTagHelper
-                    at
-                      tribute
-                     
-                    ca
-                      se
-                    cl
-                      ass
-                    co
-                      de { }
-                     
-                    de
-                      fault
-                    do
-                      // 'do' was the word itself
-                     
-                    fo
-                      r
-                      reach
-                    fu
-                      nctions { }
-                     
-                    la
-                      yout
-                    lo
-                      ck
-                     
-                    m
-                     odel
-                     
-                    pa
-                      ge
-                    pr
-                      eservewhitespace
-                     
-                    if
-                      // 'if' was the word itself
-                    im
-                      plements
-                    in
-                      herits
-                      ject
-                     
-                    n
-                     amespace
-                     
-                    re
-                      moveTagHelper
-                      ndermode
-                     
-                    se
-                      ction
-                    sw
-                      itch
-                     
-                    ta
-                      gHelperPrefix
-                    tr
-                      y
-                    ty
-                      peparam
-                     
-                    u
-                     sing
-                     
-                    w
-                     hile
-                    */
-                    
-                    /*
-                    Flat F
-                    
-                    https://learn.microsoft.com/en-us/aspnet/core/mvc/views/razor?view=aspnetcore-9.0
-                    =================================================================================
-                    
-                    ad
-                      dTagHelper
-                    at
-                      tribute
-                     
-                    ca
-                      se
-                    cl
-                      ass
-                    co
-                      de { }
-                     
-                    de
-                      fault
-                    do
-                      // 'do' was the word itself
-                     
-                    for
-                       // 'for' was a word itself
-                       each
-                    fu
-                      nctions { }
-                     
-                    la
-                      yout
-                    lo
-                      ck
-                     
-                    m
-                     odel
-                     
-                    pa
-                      ge
-                    pr
-                      eservewhitespace
-                     
-                    if
-                      // 'if' was the word itself
-                    im
-                      plements
-                    inh
-                       erits
-                    inj
-                       ect
-                     
-                    n
-                     amespace
-                     
-                    rem
-                       oveTagHelper
-                    ren
-                       dermode
-                     
-                    se
-                      ction
-                    sw
-                      itch
-                     
-                    ta
-                      gHelperPrefix
-                    tr
-                      y
-                    ty
-                      peparam
-                     
-                    u
-                     sing
-                     
-                    w
-                     hile
-                    */
-                    
-                    /*
-                    Flat G
-                    
-                    https://learn.microsoft.com/en-us/aspnet/core/mvc/views/razor?view=aspnetcore-9.0
-                    =================================================================================
-                    
-                    ad
-                    at
-                     
-                    ca
-                    cl
-                    co
-                     
-                    de
-                    do // 'do' was a word itself
-                      
-                     
-                    for // 'for' was a word itself
-                       each
-                    fu
-                     
-                    la
-                    lo
-                     
-                    m
-                     
-                    pa
-                    pr
-                     
-                    if // 'if' was a word itself
-                    im
-                    inh
-                    inj
-                     
-                    n
-                     
-                    rem
-                    ren
-                     
-                    se
-                    sw
-                     
-                    ta
-                    tr
-                    ty
-                     
-                    u
-                     
-                    w
-                    */
-                    
-                    /*
-                    Flat H
-                    
-                    https://learn.microsoft.com/en-us/aspnet/core/mvc/views/razor?view=aspnetcore-9.0
-                    =================================================================================
-                    
-                    ad
-                    at
-                    ca
-                    cl
-                    co
-                    de
-                    do^
-                    for^
-                    fore
-                    fu
-                    la
-                    lo
-                    m
-                    pa
-                    pr
-                    if^
-                    im
-                    inh
-                    inj
-                    n
-                    rem
-                    ren
-                    se
-                    sw
-                    ta
-                    tr
-                    ty
-                    u
-                    w
-                    */
-                
                     if (context == RazorLexerContextKind.Expect_AttributeName)
                     {
                         if (streamReaderWrap.CurrentCharacter == '@')
@@ -1393,6 +817,105 @@ public static class RazorLexer
         }
     }
     
+    private static void SkipCSharpdentifierOrKeyword(StreamReaderWrap streamReaderWrap)
+    {
+        /*
+            Flat G
+            
+            https://learn.microsoft.com/en-us/aspnet/core/mvc/views/razor?view=aspnetcore-9.0
+            =================================================================================
+            
+            ad
+            at
+             
+            ca
+            cl
+            co
+             
+            de
+            do // 'do' was a word itself
+              
+             
+            for // 'for' was a word itself
+               each
+            fu
+             
+            la
+            lo
+             
+            m
+             
+            pa
+            pr
+             
+            if // 'if' was a word itself
+            im
+            inh
+            inj
+             
+            n
+             
+            rem
+            ren
+             
+            se
+            sw
+             
+            ta
+            tr
+            ty
+             
+            u
+             
+            w
+            
+            Flat H
+            
+            https://learn.microsoft.com/en-us/aspnet/core/mvc/views/razor?view=aspnetcore-9.0
+            =================================================================================
+            
+            ad
+            at
+            ca
+            cl
+            co
+            de
+            do^
+            for^
+            fore
+            fu
+            la
+            lo
+            m
+            pa
+            pr
+            if^
+            im
+            inh
+            inj
+            n
+            rem
+            ren
+            se
+            sw
+            ta
+            tr
+            ty
+            u
+            w
+        */
+    
+        while (!streamReaderWrap.IsEof)
+        {
+            if (!char.IsLetterOrDigit(streamReaderWrap.CurrentCharacter) &&
+                streamReaderWrap.CurrentCharacter != '_')
+            {
+                break;
+            }
+            _ = streamReaderWrap.ReadCharacter();
+        }
+    }
+    
     /// <summary>
     /// Current character ought to be the open brace, and the syntax highlighting for the open brace will be made as part of this method.
     ///
@@ -1409,8 +932,6 @@ public static class RazorLexer
     /// </summary>
     private static void LexCSharpCodeBlock(StreamReaderWrap streamReaderWrap, List<TextEditorTextSpan> textSpanList)
     {
-        Console.WriteLine("LexCSharpCodeBlock");
-    
         var openBraceStartPosition = streamReaderWrap.PositionIndex;
         var openBraceStartByte = streamReaderWrap.ByteIndex;
         _ = streamReaderWrap.ReadCharacter();
@@ -1520,4 +1041,480 @@ public static class RazorLexer
                 closeBraceStartByte));
         }
     }
+    
+    /*
+    https://learn.microsoft.com/en-us/aspnet/core/mvc/views/razor?view=aspnetcore-9.0
+    =================================================================================
+    
+    Conditionals: @if, else if, else, and @switch
+    
+    Looping: @for, @foreach, @while, and @do while
+    
+    Compound: @using
+    
+    ...: @try, catch, finally
+    
+    ...: @lock
+    
+    Directives
+    ----------
+    @attribute [Authorize]                    
+    @page "/counter"
+    @code { } // More than one @code block is permissible.
+    @functions { }  // More than one @functions block is permissible.
+    // In Razor components, use @code over @functions to add C# members.
+    @implements IDisposable
+    @inherits TypeNameOfClassToInheritFrom
+    @inherits CustomRazorPage<TModel>
+    @model and @inherits can be used in the same view. @inherits can be in a _ViewImports.cshtml file that the view imports:
+    @inherits CustomRazorPage<TModel>
+    @inject
+    @layout
+    @model // CSHTML
+    @namespace
+    @page
+    @preservewhitespace
+    @rendermode
+    @section
+    @typeparam
+    @using
+    
+    Directive attributes
+    --------------------
+    @attributes
+    @bind
+    @bind:culture
+    @formname
+    @on{EVENT}
+    @on{EVENT}:preventDefault
+    @on{EVENT}:stopPropagation
+    @key
+    @ref
+    
+    Templated Razor delegates
+    -------------------------
+    @<tag>...</tag>
+    @{ Func<dynamic, object> petTemplate = @<p>You have a pet named <strong>@item.Name</strong>.</p>; }
+    
+    Tag Helpers // MVC
+    ------------------
+    @addTagHelper
+    @removeTagHelper
+    @tagHelperPrefix
+    
+    Razor reserved keywords
+    -----------------------
+    page
+    namespace
+    functions
+    inherits
+    model
+    section
+    helper (Not currently supported by ASP.NET Core)
+    // Razor keywords are escaped with @(Razor Keyword) (for example, @(functions)).
+
+    C# Razor keywords
+    -----------------
+    case
+    do
+    default
+    for
+    foreach
+    if
+    else
+    lock
+    switch
+    try
+    catch
+    finally
+    using
+    while
+    C# Razor keywords must be double-escaped with @(@C# Razor Keyword) (for example, @(@case)).
+        The first @ escapes the Razor parser.
+        The second @ escapes the C# parser.
+    
+    Reserved keywords not used by Razor
+    -----------------------------------
+    class
+    
+    Templating methods
+    ------------------
+    
+    Flat A
+    
+    https://learn.microsoft.com/en-us/aspnet/core/mvc/views/razor?view=aspnetcore-9.0
+    =================================================================================
+    
+    @if, else if, else
+    @switch
+    @for,
+    @foreach,
+    @while,
+    @do while
+    @using
+    @try, catch, finally
+    @lock
+    @attribute [Authorize]                    
+    @page "/counter"
+    @code { } // More than one @code block is permissible.
+    @functions { }  // More than one @functions block is permissible.
+    // In Razor components, use @code over @functions to add C# members.
+    @implements IDisposable
+    @inherits TypeNameOfClassToInheritFrom
+    @inherits CustomRazorPage<TModel>
+    @model and @inherits can be used in the same view. @inherits can be in a _ViewImports.cshtml file that the view imports:
+    @inherits CustomRazorPage<TModel>
+    @inject
+    @layout
+    @model // CSHTML
+    @namespace
+    @page
+    @preservewhitespace
+    @rendermode
+    @section
+    @typeparam
+    @using
+    @<tag>...</tag>
+    @{ Func<dynamic, object> petTemplate = @<p>You have a pet named <strong>@item.Name</strong>.</p>; }
+    @addTagHelper
+    @removeTagHelper
+    @tagHelperPrefix
+    page
+    namespace
+    functions
+    inherits
+    model
+    section
+    helper (Not currently supported by ASP.NET Core)
+    case
+    do
+    default
+    for
+    foreach
+    if
+    else
+    lock
+    switch
+    try
+    catch
+    finally
+    using
+    while
+    class
+    
+    Directive attributes
+    --------------------
+    @attributes
+    @bind
+    @bind:culture
+    @formname
+    @on{EVENT}
+    @on{EVENT}:preventDefault
+    @on{EVENT}:stopPropagation
+    @key
+    @ref
+    
+    Flat B
+    
+    https://learn.microsoft.com/en-us/aspnet/core/mvc/views/razor?view=aspnetcore-9.0
+    =================================================================================
+    
+    if
+    switch
+    for
+    foreach
+    while
+    do
+    using
+    try
+    lock
+    attribute
+    page
+    code { }
+    functions { }
+    implements
+    inherits
+    inject
+    layout
+    namespace
+    page
+    preservewhitespace
+    rendermode
+    section
+    typeparam
+    using
+    addTagHelper
+    removeTagHelper
+    tagHelperPrefix
+    page
+    namespace
+    functions
+    inherits
+    model
+    section
+    case
+    do
+    default
+    for
+    foreach
+    if
+    else
+    lock
+    switch
+    try
+    catch
+    finally
+    using
+    while
+    class
+    
+    Flat C
+    
+    https://learn.microsoft.com/en-us/aspnet/core/mvc/views/razor?view=aspnetcore-9.0
+    =================================================================================
+    
+    addTagHelper
+    attribute
+    case
+    class
+    code { }
+    default
+    do
+    for
+    foreach
+    functions { }
+    layout
+    lock
+    model
+    page
+    preservewhitespace
+    if
+    implements
+    inherits
+    inject
+    namespace
+    removeTagHelper
+    rendermode
+    section
+    switch
+    tagHelperPrefix
+    try
+    typeparam
+    using
+    while
+    
+    Flat D
+    
+    https://learn.microsoft.com/en-us/aspnet/core/mvc/views/razor?view=aspnetcore-9.0
+    =================================================================================
+    
+    a
+     ddTagHelper
+     ttribute
+     
+    c
+     ase
+     lass
+     ode { }
+     
+    d
+     efault
+     o
+     
+    f
+     or
+     oreach
+     unctions { }
+     
+    l
+     ayout
+     ock
+     
+    m
+     odel
+     
+    p
+     age
+     reservewhitespace
+     
+    i
+     f
+     mplements
+     nherits
+     nject
+     
+    n
+     amespace
+     
+    r
+     emoveTagHelper
+     endermode
+     
+    s
+     ection
+     witch
+     
+    t
+     agHelperPrefix
+     ry
+     ypeparam
+     
+    u
+     sing
+     
+    w
+     hile
+    
+    Flat E
+    
+    https://learn.microsoft.com/en-us/aspnet/core/mvc/views/razor?view=aspnetcore-9.0
+    =================================================================================
+    
+    ad
+      dTagHelper
+    at
+      tribute
+     
+    ca
+      se
+    cl
+      ass
+    co
+      de { }
+     
+    de
+      fault
+    do
+      // 'do' was the word itself
+     
+    fo
+      r
+      reach
+    fu
+      nctions { }
+     
+    la
+      yout
+    lo
+      ck
+     
+    m
+     odel
+     
+    pa
+      ge
+    pr
+      eservewhitespace
+     
+    if
+      // 'if' was the word itself
+    im
+      plements
+    in
+      herits
+      ject
+     
+    n
+     amespace
+     
+    re
+      moveTagHelper
+      ndermode
+     
+    se
+      ction
+    sw
+      itch
+     
+    ta
+      gHelperPrefix
+    tr
+      y
+    ty
+      peparam
+     
+    u
+     sing
+     
+    w
+     hile
+    
+    Flat F
+    
+    https://learn.microsoft.com/en-us/aspnet/core/mvc/views/razor?view=aspnetcore-9.0
+    =================================================================================
+    
+    ad
+      dTagHelper
+    at
+      tribute
+     
+    ca
+      se
+    cl
+      ass
+    co
+      de { }
+     
+    de
+      fault
+    do
+      // 'do' was the word itself
+     
+    for
+       // 'for' was a word itself
+       each
+    fu
+      nctions { }
+     
+    la
+      yout
+    lo
+      ck
+     
+    m
+     odel
+     
+    pa
+      ge
+    pr
+      eservewhitespace
+     
+    if
+      // 'if' was the word itself
+    im
+      plements
+    inh
+       erits
+    inj
+       ect
+     
+    n
+     amespace
+     
+    rem
+       oveTagHelper
+    ren
+       dermode
+     
+    se
+      ction
+    sw
+      itch
+     
+    ta
+      gHelperPrefix
+    tr
+      y
+    ty
+      peparam
+     
+    u
+     sing
+     
+    w
+     hile
+    
+    
+    */
 }
