@@ -837,6 +837,19 @@ public static class CSharpLexer
 
         var characterIntSum = 0;
         
+        var firstCharacter = streamReaderWrap.CurrentCharacter;
+        characterIntSum += (int)firstCharacter;
+        _ = streamReaderWrap.ReadCharacter();
+        // 'default' and 'dynamic' need to be disambiguated with this second character.
+        var possibleSecondCharacter = streamReaderWrap.CurrentCharacter;
+        // You don't know whether this character is valid or not
+        // so you cannot 'ReadCharacter()' here.
+        //
+        // And there is no reason to check its validity, because it is only used
+        // to disambiguate 'default' and 'dynamic', and by ending up
+        // in that switch case this is implicitly validated because
+        // it takes more than 1 valid character to reach the char-int-sum of those two words.
+        
         while (!streamReaderWrap.IsEof)
         {
             if (!char.IsLetterOrDigit(streamReaderWrap.CurrentCharacter) &&
