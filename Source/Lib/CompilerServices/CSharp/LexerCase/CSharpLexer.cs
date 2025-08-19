@@ -835,6 +835,8 @@ public static class CSharpLexer
         var entryPositionIndex = streamReaderWrap.PositionIndex;
         var byteEntryIndex = streamReaderWrap.ByteIndex;
 
+        var characterIntSum = 0;
+        
         while (!streamReaderWrap.IsEof)
         {
             if (!char.IsLetterOrDigit(streamReaderWrap.CurrentCharacter) &&
@@ -843,6 +845,7 @@ public static class CSharpLexer
                 break;
             }
 
+            characterIntSum += (int)streamReaderWrap.CurrentCharacter;
             _ = streamReaderWrap.ReadCharacter();
         }
 
@@ -852,7 +855,7 @@ public static class CSharpLexer
             (byte)GenericDecorationKind.None,
             byteEntryIndex);
             
-        switch ()
+        switch (characterIntSum)
         {
             // NonContextualKeywords-NonControl
             // ================================
@@ -872,9 +875,19 @@ public static class CSharpLexer
                 textSpan = textSpan with { DecorationByte = (byte)GenericDecorationKind.Keyword };
                 lexerOutput.SyntaxTokenList.Add(new SyntaxToken(SyntaxKind.BoolTokenKeyword, textSpan));
                 return;
-            case 436: // byte
+            case 436: // !! DUPLICATES !!
+                // byte
+                throw new NotImplementedException();
                 textSpan = textSpan with { DecorationByte = (byte)GenericDecorationKind.Keyword };
                 lexerOutput.SyntaxTokenList.Add(new SyntaxToken(SyntaxKind.ByteTokenKeyword, textSpan));
+                return;
+                // from
+                textSpan = textSpan with { DecorationByte = (byte)GenericDecorationKind.Keyword };
+                lexerOutput.SyntaxTokenList.Add(new SyntaxToken(SyntaxKind.FromTokenContextualKeyword, textSpan));
+                return;
+                // init
+                textSpan = textSpan with { DecorationByte = (byte)GenericDecorationKind.Keyword };
+                lexerOutput.SyntaxTokenList.Add(new SyntaxToken(SyntaxKind.InitTokenContextualKeyword, textSpan));
                 return;
             case 515: // catch
                 textSpan = textSpan with { DecorationByte = (byte)GenericDecorationKind.Keyword };
@@ -888,21 +901,43 @@ public static class CSharpLexer
                 textSpan = textSpan with { DecorationByte = (byte)GenericDecorationKind.Keyword };
                 lexerOutput.SyntaxTokenList.Add(new SyntaxToken(SyntaxKind.CheckedTokenKeyword, textSpan));
                 return;
-            case 534: // class
+            case 534: // !! DUPLICATES !!
+                throw new NotImplementedException();
+                // class
                 textSpan = textSpan with { DecorationByte = (byte)GenericDecorationKind.Keyword };
                 lexerOutput.SyntaxTokenList.Add(new SyntaxToken(SyntaxKind.ClassTokenKeyword, textSpan));
                 return;
-            case 551: // const
+                // float
+                textSpan = textSpan with { DecorationByte = (byte)GenericDecorationKind.Keyword };
+                lexerOutput.SyntaxTokenList.Add(new SyntaxToken(SyntaxKind.FloatTokenKeyword, textSpan));
+                return;
+                // await
+                textSpan = textSpan with { DecorationByte = (byte)GenericDecorationKind.Keyword };
+                lexerOutput.SyntaxTokenList.Add(new SyntaxToken(SyntaxKind.AwaitTokenContextualKeyword, textSpan));
+                return;
+            case 551: // !! DUPLICATES !!
+                throw new NotImplementedException();
+                // const
                 textSpan = textSpan with { DecorationByte = (byte)GenericDecorationKind.Keyword };
                 lexerOutput.SyntaxTokenList.Add(new SyntaxToken(SyntaxKind.ConstTokenKeyword, textSpan));
+                return;
+                // sbyte
+                textSpan = textSpan with { DecorationByte = (byte)GenericDecorationKind.Keyword };
+                lexerOutput.SyntaxTokenList.Add(new SyntaxToken(SyntaxKind.SbyteTokenKeyword, textSpan));
                 return;
             case 719: // decimal
                 textSpan = textSpan with { DecorationByte = (byte)GenericDecorationKind.Keyword };
                 lexerOutput.SyntaxTokenList.Add(new SyntaxToken(SyntaxKind.DecimalTokenKeyword, textSpan));
                 return;
-            case 741: // default
+            case 741: // !! DUPLICATES !!
+                throw new NotImplementedException();
+                // default
                 textSpan = textSpan with { DecorationByte = (byte)GenericDecorationKind.Keyword };
                 lexerOutput.SyntaxTokenList.Add(new SyntaxToken(SyntaxKind.DefaultTokenKeyword, textSpan));
+                return;
+                // dynamic
+                textSpan = textSpan with { DecorationByte = (byte)GenericDecorationKind.Keyword };
+                lexerOutput.SyntaxTokenList.Add(new SyntaxToken(SyntaxKind.DynamicTokenContextualKeyword, textSpan));
                 return;
             case 827: // delegate
                 textSpan = textSpan with { DecorationByte = (byte)GenericDecorationKind.Keyword };
@@ -940,10 +975,6 @@ public static class CSharpLexer
                 textSpan = textSpan with { DecorationByte = (byte)GenericDecorationKind.Keyword };
                 lexerOutput.SyntaxTokenList.Add(new SyntaxToken(SyntaxKind.FixedTokenKeyword, textSpan));
                 return;
-            case 534: // float
-                textSpan = textSpan with { DecorationByte = (byte)GenericDecorationKind.Keyword };
-                lexerOutput.SyntaxTokenList.Add(new SyntaxToken(SyntaxKind.FloatTokenKeyword, textSpan));
-                return;
             case 859: // implicit
                 textSpan = textSpan with { DecorationByte = (byte)GenericDecorationKind.Keyword };
                 lexerOutput.SyntaxTokenList.Add(new SyntaxToken(SyntaxKind.ImplicitTokenKeyword, textSpan));
@@ -968,13 +999,25 @@ public static class CSharpLexer
                 textSpan = textSpan with { DecorationByte = (byte)GenericDecorationKind.Keyword };
                 lexerOutput.SyntaxTokenList.Add(new SyntaxToken(SyntaxKind.IsTokenKeyword, textSpan));
                 return;
-            case 425: // lock
+            case 425: // !! DUPLICATES !!
+                throw new NotImplementedException();
+                // lock
                 textSpan = textSpan with { DecorationByte = (byte)GenericDecorationKind.Keyword };
                 lexerOutput.SyntaxTokenList.Add(new SyntaxToken(SyntaxKind.LockTokenKeyword, textSpan));
                 return;
-            case 432: // long
+                // else
+                textSpan = textSpan with { DecorationByte = (byte)GenericDecorationKind.KeywordControl };
+                lexerOutput.SyntaxTokenList.Add(new SyntaxToken(SyntaxKind.ElseTokenKeyword, textSpan));
+                return;
+            case 432: // !! DUPLICATES !!
+                throw new NotImplementedException();
+                // long
                 textSpan = textSpan with { DecorationByte = (byte)GenericDecorationKind.Keyword };
                 lexerOutput.SyntaxTokenList.Add(new SyntaxToken(SyntaxKind.LongTokenKeyword, textSpan));
+                return;
+                // join
+                textSpan = textSpan with { DecorationByte = (byte)GenericDecorationKind.Keyword };
+                lexerOutput.SyntaxTokenList.Add(new SyntaxToken(SyntaxKind.JoinTokenContextualKeyword, textSpan));
                 return;
             case 941: // namespace
                 textSpan = textSpan with { DecorationByte = (byte)GenericDecorationKind.Keyword };
@@ -1000,9 +1043,15 @@ public static class CSharpLexer
                 textSpan = textSpan with { DecorationByte = (byte)GenericDecorationKind.Keyword };
                 lexerOutput.SyntaxTokenList.Add(new SyntaxToken(SyntaxKind.OutTokenKeyword, textSpan));
                 return;
-            case 864: // override
+            case 864: // !! DUPLICATES !!
+                throw new NotImplementedException();
+                // override
                 textSpan = textSpan with { DecorationByte = (byte)GenericDecorationKind.Keyword };
                 lexerOutput.SyntaxTokenList.Add(new SyntaxToken(SyntaxKind.OverrideTokenKeyword, textSpan));
+                return;
+                // volatile
+                textSpan = textSpan with { DecorationByte = (byte)GenericDecorationKind.Keyword };
+                lexerOutput.SyntaxTokenList.Add(new SyntaxToken(SyntaxKind.VolatileTokenKeyword, textSpan));
                 return;
             case 644: // params
                 textSpan = textSpan with { DecorationByte = (byte)GenericDecorationKind.Keyword };
@@ -1016,9 +1065,15 @@ public static class CSharpLexer
                 textSpan = textSpan with { DecorationByte = (byte)GenericDecorationKind.Keyword };
                 lexerOutput.SyntaxTokenList.Add(new SyntaxToken(SyntaxKind.ProtectedTokenKeyword, textSpan));
                 return;
-            case 639: // public
+            case 639: // !! DUPLICATES !!
+                throw new NotImplementedException();
+                // public
                 textSpan = textSpan with { DecorationByte = (byte)GenericDecorationKind.Keyword };
                 lexerOutput.SyntaxTokenList.Add(new SyntaxToken(SyntaxKind.PublicTokenKeyword, textSpan));
+                return;
+                // record
+                textSpan = textSpan with { DecorationByte = (byte)GenericDecorationKind.Keyword };
+                lexerOutput.SyntaxTokenList.Add(new SyntaxToken(SyntaxKind.RecordTokenContextualKeyword, textSpan));
                 return;
             case 862: // readonly
                 textSpan = textSpan with { DecorationByte = (byte)GenericDecorationKind.Keyword };
@@ -1027,10 +1082,6 @@ public static class CSharpLexer
             case 317: // ref
                 textSpan = textSpan with { DecorationByte = (byte)GenericDecorationKind.Keyword };
                 lexerOutput.SyntaxTokenList.Add(new SyntaxToken(SyntaxKind.RefTokenKeyword, textSpan));
-                return;
-            case 551: // sbyte
-                textSpan = textSpan with { DecorationByte = (byte)GenericDecorationKind.Keyword };
-                lexerOutput.SyntaxTokenList.Add(new SyntaxToken(SyntaxKind.SbyteTokenKeyword, textSpan));
                 return;
             case 622: // sealed
                 textSpan = textSpan with { DecorationByte = (byte)GenericDecorationKind.Keyword };
@@ -1052,33 +1103,43 @@ public static class CSharpLexer
                 textSpan = textSpan with { DecorationByte = (byte)GenericDecorationKind.Keyword };
                 lexerOutput.SyntaxTokenList.Add(new SyntaxToken(SyntaxKind.StaticTokenKeyword, textSpan));
                 return;
-            case 663: // string
+            case 663: // !! DUPLICATES !!
+                throw new NotImplementedException();
+                // string
                 textSpan = textSpan with { DecorationByte = (byte)GenericDecorationKind.Keyword };
                 lexerOutput.SyntaxTokenList.Add(new SyntaxToken(SyntaxKind.StringTokenKeyword, textSpan));
                 return;
-            case 677: // struct
+                // typeof
+                textSpan = textSpan with { DecorationByte = (byte)GenericDecorationKind.Keyword };
+                lexerOutput.SyntaxTokenList.Add(new SyntaxToken(SyntaxKind.TypeofTokenKeyword, textSpan));
+                return;
+            case 677: // !! DUPLICATES !!
+                throw new NotImplementedException();
+                // struct
                 textSpan = textSpan with { DecorationByte = (byte)GenericDecorationKind.Keyword };
                 lexerOutput.SyntaxTokenList.Add(new SyntaxToken(SyntaxKind.StructTokenKeyword, textSpan));
+                return;
+                // ushort
+                textSpan = textSpan with { DecorationByte = (byte)GenericDecorationKind.Keyword };
+                lexerOutput.SyntaxTokenList.Add(new SyntaxToken(SyntaxKind.UshortTokenKeyword, textSpan));
                 return;
             case 440: // this
                 textSpan = textSpan with { DecorationByte = (byte)GenericDecorationKind.Keyword };
                 lexerOutput.SyntaxTokenList.Add(new SyntaxToken(SyntaxKind.ThisTokenKeyword, textSpan));
                 return;
-            case 448: // true
+            case 448: // !! DUPLICATES !!
+                throw new NotImplementedException();
+                // true
                 textSpan = textSpan with { DecorationByte = (byte)GenericDecorationKind.Keyword };
                 lexerOutput.SyntaxTokenList.Add(new SyntaxToken(SyntaxKind.TrueTokenKeyword, textSpan));
+                return;
+                // uint
+                textSpan = textSpan with { DecorationByte = (byte)GenericDecorationKind.Keyword };
+                lexerOutput.SyntaxTokenList.Add(new SyntaxToken(SyntaxKind.UintTokenKeyword, textSpan));
                 return;
             case 351: // try
                 textSpan = textSpan with { DecorationByte = (byte)GenericDecorationKind.Keyword };
                 lexerOutput.SyntaxTokenList.Add(new SyntaxToken(SyntaxKind.TryTokenKeyword, textSpan));
-                return;
-            case 663: // typeof
-                textSpan = textSpan with { DecorationByte = (byte)GenericDecorationKind.Keyword };
-                lexerOutput.SyntaxTokenList.Add(new SyntaxToken(SyntaxKind.TypeofTokenKeyword, textSpan));
-                return;
-            case 448: // uint
-                textSpan = textSpan with { DecorationByte = (byte)GenericDecorationKind.Keyword };
-                lexerOutput.SyntaxTokenList.Add(new SyntaxToken(SyntaxKind.UintTokenKeyword, textSpan));
                 return;
             case 549: // ulong
                 textSpan = textSpan with { DecorationByte = (byte)GenericDecorationKind.Keyword };
@@ -1092,10 +1153,6 @@ public static class CSharpLexer
                 textSpan = textSpan with { DecorationByte = (byte)GenericDecorationKind.Keyword };
                 lexerOutput.SyntaxTokenList.Add(new SyntaxToken(SyntaxKind.UnsafeTokenKeyword, textSpan));
                 return;
-            case 677: // ushort
-                textSpan = textSpan with { DecorationByte = (byte)GenericDecorationKind.Keyword };
-                lexerOutput.SyntaxTokenList.Add(new SyntaxToken(SyntaxKind.UshortTokenKeyword, textSpan));
-                return;
             case 550: // using
                 textSpan = textSpan with { DecorationByte = (byte)GenericDecorationKind.Keyword };
                 lexerOutput.SyntaxTokenList.Add(new SyntaxToken(SyntaxKind.UsingTokenKeyword, textSpan));
@@ -1104,13 +1161,15 @@ public static class CSharpLexer
                 textSpan = textSpan with { DecorationByte = (byte)GenericDecorationKind.Keyword };
                 lexerOutput.SyntaxTokenList.Add(new SyntaxToken(SyntaxKind.VirtualTokenKeyword, textSpan));
                 return;
-            case 434: // void
+            case 434: // !! DUPLICATES !!
+                throw new NotImplementedException();
+                // void
                 textSpan = textSpan with { DecorationByte = (byte)GenericDecorationKind.Keyword };
                 lexerOutput.SyntaxTokenList.Add(new SyntaxToken(SyntaxKind.VoidTokenKeyword, textSpan));
                 return;
-            case 864: // volatile
+                // when
                 textSpan = textSpan with { DecorationByte = (byte)GenericDecorationKind.Keyword };
-                lexerOutput.SyntaxTokenList.Add(new SyntaxToken(SyntaxKind.VolatileTokenKeyword, textSpan));
+                lexerOutput.SyntaxTokenList.Add(new SyntaxToken(SyntaxKind.WhenTokenContextualKeyword, textSpan));
                 return;
             case 517: // break
                 textSpan = textSpan with { DecorationByte = (byte)GenericDecorationKind.KeywordControl };
@@ -1128,10 +1187,6 @@ public static class CSharpLexer
                 textSpan = textSpan with { DecorationByte = (byte)GenericDecorationKind.KeywordControl };
                 lexerOutput.SyntaxTokenList.Add(new SyntaxToken(SyntaxKind.DoTokenKeyword, textSpan));
                 return;
-            case 425: // else
-                textSpan = textSpan with { DecorationByte = (byte)GenericDecorationKind.KeywordControl };
-                lexerOutput.SyntaxTokenList.Add(new SyntaxToken(SyntaxKind.ElseTokenKeyword, textSpan));
-                return;
             case 327: // for
                 textSpan = textSpan with { DecorationByte = (byte)GenericDecorationKind.KeywordControl };
                 lexerOutput.SyntaxTokenList.Add(new SyntaxToken(SyntaxKind.ForTokenKeyword, textSpan));
@@ -1140,9 +1195,15 @@ public static class CSharpLexer
                 textSpan = textSpan with { DecorationByte = (byte)GenericDecorationKind.KeywordControl };
                 lexerOutput.SyntaxTokenList.Add(new SyntaxToken(SyntaxKind.ForeachTokenKeyword, textSpan));
                 return;
-            case 441: // goto
+            case 441: // !! DUPLICATES !!
+                throw new NotImplementedException();
+                // goto
                 textSpan = textSpan with { DecorationByte = (byte)GenericDecorationKind.KeywordControl };
                 lexerOutput.SyntaxTokenList.Add(new SyntaxToken(SyntaxKind.GotoTokenKeyword, textSpan));
+                return;
+                // nint
+                textSpan = textSpan with { DecorationByte = (byte)GenericDecorationKind.Keyword };
+                lexerOutput.SyntaxTokenList.Add(new SyntaxToken(SyntaxKind.NintTokenContextualKeyword, textSpan));
                 return;
             case 207: // if
                 textSpan = textSpan with { DecorationByte = (byte)GenericDecorationKind.KeywordControl };
@@ -1188,10 +1249,6 @@ public static class CSharpLexer
                 textSpan = textSpan with { DecorationByte = (byte)GenericDecorationKind.Keyword };
                 lexerOutput.SyntaxTokenList.Add(new SyntaxToken(SyntaxKind.AsyncTokenContextualKeyword, textSpan));
                 return;
-            case 534: // await
-                textSpan = textSpan with { DecorationByte = (byte)GenericDecorationKind.Keyword };
-                lexerOutput.SyntaxTokenList.Add(new SyntaxToken(SyntaxKind.AwaitTokenContextualKeyword, textSpan));
-                return;
             case 219: // by
                 textSpan = textSpan with { DecorationByte = (byte)GenericDecorationKind.Keyword };
                 lexerOutput.SyntaxTokenList.Add(new SyntaxToken(SyntaxKind.ByTokenContextualKeyword, textSpan));
@@ -1200,10 +1257,6 @@ public static class CSharpLexer
                 textSpan = textSpan with { DecorationByte = (byte)GenericDecorationKind.Keyword };
                 lexerOutput.SyntaxTokenList.Add(new SyntaxToken(SyntaxKind.DescendingTokenContextualKeyword, textSpan));
                 return;
-            case 741: // dynamic
-                textSpan = textSpan with { DecorationByte = (byte)GenericDecorationKind.Keyword };
-                lexerOutput.SyntaxTokenList.Add(new SyntaxToken(SyntaxKind.DynamicTokenContextualKeyword, textSpan));
-                return;
             case 651: // equals
                 textSpan = textSpan with { DecorationByte = (byte)GenericDecorationKind.Keyword };
                 lexerOutput.SyntaxTokenList.Add(new SyntaxToken(SyntaxKind.EqualsTokenContextualKeyword, textSpan));
@@ -1211,10 +1264,6 @@ public static class CSharpLexer
             case 416: // file
                 textSpan = textSpan with { DecorationByte = (byte)GenericDecorationKind.Keyword };
                 lexerOutput.SyntaxTokenList.Add(new SyntaxToken(SyntaxKind.FileTokenContextualKeyword, textSpan));
-                return;
-            case 436: // from
-                textSpan = textSpan with { DecorationByte = (byte)GenericDecorationKind.Keyword };
-                lexerOutput.SyntaxTokenList.Add(new SyntaxToken(SyntaxKind.FromTokenContextualKeyword, textSpan));
                 return;
             case 320: // get
                 textSpan = textSpan with { DecorationByte = (byte)GenericDecorationKind.Keyword };
@@ -1228,17 +1277,9 @@ public static class CSharpLexer
                 textSpan = textSpan with { DecorationByte = (byte)GenericDecorationKind.Keyword };
                 lexerOutput.SyntaxTokenList.Add(new SyntaxToken(SyntaxKind.GroupTokenContextualKeyword, textSpan));
                 return;
-            case 436: // init
-                textSpan = textSpan with { DecorationByte = (byte)GenericDecorationKind.Keyword };
-                lexerOutput.SyntaxTokenList.Add(new SyntaxToken(SyntaxKind.InitTokenContextualKeyword, textSpan));
-                return;
             case 442: // into
                 textSpan = textSpan with { DecorationByte = (byte)GenericDecorationKind.Keyword };
                 lexerOutput.SyntaxTokenList.Add(new SyntaxToken(SyntaxKind.IntoTokenContextualKeyword, textSpan));
-                return;
-            case 432: // join
-                textSpan = textSpan with { DecorationByte = (byte)GenericDecorationKind.Keyword };
-                lexerOutput.SyntaxTokenList.Add(new SyntaxToken(SyntaxKind.JoinTokenContextualKeyword, textSpan));
                 return;
             case 325: // let
                 textSpan = textSpan with { DecorationByte = (byte)GenericDecorationKind.Keyword };
@@ -1251,10 +1292,6 @@ public static class CSharpLexer
             case 630: // nameof
                 textSpan = textSpan with { DecorationByte = (byte)GenericDecorationKind.Keyword };
                 lexerOutput.SyntaxTokenList.Add(new SyntaxToken(SyntaxKind.NameofTokenContextualKeyword, textSpan));
-                return;
-            case 441: // nint
-                textSpan = textSpan with { DecorationByte = (byte)GenericDecorationKind.Keyword };
-                lexerOutput.SyntaxTokenList.Add(new SyntaxToken(SyntaxKind.NintTokenContextualKeyword, textSpan));
                 return;
             case 337: // not
                 textSpan = textSpan with { DecorationByte = (byte)GenericDecorationKind.Keyword };
@@ -1283,10 +1320,6 @@ public static class CSharpLexer
             case 749: // partial
                 textSpan = textSpan with { DecorationByte = (byte)GenericDecorationKind.Keyword };
                 lexerOutput.SyntaxTokenList.Add(new SyntaxToken(SyntaxKind.PartialTokenContextualKeyword, textSpan));
-                return;
-            case 639: // record
-                textSpan = textSpan with { DecorationByte = (byte)GenericDecorationKind.Keyword };
-                lexerOutput.SyntaxTokenList.Add(new SyntaxToken(SyntaxKind.RecordTokenContextualKeyword, textSpan));
                 return;
             case 654: // remove
                 textSpan = textSpan with { DecorationByte = (byte)GenericDecorationKind.Keyword };
@@ -1319,10 +1352,6 @@ public static class CSharpLexer
             case 329: // var
                 textSpan = textSpan with { DecorationByte = (byte)GenericDecorationKind.Keyword };
                 lexerOutput.SyntaxTokenList.Add(new SyntaxToken(SyntaxKind.VarTokenContextualKeyword, textSpan));
-                return;
-            case 434: // when
-                textSpan = textSpan with { DecorationByte = (byte)GenericDecorationKind.Keyword };
-                lexerOutput.SyntaxTokenList.Add(new SyntaxToken(SyntaxKind.WhenTokenContextualKeyword, textSpan));
                 return;
             case 539: // where
                 textSpan = textSpan with { DecorationByte = (byte)GenericDecorationKind.Keyword };
