@@ -572,6 +572,57 @@ public static class RazorLexer
                     w
                      hile
                     */
+                    
+                    /*
+                    Flat G
+                    
+                    https://learn.microsoft.com/en-us/aspnet/core/mvc/views/razor?view=aspnetcore-9.0
+                    =================================================================================
+                    
+                    ad
+                    at
+                     
+                    ca
+                    cl
+                    co
+                     
+                    de
+                    do // 'do' was a word itself
+                      
+                     
+                    for // 'for' was a word itself
+                       each
+                    fu
+                     
+                    la
+                    lo
+                     
+                    m
+                     
+                    pa
+                    pr
+                     
+                    if // 'if' was a word itself
+                    im
+                    inh
+                    inj
+                     
+                    n
+                     
+                    rem
+                    ren
+                     
+                    se
+                    sw
+                     
+                    ta
+                    tr
+                    ty
+                     
+                    u
+                     
+                    w
+                    */
                 
                     if (context == RazorLexerContextKind.Expect_AttributeName)
                     {
