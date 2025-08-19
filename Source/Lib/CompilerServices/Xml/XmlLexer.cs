@@ -10,10 +10,6 @@ public static class XmlLexer
         // Expect_TagName, // There is no expect tag name, you can't have whitespace here
         Expect_AttributeName,
         Expect_AttributeValue,
-        Current_Text,
-        Current_TagName,
-        Current_AttributeName,
-        Current_AttributeValue,
     }
 
     public static XmlLexerOutput Lex(StreamReaderWrap streamReaderWrap)
@@ -486,10 +482,7 @@ public static class XmlLexer
                 }
                 case '>':
                 {
-                    if (context != XmlLexerContextKind.Current_AttributeValue && context != XmlLexerContextKind.Current_Text)
-                    {
-                        context = XmlLexerContextKind.Expect_TagOrText;
-                    }
+                    context = XmlLexerContextKind.Expect_TagOrText;
                 
                     if (streamReaderWrap.PeekCharacter(1) == '=')
                     {

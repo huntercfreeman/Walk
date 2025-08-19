@@ -18,9 +18,8 @@ using Walk.CompilerServices.Css.Decoration;
 using Walk.CompilerServices.DotNetSolution.CompilerServiceCase;
 using Walk.CompilerServices.Json;
 using Walk.CompilerServices.Json.Decoration;
-using Walk.CompilerServices.Razor.CompilerServiceCase;
+using Walk.CompilerServices.Razor;
 using Walk.CompilerServices.Xml;
-using Walk.CompilerServices.Xml.Html.Decoration;
 using Walk.Extensions.DotNet;
 using Walk.Extensions.DotNet.AppDatas.Models;
 using Walk.Extensions.DotNet.CommandLines.Models;
@@ -538,6 +537,7 @@ public static class InitializationHelper
         var jsonDecorationMapper = new TextEditorJsonDecorationMapper();
         var genericDecorationMapper = new GenericDecorationMapper();
         var xmlDecorationMapper = new XmlDecorationMapper();
+        var razorDecorationMapper = new RazorDecorationMapper();
         var terminalDecorationMapper = new TerminalDecorationMapper();
         var defaultDecorationMapper = new TextEditorDecorationMapperDefault();
 
@@ -546,8 +546,8 @@ public static class InitializationHelper
         DotNetService.TextEditorService.RegisterDecorationMapper(ExtensionNoPeriodFacts.C_SHARP_PROJECT, xmlDecorationMapper);
         DotNetService.TextEditorService.RegisterDecorationMapper(ExtensionNoPeriodFacts.C_SHARP_CLASS, genericDecorationMapper);
         DotNetService.TextEditorService.RegisterDecorationMapper(ExtensionNoPeriodFacts.RAZOR_CODEBEHIND, genericDecorationMapper);
-        DotNetService.TextEditorService.RegisterDecorationMapper(ExtensionNoPeriodFacts.RAZOR_MARKUP, xmlDecorationMapper);
-        DotNetService.TextEditorService.RegisterDecorationMapper(ExtensionNoPeriodFacts.CSHTML_CLASS, xmlDecorationMapper);
+        DotNetService.TextEditorService.RegisterDecorationMapper(ExtensionNoPeriodFacts.RAZOR_MARKUP, razorDecorationMapper);
+        DotNetService.TextEditorService.RegisterDecorationMapper(ExtensionNoPeriodFacts.CSHTML_CLASS, razorDecorationMapper);
         DotNetService.TextEditorService.RegisterDecorationMapper(ExtensionNoPeriodFacts.CSS, cssDecorationMapper);
         DotNetService.TextEditorService.RegisterDecorationMapper(ExtensionNoPeriodFacts.JAVA_SCRIPT, genericDecorationMapper);
         DotNetService.TextEditorService.RegisterDecorationMapper(ExtensionNoPeriodFacts.JSON, jsonDecorationMapper);
