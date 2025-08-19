@@ -92,7 +92,8 @@ public static class RazorLexer
                             var atCharStartPosition = streamReaderWrap.PositionIndex;
                             var atCharStartByte = streamReaderWrap.ByteIndex;
                             _ = streamReaderWrap.ReadCharacter();
-                            SkipCSharpdentifier(streamReaderWrap);
+                            // Attribute skips HTML identifier because ':' example: 'onclick:stopPropagation="true"'
+                            SkipHtmlIdentifier(streamReaderWrap);
                             output.TextSpanList.Add(new TextEditorTextSpan(
                                 atCharStartPosition,
                                 streamReaderWrap.PositionIndex,
