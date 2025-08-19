@@ -494,6 +494,84 @@ public static class RazorLexer
                     w
                      hile
                     */
+                    
+                    /*
+                    Flat F
+                    
+                    https://learn.microsoft.com/en-us/aspnet/core/mvc/views/razor?view=aspnetcore-9.0
+                    =================================================================================
+                    
+                    ad
+                      dTagHelper
+                    at
+                      tribute
+                     
+                    ca
+                      se
+                    cl
+                      ass
+                    co
+                      de { }
+                     
+                    de
+                      fault
+                    do
+                      // 'do' was the word itself
+                     
+                    for
+                       // 'for' was a word itself
+                       each
+                    fu
+                      nctions { }
+                     
+                    la
+                      yout
+                    lo
+                      ck
+                     
+                    m
+                     odel
+                     
+                    pa
+                      ge
+                    pr
+                      eservewhitespace
+                     
+                    if
+                      // 'if' was the word itself
+                    im
+                      plements
+                    inh
+                       erits
+                    inj
+                       ect
+                     
+                    n
+                     amespace
+                     
+                    rem
+                       oveTagHelper
+                    ren
+                       dermode
+                     
+                    se
+                      ction
+                    sw
+                      itch
+                     
+                    ta
+                      gHelperPrefix
+                    tr
+                      y
+                    ty
+                      peparam
+                     
+                    u
+                     sing
+                     
+                    w
+                     hile
+                    */
                 
                     if (context == RazorLexerContextKind.Expect_AttributeName)
                     {
