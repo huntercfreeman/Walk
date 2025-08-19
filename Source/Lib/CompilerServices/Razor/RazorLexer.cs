@@ -623,6 +623,43 @@ public static class RazorLexer
                      
                     w
                     */
+                    
+                    /*
+                    Flat H
+                    
+                    https://learn.microsoft.com/en-us/aspnet/core/mvc/views/razor?view=aspnetcore-9.0
+                    =================================================================================
+                    
+                    ad
+                    at
+                    ca
+                    cl
+                    co
+                    de
+                    do^
+                    for^
+                    fore
+                    fu
+                    la
+                    lo
+                    m
+                    pa
+                    pr
+                    if^
+                    im
+                    inh
+                    inj
+                    n
+                    rem
+                    ren
+                    se
+                    sw
+                    ta
+                    tr
+                    ty
+                    u
+                    w
+                    */
                 
                     if (context == RazorLexerContextKind.Expect_AttributeName)
                     {
