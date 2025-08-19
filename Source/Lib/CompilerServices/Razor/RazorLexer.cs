@@ -14,6 +14,99 @@ public static class RazorLexer
 
     public static RazorLexerOutput Lex(StreamReaderWrap streamReaderWrap)
     {
+        /*
+        =======================
+        =======================
+        1189 // addTagHelper
+        980 // attribute
+        412 // case
+        534 // class
+        411 // code
+        741 // default
+        211 // do
+        327 // for
+        728 // foreach
+        985 // functions
+        670 // layout
+        425 // lock
+        529 // model
+        413 // page
+        1945 // preservewhitespace
+        207 // if
+        1086 // implements
+        870 // inherits
+        637 // inject
+        941 // namespace
+        1546 // removeTagHelper
+        1061 // rendermode
+        757 // section
+        658 // switch
+        !DUPLICATE!:1546/tagHelperPrefix
+        1546 // tagHelperPrefix
+        351 // try
+        979 // typeparam
+        550 // using
+        537 // while
+        =======================
+        =======================
+    
+        var keywordList = new List<string>
+        {
+            "addTagHelper",
+            "attribute",
+            "case",
+            "class",
+            "code",
+            "default",
+            "do",
+            "for",
+            "foreach",
+            "functions",
+            "layout",
+            "lock",
+            "model",
+            "page",
+            "preservewhitespace",
+            "if",
+            "implements",
+            "inherits",
+            "inject",
+            "namespace",
+            "removeTagHelper",
+            "rendermode",
+            "section",
+            "switch",
+            "tagHelperPrefix",
+            "try",
+            "typeparam",
+            "using",
+            "while",
+        };
+        
+        Console.WriteLine("=======================");
+        Console.WriteLine("=======================");
+        
+        var hashSet = new HashSet<int>();
+        
+        foreach (var keyword in keywordList)
+        {
+            var sum = 0;
+            foreach (var character in keyword)
+            {
+                sum += (int)character;
+            }
+            
+            if (!hashSet.Add(sum))
+            {
+                Console.WriteLine($"!DUPLICATE!:{sum}/{keyword}");
+            }
+            Console.WriteLine($"{sum} // {keyword}");
+        }
+        
+        Console.WriteLine("=======================");
+        Console.WriteLine("=======================");
+        */
+    
         var context = RazorLexerContextKind.Expect_TagOrText;
         var output = new RazorLexerOutput();
         
@@ -892,6 +985,38 @@ public static class RazorLexer
             ty
             u
             w
+        */
+        
+        /*
+            addTagHelper
+            attribute
+            case
+            class
+            code { }
+            default
+            do
+            for
+            foreach
+            functions { }
+            layout
+            lock
+            model
+            page
+            preservewhitespace
+            if
+            implements
+            inherits
+            inject
+            namespace
+            removeTagHelper
+            rendermode
+            section
+            switch
+            tagHelperPrefix
+            try
+            typeparam
+            using
+            while
         */
     
         while (!streamReaderWrap.IsEof)
