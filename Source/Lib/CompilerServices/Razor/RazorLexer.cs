@@ -207,9 +207,7 @@ public static class RazorLexer
                                     while (!streamReaderWrap.IsEof)
                                     {
                                         if (streamReaderWrap.CurrentCharacter == '*' && streamReaderWrap.PeekCharacter(1) == '@')
-                                        {
                                             break;
-                                        }
                                     
                                         _ = streamReaderWrap.ReadCharacter();
                                     }
