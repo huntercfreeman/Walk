@@ -261,6 +261,62 @@ public static class RazorLexer
                     @key
                     @ref
                     */
+                    
+                    /*
+                    Flat B
+                    
+                    https://learn.microsoft.com/en-us/aspnet/core/mvc/views/razor?view=aspnetcore-9.0
+                    =================================================================================
+                    
+                    if
+                    switch
+                    for
+                    foreach
+                    while
+                    do
+                    using
+                    try
+                    lock
+                    attribute
+                    page
+                    code { }
+                    functions { }
+                    implements
+                    inherits
+                    inject
+                    layout
+                    namespace
+                    page
+                    preservewhitespace
+                    rendermode
+                    section
+                    typeparam
+                    using
+                    addTagHelper
+                    removeTagHelper
+                    tagHelperPrefix
+                    page
+                    namespace
+                    functions
+                    inherits
+                    model
+                    section
+                    case
+                    do
+                    default
+                    for
+                    foreach
+                    if
+                    else
+                    lock
+                    switch
+                    try
+                    catch
+                    finally
+                    using
+                    while
+                    class
+                    */
                 
                     if (context == RazorLexerContextKind.Expect_AttributeName)
                     {
