@@ -245,14 +245,23 @@ public static class RazorLexer
                                 }
                                 else
                                 {
+                                    output.TextSpanList.Add(new TextEditorTextSpan(
+                                        atCharStartPosition,
+                                        streamReaderWrap.PositionIndex,
+                                        (byte)RazorDecorationKind.InjectedLanguageFragment,
+                                        atCharStartByte));
+                                
+                                    var wordStartPosition = streamReaderWrap.PositionIndex;
+                                    var wordStartByte = streamReaderWrap.ByteIndex;
+                                    
                                     var everythingWasHandledForMe = SkipCSharpdentifierOrKeyword(streamReaderWrap, output.TextSpanList);
                                     if (!everythingWasHandledForMe)
                                     {
                                         output.TextSpanList.Add(new TextEditorTextSpan(
-                                            atCharStartPosition,
+                                            wordStartPosition,
                                             streamReaderWrap.PositionIndex,
                                             (byte)RazorDecorationKind.InjectedLanguageFragment,
-                                            atCharStartByte));
+                                            wordStartByte));
                                     }
                                 }
                                 
@@ -856,6 +865,7 @@ public static class RazorLexer
             case 534: // class
                 break;
             case 411: // code
+            case 985: // functions
                 textSpanList.Add(new TextEditorTextSpan(
                     wordStartPosition,
                     streamReaderWrap.PositionIndex,
@@ -888,8 +898,6 @@ public static class RazorLexer
             case 327: // for
                 break;
             case 728: // foreach
-                break;
-            case 985: // functions
                 break;
             case 670: // layout
                 break;
