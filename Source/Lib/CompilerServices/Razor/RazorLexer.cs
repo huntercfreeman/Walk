@@ -1829,3 +1829,441 @@ public static class RazorLexer
     w
     */
 }
+
+
+
+
+
+
+/*switch (binder.CSharpCompilerService.SafeGetText(lexerOutput.ResourceUri.Value, textSpan) ?? string.Empty)
+{
+    // NonContextualKeywords-NonControl
+    // ================================
+    
+    // case "abstract":
+        
+    // case "as":
+        
+    // case "base":
+        
+    // case "bool":
+        
+    // case "byte":
+        
+    // case "catch":
+        
+    // case "char":
+        
+    // case "checked":
+        
+    // case "class":
+        
+    // case "const":
+        
+    // case "decimal":
+        
+    // case "default":
+        
+    // case "delegate":
+        
+    // case "double":
+        
+    // case "enum":
+        
+    // case "event":
+        
+    // case "explicit":
+        
+    // case "extern":
+        
+    // case "false":
+        
+    // case "finally":
+        
+    // case "fixed":
+        
+    // case "float":
+        
+    // case "implicit":
+        
+    // case "in":
+        
+    // case "int":
+        
+    // case "interface":
+        
+    // case "internal":
+        
+    // case "is":
+        
+    // case "lock":
+        
+    // case "long":
+        
+    // case "namespace":
+        
+    // case "new":
+        
+    // case "null":
+        
+    // case "object":
+        
+    // case "operator":
+        
+    // case "out":
+        
+    // case "override":
+        
+    // case "params":
+        
+    // case "private":
+        
+    // case "protected":
+        
+    // case "public":
+        
+    // case "readonly":
+        
+    // case "ref":
+        
+    // case "sbyte":
+        
+    // case "sealed":
+        
+    // case "short":
+        
+    // case "sizeof":
+        
+    // case "stackalloc":
+        
+    // case "static":
+        
+    // case "string":
+        
+    // case "struct":
+        
+    // case "this":
+        
+    // case "true":
+        
+    // case "try":
+        
+    // case "typeof":
+        
+    // case "uint":
+        
+    // case "ulong":
+        
+    // case "unchecked":
+        
+    // case "unsafe":
+        
+    // case "ushort":
+        
+    // case "using":
+        
+    // case "virtual":
+        
+    // case "void":
+        
+    // case "volatile":
+        
+    // NonContextualKeywords-IsControl
+    // ===============================
+    // case "break":
+        
+    // case "case":
+        
+    // case "continue":
+        
+    // case "do":
+        
+    // case "else":
+        
+    // case "for":
+        
+    // case "foreach":
+        
+    // case "goto":
+        
+    // case "if":
+        
+    // case "return":
+        
+    // case "switch":
+        
+    // case "throw":
+        
+    // case "while":
+        
+    // ContextualKeywords-NotControl
+    // =============================
+    // case "add":
+        
+    // case "and":
+        
+    // case "alias":
+        
+    // case "ascending":
+        
+    // case "args":
+        
+    // case "async":
+        
+    // case "await":
+        
+    // case "by":
+        
+    // case "descending":
+        
+    // case "dynamic":
+        
+    // case "equals":
+        
+    // case "file":
+        
+    // case "from":
+        
+    // case "get":
+        
+    // case "global":
+        
+    // case "group":
+        
+    // case "init":
+        
+    // case "into":
+        
+    // case "join":
+        
+    // case "let":
+        
+    // case "managed":
+        
+    // case "nameof":
+        
+    // case "nint":
+        
+    // case "not":
+        
+    // case "notnull":
+        
+    // case "nuint":
+        
+    // case "on":
+        
+    // case "or":
+        
+    // case "orderby":
+        
+    // case "partial":
+        
+    // case "record":
+        
+    // case "remove":
+        
+    // case "required":
+        
+    // case "scoped":
+        
+    // case "select":
+        
+    // case "set":
+        
+    // case "unmanaged":
+        
+    // case "value":
+        
+    // case "var":
+        
+    // case "when":
+        
+    // case "where":
+        
+    // case "with":
+        
+    // ContextualKeywords-IsControl
+    // ============================
+    // case "yield":
+        
+    default:
+        lexerOutput.SyntaxTokenList.Add(new SyntaxToken(SyntaxKind.IdentifierToken, textSpan));
+        return;
+}*/
+
+
+
+
+
+
+
+
+/*
+var keywordList = new List<string>
+        {
+            // NonContextualKeywords-NonControl
+            // ================================
+            "abstract",
+            "as",
+            "base",
+            "bool",
+            "byte",
+            "catch",
+            "char",
+            "checked",
+            "class",
+            "const",
+            "decimal",
+            "default",
+            "delegate",
+            "double",
+            "enum",
+            "event",
+            "explicit",
+            "extern",
+            "false",
+            "finally",
+            "fixed",
+            "float",
+            "implicit",
+            "in",
+            "int",
+            "interface",
+            "internal",
+            "is",
+            "lock",
+            "long",
+            "namespace",
+            "new",
+            "null",
+            "object",
+            "operator",
+            "out",
+            "override",
+            "params",
+            "private",
+            "protected",
+            "public",
+            "readonly",
+            "ref",
+            "sbyte",
+            "sealed",
+            "short",
+            "sizeof",
+            "stackalloc",
+            "static",
+            "string",
+            "struct",
+            "this",
+            "true",
+            "try",
+            "typeof",
+            "uint",
+            "ulong",
+            "unchecked",
+            "unsafe",
+            "ushort",
+            "using",
+            "virtual",
+            "void",
+            "volatile",
+            // NonContextualKeywords-IsControl
+            // ===============================
+            "break",
+            "case",
+            "continue",
+            "do",
+            "else",
+            "for",
+            "foreach",
+            "goto",
+            "if",
+            "return",
+            "switch",
+            "throw",
+            "while",
+            // ContextualKeywords-NotControl
+            // =============================
+            "add",
+            "and",
+            "alias",
+            "ascending",
+            "args",
+            "async",
+            "await",
+            "by",
+            "descending",
+            "dynamic",
+            "equals",
+            "file",
+            "from",
+            "get",
+            "global",
+            "group",
+            "init",
+            "into",
+            "join",
+            "let",
+            "managed",
+            "nameof",
+            "nint",
+            "not",
+            "notnull",
+            "nuint",
+            "on",
+            "or",
+            "orderby",
+            "partial",
+            "record",
+            "remove",
+            "required",
+            "scoped",
+            "select",
+            "set",
+            "unmanaged",
+            "value",
+            "var",
+            "when",
+            "where",
+            "with",
+            // ContextualKeywords-IsControl
+            // ============================
+            "yield",
+        };
+        
+        Console.WriteLine("=======================");
+        Console.WriteLine("=======================");
+        
+        // var hashSet = new HashSet<int>();
+        
+        foreach (var keyword in keywordList)
+        {
+            var sum = 0;
+            foreach (var character in keyword)
+            {
+                sum += (int)character;
+            }
+            
+            // if (!hashSet.Add(sum))
+            // {
+            //    Console.WriteLine($"!DUPLICATE!:{sum}/{keyword}");
+            //}
+            Console.WriteLine($"case {sum}: // {keyword}");
+        }
+        
+        Console.WriteLine("=======================");
+        Console.WriteLine("=======================");
+*/
+
+
+
+
+
+
+
+
+
+
+
+
+

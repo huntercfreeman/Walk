@@ -851,6 +851,492 @@ public static class CSharpLexer
             streamReaderWrap.PositionIndex,
             (byte)GenericDecorationKind.None,
             byteEntryIndex);
+            
+        switch ()
+        {
+            // NonContextualKeywords-NonControl
+            // ================================
+            case 852: // abstract
+                textSpan = textSpan with { DecorationByte = (byte)GenericDecorationKind.Keyword };
+                lexerOutput.SyntaxTokenList.Add(new SyntaxToken(SyntaxKind.AbstractTokenKeyword, textSpan));
+                return;
+            case 212: // as
+                textSpan = textSpan with { DecorationByte = (byte)GenericDecorationKind.Keyword };
+                lexerOutput.SyntaxTokenList.Add(new SyntaxToken(SyntaxKind.AsTokenKeyword, textSpan));
+                return;
+            case 411: // base
+                textSpan = textSpan with { DecorationByte = (byte)GenericDecorationKind.Keyword };
+                lexerOutput.SyntaxTokenList.Add(new SyntaxToken(SyntaxKind.BaseTokenKeyword, textSpan));
+                return;
+            case 428: // bool
+                textSpan = textSpan with { DecorationByte = (byte)GenericDecorationKind.Keyword };
+                lexerOutput.SyntaxTokenList.Add(new SyntaxToken(SyntaxKind.BoolTokenKeyword, textSpan));
+                return;
+            case 436: // byte
+                textSpan = textSpan with { DecorationByte = (byte)GenericDecorationKind.Keyword };
+                lexerOutput.SyntaxTokenList.Add(new SyntaxToken(SyntaxKind.ByteTokenKeyword, textSpan));
+                return;
+            case 515: // catch
+                textSpan = textSpan with { DecorationByte = (byte)GenericDecorationKind.Keyword };
+                lexerOutput.SyntaxTokenList.Add(new SyntaxToken(SyntaxKind.CatchTokenKeyword, textSpan));
+                return;
+            case 414: // char
+                textSpan = textSpan with { DecorationByte = (byte)GenericDecorationKind.Keyword };
+                lexerOutput.SyntaxTokenList.Add(new SyntaxToken(SyntaxKind.CharTokenKeyword, textSpan));
+                return;
+            case 711: // checked
+                textSpan = textSpan with { DecorationByte = (byte)GenericDecorationKind.Keyword };
+                lexerOutput.SyntaxTokenList.Add(new SyntaxToken(SyntaxKind.CheckedTokenKeyword, textSpan));
+                return;
+            case 534: // class
+                textSpan = textSpan with { DecorationByte = (byte)GenericDecorationKind.Keyword };
+                lexerOutput.SyntaxTokenList.Add(new SyntaxToken(SyntaxKind.ClassTokenKeyword, textSpan));
+                return;
+            case 551: // const
+                textSpan = textSpan with { DecorationByte = (byte)GenericDecorationKind.Keyword };
+                lexerOutput.SyntaxTokenList.Add(new SyntaxToken(SyntaxKind.ConstTokenKeyword, textSpan));
+                return;
+            case 719: // decimal
+                textSpan = textSpan with { DecorationByte = (byte)GenericDecorationKind.Keyword };
+                lexerOutput.SyntaxTokenList.Add(new SyntaxToken(SyntaxKind.DecimalTokenKeyword, textSpan));
+                return;
+            case 741: // default
+                textSpan = textSpan with { DecorationByte = (byte)GenericDecorationKind.Keyword };
+                lexerOutput.SyntaxTokenList.Add(new SyntaxToken(SyntaxKind.DefaultTokenKeyword, textSpan));
+                return;
+            case 827: // delegate
+                textSpan = textSpan with { DecorationByte = (byte)GenericDecorationKind.Keyword };
+                lexerOutput.SyntaxTokenList.Add(new SyntaxToken(SyntaxKind.DelegateTokenKeyword, textSpan));
+                return;
+            case 635: // double
+                textSpan = textSpan with { DecorationByte = (byte)GenericDecorationKind.Keyword };
+                lexerOutput.SyntaxTokenList.Add(new SyntaxToken(SyntaxKind.DoubleTokenKeyword, textSpan));
+                return;
+            case 437: // enum
+                textSpan = textSpan with { DecorationByte = (byte)GenericDecorationKind.Keyword };
+                lexerOutput.SyntaxTokenList.Add(new SyntaxToken(SyntaxKind.EnumTokenKeyword, textSpan));
+                return;
+            case 546: // event
+                textSpan = textSpan with { DecorationByte = (byte)GenericDecorationKind.Keyword };
+                lexerOutput.SyntaxTokenList.Add(new SyntaxToken(SyntaxKind.EventTokenKeyword, textSpan));
+                return;
+            case 866: // explicit
+                textSpan = textSpan with { DecorationByte = (byte)GenericDecorationKind.Keyword };
+                lexerOutput.SyntaxTokenList.Add(new SyntaxToken(SyntaxKind.ExplicitTokenKeyword, textSpan));
+                return;
+            case 662: // extern
+                textSpan = textSpan with { DecorationByte = (byte)GenericDecorationKind.Keyword };
+                lexerOutput.SyntaxTokenList.Add(new SyntaxToken(SyntaxKind.ExternTokenKeyword, textSpan));
+                return;
+            case 523: // false
+                textSpan = textSpan with { DecorationByte = (byte)GenericDecorationKind.Keyword };
+                lexerOutput.SyntaxTokenList.Add(new SyntaxToken(SyntaxKind.FalseTokenKeyword, textSpan));
+                return;
+            case 751: // finally
+                textSpan = textSpan with { DecorationByte = (byte)GenericDecorationKind.Keyword };
+                lexerOutput.SyntaxTokenList.Add(new SyntaxToken(SyntaxKind.FinallyTokenKeyword, textSpan));
+                return;
+            case 528: // fixed
+                textSpan = textSpan with { DecorationByte = (byte)GenericDecorationKind.Keyword };
+                lexerOutput.SyntaxTokenList.Add(new SyntaxToken(SyntaxKind.FixedTokenKeyword, textSpan));
+                return;
+            case 534: // float
+                textSpan = textSpan with { DecorationByte = (byte)GenericDecorationKind.Keyword };
+                lexerOutput.SyntaxTokenList.Add(new SyntaxToken(SyntaxKind.FloatTokenKeyword, textSpan));
+                return;
+            case 859: // implicit
+                textSpan = textSpan with { DecorationByte = (byte)GenericDecorationKind.Keyword };
+                lexerOutput.SyntaxTokenList.Add(new SyntaxToken(SyntaxKind.ImplicitTokenKeyword, textSpan));
+                return;
+            case 215: // in
+                textSpan = textSpan with { DecorationByte = (byte)GenericDecorationKind.Keyword };
+                lexerOutput.SyntaxTokenList.Add(new SyntaxToken(SyntaxKind.InTokenKeyword, textSpan));
+                return;
+            case 331: // int
+                textSpan = textSpan with { DecorationByte = (byte)GenericDecorationKind.Keyword };
+                lexerOutput.SyntaxTokenList.Add(new SyntaxToken(SyntaxKind.IntTokenKeyword, textSpan));
+                return;
+            case 945: // interface
+                textSpan = textSpan with { DecorationByte = (byte)GenericDecorationKind.Keyword };
+                lexerOutput.SyntaxTokenList.Add(new SyntaxToken(SyntaxKind.InterfaceTokenKeyword, textSpan));
+                return;
+            case 861: // internal
+                textSpan = textSpan with { DecorationByte = (byte)GenericDecorationKind.Keyword };
+                lexerOutput.SyntaxTokenList.Add(new SyntaxToken(SyntaxKind.InternalTokenKeyword, textSpan));
+                return;
+            case 220: // is
+                textSpan = textSpan with { DecorationByte = (byte)GenericDecorationKind.Keyword };
+                lexerOutput.SyntaxTokenList.Add(new SyntaxToken(SyntaxKind.IsTokenKeyword, textSpan));
+                return;
+            case 425: // lock
+                textSpan = textSpan with { DecorationByte = (byte)GenericDecorationKind.Keyword };
+                lexerOutput.SyntaxTokenList.Add(new SyntaxToken(SyntaxKind.LockTokenKeyword, textSpan));
+                return;
+            case 432: // long
+                textSpan = textSpan with { DecorationByte = (byte)GenericDecorationKind.Keyword };
+                lexerOutput.SyntaxTokenList.Add(new SyntaxToken(SyntaxKind.LongTokenKeyword, textSpan));
+                return;
+            case 941: // namespace
+                textSpan = textSpan with { DecorationByte = (byte)GenericDecorationKind.Keyword };
+                lexerOutput.SyntaxTokenList.Add(new SyntaxToken(SyntaxKind.NamespaceTokenKeyword, textSpan));
+                return;
+            case 330: // new
+                textSpan = textSpan with { DecorationByte = (byte)GenericDecorationKind.Keyword };
+                lexerOutput.SyntaxTokenList.Add(new SyntaxToken(SyntaxKind.NewTokenKeyword, textSpan));
+                return;
+            case 443: // null
+                textSpan = textSpan with { DecorationByte = (byte)GenericDecorationKind.Keyword };
+                lexerOutput.SyntaxTokenList.Add(new SyntaxToken(SyntaxKind.NullTokenKeyword, textSpan));
+                return;
+            case 631: // object
+                textSpan = textSpan with { DecorationByte = (byte)GenericDecorationKind.Keyword };
+                lexerOutput.SyntaxTokenList.Add(new SyntaxToken(SyntaxKind.ObjectTokenKeyword, textSpan));
+                return;
+            case 876: // operator
+                textSpan = textSpan with { DecorationByte = (byte)GenericDecorationKind.Keyword };
+                lexerOutput.SyntaxTokenList.Add(new SyntaxToken(SyntaxKind.OperatorTokenKeyword, textSpan));
+                return;
+            case 344: // out
+                textSpan = textSpan with { DecorationByte = (byte)GenericDecorationKind.Keyword };
+                lexerOutput.SyntaxTokenList.Add(new SyntaxToken(SyntaxKind.OutTokenKeyword, textSpan));
+                return;
+            case 864: // override
+                textSpan = textSpan with { DecorationByte = (byte)GenericDecorationKind.Keyword };
+                lexerOutput.SyntaxTokenList.Add(new SyntaxToken(SyntaxKind.OverrideTokenKeyword, textSpan));
+                return;
+            case 644: // params
+                textSpan = textSpan with { DecorationByte = (byte)GenericDecorationKind.Keyword };
+                lexerOutput.SyntaxTokenList.Add(new SyntaxToken(SyntaxKind.ParamsTokenKeyword, textSpan));
+                return;
+            case 763: // private
+                textSpan = textSpan with { DecorationByte = (byte)GenericDecorationKind.Keyword };
+                lexerOutput.SyntaxTokenList.Add(new SyntaxToken(SyntaxKind.PrivateTokenKeyword, textSpan));
+                return;
+            case 970: // protected
+                textSpan = textSpan with { DecorationByte = (byte)GenericDecorationKind.Keyword };
+                lexerOutput.SyntaxTokenList.Add(new SyntaxToken(SyntaxKind.ProtectedTokenKeyword, textSpan));
+                return;
+            case 639: // public
+                textSpan = textSpan with { DecorationByte = (byte)GenericDecorationKind.Keyword };
+                lexerOutput.SyntaxTokenList.Add(new SyntaxToken(SyntaxKind.PublicTokenKeyword, textSpan));
+                return;
+            case 862: // readonly
+                textSpan = textSpan with { DecorationByte = (byte)GenericDecorationKind.Keyword };
+                lexerOutput.SyntaxTokenList.Add(new SyntaxToken(SyntaxKind.ReadonlyTokenKeyword, textSpan));
+                return;
+            case 317: // ref
+                textSpan = textSpan with { DecorationByte = (byte)GenericDecorationKind.Keyword };
+                lexerOutput.SyntaxTokenList.Add(new SyntaxToken(SyntaxKind.RefTokenKeyword, textSpan));
+                return;
+            case 551: // sbyte
+                textSpan = textSpan with { DecorationByte = (byte)GenericDecorationKind.Keyword };
+                lexerOutput.SyntaxTokenList.Add(new SyntaxToken(SyntaxKind.SbyteTokenKeyword, textSpan));
+                return;
+            case 622: // sealed
+                textSpan = textSpan with { DecorationByte = (byte)GenericDecorationKind.Keyword };
+                lexerOutput.SyntaxTokenList.Add(new SyntaxToken(SyntaxKind.SealedTokenKeyword, textSpan));
+                return;
+            case 560: // short
+                textSpan = textSpan with { DecorationByte = (byte)GenericDecorationKind.Keyword };
+                lexerOutput.SyntaxTokenList.Add(new SyntaxToken(SyntaxKind.ShortTokenKeyword, textSpan));
+                return;
+            case 656: // sizeof
+                textSpan = textSpan with { DecorationByte = (byte)GenericDecorationKind.Keyword };
+                lexerOutput.SyntaxTokenList.Add(new SyntaxToken(SyntaxKind.SizeofTokenKeyword, textSpan));
+                return;
+            case 1057: // stackalloc
+                textSpan = textSpan with { DecorationByte = (byte)GenericDecorationKind.Keyword };
+                lexerOutput.SyntaxTokenList.Add(new SyntaxToken(SyntaxKind.StackallocTokenKeyword, textSpan));
+                return;
+            case 648: // static
+                textSpan = textSpan with { DecorationByte = (byte)GenericDecorationKind.Keyword };
+                lexerOutput.SyntaxTokenList.Add(new SyntaxToken(SyntaxKind.StaticTokenKeyword, textSpan));
+                return;
+            case 663: // string
+                textSpan = textSpan with { DecorationByte = (byte)GenericDecorationKind.Keyword };
+                lexerOutput.SyntaxTokenList.Add(new SyntaxToken(SyntaxKind.StringTokenKeyword, textSpan));
+                return;
+            case 677: // struct
+                textSpan = textSpan with { DecorationByte = (byte)GenericDecorationKind.Keyword };
+                lexerOutput.SyntaxTokenList.Add(new SyntaxToken(SyntaxKind.StructTokenKeyword, textSpan));
+                return;
+            case 440: // this
+                textSpan = textSpan with { DecorationByte = (byte)GenericDecorationKind.Keyword };
+                lexerOutput.SyntaxTokenList.Add(new SyntaxToken(SyntaxKind.ThisTokenKeyword, textSpan));
+                return;
+            case 448: // true
+                textSpan = textSpan with { DecorationByte = (byte)GenericDecorationKind.Keyword };
+                lexerOutput.SyntaxTokenList.Add(new SyntaxToken(SyntaxKind.TrueTokenKeyword, textSpan));
+                return;
+            case 351: // try
+                textSpan = textSpan with { DecorationByte = (byte)GenericDecorationKind.Keyword };
+                lexerOutput.SyntaxTokenList.Add(new SyntaxToken(SyntaxKind.TryTokenKeyword, textSpan));
+                return;
+            case 663: // typeof
+                textSpan = textSpan with { DecorationByte = (byte)GenericDecorationKind.Keyword };
+                lexerOutput.SyntaxTokenList.Add(new SyntaxToken(SyntaxKind.TypeofTokenKeyword, textSpan));
+                return;
+            case 448: // uint
+                textSpan = textSpan with { DecorationByte = (byte)GenericDecorationKind.Keyword };
+                lexerOutput.SyntaxTokenList.Add(new SyntaxToken(SyntaxKind.UintTokenKeyword, textSpan));
+                return;
+            case 549: // ulong
+                textSpan = textSpan with { DecorationByte = (byte)GenericDecorationKind.Keyword };
+                lexerOutput.SyntaxTokenList.Add(new SyntaxToken(SyntaxKind.UlongTokenKeyword, textSpan));
+                return;
+            case 938: // unchecked
+                textSpan = textSpan with { DecorationByte = (byte)GenericDecorationKind.Keyword };
+                lexerOutput.SyntaxTokenList.Add(new SyntaxToken(SyntaxKind.UncheckedTokenKeyword, textSpan));
+                return;
+            case 642: // unsafe
+                textSpan = textSpan with { DecorationByte = (byte)GenericDecorationKind.Keyword };
+                lexerOutput.SyntaxTokenList.Add(new SyntaxToken(SyntaxKind.UnsafeTokenKeyword, textSpan));
+                return;
+            case 677: // ushort
+                textSpan = textSpan with { DecorationByte = (byte)GenericDecorationKind.Keyword };
+                lexerOutput.SyntaxTokenList.Add(new SyntaxToken(SyntaxKind.UshortTokenKeyword, textSpan));
+                return;
+            case 550: // using
+                textSpan = textSpan with { DecorationByte = (byte)GenericDecorationKind.Keyword };
+                lexerOutput.SyntaxTokenList.Add(new SyntaxToken(SyntaxKind.UsingTokenKeyword, textSpan));
+                return;
+            case 775: // virtual
+                textSpan = textSpan with { DecorationByte = (byte)GenericDecorationKind.Keyword };
+                lexerOutput.SyntaxTokenList.Add(new SyntaxToken(SyntaxKind.VirtualTokenKeyword, textSpan));
+                return;
+            case 434: // void
+                textSpan = textSpan with { DecorationByte = (byte)GenericDecorationKind.Keyword };
+                lexerOutput.SyntaxTokenList.Add(new SyntaxToken(SyntaxKind.VoidTokenKeyword, textSpan));
+                return;
+            case 864: // volatile
+                textSpan = textSpan with { DecorationByte = (byte)GenericDecorationKind.Keyword };
+                lexerOutput.SyntaxTokenList.Add(new SyntaxToken(SyntaxKind.VolatileTokenKeyword, textSpan));
+                return;
+            case 517: // break
+                textSpan = textSpan with { DecorationByte = (byte)GenericDecorationKind.KeywordControl };
+                lexerOutput.SyntaxTokenList.Add(new SyntaxToken(SyntaxKind.BreakTokenKeyword, textSpan));
+                return;
+            case 412: // case
+                textSpan = textSpan with { DecorationByte = (byte)GenericDecorationKind.KeywordControl };
+                lexerOutput.SyntaxTokenList.Add(new SyntaxToken(SyntaxKind.CaseTokenKeyword, textSpan));
+                return;
+            case 869: // continue
+                textSpan = textSpan with { DecorationByte = (byte)GenericDecorationKind.KeywordControl };
+                lexerOutput.SyntaxTokenList.Add(new SyntaxToken(SyntaxKind.ContinueTokenKeyword, textSpan));
+                return;
+            case 211: // do
+                textSpan = textSpan with { DecorationByte = (byte)GenericDecorationKind.KeywordControl };
+                lexerOutput.SyntaxTokenList.Add(new SyntaxToken(SyntaxKind.DoTokenKeyword, textSpan));
+                return;
+            case 425: // else
+                textSpan = textSpan with { DecorationByte = (byte)GenericDecorationKind.KeywordControl };
+                lexerOutput.SyntaxTokenList.Add(new SyntaxToken(SyntaxKind.ElseTokenKeyword, textSpan));
+                return;
+            case 327: // for
+                textSpan = textSpan with { DecorationByte = (byte)GenericDecorationKind.KeywordControl };
+                lexerOutput.SyntaxTokenList.Add(new SyntaxToken(SyntaxKind.ForTokenKeyword, textSpan));
+                return;
+            case 728: // foreach
+                textSpan = textSpan with { DecorationByte = (byte)GenericDecorationKind.KeywordControl };
+                lexerOutput.SyntaxTokenList.Add(new SyntaxToken(SyntaxKind.ForeachTokenKeyword, textSpan));
+                return;
+            case 441: // goto
+                textSpan = textSpan with { DecorationByte = (byte)GenericDecorationKind.KeywordControl };
+                lexerOutput.SyntaxTokenList.Add(new SyntaxToken(SyntaxKind.GotoTokenKeyword, textSpan));
+                return;
+            case 207: // if
+                textSpan = textSpan with { DecorationByte = (byte)GenericDecorationKind.KeywordControl };
+                lexerOutput.SyntaxTokenList.Add(new SyntaxToken(SyntaxKind.IfTokenKeyword, textSpan));
+                return;
+            case 672: // return
+                textSpan = textSpan with { DecorationByte = (byte)GenericDecorationKind.KeywordControl };
+                lexerOutput.SyntaxTokenList.Add(new SyntaxToken(SyntaxKind.ReturnTokenKeyword, textSpan));
+                return;
+            case 658: // switch
+                textSpan = textSpan with { DecorationByte = (byte)GenericDecorationKind.KeywordControl };
+                lexerOutput.SyntaxTokenList.Add(new SyntaxToken(SyntaxKind.SwitchTokenKeyword, textSpan));
+                return;
+            case 564: // throw
+                textSpan = textSpan with { DecorationByte = (byte)GenericDecorationKind.KeywordControl };
+                lexerOutput.SyntaxTokenList.Add(new SyntaxToken(SyntaxKind.ThrowTokenKeyword, textSpan));
+                return;
+            case 537: // while
+                textSpan = textSpan with { DecorationByte = (byte)GenericDecorationKind.KeywordControl };
+                lexerOutput.SyntaxTokenList.Add(new SyntaxToken(SyntaxKind.WhileTokenKeyword, textSpan));
+                return;
+            case 297: // add
+                textSpan = textSpan with { DecorationByte = (byte)GenericDecorationKind.Keyword };
+                lexerOutput.SyntaxTokenList.Add(new SyntaxToken(SyntaxKind.AddTokenContextualKeyword, textSpan));
+                return;
+            case 307: // and
+                textSpan = textSpan with { DecorationByte = (byte)GenericDecorationKind.Keyword };
+                lexerOutput.SyntaxTokenList.Add(new SyntaxToken(SyntaxKind.AndTokenContextualKeyword, textSpan));
+                return;
+            case 522: // alias
+                textSpan = textSpan with { DecorationByte = (byte)GenericDecorationKind.Keyword };
+                lexerOutput.SyntaxTokenList.Add(new SyntaxToken(SyntaxKind.AliasTokenContextualKeyword, textSpan));
+                return;
+            case 940: // ascending
+                textSpan = textSpan with { DecorationByte = (byte)GenericDecorationKind.Keyword };
+                lexerOutput.SyntaxTokenList.Add(new SyntaxToken(SyntaxKind.AscendingTokenContextualKeyword, textSpan));
+                return;
+            case 429: // args
+                textSpan = textSpan with { DecorationByte = (byte)GenericDecorationKind.Keyword };
+                lexerOutput.SyntaxTokenList.Add(new SyntaxToken(SyntaxKind.ArgsTokenContextualKeyword, textSpan));
+                return;
+            case 542: // async
+                textSpan = textSpan with { DecorationByte = (byte)GenericDecorationKind.Keyword };
+                lexerOutput.SyntaxTokenList.Add(new SyntaxToken(SyntaxKind.AsyncTokenContextualKeyword, textSpan));
+                return;
+            case 534: // await
+                textSpan = textSpan with { DecorationByte = (byte)GenericDecorationKind.Keyword };
+                lexerOutput.SyntaxTokenList.Add(new SyntaxToken(SyntaxKind.AwaitTokenContextualKeyword, textSpan));
+                return;
+            case 219: // by
+                textSpan = textSpan with { DecorationByte = (byte)GenericDecorationKind.Keyword };
+                lexerOutput.SyntaxTokenList.Add(new SyntaxToken(SyntaxKind.ByTokenContextualKeyword, textSpan));
+                return;
+            case 1044: // descending
+                textSpan = textSpan with { DecorationByte = (byte)GenericDecorationKind.Keyword };
+                lexerOutput.SyntaxTokenList.Add(new SyntaxToken(SyntaxKind.DescendingTokenContextualKeyword, textSpan));
+                return;
+            case 741: // dynamic
+                textSpan = textSpan with { DecorationByte = (byte)GenericDecorationKind.Keyword };
+                lexerOutput.SyntaxTokenList.Add(new SyntaxToken(SyntaxKind.DynamicTokenContextualKeyword, textSpan));
+                return;
+            case 651: // equals
+                textSpan = textSpan with { DecorationByte = (byte)GenericDecorationKind.Keyword };
+                lexerOutput.SyntaxTokenList.Add(new SyntaxToken(SyntaxKind.EqualsTokenContextualKeyword, textSpan));
+                return;
+            case 416: // file
+                textSpan = textSpan with { DecorationByte = (byte)GenericDecorationKind.Keyword };
+                lexerOutput.SyntaxTokenList.Add(new SyntaxToken(SyntaxKind.FileTokenContextualKeyword, textSpan));
+                return;
+            case 436: // from
+                textSpan = textSpan with { DecorationByte = (byte)GenericDecorationKind.Keyword };
+                lexerOutput.SyntaxTokenList.Add(new SyntaxToken(SyntaxKind.FromTokenContextualKeyword, textSpan));
+                return;
+            case 320: // get
+                textSpan = textSpan with { DecorationByte = (byte)GenericDecorationKind.Keyword };
+                lexerOutput.SyntaxTokenList.Add(new SyntaxToken(SyntaxKind.GetTokenContextualKeyword, textSpan));
+                return;
+            case 625: // global
+                textSpan = textSpan with { DecorationByte = (byte)GenericDecorationKind.Keyword };
+                lexerOutput.SyntaxTokenList.Add(new SyntaxToken(SyntaxKind.GlobalTokenContextualKeyword, textSpan));
+                return;
+            case 557: // group
+                textSpan = textSpan with { DecorationByte = (byte)GenericDecorationKind.Keyword };
+                lexerOutput.SyntaxTokenList.Add(new SyntaxToken(SyntaxKind.GroupTokenContextualKeyword, textSpan));
+                return;
+            case 436: // init
+                textSpan = textSpan with { DecorationByte = (byte)GenericDecorationKind.Keyword };
+                lexerOutput.SyntaxTokenList.Add(new SyntaxToken(SyntaxKind.InitTokenContextualKeyword, textSpan));
+                return;
+            case 442: // into
+                textSpan = textSpan with { DecorationByte = (byte)GenericDecorationKind.Keyword };
+                lexerOutput.SyntaxTokenList.Add(new SyntaxToken(SyntaxKind.IntoTokenContextualKeyword, textSpan));
+                return;
+            case 432: // join
+                textSpan = textSpan with { DecorationByte = (byte)GenericDecorationKind.Keyword };
+                lexerOutput.SyntaxTokenList.Add(new SyntaxToken(SyntaxKind.JoinTokenContextualKeyword, textSpan));
+                return;
+            case 325: // let
+                textSpan = textSpan with { DecorationByte = (byte)GenericDecorationKind.Keyword };
+                lexerOutput.SyntaxTokenList.Add(new SyntaxToken(SyntaxKind.LetTokenContextualKeyword, textSpan));
+                return;
+            case 717: // managed
+                textSpan = textSpan with { DecorationByte = (byte)GenericDecorationKind.Keyword };
+                lexerOutput.SyntaxTokenList.Add(new SyntaxToken(SyntaxKind.ManagedTokenContextualKeyword, textSpan));
+                return;
+            case 630: // nameof
+                textSpan = textSpan with { DecorationByte = (byte)GenericDecorationKind.Keyword };
+                lexerOutput.SyntaxTokenList.Add(new SyntaxToken(SyntaxKind.NameofTokenContextualKeyword, textSpan));
+                return;
+            case 441: // nint
+                textSpan = textSpan with { DecorationByte = (byte)GenericDecorationKind.Keyword };
+                lexerOutput.SyntaxTokenList.Add(new SyntaxToken(SyntaxKind.NintTokenContextualKeyword, textSpan));
+                return;
+            case 337: // not
+                textSpan = textSpan with { DecorationByte = (byte)GenericDecorationKind.Keyword };
+                lexerOutput.SyntaxTokenList.Add(new SyntaxToken(SyntaxKind.NotTokenContextualKeyword, textSpan));
+                return;
+            case 780: // notnull
+                textSpan = textSpan with { DecorationByte = (byte)GenericDecorationKind.Keyword };
+                lexerOutput.SyntaxTokenList.Add(new SyntaxToken(SyntaxKind.NotnullTokenContextualKeyword, textSpan));
+                return;
+            case 558: // nuint
+                textSpan = textSpan with { DecorationByte = (byte)GenericDecorationKind.Keyword };
+                lexerOutput.SyntaxTokenList.Add(new SyntaxToken(SyntaxKind.NuintTokenContextualKeyword, textSpan));
+                return;
+            case 221: // on
+                textSpan = textSpan with { DecorationByte = (byte)GenericDecorationKind.Keyword };
+                lexerOutput.SyntaxTokenList.Add(new SyntaxToken(SyntaxKind.OnTokenContextualKeyword, textSpan));
+                return;
+            case 225: // or
+                textSpan = textSpan with { DecorationByte = (byte)GenericDecorationKind.Keyword };
+                lexerOutput.SyntaxTokenList.Add(new SyntaxToken(SyntaxKind.OrTokenContextualKeyword, textSpan));
+                return;
+            case 759: // orderby
+                textSpan = textSpan with { DecorationByte = (byte)GenericDecorationKind.Keyword };
+                lexerOutput.SyntaxTokenList.Add(new SyntaxToken(SyntaxKind.OrderbyTokenContextualKeyword, textSpan));
+                return;
+            case 749: // partial
+                textSpan = textSpan with { DecorationByte = (byte)GenericDecorationKind.Keyword };
+                lexerOutput.SyntaxTokenList.Add(new SyntaxToken(SyntaxKind.PartialTokenContextualKeyword, textSpan));
+                return;
+            case 639: // record
+                textSpan = textSpan with { DecorationByte = (byte)GenericDecorationKind.Keyword };
+                lexerOutput.SyntaxTokenList.Add(new SyntaxToken(SyntaxKind.RecordTokenContextualKeyword, textSpan));
+                return;
+            case 654: // remove
+                textSpan = textSpan with { DecorationByte = (byte)GenericDecorationKind.Keyword };
+                lexerOutput.SyntaxTokenList.Add(new SyntaxToken(SyntaxKind.RemoveTokenContextualKeyword, textSpan));
+                return;
+            case 865: // required
+                textSpan = textSpan with { DecorationByte = (byte)GenericDecorationKind.Keyword };
+                lexerOutput.SyntaxTokenList.Add(new SyntaxToken(SyntaxKind.RequiredTokenContextualKeyword, textSpan));
+                return;
+            case 638: // scoped
+                textSpan = textSpan with { DecorationByte = (byte)GenericDecorationKind.Keyword };
+                lexerOutput.SyntaxTokenList.Add(new SyntaxToken(SyntaxKind.ScopedTokenContextualKeyword, textSpan));
+                return;
+            case 640: // select
+                textSpan = textSpan with { DecorationByte = (byte)GenericDecorationKind.Keyword };
+                lexerOutput.SyntaxTokenList.Add(new SyntaxToken(SyntaxKind.SelectTokenContextualKeyword, textSpan));
+                return;
+            case 332: // set
+                textSpan = textSpan with { DecorationByte = (byte)GenericDecorationKind.Keyword };
+                lexerOutput.SyntaxTokenList.Add(new SyntaxToken(SyntaxKind.SetTokenContextualKeyword, textSpan));
+                return;
+            case 944: // unmanaged
+                textSpan = textSpan with { DecorationByte = (byte)GenericDecorationKind.Keyword };
+                lexerOutput.SyntaxTokenList.Add(new SyntaxToken(SyntaxKind.UnmanagedTokenContextualKeyword, textSpan));
+                return;
+            case 541: // value
+                textSpan = textSpan with { DecorationByte = (byte)GenericDecorationKind.Keyword };
+                lexerOutput.SyntaxTokenList.Add(new SyntaxToken(SyntaxKind.ValueTokenContextualKeyword, textSpan));
+                return;
+            case 329: // var
+                textSpan = textSpan with { DecorationByte = (byte)GenericDecorationKind.Keyword };
+                lexerOutput.SyntaxTokenList.Add(new SyntaxToken(SyntaxKind.VarTokenContextualKeyword, textSpan));
+                return;
+            case 434: // when
+                textSpan = textSpan with { DecorationByte = (byte)GenericDecorationKind.Keyword };
+                lexerOutput.SyntaxTokenList.Add(new SyntaxToken(SyntaxKind.WhenTokenContextualKeyword, textSpan));
+                return;
+            case 539: // where
+                textSpan = textSpan with { DecorationByte = (byte)GenericDecorationKind.Keyword };
+                lexerOutput.SyntaxTokenList.Add(new SyntaxToken(SyntaxKind.WhereTokenContextualKeyword, textSpan));
+                return;
+            case 444: // with
+                textSpan = textSpan with { DecorationByte = (byte)GenericDecorationKind.Keyword };
+                lexerOutput.SyntaxTokenList.Add(new SyntaxToken(SyntaxKind.WithTokenContextualKeyword, textSpan));
+                return;
+            case 535: // yield
+                textSpan = textSpan with { DecorationByte = (byte)GenericDecorationKind.KeywordControl };
+                lexerOutput.SyntaxTokenList.Add(new SyntaxToken(SyntaxKind.YieldTokenContextualKeyword, textSpan));
+                return;
+        }
         
         switch (binder.CSharpCompilerService.SafeGetText(lexerOutput.ResourceUri.Value, textSpan) ?? string.Empty)
         {
