@@ -837,6 +837,7 @@ public static class CSharpLexer
 
         var characterIntSum = 0;
         
+        // Entry into this method implies that the first letter will be valid.
         var firstCharacter = streamReaderWrap.CurrentCharacter;
         characterIntSum += (int)firstCharacter;
         _ = streamReaderWrap.ReadCharacter();
@@ -889,6 +890,10 @@ public static class CSharpLexer
                 lexerOutput.SyntaxTokenList.Add(new SyntaxToken(SyntaxKind.BoolTokenKeyword, textSpan));
                 return;
             case 436: // !! DUPLICATES !!
+                if (firstCharacter == 'b')
+                {
+                }
+                else if (firstCharacter == '')
                 // byte
                 throw new NotImplementedException();
                 textSpan = textSpan with { DecorationByte = (byte)GenericDecorationKind.Keyword };
