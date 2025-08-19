@@ -28,6 +28,7 @@ public enum RazorDecorationKind
     HtmlCode,
     InjectedLanguageFragment,
     InjectedLanguageComponent,
+    CSharpMarker,
     Error,
     InjectedLanguageCodeBlock,
     InjectedLanguageCodeBlockTag,

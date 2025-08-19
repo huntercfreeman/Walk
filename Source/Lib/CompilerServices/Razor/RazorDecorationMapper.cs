@@ -29,6 +29,7 @@ public class RazorDecorationMapper : IDecorationMapper
             RazorDecorationKind.HtmlCode => "di_te_html-code",
             RazorDecorationKind.InjectedLanguageFragment => "di_injected-language-fragment",
             RazorDecorationKind.InjectedLanguageComponent => "di_injected-language-component",
+            RazorDecorationKind.CSharpMarker => "di_type",
             RazorDecorationKind.Error => "di_te_error",
             RazorDecorationKind.InjectedLanguageCodeBlock => "di_te_injected-language-code-block",
             RazorDecorationKind.InjectedLanguageCodeBlockTag => "di_te_injected-language-code-block-tag",
