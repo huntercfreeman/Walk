@@ -71,6 +71,8 @@ public class CSharpBinder
     public List<ISyntaxNode> NodeList { get; } = new();
     public List<ICodeBlockOwner> CodeBlockOwnerList { get; } = new();
     
+    public char[] KeywordCheckBuffer { get; } = new char[10];
+    
     internal const int POOL_TYPE_CLAUSE_NODE_MAX_COUNT = 3;
     /// <summary>This is only safe to use while parsing</summary>
     internal readonly Queue<TypeClauseNode> Pool_TypeClauseNode_Queue = new();
