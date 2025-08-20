@@ -1076,10 +1076,19 @@ public ref struct CSharpParserModel
                     var otherTextSpan = GetIdentifierTextSpan(x);
                     if (otherTextSpan.Length == typeIdentifierText.Length)
                     {
-                        if (GetIdentifierText(x, resourceUri, compilationUnit) == typeIdentifierText)
+                        if (otherTextSpan.CharIntSum == 0 ||
+                            typeIdentifierTextSpan.CharIntSum == 0 ||
+                            otherTextSpan.CharIntSum == typeIdentifierTextSpan.CharIntSum)
                         {
-                            typeDefinitionNode = (TypeDefinitionNode)x;
-                            break;
+                            if (GetIdentifierText(x, resourceUri, compilationUnit) == typeIdentifierText)
+                            {
+                                typeDefinitionNode = (TypeDefinitionNode)x;
+                                break;
+                            }
+                        }
+                        else
+                        {
+                            ++Walk.Common.RazorLib.Installations.Models.WalkDebugSomething.AvoidStringLogicByCheckingCharIntSum;
                         }
                     }
                     else
