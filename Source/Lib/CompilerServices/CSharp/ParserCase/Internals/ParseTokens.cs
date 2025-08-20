@@ -533,6 +533,10 @@ public static class ParseTokens
         var shouldBacktrack = false;
         IExpressionNode backtrackNode = EmptyExpressionNode.Empty;
         
+        // TODO: Is this missing an else in order to set...
+        // ...'parserModel.MostRecentLeftHandSideAssignmentExpressionTypeClauseNode = CSharpFacts.Types.Void.ToTypeReference();'
+        // when this if is not true? Every inner branch is setting MostRecentLeftHandSideAssignmentExpressionTypeClauseNode.
+        //
         if (parserModel.StatementBuilder.MostRecentNode is not null)
         {
             var previousNode = parserModel.StatementBuilder.MostRecentNode;
@@ -540,9 +544,6 @@ public static class ParseTokens
             if (previousNode.SyntaxKind == SyntaxKind.VariableReferenceNode)
             {
                 shouldBacktrack = true;
-                // TODO: VariableReferenceNode contains a property which is 'VariableDeclarationNode' this seems odd for the reference to have the declaration...
-                //       ...as a member.
-                // TODO: Yeah this is throwing null reference exceptions because of that 'VariableDeclarationNode'.
                 parserModel.MostRecentLeftHandSideAssignmentExpressionTypeClauseNode = ((VariableReferenceNode)previousNode).ResultTypeReference;
                 backtrackNode = (VariableReferenceNode)previousNode;
             }
