@@ -1033,11 +1033,20 @@ public ref struct CSharpParserModel
         {
             var x = Binder.CodeBlockOwnerList[i];
             if (x.Unsafe_ParentIndexKey == scopeIndexKey &&
-                x.SyntaxKind == SyntaxKind.TypeDefinitionNode &&
-                GetIdentifierText(x, resourceUri, compilationUnit) == typeIdentifierText)
+                x.SyntaxKind == SyntaxKind.TypeDefinitionNode)
             {
-                typeDefinitionNode = (TypeDefinitionNode)x;
-                break;
+                if (GetIdentifierTextSpan(x).Length == typeIdentifierText.Length)
+                {
+                    if (GetIdentifierText(x, resourceUri, compilationUnit) == typeIdentifierText)
+                    {
+                        typeDefinitionNode = (TypeDefinitionNode)x;
+                        break;
+                    }
+                }
+                else
+                {
+                    ++Walk.Common.RazorLib.Installations.Models.WalkDebugSomething.AvoidStringLogicByCheckingLength;
+                }
             }
         }
         
@@ -1047,10 +1056,17 @@ public ref struct CSharpParserModel
             {
                 foreach (var x in ExternalTypeDefinitionList)
                 {
-                    if (GetIdentifierText(x, resourceUri, compilationUnit) == typeIdentifierText)
+                    if (GetIdentifierTextSpan(x).Length == typeIdentifierText.Length)
                     {
-                        typeDefinitionNode = (TypeDefinitionNode)x;
-                        break;
+                        if (GetIdentifierText(x, resourceUri, compilationUnit) == typeIdentifierText)
+                        {
+                            typeDefinitionNode = (TypeDefinitionNode)x;
+                            break;
+                        }
+                    }
+                    else
+                    {
+                        ++Walk.Common.RazorLib.Installations.Models.WalkDebugSomething.AvoidStringLogicByCheckingLength;
                     }
                 }
                 if (typeDefinitionNode is not null)
@@ -1080,11 +1096,20 @@ public ref struct CSharpParserModel
         {
             var x = Binder.CodeBlockOwnerList[i];
             if (x.Unsafe_ParentIndexKey == scopeIndexKey &&
-                x.SyntaxKind == SyntaxKind.TypeDefinitionNode &&
-                GetIdentifierText(x, resourceUri, compilationUnit) == typeIdentifierText)
+                x.SyntaxKind == SyntaxKind.TypeDefinitionNode)
             {
-                matchNode = (TypeDefinitionNode)x;
-                break;
+                if (GetIdentifierTextSpan(x).Length == typeIdentifierText.Length)
+                {
+                    if (GetIdentifierText(x, resourceUri, compilationUnit) == typeIdentifierText)
+                    {
+                        matchNode = (TypeDefinitionNode)x;
+                        break;
+                    }
+                }
+                else
+                {
+                    ++Walk.Common.RazorLib.Installations.Models.WalkDebugSomething.AvoidStringLogicByCheckingLength;
+                }
             }
         }
         
@@ -1169,11 +1194,20 @@ public ref struct CSharpParserModel
             var x = Binder.CodeBlockOwnerList[i];
             
             if (x.Unsafe_ParentIndexKey == scopeIndexKey &&
-                x.SyntaxKind == SyntaxKind.FunctionDefinitionNode &&
-                GetIdentifierText(x, resourceUri, compilationUnit) == functionIdentifierText)
+                x.SyntaxKind == SyntaxKind.FunctionDefinitionNode)
             {
-                functionDefinitionNode = (FunctionDefinitionNode)x;
-                break;
+                if (GetIdentifierTextSpan(x).Length == functionIdentifierText.Length)
+                {
+                    if (GetIdentifierText(x, resourceUri, compilationUnit) == functionIdentifierText)
+                    {
+                        functionDefinitionNode = (FunctionDefinitionNode)x;
+                        break;
+                    }
+                }
+                else
+                {
+                    ++Walk.Common.RazorLib.Installations.Models.WalkDebugSomething.AvoidStringLogicByCheckingLength;
+                }
             }
         }
         
@@ -1316,11 +1350,20 @@ public ref struct CSharpParserModel
             var x = Binder.NodeList[i];
             
             if (x.Unsafe_ParentIndexKey == scopeIndexKey &&
-                x.SyntaxKind == SyntaxKind.VariableDeclarationNode &&
-                GetIdentifierText(x, resourceUri, compilationUnit) == variableIdentifierText)
+                x.SyntaxKind == SyntaxKind.VariableDeclarationNode)
             {
-                variableDeclarationNode = (VariableDeclarationNode)x;
-                break;
+                if (GetIdentifierTextSpan(x).Length == variableIdentifierText.Length)
+                {
+                    if (GetIdentifierText(x, resourceUri, compilationUnit) == variableIdentifierText)
+                    {
+                        variableDeclarationNode = (VariableDeclarationNode)x;
+                        break;
+                    }
+                }
+                else
+                {
+                    ++Walk.Common.RazorLib.Installations.Models.WalkDebugSomething.AvoidStringLogicByCheckingLength;
+                }
             }
         }
         
@@ -1420,11 +1463,20 @@ public ref struct CSharpParserModel
         {
             var x = Binder.NodeList[i];
             if (x.Unsafe_ParentIndexKey == scopeIndexKey &&
-                x.SyntaxKind == SyntaxKind.VariableDeclarationNode &&
-                GetIdentifierText(x, ResourceUri, Compilation) == variableIdentifierText)
+                x.SyntaxKind == SyntaxKind.VariableDeclarationNode)
             {
-                matchNode = (VariableDeclarationNode)x;
-                break;
+                if (GetIdentifierTextSpan(x).Length == variableIdentifierText.Length)
+                {
+                    if (GetIdentifierText(x, ResourceUri, Compilation) == variableIdentifierText)
+                    {
+                        matchNode = (VariableDeclarationNode)x;
+                        break;
+                    }
+                }
+                else
+                {
+                    ++Walk.Common.RazorLib.Installations.Models.WalkDebugSomething.AvoidStringLogicByCheckingLength;
+                }
             }
         }
         
@@ -1458,11 +1510,20 @@ public ref struct CSharpParserModel
             var x = Binder.NodeList[index];
             
             if (x.Unsafe_ParentIndexKey == scopeIndexKey &&
-                x.SyntaxKind == SyntaxKind.VariableDeclarationNode &&
-                GetIdentifierText(x, ResourceUri, Compilation) == variableIdentifierText)
+                x.SyntaxKind == SyntaxKind.VariableDeclarationNode)
             {
-                matchNode = (VariableDeclarationNode)x;
-                break;
+                if (GetIdentifierTextSpan(x).Length == variableIdentifierText.Length)
+                {
+                    if (GetIdentifierText(x, ResourceUri, Compilation) == variableIdentifierText)
+                    {
+                        matchNode = (VariableDeclarationNode)x;
+                        break;
+                    }
+                }
+                else
+                {
+                    ++Walk.Common.RazorLib.Installations.Models.WalkDebugSomething.AvoidStringLogicByCheckingLength;
+                }
             }
         }
         
@@ -1512,11 +1573,20 @@ public ref struct CSharpParserModel
             var x = Binder.NodeList[i];
             
             if (x.Unsafe_ParentIndexKey == scopeIndexKey &&
-                x.SyntaxKind == SyntaxKind.LabelDeclarationNode &&
-                GetIdentifierText(x, ResourceUri, Compilation) == labelIdentifierText)
+                x.SyntaxKind == SyntaxKind.LabelDeclarationNode)
             {
-                labelDeclarationNode = (LabelDeclarationNode)x;
-                break;
+                if (GetIdentifierTextSpan(x).Length == labelIdentifierText.Length)
+                {
+                    if (GetIdentifierText(x, ResourceUri, Compilation) == labelIdentifierText)
+                    {
+                        labelDeclarationNode = (LabelDeclarationNode)x;
+                        break;
+                    }
+                }
+                else
+                {
+                    ++Walk.Common.RazorLib.Installations.Models.WalkDebugSomething.AvoidStringLogicByCheckingLength;
+                }
             }
         }
         
@@ -1537,11 +1607,20 @@ public ref struct CSharpParserModel
             var x = Binder.NodeList[i];
             
             if (x.Unsafe_ParentIndexKey == scopeIndexKey &&
-                x.SyntaxKind == SyntaxKind.LabelDeclarationNode &&
-                GetIdentifierText(x, ResourceUri, Compilation) == labelIdentifierText)
+                x.SyntaxKind == SyntaxKind.LabelDeclarationNode)
             {
-                matchNode = (LabelDeclarationNode)x;
-                break;
+                if (GetIdentifierTextSpan(x).Length == labelIdentifierText.Length)
+                {
+                    if (GetIdentifierText(x, ResourceUri, Compilation) == labelIdentifierText)
+                    {
+                        matchNode = (LabelDeclarationNode)x;
+                        break;
+                    }
+                }
+                else
+                {
+                    ++Walk.Common.RazorLib.Installations.Models.WalkDebugSomething.AvoidStringLogicByCheckingLength;
+                }
             }
         }
         
@@ -1574,11 +1653,20 @@ public ref struct CSharpParserModel
             var x = Binder.NodeList[index];
             
             if (x.Unsafe_ParentIndexKey == scopeIndexKey &&
-                x.SyntaxKind == SyntaxKind.LabelDeclarationNode &&
-                GetIdentifierText(x, ResourceUri, Compilation) == labelIdentifierText)
+                x.SyntaxKind == SyntaxKind.LabelDeclarationNode)
             {
-                matchNode = (LabelDeclarationNode)x;
-                break;
+                if (GetIdentifierTextSpan(x).Length == labelIdentifierText.Length)
+                {
+                    if (GetIdentifierText(x, ResourceUri, Compilation) == labelIdentifierText)
+                    {
+                        matchNode = (LabelDeclarationNode)x;
+                        break;
+                    }
+                }
+                else
+                {
+                    ++Walk.Common.RazorLib.Installations.Models.WalkDebugSomething.AvoidStringLogicByCheckingLength;
+                }
             }
         }
 
@@ -1707,6 +1795,31 @@ public ref struct CSharpParserModel
             {
                 return string.Empty;
             }
+        }
+    }
+    
+    public readonly TextEditorTextSpan GetIdentifierTextSpan(ISyntaxNode node)
+    {
+        switch (node.SyntaxKind)
+        {
+            case SyntaxKind.TypeDefinitionNode:
+                return ((TypeDefinitionNode)node).TypeIdentifierToken.TextSpan;
+            case SyntaxKind.TypeClauseNode:
+                return ((TypeClauseNode)node).TypeIdentifierToken.TextSpan;
+            case SyntaxKind.FunctionDefinitionNode:
+                return ((FunctionDefinitionNode)node).FunctionIdentifierToken.TextSpan;
+            case SyntaxKind.FunctionInvocationNode:
+                return ((FunctionInvocationNode)node).FunctionInvocationIdentifierToken.TextSpan;
+            case SyntaxKind.VariableDeclarationNode:
+                return ((VariableDeclarationNode)node).IdentifierToken.TextSpan;
+            case SyntaxKind.VariableReferenceNode:
+                return ((VariableReferenceNode)node).VariableIdentifierToken.TextSpan;
+            case SyntaxKind.LabelDeclarationNode:
+                return ((LabelDeclarationNode)node).IdentifierToken.TextSpan;
+            case SyntaxKind.LabelReferenceNode:
+                return ((LabelReferenceNode)node).IdentifierToken.TextSpan;
+            default:
+                return default;
         }
     }
     

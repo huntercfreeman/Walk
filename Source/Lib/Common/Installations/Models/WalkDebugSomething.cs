@@ -87,6 +87,8 @@ public static class WalkDebugSomething
     
     public static int NamespacePrefixNode { get; set; }
     
+    public static int AvoidStringLogicByCheckingLength { get; set; }
+    
     #if DEBUG
     public class Asdfg
     {
@@ -279,6 +281,8 @@ public static class WalkDebugSomething
         
         //builder.AppendLine($"TagNode: {TagNode}");
         //TagNodeBuilder
+        
+        builder.AppendLine($"AvoidStringLogicByCheckingLength: {AvoidStringLogicByCheckingLength}");
         
         return builder.ToString();
     }
