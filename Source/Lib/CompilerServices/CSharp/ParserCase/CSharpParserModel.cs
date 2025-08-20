@@ -1125,12 +1125,22 @@ public ref struct CSharpParserModel
             if (x.Unsafe_ParentIndexKey == scopeIndexKey &&
                 x.SyntaxKind == SyntaxKind.TypeDefinitionNode)
             {
-                if (GetIdentifierTextSpan(x).Length == typeIdentifierText.Length)
+                var otherTextSpan = GetIdentifierTextSpan(x);
+                if (otherTextSpan.Length == typeIdentifierText.Length)
                 {
-                    if (GetIdentifierText(x, resourceUri, compilationUnit) == typeIdentifierText)
+                    if (otherTextSpan.CharIntSum == 0 ||
+                        typeDefinitionNode.TypeIdentifierToken.TextSpan.CharIntSum == 0 ||
+                        otherTextSpan.CharIntSum == typeDefinitionNode.TypeIdentifierToken.TextSpan.CharIntSum)
                     {
-                        matchNode = (TypeDefinitionNode)x;
-                        break;
+                        if (GetIdentifierText(x, resourceUri, compilationUnit) == typeIdentifierText)
+                        {
+                            matchNode = (TypeDefinitionNode)x;
+                            break;
+                        }
+                    }
+                    else
+                    {
+                        ++Walk.Common.RazorLib.Installations.Models.WalkDebugSomething.AvoidStringLogicByCheckingCharIntSum;
                     }
                 }
                 else
@@ -1527,12 +1537,22 @@ public ref struct CSharpParserModel
             if (x.Unsafe_ParentIndexKey == scopeIndexKey &&
                 x.SyntaxKind == SyntaxKind.VariableDeclarationNode)
             {
-                if (GetIdentifierTextSpan(x).Length == variableIdentifierText.Length)
+                var otherTextSpan = GetIdentifierTextSpan(x);
+                if (otherTextSpan.Length == variableIdentifierText.Length)
                 {
-                    if (GetIdentifierText(x, ResourceUri, Compilation) == variableIdentifierText)
+                    if (otherTextSpan.CharIntSum == 0 ||
+                        variableDeclarationNode.IdentifierToken.TextSpan.CharIntSum == 0 ||
+                        otherTextSpan.CharIntSum == variableDeclarationNode.IdentifierToken.TextSpan.CharIntSum)
                     {
-                        matchNode = (VariableDeclarationNode)x;
-                        break;
+                        if (GetIdentifierText(x, ResourceUri, Compilation) == variableIdentifierText)
+                        {
+                            matchNode = (VariableDeclarationNode)x;
+                            break;
+                        }
+                    }
+                    else
+                    {
+                        ++Walk.Common.RazorLib.Installations.Models.WalkDebugSomething.AvoidStringLogicByCheckingCharIntSum;
                     }
                 }
                 else
