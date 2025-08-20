@@ -940,26 +940,34 @@ public static class CSharpLexer
 
                 goto default;
             case 436: // !! DUPLICATES !!
-                if (textSpan.Length == aaa &&
-                    keywordCheckBuffer[0] == 'aaa' &&)
-                {
-                }
-
-                if (firstCharacter == 'b')
+            
+                if (textSpan.Length != 4)
+                    goto default;
+            
+                if (keywordCheckBuffer[0] == 'b' &&
+                    keywordCheckBuffer[1] == 'y' &&
+                    keywordCheckBuffer[2] == 't' &&
+                    keywordCheckBuffer[3] == 'e')
                 {
                     // byte
                     textSpan = textSpan with { DecorationByte = (byte)GenericDecorationKind.Keyword };
                     lexerOutput.SyntaxTokenList.Add(new SyntaxToken(SyntaxKind.ByteTokenKeyword, textSpan));
                     return;
                 }
-                else if (firstCharacter == 'f')
+                else if (keywordCheckBuffer[0] == 'f' &&
+                         keywordCheckBuffer[1] == 'r' &&
+                         keywordCheckBuffer[2] == 'o' &&
+                         keywordCheckBuffer[3] == 'm')
                 {
                     // from
                     textSpan = textSpan with { DecorationByte = (byte)GenericDecorationKind.Keyword };
                     lexerOutput.SyntaxTokenList.Add(new SyntaxToken(SyntaxKind.FromTokenContextualKeyword, textSpan));
                     return;
                 }
-                else if (firstCharacter == 'i')
+                else if (keywordCheckBuffer[0] == 'i' &&
+                         keywordCheckBuffer[1] == 'n' &&
+                         keywordCheckBuffer[2] == 'i' &&
+                         keywordCheckBuffer[3] == 't')
                 {
                     // init
                     textSpan = textSpan with { DecorationByte = (byte)GenericDecorationKind.Keyword };
@@ -1012,26 +1020,37 @@ public static class CSharpLexer
 
                 goto default;
             case 534: // !! DUPLICATES !!
-                if (textSpan.Length == aaa &&
-                    keywordCheckBuffer[0] == 'aaa' &&)
-                {
-                }
+                
+                if (textSpan.Length != 5)
+                    goto default;
 
-                if (firstCharacter == 'c')
+                if (keywordCheckBuffer[0] == 'c' &&
+                    keywordCheckBuffer[1] == 'l' &&
+                    keywordCheckBuffer[2] == 'a' &&
+                    keywordCheckBuffer[3] == 's' &&
+                    keywordCheckBuffer[4] == 's')
                 {
                     // class
                     textSpan = textSpan with { DecorationByte = (byte)GenericDecorationKind.Keyword };
                     lexerOutput.SyntaxTokenList.Add(new SyntaxToken(SyntaxKind.ClassTokenKeyword, textSpan));
                     return;
                 }
-                else if (firstCharacter == 'f')
+                else if (keywordCheckBuffer[0] == 'f' &&
+                         keywordCheckBuffer[1] == 'l' &&
+                         keywordCheckBuffer[2] == 'o' &&
+                         keywordCheckBuffer[3] == 'a' &&
+                         keywordCheckBuffer[4] == 't')
                 {
                     // float
                     textSpan = textSpan with { DecorationByte = (byte)GenericDecorationKind.Keyword };
                     lexerOutput.SyntaxTokenList.Add(new SyntaxToken(SyntaxKind.FloatTokenKeyword, textSpan));
                     return;
                 }
-                else if (firstCharacter == 'a')
+                else if (keywordCheckBuffer[0] == 'a' &&
+                         keywordCheckBuffer[1] == 'w' &&
+                         keywordCheckBuffer[2] == 'a' &&
+                         keywordCheckBuffer[3] == 'i' &&
+                         keywordCheckBuffer[4] == 't')
                 {
                     // await
                     textSpan = textSpan with { DecorationByte = (byte)GenericDecorationKind.Keyword };
@@ -1039,21 +1058,28 @@ public static class CSharpLexer
                     return;
                 }
                 
-                break;
+                goto default;
             case 551: // !! DUPLICATES !!
-                if (textSpan.Length == aaa &&
-                    keywordCheckBuffer[0] == 'aaa' &&)
-                {
-                }
+                
+                if (textSpan.Length != 5
+                    goto default;
 
-                if (firstCharacter == 'c')
+                if (keywordCheckBuffer[0] == 'c' &&
+                    keywordCheckBuffer[1] == 'o' &&
+                    keywordCheckBuffer[2] == 'n' &&
+                    keywordCheckBuffer[3] == 's' &&
+                    keywordCheckBuffer[4] == 't')
                 {
                     // const
                     textSpan = textSpan with { DecorationByte = (byte)GenericDecorationKind.Keyword };
                     lexerOutput.SyntaxTokenList.Add(new SyntaxToken(SyntaxKind.ConstTokenKeyword, textSpan));
                     return;
                 }
-                else if (firstCharacter == 's')
+                else if (keywordCheckBuffer[0] == 's' &&
+                         keywordCheckBuffer[1] == 'b' &&
+                         keywordCheckBuffer[2] == 'y' &&
+                         keywordCheckBuffer[3] == 't' &&
+                         keywordCheckBuffer[4] == 'e')
                 {
                     // sbyte
                     textSpan = textSpan with { DecorationByte = (byte)GenericDecorationKind.Keyword };
@@ -1061,7 +1087,7 @@ public static class CSharpLexer
                     return;
                 }
                 
-                break;
+                goto default;
             case 719: // decimal
                 if (textSpan.Length == 7 &&
                     keywordCheckBuffer[0] == 'd' &&
@@ -1079,19 +1105,30 @@ public static class CSharpLexer
 
                 goto default;
             case 741: // !! DUPLICATES !!
-                if (textSpan.Length == aaa &&
-                    keywordCheckBuffer[0] == 'aaa' &&)
-                {
-                }
+                
+                if (textSpan.Length != 7)
+                    goto default;
 
-                if (possibleSecondCharacter == 'e')
+                if (keywordCheckBuffer[0] == 'd' &&
+                    keywordCheckBuffer[1] == 'e' &&
+                    keywordCheckBuffer[2] == 'f' &&
+                    keywordCheckBuffer[3] == 'a' &&
+                    keywordCheckBuffer[4] == 'u' &&
+                    keywordCheckBuffer[5] == 'l' &&
+                    keywordCheckBuffer[6] == 't')
                 {
                     // default
                     textSpan = textSpan with { DecorationByte = (byte)GenericDecorationKind.Keyword };
                     lexerOutput.SyntaxTokenList.Add(new SyntaxToken(SyntaxKind.DefaultTokenKeyword, textSpan));
                     return;
                 }
-                else if (possibleSecondCharacter == 'y')
+                else if (keywordCheckBuffer[0] == 'd' &&
+                         keywordCheckBuffer[1] == 'y' &&
+                         keywordCheckBuffer[2] == 'n' &&
+                         keywordCheckBuffer[3] == 'a' &&
+                         keywordCheckBuffer[4] == 'm' &&
+                         keywordCheckBuffer[5] == 'i' &&
+                         keywordCheckBuffer[6] == 'c')
                 {
                     // dynamic
                     textSpan = textSpan with { DecorationByte = (byte)GenericDecorationKind.Keyword };
@@ -1099,7 +1136,7 @@ public static class CSharpLexer
                     return;
                 }
                 
-                break;
+                goto default;
             case 827: // delegate
                 if (textSpan.Length == 8 &&
                     keywordCheckBuffer[0] == 'd' &&
@@ -1322,19 +1359,24 @@ public static class CSharpLexer
 
                 goto default;
             case 425: // !! DUPLICATES !!
-                if (textSpan.Length == aaa &&
-                    keywordCheckBuffer[0] == 'aaa' &&)
-                {
-                }
+                
+                if (textSpan.Length != 4)
+                    goto default;
 
-                if (firstCharacter == 'l')
+                if (keywordCheckBuffer[0] == 'l' &&
+                    keywordCheckBuffer[1] == 'o' &&
+                    keywordCheckBuffer[2] == 'c' &&
+                    keywordCheckBuffer[3] == 'k')
                 {
                     // lock
                     textSpan = textSpan with { DecorationByte = (byte)GenericDecorationKind.Keyword };
                     lexerOutput.SyntaxTokenList.Add(new SyntaxToken(SyntaxKind.LockTokenKeyword, textSpan));
                     return;
                 }
-                else if (firstCharacter == 'e')
+                else if (keywordCheckBuffer[0] == 'e' &&
+                         keywordCheckBuffer[1] == 'l' &&
+                         keywordCheckBuffer[2] == 's' &&
+                         keywordCheckBuffer[3] == 'e')
                 {
                     // else
                     textSpan = textSpan with { DecorationByte = (byte)GenericDecorationKind.KeywordControl };
@@ -1342,21 +1384,26 @@ public static class CSharpLexer
                     return;
                 }
                 
-                break;
+                goto default;
             case 432: // !! DUPLICATES !!
-                if (textSpan.Length == aaa &&
-                    keywordCheckBuffer[0] == 'aaa' &&)
-                {
-                }
+                
+                if (textSpan.Length != 4)
+                    goto default;
 
-                if (firstCharacter == 'l')
+                if (keywordCheckBuffer[0] == 'l' &&
+                    keywordCheckBuffer[1] == 'o' &&
+                    keywordCheckBuffer[2] == 'n' &&
+                    keywordCheckBuffer[3] == 'g')
                 {
                     // long
                     textSpan = textSpan with { DecorationByte = (byte)GenericDecorationKind.Keyword };
                     lexerOutput.SyntaxTokenList.Add(new SyntaxToken(SyntaxKind.LongTokenKeyword, textSpan));
                     return;
                 }
-                else
+                else if (keywordCheckBuffer[0] == 'j' &&
+                         keywordCheckBuffer[1] == 'o' &&
+                         keywordCheckBuffer[2] == 'i' &&
+                         keywordCheckBuffer[3] == 'n')
                 {
                     // join
                     textSpan = textSpan with { DecorationByte = (byte)GenericDecorationKind.Keyword };
@@ -1364,7 +1411,7 @@ public static class CSharpLexer
                     return;
                 }
                 
-                break;
+                goto default;
             case 941: // namespace
                 if (textSpan.Length == 9 &&
                     keywordCheckBuffer[0] == 'n' &&
@@ -1453,19 +1500,32 @@ public static class CSharpLexer
 
                 goto default;
             case 864: // !! DUPLICATES !!
-                if (textSpan.Length == aaa &&
-                    keywordCheckBuffer[0] == 'aaa' &&)
-                {
-                }
+                
+                if (textSpan.Length != 8)
+                    goto default;
 
-                if (firstCharacter == 'o')
+                if (keywordCheckBuffer[0] == 'o' &&
+                    keywordCheckBuffer[1] == 'v' &&
+                    keywordCheckBuffer[2] == 'e' &&
+                    keywordCheckBuffer[3] == 'r' &&
+                    keywordCheckBuffer[4] == 'r' &&
+                    keywordCheckBuffer[5] == 'i' &&
+                    keywordCheckBuffer[6] == 'd' &&
+                    keywordCheckBuffer[7] == 'e')
                 {
                     // override
                     textSpan = textSpan with { DecorationByte = (byte)GenericDecorationKind.Keyword };
                     lexerOutput.SyntaxTokenList.Add(new SyntaxToken(SyntaxKind.OverrideTokenKeyword, textSpan));
                     return;
                 }
-                else if (firstCharacter == 'v')
+                else if (keywordCheckBuffer[0] == 'v' &&
+                         keywordCheckBuffer[1] == 'o' &&
+                         keywordCheckBuffer[2] == 'l' &&
+                         keywordCheckBuffer[3] == 'a' &&
+                         keywordCheckBuffer[4] == 't' &&
+                         keywordCheckBuffer[5] == 'i' &&
+                         keywordCheckBuffer[6] == 'l' &&
+                         keywordCheckBuffer[7] == 'e')
                 {
                     // volatile
                     textSpan = textSpan with { DecorationByte = (byte)GenericDecorationKind.Keyword };
@@ -1473,7 +1533,7 @@ public static class CSharpLexer
                     return;
                 }
                     
-                break;
+                goto default;
             case 644: // params
                 if (textSpan.Length == 6 &&
                     keywordCheckBuffer[0] == 'p' &&
@@ -1524,19 +1584,28 @@ public static class CSharpLexer
 
                 goto default;
             case 639: // !! DUPLICATES !!
-                if (textSpan.Length == aaa &&
-                    keywordCheckBuffer[0] == 'aaa' &&)
-                {
-                }
+                
+                if (textSpan.Length != 6)
+                    goto default;
 
-                if (firstCharacter == 'p')
+                if (keywordCheckBuffer[0] == 'p' &&
+                    keywordCheckBuffer[1] == 'u' &&
+                    keywordCheckBuffer[2] == 'b' &&
+                    keywordCheckBuffer[3] == 'l' &&
+                    keywordCheckBuffer[4] == 'i' &&
+                    keywordCheckBuffer[5] == 'c')
                 {
                     // public
                     textSpan = textSpan with { DecorationByte = (byte)GenericDecorationKind.Keyword };
                     lexerOutput.SyntaxTokenList.Add(new SyntaxToken(SyntaxKind.PublicTokenKeyword, textSpan));
                     return;
                 }
-                else if (firstCharacter == 'r')
+                else if (keywordCheckBuffer[0] == 'r' &&
+                         keywordCheckBuffer[1] == 'e' &&
+                         keywordCheckBuffer[2] == 'c' &&
+                         keywordCheckBuffer[3] == 'o' &&
+                         keywordCheckBuffer[4] == 'r' &&
+                         keywordCheckBuffer[5] == 'd')
                 {
                     // record
                     textSpan = textSpan with { DecorationByte = (byte)GenericDecorationKind.Keyword };
@@ -1544,7 +1613,7 @@ public static class CSharpLexer
                     return;
                 }
                 
-                break;
+                goto default;
             case 862: // readonly
                 if (textSpan.Length == 8 &&
                     keywordCheckBuffer[0] == 'r' &&
@@ -1653,19 +1722,28 @@ public static class CSharpLexer
 
                 goto default;
             case 663: // !! DUPLICATES !!
-                if (textSpan.Length == aaa &&
-                    keywordCheckBuffer[0] == 'aaa' &&)
-                {
-                }
+                
+                if (textSpan.Length != 6)
+                    goto default;
 
-                if (firstCharacter == 's')
+                if (keywordCheckBuffer[0] == 's' &&
+                    keywordCheckBuffer[1] == 't' &&
+                    keywordCheckBuffer[2] == 'r' &&
+                    keywordCheckBuffer[3] == 'i' &&
+                    keywordCheckBuffer[4] == 'n' &&
+                    keywordCheckBuffer[5] == 'g')
                 {
                     // string
                     textSpan = textSpan with { DecorationByte = (byte)GenericDecorationKind.Keyword };
                     lexerOutput.SyntaxTokenList.Add(new SyntaxToken(SyntaxKind.StringTokenKeyword, textSpan));
                     return;
                 }
-                else if (firstCharacter == 't')
+                else if (keywordCheckBuffer[0] == 't' &&
+                         keywordCheckBuffer[1] == 'y' &&
+                         keywordCheckBuffer[2] == 'p' &&
+                         keywordCheckBuffer[3] == 'e' &&
+                         keywordCheckBuffer[4] == 'o' &&
+                         keywordCheckBuffer[5] == 'f')
                 {
                     // typeof
                     textSpan = textSpan with { DecorationByte = (byte)GenericDecorationKind.Keyword };
@@ -1673,21 +1751,30 @@ public static class CSharpLexer
                     return;
                 }
                 
-                break;
+                goto default;
             case 677: // !! DUPLICATES !!
-                if (textSpan.Length == aaa &&
-                    keywordCheckBuffer[0] == 'aaa' &&)
-                {
-                }
+                
+                if (textSpan.Length != 6)
+                    goto default;
 
-                if (firstCharacter == 's')
+                if (keywordCheckBuffer[0] == 's' &&
+                    keywordCheckBuffer[1] == 't' &&
+                    keywordCheckBuffer[2] == 'r' &&
+                    keywordCheckBuffer[3] == 'u' &&
+                    keywordCheckBuffer[4] == 'c' &&
+                    keywordCheckBuffer[5] == 't')
                 {
                     // struct
                     textSpan = textSpan with { DecorationByte = (byte)GenericDecorationKind.Keyword };
                     lexerOutput.SyntaxTokenList.Add(new SyntaxToken(SyntaxKind.StructTokenKeyword, textSpan));
                     return;
                 }
-                else if (firstCharacter == 'u')
+                else if (keywordCheckBuffer[0] == 'u' &&
+                         keywordCheckBuffer[1] == 's' &&
+                         keywordCheckBuffer[2] == 'h' &&
+                         keywordCheckBuffer[3] == 'o' &&
+                         keywordCheckBuffer[4] == 'r' &&
+                         keywordCheckBuffer[5] == 't')
                 {
                     // ushort
                     textSpan = textSpan with { DecorationByte = (byte)GenericDecorationKind.Keyword };
@@ -1695,7 +1782,7 @@ public static class CSharpLexer
                     return;
                 }
                 
-                break;
+                goto default;
             case 440: // this
                 if (textSpan.Length == 4 &&
                     keywordCheckBuffer[0] == 't' &&
@@ -1710,19 +1797,24 @@ public static class CSharpLexer
 
                 goto default;
             case 448: // !! DUPLICATES !!
-                if (textSpan.Length == aaa &&
-                    keywordCheckBuffer[0] == 'aaa' &&)
-                {
-                }
+                
+                if (textSpan.Length != 4)
+                    goto default;
 
-                if (firstCharacter == 't')
+                if (keywordCheckBuffer[0] == 't' &&
+                    keywordCheckBuffer[1] == 'r' &&
+                    keywordCheckBuffer[2] == 'u' &&
+                    keywordCheckBuffer[3] == 'e')
                 {
                     // true
                     textSpan = textSpan with { DecorationByte = (byte)GenericDecorationKind.Keyword };
                     lexerOutput.SyntaxTokenList.Add(new SyntaxToken(SyntaxKind.TrueTokenKeyword, textSpan));
                     return;
                 }
-                else if (firstCharacter == 'u')
+                else if (keywordCheckBuffer[0] == 'u' &&
+                         keywordCheckBuffer[1] == 'i' &&
+                         keywordCheckBuffer[2] == 'n' &&
+                         keywordCheckBuffer[3] == 't')
                 {
                     // uint
                     textSpan = textSpan with { DecorationByte = (byte)GenericDecorationKind.Keyword };
@@ -1730,7 +1822,7 @@ public static class CSharpLexer
                     return;
                 }
                 
-                break;
+                goto default;
             case 351: // try
                 if (textSpan.Length == 3 &&
                     keywordCheckBuffer[0] == 't' &&
@@ -1821,19 +1913,24 @@ public static class CSharpLexer
 
                 goto default;
             case 434: // !! DUPLICATES !!
-                if (textSpan.Length == aaa &&
-                    keywordCheckBuffer[0] == 'aaa' &&)
-                {
-                }
+                
+                if (textSpan.Length != 4)
+                    goto default;
 
-                if (firstCharacter == 'v')
+                if (keywordCheckBuffer[0] == 'v' &&
+                    keywordCheckBuffer[1] == 'o' &&
+                    keywordCheckBuffer[2] == 'i' &&
+                    keywordCheckBuffer[3] == 'd')
                 {
                     // void
                     textSpan = textSpan with { DecorationByte = (byte)GenericDecorationKind.Keyword };
                     lexerOutput.SyntaxTokenList.Add(new SyntaxToken(SyntaxKind.VoidTokenKeyword, textSpan));
                     return;
                 }
-                else if (firstCharacter == 'w')
+                else if (keywordCheckBuffer[0] == 'w' &&
+                         keywordCheckBuffer[1] == 'h' &&
+                         keywordCheckBuffer[2] == 'e' &&
+                         keywordCheckBuffer[3] == 'n')
                 {
                     // when
                     textSpan = textSpan with { DecorationByte = (byte)GenericDecorationKind.Keyword };
@@ -1841,7 +1938,7 @@ public static class CSharpLexer
                     return;
                 }
                 
-                break;
+                goto default;
             case 517: // break
                 if (textSpan.Length == 5 &&
                     keywordCheckBuffer[0] == 'b' &&
@@ -1926,19 +2023,24 @@ public static class CSharpLexer
 
                 goto default;
             case 441: // !! DUPLICATES !!
-                if (textSpan.Length == aaa &&
-                    keywordCheckBuffer[0] == 'aaa' &&)
-                {
-                }
+                
+                if (textSpan.Length != 4)
+                    goto default;
 
-                if (firstCharacter == 'g')
+                if (keywordCheckBuffer[0] == 'g' &&
+                    keywordCheckBuffer[1] == 'o' &&
+                    keywordCheckBuffer[2] == 't' &&
+                    keywordCheckBuffer[3] == 'o')
                 {
                     // goto
                     textSpan = textSpan with { DecorationByte = (byte)GenericDecorationKind.KeywordControl };
                     lexerOutput.SyntaxTokenList.Add(new SyntaxToken(SyntaxKind.GotoTokenKeyword, textSpan));
                     return;
                 }
-                else if (firstCharacter == 'n')
+                else if (keywordCheckBuffer[0] == 'n' &&
+                         keywordCheckBuffer[1] == 'i' &&
+                         keywordCheckBuffer[2] == 'n' &&
+                         keywordCheckBuffer[3] == 't')
                 {
                     // nint
                     textSpan = textSpan with { DecorationByte = (byte)GenericDecorationKind.Keyword };
@@ -1946,7 +2048,7 @@ public static class CSharpLexer
                     return;
                 }
                 
-                break;
+                goto default;
             case 207: // if
                 if (textSpan.Length == 2 &&
                     keywordCheckBuffer[0] == 'i' &&
