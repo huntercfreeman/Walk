@@ -1073,7 +1073,8 @@ public ref struct CSharpParserModel
             {
                 foreach (var x in ExternalTypeDefinitionList)
                 {
-                    if (GetIdentifierTextSpan(x).Length == typeIdentifierText.Length)
+                    var otherTextSpan = GetIdentifierTextSpan(x);
+                    if (otherTextSpan.Length == typeIdentifierText.Length)
                     {
                         if (GetIdentifierText(x, resourceUri, compilationUnit) == typeIdentifierText)
                         {
@@ -1217,7 +1218,7 @@ public ref struct CSharpParserModel
                 x.SyntaxKind == SyntaxKind.FunctionDefinitionNode)
             {
                 var otherTextSpan = GetIdentifierTextSpan(x);
-                if (GetIdentifierTextSpan(x).Length == functionIdentifierText.Length)
+                if (otherTextSpan.Length == functionIdentifierText.Length)
                 {
                     if (otherTextSpan.CharIntSum == 0 ||
                         functionIdentifierTextSpan.CharIntSum == 0 ||
@@ -1388,7 +1389,7 @@ public ref struct CSharpParserModel
                 x.SyntaxKind == SyntaxKind.VariableDeclarationNode)
             {
                 var otherTextSpan = GetIdentifierTextSpan(x);
-                if (GetIdentifierTextSpan(x).Length == variableIdentifierText.Length)
+                if (otherTextSpan.Length == variableIdentifierText.Length)
                 {
                     if (otherTextSpan.CharIntSum == 0 ||
                         variableIdentifierTextSpan.CharIntSum == 0 ||
@@ -1663,7 +1664,7 @@ public ref struct CSharpParserModel
                 x.SyntaxKind == SyntaxKind.LabelDeclarationNode)
             {
                 var otherTextSpan = GetIdentifierTextSpan(x);
-                if (GetIdentifierTextSpan(x).Length == labelIdentifierText.Length)
+                if (otherTextSpan.Length == labelIdentifierText.Length)
                 {
                     if (otherTextSpan.CharIntSum == 0 ||
                         labelIdentifierTextSpan.CharIntSum == 0 ||
