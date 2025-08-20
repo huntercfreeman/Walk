@@ -851,7 +851,7 @@ public static class CSharpLexer
         //
         // The check is only performed for the length of the word, so the indices are always initialized in time.
         // 
-        Span<int> keywordCheckBuffer = stackalloc int[10];
+        Span<char> keywordCheckBuffer = stackalloc char[10];
     
         var entryPositionIndex = streamReaderWrap.PositionIndex;
         var byteEntryIndex = streamReaderWrap.ByteIndex;
@@ -870,9 +870,9 @@ public static class CSharpLexer
 
             characterIntSum += (int)streamReaderWrap.CurrentCharacter;
             if (bufferIndex < 10)
-                keywordCheckBuffer[bufferIndex++] = streamReaderWrap.ReadCharacter();
-            else
-                _ = streamReaderWrap.ReadCharacter();
+                keywordCheckBuffer[bufferIndex++] = streamReaderWrap.CurrentCharacter;
+            
+            _ = streamReaderWrap.ReadCharacter();
         }
 
         var textSpan = new TextEditorTextSpan(
@@ -903,6 +903,11 @@ public static class CSharpLexer
                 
                 goto default;
             case 212: // as
+                Console.WriteLine("as?");
+                Console.WriteLine(textSpan.Length);
+                Console.WriteLine(keywordCheckBuffer[0]);
+                Console.WriteLine(keywordCheckBuffer[1]);
+                
                 if (textSpan.Length == 2 &&
                     keywordCheckBuffer[0] == 'a' &&
                     keywordCheckBuffer[1] == 's')
