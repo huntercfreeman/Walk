@@ -18,6 +18,7 @@ public static class ParseTokens
                     parserModel.Compilation,
                     parserModel.CurrentCodeBlockOwner.Unsafe_SelfIndexKey,
                     parserModel.GetTextSpanText(parserModel.TokenWalker.Current.TextSpan),
+                    parserModel.TokenWalker.Current.TextSpan,
                     out _))
             {
                 parserModel.BindDiscard(parserModel.TokenWalker.Current);

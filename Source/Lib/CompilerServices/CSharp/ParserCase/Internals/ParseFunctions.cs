@@ -36,6 +36,7 @@ public class ParseFunctions
                 parserModel.Compilation,
                 parserModel.CurrentCodeBlockOwner.Unsafe_SelfIndexKey,
                 parserModel.GetTextSpanText(consumedIdentifierToken.TextSpan),
+                consumedIdentifierToken.TextSpan,
                 out var existingFunctionDefinitionNode))
         {
             isFunctionOverloadCase = true;
