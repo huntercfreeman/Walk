@@ -1155,6 +1155,7 @@ public static class ParseExpressions
                     parserModel.Compilation,
                     parserModel.CurrentCodeBlockOwner.Unsafe_SelfIndexKey,
                     ambiguousIdentifierTokenText,
+                    ambiguousIdentifierExpressionNode.Token.TextSpan,
                     out var functionDefinitionNode))
             {
                 var token = ambiguousIdentifierExpressionNode.Token;

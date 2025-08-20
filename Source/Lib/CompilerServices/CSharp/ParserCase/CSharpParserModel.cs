@@ -680,6 +680,7 @@ public ref struct CSharpParserModel
                 Compilation,
                 CurrentCodeBlockOwner.Unsafe_SelfIndexKey,
                 functionInvocationIdentifierText,
+                functionInvocationNode.FunctionInvocationIdentifierToken.TextSpan,
                 out var functionDefinitionNode) &&
             functionDefinitionNode is not null)
         {
@@ -1169,6 +1170,7 @@ public ref struct CSharpParserModel
         CSharpCompilationUnit compilationUnit,
         int initialScopeIndexKey,
         string identifierText,
+        TextEditorTextSpan identifierTextSpan,
         out FunctionDefinitionNode? functionDefinitionNode)
     {
         var localScope = Binder.GetScopeByScopeIndexKey(compilationUnit, initialScopeIndexKey);
@@ -1180,6 +1182,7 @@ public ref struct CSharpParserModel
                     compilationUnit,
                     localScope.Unsafe_SelfIndexKey,
                     identifierText,
+                    identifierTextSpan,
                     out functionDefinitionNode))
             {
                 return true;
@@ -1200,6 +1203,7 @@ public ref struct CSharpParserModel
         CSharpCompilationUnit compilationUnit,
         int scopeIndexKey,
         string functionIdentifierText,
+        TextEditorTextSpan functionIdentifierTextSpan,
         out FunctionDefinitionNode functionDefinitionNode)
     {
         functionDefinitionNode = null;
@@ -1211,12 +1215,22 @@ public ref struct CSharpParserModel
             if (x.Unsafe_ParentIndexKey == scopeIndexKey &&
                 x.SyntaxKind == SyntaxKind.FunctionDefinitionNode)
             {
+                var otherTextSpan = GetIdentifierTextSpan(x);
                 if (GetIdentifierTextSpan(x).Length == functionIdentifierText.Length)
                 {
-                    if (GetIdentifierText(x, resourceUri, compilationUnit) == functionIdentifierText)
+                    if (otherTextSpan.CharIntSum == 0 ||
+                        functionIdentifierTextSpan.CharIntSum == 0 ||
+                        otherTextSpan.CharIntSum == functionIdentifierTextSpan.CharIntSum)
                     {
-                        functionDefinitionNode = (FunctionDefinitionNode)x;
-                        break;
+                        if (GetIdentifierText(x, resourceUri, compilationUnit) == functionIdentifierText)
+                        {
+                            functionDefinitionNode = (FunctionDefinitionNode)x;
+                            break;
+                        }
+                    }
+                    else
+                    {
+                        ++Walk.Common.RazorLib.Installations.Models.WalkDebugSomething.AvoidStringLogicByCheckingCharIntSum;
                     }
                 }
                 else
