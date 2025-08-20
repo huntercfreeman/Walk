@@ -69,18 +69,18 @@ public class CSharpStatementBuilder
         {
             if (MostRecentNode.SyntaxKind == SyntaxKind.VariableReferenceNode)
             {
-                var variableReferenceNode = (Walk.Extensions.CompilerServices.Syntax.Nodes.VariableReferenceNode)MostRecentNode;
-                parserModel.Return_VariableReferenceNode(variableReferenceNode);
+                parserModel.Return_VariableReferenceNode(
+                    (Walk.Extensions.CompilerServices.Syntax.Nodes.VariableReferenceNode)MostRecentNode);
             }
             else if (MostRecentNode.SyntaxKind == SyntaxKind.FunctionInvocationNode)
             {
-                var functionInvocationNode = (Walk.Extensions.CompilerServices.Syntax.Nodes.FunctionInvocationNode)MostRecentNode;
-                parserModel.Return_FunctionInvocationNode(functionInvocationNode);
+                parserModel.Return_FunctionInvocationNode(
+                    (Walk.Extensions.CompilerServices.Syntax.Nodes.FunctionInvocationNode)MostRecentNode);
             }
             else if (MostRecentNode.SyntaxKind == SyntaxKind.ConstructorInvocationExpressionNode)
             {
-                var constructorInvocationExpressionNode = (Walk.Extensions.CompilerServices.Syntax.Nodes.ConstructorInvocationExpressionNode)MostRecentNode;
-                parserModel.Return_ConstructorInvocationExpressionNode(constructorInvocationExpressionNode);
+                parserModel.Return_ConstructorInvocationExpressionNode(
+                    (Walk.Extensions.CompilerServices.Syntax.Nodes.ConstructorInvocationExpressionNode)MostRecentNode);
             }
         }
     
