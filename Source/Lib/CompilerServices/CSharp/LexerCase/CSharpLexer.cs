@@ -982,7 +982,7 @@ public static class CSharpLexer
                     keywordCheckBuffer[1] == 'a' &&
                     keywordCheckBuffer[2] == 't' &&
                     keywordCheckBuffer[3] == 'c' &&
-                    keywordCheckBuffer[4] == 'h' &&)
+                    keywordCheckBuffer[4] == 'h')
                 {
                     textSpan = textSpan with { DecorationByte = (byte)GenericDecorationKind.Keyword };
                     lexerOutput.SyntaxTokenList.Add(new SyntaxToken(SyntaxKind.CatchTokenKeyword, textSpan));
@@ -1061,7 +1061,7 @@ public static class CSharpLexer
                 goto default;
             case 551: // !! DUPLICATES !!
                 
-                if (textSpan.Length != 5
+                if (textSpan.Length != 5)
                     goto default;
 
                 if (keywordCheckBuffer[0] == 'c' &&
@@ -1975,7 +1975,7 @@ public static class CSharpLexer
                     keywordCheckBuffer[4] == 'i' &&
                     keywordCheckBuffer[5] == 'n' &&
                     keywordCheckBuffer[6] == 'u' &&
-                    keywordCheckBuffer[7] == 'e' &&)
+                    keywordCheckBuffer[7] == 'e')
                 {
                     textSpan = textSpan with { DecorationByte = (byte)GenericDecorationKind.KeywordControl };
                     lexerOutput.SyntaxTokenList.Add(new SyntaxToken(SyntaxKind.ContinueTokenKeyword, textSpan));
@@ -2536,7 +2536,7 @@ public static class CSharpLexer
                     keywordCheckBuffer[5] == 'a' &&
                     keywordCheckBuffer[6] == 'g' &&
                     keywordCheckBuffer[7] == 'e' &&
-                    keywordCheckBuffer[8] == 'd' &&)
+                    keywordCheckBuffer[8] == 'd')
                 {
                     textSpan = textSpan with { DecorationByte = (byte)GenericDecorationKind.Keyword };
                     lexerOutput.SyntaxTokenList.Add(new SyntaxToken(SyntaxKind.UnmanagedTokenContextualKeyword, textSpan));
@@ -2610,7 +2610,7 @@ public static class CSharpLexer
                     return;
                 }
 
-                    
+                goto default;
             default:
                 lexerOutput.SyntaxTokenList.Add(new SyntaxToken(SyntaxKind.IdentifierToken, textSpan));
                 return;
