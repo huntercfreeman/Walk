@@ -11,7 +11,8 @@ public static class ParseTokens
     public static void ParseIdentifierToken(ref CSharpParserModel parserModel)
     {
         if (parserModel.TokenWalker.Current.TextSpan.Length == 1 &&
-            parserModel.GetTextSpanText(parserModel.TokenWalker.Current.TextSpan) == "_")
+            // 95 is ASCII code for '_'
+            parserModel.TokenWalker.Current.TextSpan.CharIntSum == 95)
         {
             if (!parserModel.TryGetVariableDeclarationHierarchically(
                     parserModel.ResourceUri,
