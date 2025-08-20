@@ -977,6 +977,7 @@ public static class ParseExpressions
                 parserModel.Compilation,
                 parserModel.CurrentCodeBlockOwner.Unsafe_SelfIndexKey,
                 parserModel.GetTextSpanText(token.TextSpan),
+                token.TextSpan,
                 out var typeDefinitionNode);
         
         var typeClauseNode = UtilityApi.ConvertTokenToTypeClauseNode(ref token, ref parserModel);
@@ -1055,6 +1056,7 @@ public static class ParseExpressions
                     parserModel.Compilation,
                     parserModel.CurrentCodeBlockOwner.Unsafe_SelfIndexKey,
                     ambiguousIdentifierTokenText,
+                    ambiguousIdentifierExpressionNode.Token.TextSpan,
                     out var existingVariableDeclarationNode))
             {
                 var token = ambiguousIdentifierExpressionNode.Token;
@@ -1083,6 +1085,7 @@ public static class ParseExpressions
                     parserModel.Compilation,
                     parserModel.CurrentCodeBlockOwner.Unsafe_SelfIndexKey,
                     ambiguousIdentifierTokenText,
+                    ambiguousIdentifierExpressionNode.Token.TextSpan,
                     out var typeDefinitionNode))
             {
                 var token = ambiguousIdentifierExpressionNode.Token;
@@ -1134,6 +1137,7 @@ public static class ParseExpressions
                     parserModel.Compilation,
                     parserModel.CurrentCodeBlockOwner.Unsafe_SelfIndexKey,
                     ambiguousIdentifierTokenText,
+                    ambiguousIdentifierExpressionNode.Token.TextSpan,
                     out _))
             {
                 parserModel.BindDiscard(ambiguousIdentifierExpressionNode.Token);
@@ -3240,6 +3244,7 @@ public static class ParseExpressions
                                 innerCompilationUnit,
                                 scope.Unsafe_SelfIndexKey,
                                 parserModel.Binder.CSharpCompilerService.SafeGetText(typeReference.ExplicitDefinitionResourceUri.Value, typeReference.ExplicitDefinitionTextSpan) ?? string.Empty,
+                                typeReference.ExplicitDefinitionTextSpan,
                                 out var innerTypeDefinitionNode) &&
                             innerTypeDefinitionNode is not null)
                         {
@@ -3281,6 +3286,7 @@ public static class ParseExpressions
                             parserModel.Compilation,
                             scope.Unsafe_SelfIndexKey,
                             parserModel.Binder.CSharpCompilerService.SafeGetText(parserModel.ResourceUri.Value, typeReference.TypeIdentifierToken.TextSpan) ?? string.Empty,
+                            typeReference.TypeIdentifierToken.TextSpan,
                             out var innerTypeDefinitionNode) &&
                         innerTypeDefinitionNode is not null)
                     {

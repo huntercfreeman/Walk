@@ -53,7 +53,9 @@ public static class TypeFacts
         AccessModifierKind.Public,
         false,
         StorageModifierKind.Class,
-        new SyntaxToken(SyntaxKind.IdentifierToken, new TextEditorTextSpan(0, 13, (byte)GenericDecorationKind.None)),
+        new SyntaxToken(
+            SyntaxKind.IdentifierToken,
+            new TextEditorTextSpan(0, 13, (byte)GenericDecorationKind.None, byteIndex: 0, charIntSum: 1310)),
         openAngleBracketToken: default,
 		indexGenericParameterEntryList: -1,
         countGenericParameterEntryList: 0,
@@ -68,7 +70,7 @@ public static class TypeFacts
         // FindAllReferences
         // , referenceHashSet: new()
         );
-
+    
     /// <summary>
     /// If a <see cref="ISyntaxNode"/> has a <see cref="TypeClauseNode"/>,
     /// but is constructed during parsing process, prior to having found the
@@ -79,7 +81,9 @@ public static class TypeFacts
         AccessModifierKind.Public,
         false,
         StorageModifierKind.Class,
-        new SyntaxToken(SyntaxKind.IdentifierToken, new TextEditorTextSpan(14, 19, (byte)GenericDecorationKind.None)),
+        new SyntaxToken(
+            SyntaxKind.IdentifierToken,
+            new TextEditorTextSpan(14, 19, (byte)GenericDecorationKind.None, byteIndex: 0, charIntSum: 559)),
         openAngleBracketToken: default,
 		indexGenericParameterEntryList: -1,
         countGenericParameterEntryList: 0,
@@ -122,7 +126,9 @@ public static class TypeFacts
         AccessModifierKind.Public,
         false,
         StorageModifierKind.Class,
-        new SyntaxToken(SyntaxKind.IdentifierToken, new TextEditorTextSpan(14, 19, (byte)GenericDecorationKind.None)),
+        new SyntaxToken(
+            SyntaxKind.IdentifierToken,
+            new TextEditorTextSpan(14, 19, (byte)GenericDecorationKind.None, byteIndex: 0, charIntSum: 624)),
         openAngleBracketToken: default,
 		indexGenericParameterEntryList: -1,
         countGenericParameterEntryList: 0,

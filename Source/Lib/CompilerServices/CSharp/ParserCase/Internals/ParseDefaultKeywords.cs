@@ -931,6 +931,7 @@ public class ParseDefaultKeywords
                     parserModel.Compilation,
                     parserModel.CurrentCodeBlockOwner.Unsafe_SelfIndexKey,
                     parserModel.GetTextSpanText(identifierToken.TextSpan),
+                    identifierToken.TextSpan,
                     out TypeDefinitionNode innerTypeDefinitionNode))
             {
                 typeDefinitionNode.IndexPartialTypeDefinition = innerTypeDefinitionNode.IndexPartialTypeDefinition;

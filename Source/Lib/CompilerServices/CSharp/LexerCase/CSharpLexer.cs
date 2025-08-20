@@ -879,7 +879,8 @@ public static class CSharpLexer
             entryPositionIndex,
             streamReaderWrap.PositionIndex,
             (byte)GenericDecorationKind.None,
-            byteEntryIndex);
+            byteEntryIndex,
+            characterIntSum);
         
         switch (characterIntSum)
         {
