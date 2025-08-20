@@ -1133,8 +1133,11 @@ public static class CSharpLexer
 
                 goto default;
             case 437: // enum
-                if (textSpan.Length == aaa &&
-                    keywordCheckBuffer[0] == 'aaa' &&)
+                if (textSpan.Length == 4 &&
+                    keywordCheckBuffer[0] == 'aaa' &&
+                    keywordCheckBuffer[0] == 'aaa' &&
+                    keywordCheckBuffer[0] == 'aaa' &&
+                    keywordCheckBuffer[0] == 'aaa')
                 {
                     textSpan = textSpan with { DecorationByte = (byte)GenericDecorationKind.Keyword };
                     lexerOutput.SyntaxTokenList.Add(new SyntaxToken(SyntaxKind.EnumTokenKeyword, textSpan));
@@ -1143,8 +1146,12 @@ public static class CSharpLexer
 
                 goto default;
             case 546: // event
-                if (textSpan.Length == aaa &&
-                    keywordCheckBuffer[0] == 'aaa' &&)
+                if (textSpan.Length == 5 &&
+                    keywordCheckBuffer[0] == 'aaa' &&
+                    keywordCheckBuffer[0] == 'aaa' &&
+                    keywordCheckBuffer[0] == 'aaa' &&
+                    keywordCheckBuffer[0] == 'aaa' &&
+                    keywordCheckBuffer[0] == 'aaa')
                 {
                     textSpan = textSpan with { DecorationByte = (byte)GenericDecorationKind.Keyword };
                     lexerOutput.SyntaxTokenList.Add(new SyntaxToken(SyntaxKind.EventTokenKeyword, textSpan));
@@ -1153,8 +1160,15 @@ public static class CSharpLexer
 
                     
             case 866: // explicit
-                if (textSpan.Length == aaa &&
-                    keywordCheckBuffer[0] == 'aaa' &&)
+                if (textSpan.Length == 8 &&
+                    keywordCheckBuffer[0] == 'aaa' &&
+                    keywordCheckBuffer[0] == 'aaa' &&
+                    keywordCheckBuffer[0] == 'aaa' &&
+                    keywordCheckBuffer[0] == 'aaa' &&
+                    keywordCheckBuffer[0] == 'aaa' &&
+                    keywordCheckBuffer[0] == 'aaa' &&
+                    keywordCheckBuffer[0] == 'aaa' &&
+                    keywordCheckBuffer[0] == 'aaa')
                 {
                     textSpan = textSpan with { DecorationByte = (byte)GenericDecorationKind.Keyword };
                     lexerOutput.SyntaxTokenList.Add(new SyntaxToken(SyntaxKind.ExplicitTokenKeyword, textSpan));
@@ -1163,8 +1177,13 @@ public static class CSharpLexer
 
                     
             case 662: // extern
-                if (textSpan.Length == aaa &&
-                    keywordCheckBuffer[0] == 'aaa' &&)
+                if (textSpan.Length == 6 &&
+                    keywordCheckBuffer[0] == 'aaa' &&
+                    keywordCheckBuffer[0] == 'aaa' &&
+                    keywordCheckBuffer[0] == 'aaa' &&
+                    keywordCheckBuffer[0] == 'aaa' &&
+                    keywordCheckBuffer[0] == 'aaa' &&
+                    keywordCheckBuffer[0] == 'aaa')
                 {
                     textSpan = textSpan with { DecorationByte = (byte)GenericDecorationKind.Keyword };
                     lexerOutput.SyntaxTokenList.Add(new SyntaxToken(SyntaxKind.ExternTokenKeyword, textSpan));
@@ -1173,8 +1192,12 @@ public static class CSharpLexer
 
                     
             case 523: // false
-                if (textSpan.Length == aaa &&
-                    keywordCheckBuffer[0] == 'aaa' &&)
+                if (textSpan.Length == 5 &&
+                    keywordCheckBuffer[0] == 'aaa' &&
+                    keywordCheckBuffer[0] == 'aaa' &&
+                    keywordCheckBuffer[0] == 'aaa' &&
+                    keywordCheckBuffer[0] == 'aaa' &&
+                    keywordCheckBuffer[0] == 'aaa')
                 {
                     textSpan = textSpan with { DecorationByte = (byte)GenericDecorationKind.Keyword };
                     lexerOutput.SyntaxTokenList.Add(new SyntaxToken(SyntaxKind.FalseTokenKeyword, textSpan));
@@ -1183,8 +1206,14 @@ public static class CSharpLexer
 
                     
             case 751: // finally
-                if (textSpan.Length == aaa &&
-                    keywordCheckBuffer[0] == 'aaa' &&)
+                if (textSpan.Length == 7 &&
+                    keywordCheckBuffer[0] == 'aaa' &&
+                    keywordCheckBuffer[0] == 'aaa' &&
+                    keywordCheckBuffer[0] == 'aaa' &&
+                    keywordCheckBuffer[0] == 'aaa' &&
+                    keywordCheckBuffer[0] == 'aaa' &&
+                    keywordCheckBuffer[0] == 'aaa' &&
+                    keywordCheckBuffer[0] == 'aaa')
                 {
                     textSpan = textSpan with { DecorationByte = (byte)GenericDecorationKind.Keyword };
                     lexerOutput.SyntaxTokenList.Add(new SyntaxToken(SyntaxKind.FinallyTokenKeyword, textSpan));
@@ -1193,8 +1222,12 @@ public static class CSharpLexer
 
                     
             case 528: // fixed
-                if (textSpan.Length == aaa &&
-                    keywordCheckBuffer[0] == 'aaa' &&)
+                if (textSpan.Length == 5 &&
+                    keywordCheckBuffer[0] == 'aaa' &&
+                    keywordCheckBuffer[0] == 'aaa' &&
+                    keywordCheckBuffer[0] == 'aaa' &&
+                    keywordCheckBuffer[0] == 'aaa' &&
+                    keywordCheckBuffer[0] == 'aaa')
                 {
                     textSpan = textSpan with { DecorationByte = (byte)GenericDecorationKind.Keyword };
                     lexerOutput.SyntaxTokenList.Add(new SyntaxToken(SyntaxKind.FixedTokenKeyword, textSpan));
@@ -1203,8 +1236,15 @@ public static class CSharpLexer
 
                     
             case 859: // implicit
-                if (textSpan.Length == aaa &&
-                    keywordCheckBuffer[0] == 'aaa' &&)
+                if (textSpan.Length == 8 &&
+                    keywordCheckBuffer[0] == 'aaa' &&
+                    keywordCheckBuffer[0] == 'aaa' &&
+                    keywordCheckBuffer[0] == 'aaa' &&
+                    keywordCheckBuffer[0] == 'aaa' &&
+                    keywordCheckBuffer[0] == 'aaa' &&
+                    keywordCheckBuffer[0] == 'aaa' &&
+                    keywordCheckBuffer[0] == 'aaa' &&
+                    keywordCheckBuffer[0] == 'aaa')
                 {
                     textSpan = textSpan with { DecorationByte = (byte)GenericDecorationKind.Keyword };
                     lexerOutput.SyntaxTokenList.Add(new SyntaxToken(SyntaxKind.ImplicitTokenKeyword, textSpan));
@@ -1213,8 +1253,9 @@ public static class CSharpLexer
 
                     
             case 215: // in
-                if (textSpan.Length == aaa &&
-                    keywordCheckBuffer[0] == 'aaa' &&)
+                if (textSpan.Length == 2 &&
+                    keywordCheckBuffer[0] == 'aaa' &&
+                    keywordCheckBuffer[0] == 'aaa')
                 {
                     textSpan = textSpan with { DecorationByte = (byte)GenericDecorationKind.Keyword };
                     lexerOutput.SyntaxTokenList.Add(new SyntaxToken(SyntaxKind.InTokenKeyword, textSpan));
@@ -1223,8 +1264,10 @@ public static class CSharpLexer
 
                     
             case 331: // int
-                if (textSpan.Length == aaa &&
-                    keywordCheckBuffer[0] == 'aaa' &&)
+                if (textSpan.Length == 3 &&
+                    keywordCheckBuffer[0] == 'aaa' &&
+                    keywordCheckBuffer[0] == 'aaa' &&
+                    keywordCheckBuffer[0] == 'aaa')
                 {
                     textSpan = textSpan with { DecorationByte = (byte)GenericDecorationKind.Keyword };
                     lexerOutput.SyntaxTokenList.Add(new SyntaxToken(SyntaxKind.IntTokenKeyword, textSpan));
@@ -1233,8 +1276,16 @@ public static class CSharpLexer
 
                     
             case 945: // interface
-                if (textSpan.Length == aaa &&
-                    keywordCheckBuffer[0] == 'aaa' &&)
+                if (textSpan.Length == 9 &&
+                    keywordCheckBuffer[0] == 'aaa' &&
+                    keywordCheckBuffer[0] == 'aaa' &&
+                    keywordCheckBuffer[0] == 'aaa' &&
+                    keywordCheckBuffer[0] == 'aaa' &&
+                    keywordCheckBuffer[0] == 'aaa' &&
+                    keywordCheckBuffer[0] == 'aaa' &&
+                    keywordCheckBuffer[0] == 'aaa' &&
+                    keywordCheckBuffer[0] == 'aaa' &&
+                    keywordCheckBuffer[0] == 'aaa')
                 {
                     textSpan = textSpan with { DecorationByte = (byte)GenericDecorationKind.Keyword };
                     lexerOutput.SyntaxTokenList.Add(new SyntaxToken(SyntaxKind.InterfaceTokenKeyword, textSpan));
@@ -1243,8 +1294,15 @@ public static class CSharpLexer
 
                     
             case 861: // internal
-                if (textSpan.Length == aaa &&
-                    keywordCheckBuffer[0] == 'aaa' &&)
+                if (textSpan.Length == 8 &&
+                    keywordCheckBuffer[0] == 'aaa' &&
+                    keywordCheckBuffer[0] == 'aaa' &&
+                    keywordCheckBuffer[0] == 'aaa' &&
+                    keywordCheckBuffer[0] == 'aaa' &&
+                    keywordCheckBuffer[0] == 'aaa' &&
+                    keywordCheckBuffer[0] == 'aaa' &&
+                    keywordCheckBuffer[0] == 'aaa' &&
+                    keywordCheckBuffer[0] == 'aaa')
                 {
                     textSpan = textSpan with { DecorationByte = (byte)GenericDecorationKind.Keyword };
                     lexerOutput.SyntaxTokenList.Add(new SyntaxToken(SyntaxKind.InternalTokenKeyword, textSpan));
@@ -1253,8 +1311,9 @@ public static class CSharpLexer
 
                     
             case 220: // is
-                if (textSpan.Length == aaa &&
-                    keywordCheckBuffer[0] == 'aaa' &&)
+                if (textSpan.Length == 2 &&
+                    keywordCheckBuffer[0] == 'aaa' &&
+                    keywordCheckBuffer[0] == 'aaa')
                 {
                     textSpan = textSpan with { DecorationByte = (byte)GenericDecorationKind.Keyword };
                     lexerOutput.SyntaxTokenList.Add(new SyntaxToken(SyntaxKind.IsTokenKeyword, textSpan));
@@ -1307,8 +1366,16 @@ public static class CSharpLexer
                 
                 break;
             case 941: // namespace
-                if (textSpan.Length == aaa &&
-                    keywordCheckBuffer[0] == 'aaa' &&)
+                if (textSpan.Length == 9 &&
+                    keywordCheckBuffer[0] == 'aaa' &&
+                    keywordCheckBuffer[0] == 'aaa' &&
+                    keywordCheckBuffer[0] == 'aaa' &&
+                    keywordCheckBuffer[0] == 'aaa' &&
+                    keywordCheckBuffer[0] == 'aaa' &&
+                    keywordCheckBuffer[0] == 'aaa' &&
+                    keywordCheckBuffer[0] == 'aaa' &&
+                    keywordCheckBuffer[0] == 'aaa' &&
+                    keywordCheckBuffer[0] == 'aaa')
                 {
                     textSpan = textSpan with { DecorationByte = (byte)GenericDecorationKind.Keyword };
                     lexerOutput.SyntaxTokenList.Add(new SyntaxToken(SyntaxKind.NamespaceTokenKeyword, textSpan));
@@ -1317,8 +1384,10 @@ public static class CSharpLexer
 
                     
             case 330: // new
-                if (textSpan.Length == aaa &&
-                    keywordCheckBuffer[0] == 'aaa' &&)
+                if (textSpan.Length == 3 &&
+                    keywordCheckBuffer[0] == 'aaa' &&
+                    keywordCheckBuffer[0] == 'aaa' &&
+                    keywordCheckBuffer[0] == 'aaa')
                 {
                     textSpan = textSpan with { DecorationByte = (byte)GenericDecorationKind.Keyword };
                     lexerOutput.SyntaxTokenList.Add(new SyntaxToken(SyntaxKind.NewTokenKeyword, textSpan));
@@ -1327,8 +1396,11 @@ public static class CSharpLexer
 
                     
             case 443: // null
-                if (textSpan.Length == aaa &&
-                    keywordCheckBuffer[0] == 'aaa' &&)
+                if (textSpan.Length == 4 &&
+                    keywordCheckBuffer[0] == 'aaa' &&
+                    keywordCheckBuffer[0] == 'aaa' &&
+                    keywordCheckBuffer[0] == 'aaa' &&
+                    keywordCheckBuffer[0] == 'aaa')
                 {
                     textSpan = textSpan with { DecorationByte = (byte)GenericDecorationKind.Keyword };
                     lexerOutput.SyntaxTokenList.Add(new SyntaxToken(SyntaxKind.NullTokenKeyword, textSpan));
@@ -1337,8 +1409,13 @@ public static class CSharpLexer
 
                     
             case 631: // object
-                if (textSpan.Length == aaa &&
-                    keywordCheckBuffer[0] == 'aaa' &&)
+                if (textSpan.Length == 6 &&
+                    keywordCheckBuffer[0] == 'aaa' &&
+                    keywordCheckBuffer[0] == 'aaa' &&
+                    keywordCheckBuffer[0] == 'aaa' &&
+                    keywordCheckBuffer[0] == 'aaa' &&
+                    keywordCheckBuffer[0] == 'aaa' &&
+                    keywordCheckBuffer[0] == 'aaa')
                 {
                     textSpan = textSpan with { DecorationByte = (byte)GenericDecorationKind.Keyword };
                     lexerOutput.SyntaxTokenList.Add(new SyntaxToken(SyntaxKind.ObjectTokenKeyword, textSpan));
@@ -1347,8 +1424,15 @@ public static class CSharpLexer
 
                     
             case 876: // operator
-                if (textSpan.Length == aaa &&
-                    keywordCheckBuffer[0] == 'aaa' &&)
+                if (textSpan.Length == 8 &&
+                    keywordCheckBuffer[0] == 'aaa' &&
+                    keywordCheckBuffer[0] == 'aaa' &&
+                    keywordCheckBuffer[0] == 'aaa' &&
+                    keywordCheckBuffer[0] == 'aaa' &&
+                    keywordCheckBuffer[0] == 'aaa' &&
+                    keywordCheckBuffer[0] == 'aaa' &&
+                    keywordCheckBuffer[0] == 'aaa' &&
+                    keywordCheckBuffer[0] == 'aaa')
                 {
                     textSpan = textSpan with { DecorationByte = (byte)GenericDecorationKind.Keyword };
                     lexerOutput.SyntaxTokenList.Add(new SyntaxToken(SyntaxKind.OperatorTokenKeyword, textSpan));
@@ -1357,8 +1441,10 @@ public static class CSharpLexer
 
                     
             case 344: // out
-                if (textSpan.Length == aaa &&
-                    keywordCheckBuffer[0] == 'aaa' &&)
+                if (textSpan.Length == 3 &&
+                    keywordCheckBuffer[0] == 'aaa' &&
+                    keywordCheckBuffer[0] == 'aaa' &&
+                    keywordCheckBuffer[0] == 'aaa')
                 {
                     textSpan = textSpan with { DecorationByte = (byte)GenericDecorationKind.Keyword };
                     lexerOutput.SyntaxTokenList.Add(new SyntaxToken(SyntaxKind.OutTokenKeyword, textSpan));
@@ -1389,8 +1475,13 @@ public static class CSharpLexer
                     
                 break;
             case 644: // params
-                if (textSpan.Length == aaa &&
-                    keywordCheckBuffer[0] == 'aaa' &&)
+                if (textSpan.Length == 6 &&
+                    keywordCheckBuffer[0] == 'aaa' &&
+                    keywordCheckBuffer[0] == 'aaa' &&
+                    keywordCheckBuffer[0] == 'aaa' &&
+                    keywordCheckBuffer[0] == 'aaa' &&
+                    keywordCheckBuffer[0] == 'aaa' &&
+                    keywordCheckBuffer[0] == 'aaa')
                 {
                     textSpan = textSpan with { DecorationByte = (byte)GenericDecorationKind.Keyword };
                     lexerOutput.SyntaxTokenList.Add(new SyntaxToken(SyntaxKind.ParamsTokenKeyword, textSpan));
@@ -1399,8 +1490,14 @@ public static class CSharpLexer
 
                     
             case 763: // private
-                if (textSpan.Length == aaa &&
-                    keywordCheckBuffer[0] == 'aaa' &&)
+                if (textSpan.Length == 7 &&
+                    keywordCheckBuffer[0] == 'aaa' &&
+                    keywordCheckBuffer[0] == 'aaa' &&
+                    keywordCheckBuffer[0] == 'aaa' &&
+                    keywordCheckBuffer[0] == 'aaa' &&
+                    keywordCheckBuffer[0] == 'aaa' &&
+                    keywordCheckBuffer[0] == 'aaa' &&
+                    keywordCheckBuffer[0] == 'aaa')
                 {
                     textSpan = textSpan with { DecorationByte = (byte)GenericDecorationKind.Keyword };
                     lexerOutput.SyntaxTokenList.Add(new SyntaxToken(SyntaxKind.PrivateTokenKeyword, textSpan));
@@ -1409,8 +1506,16 @@ public static class CSharpLexer
 
                     
             case 970: // protected
-                if (textSpan.Length == aaa &&
-                    keywordCheckBuffer[0] == 'aaa' &&)
+                if (textSpan.Length == 9 &&
+                    keywordCheckBuffer[0] == 'aaa' &&
+                    keywordCheckBuffer[0] == 'aaa' &&
+                    keywordCheckBuffer[0] == 'aaa' &&
+                    keywordCheckBuffer[0] == 'aaa' &&
+                    keywordCheckBuffer[0] == 'aaa' &&
+                    keywordCheckBuffer[0] == 'aaa' &&
+                    keywordCheckBuffer[0] == 'aaa' &&
+                    keywordCheckBuffer[0] == 'aaa' &&
+                    keywordCheckBuffer[0] == 'aaa')
                 {
                     textSpan = textSpan with { DecorationByte = (byte)GenericDecorationKind.Keyword };
                     lexerOutput.SyntaxTokenList.Add(new SyntaxToken(SyntaxKind.ProtectedTokenKeyword, textSpan));
@@ -1441,8 +1546,15 @@ public static class CSharpLexer
                 
                 break;
             case 862: // readonly
-                if (textSpan.Length == aaa &&
-                    keywordCheckBuffer[0] == 'aaa' &&)
+                if (textSpan.Length == 8 &&
+                    keywordCheckBuffer[0] == 'aaa' &&
+                    keywordCheckBuffer[0] == 'aaa' &&
+                    keywordCheckBuffer[0] == 'aaa' &&
+                    keywordCheckBuffer[0] == 'aaa' &&
+                    keywordCheckBuffer[0] == 'aaa' &&
+                    keywordCheckBuffer[0] == 'aaa' &&
+                    keywordCheckBuffer[0] == 'aaa' &&
+                    keywordCheckBuffer[0] == 'aaa')
                 {
                     textSpan = textSpan with { DecorationByte = (byte)GenericDecorationKind.Keyword };
                     lexerOutput.SyntaxTokenList.Add(new SyntaxToken(SyntaxKind.ReadonlyTokenKeyword, textSpan));
@@ -1451,8 +1563,10 @@ public static class CSharpLexer
 
                     
             case 317: // ref
-                if (textSpan.Length == aaa &&
-                    keywordCheckBuffer[0] == 'aaa' &&)
+                if (textSpan.Length == 3 &&
+                    keywordCheckBuffer[0] == 'aaa' &&
+                    keywordCheckBuffer[0] == 'aaa' &&
+                    keywordCheckBuffer[0] == 'aaa')
                 {
                     textSpan = textSpan with { DecorationByte = (byte)GenericDecorationKind.Keyword };
                     lexerOutput.SyntaxTokenList.Add(new SyntaxToken(SyntaxKind.RefTokenKeyword, textSpan));
@@ -1461,8 +1575,13 @@ public static class CSharpLexer
 
                     
             case 622: // sealed
-                if (textSpan.Length == aaa &&
-                    keywordCheckBuffer[0] == 'aaa' &&)
+                if (textSpan.Length == 6 &&
+                    keywordCheckBuffer[0] == 'aaa' &&
+                    keywordCheckBuffer[0] == 'aaa' &&
+                    keywordCheckBuffer[0] == 'aaa' &&
+                    keywordCheckBuffer[0] == 'aaa' &&
+                    keywordCheckBuffer[0] == 'aaa' &&
+                    keywordCheckBuffer[0] == 'aaa')
                 {
                     textSpan = textSpan with { DecorationByte = (byte)GenericDecorationKind.Keyword };
                     lexerOutput.SyntaxTokenList.Add(new SyntaxToken(SyntaxKind.SealedTokenKeyword, textSpan));
@@ -1471,8 +1590,12 @@ public static class CSharpLexer
 
                     
             case 560: // short
-                if (textSpan.Length == aaa &&
-                    keywordCheckBuffer[0] == 'aaa' &&)
+                if (textSpan.Length == 5 &&
+                    keywordCheckBuffer[0] == 'aaa' &&
+                    keywordCheckBuffer[0] == 'aaa' &&
+                    keywordCheckBuffer[0] == 'aaa' &&
+                    keywordCheckBuffer[0] == 'aaa' &&
+                    keywordCheckBuffer[0] == 'aaa')
                 {
                     textSpan = textSpan with { DecorationByte = (byte)GenericDecorationKind.Keyword };
                     lexerOutput.SyntaxTokenList.Add(new SyntaxToken(SyntaxKind.ShortTokenKeyword, textSpan));
@@ -1481,8 +1604,13 @@ public static class CSharpLexer
 
                     
             case 656: // sizeof
-                if (textSpan.Length == aaa &&
-                    keywordCheckBuffer[0] == 'aaa' &&)
+                if (textSpan.Length == 6 &&
+                    keywordCheckBuffer[0] == 'aaa' &&
+                    keywordCheckBuffer[0] == 'aaa' &&
+                    keywordCheckBuffer[0] == 'aaa' &&
+                    keywordCheckBuffer[0] == 'aaa' &&
+                    keywordCheckBuffer[0] == 'aaa' &&
+                    keywordCheckBuffer[0] == 'aaa')
                 {
                     textSpan = textSpan with { DecorationByte = (byte)GenericDecorationKind.Keyword };
                     lexerOutput.SyntaxTokenList.Add(new SyntaxToken(SyntaxKind.SizeofTokenKeyword, textSpan));
@@ -1491,8 +1619,17 @@ public static class CSharpLexer
 
                     
             case 1057: // stackalloc
-                if (textSpan.Length == aaa &&
-                    keywordCheckBuffer[0] == 'aaa' &&)
+                if (textSpan.Length == 10 &&
+                    keywordCheckBuffer[0] == 'aaa' &&
+                    keywordCheckBuffer[0] == 'aaa' &&
+                    keywordCheckBuffer[0] == 'aaa' &&
+                    keywordCheckBuffer[0] == 'aaa' &&
+                    keywordCheckBuffer[0] == 'aaa' &&
+                    keywordCheckBuffer[0] == 'aaa' &&
+                    keywordCheckBuffer[0] == 'aaa' &&
+                    keywordCheckBuffer[0] == 'aaa' &&
+                    keywordCheckBuffer[0] == 'aaa' &&
+                    keywordCheckBuffer[0] == 'aaa')
                 {
                     textSpan = textSpan with { DecorationByte = (byte)GenericDecorationKind.Keyword };
                     lexerOutput.SyntaxTokenList.Add(new SyntaxToken(SyntaxKind.StackallocTokenKeyword, textSpan));
@@ -1501,8 +1638,13 @@ public static class CSharpLexer
 
                     
             case 648: // static
-                if (textSpan.Length == aaa &&
-                    keywordCheckBuffer[0] == 'aaa' &&)
+                if (textSpan.Length == 6 &&
+                    keywordCheckBuffer[0] == 'aaa' &&
+                    keywordCheckBuffer[0] == 'aaa' &&
+                    keywordCheckBuffer[0] == 'aaa' &&
+                    keywordCheckBuffer[0] == 'aaa' &&
+                    keywordCheckBuffer[0] == 'aaa' &&
+                    keywordCheckBuffer[0] == 'aaa')
                 {
                     textSpan = textSpan with { DecorationByte = (byte)GenericDecorationKind.Keyword };
                     lexerOutput.SyntaxTokenList.Add(new SyntaxToken(SyntaxKind.StaticTokenKeyword, textSpan));
@@ -1587,8 +1729,10 @@ public static class CSharpLexer
                 
                 break;
             case 351: // try
-                if (textSpan.Length == aaa &&
-                    keywordCheckBuffer[0] == 'aaa' &&)
+                if (textSpan.Length == 3 &&
+                    keywordCheckBuffer[0] == 'aaa' &&
+                    keywordCheckBuffer[0] == 'aaa' &&
+                    keywordCheckBuffer[0] == 'aaa')
                 {
                     textSpan = textSpan with { DecorationByte = (byte)GenericDecorationKind.Keyword };
                     lexerOutput.SyntaxTokenList.Add(new SyntaxToken(SyntaxKind.TryTokenKeyword, textSpan));
@@ -1597,8 +1741,12 @@ public static class CSharpLexer
 
                     
             case 549: // ulong
-                if (textSpan.Length == aaa &&
-                    keywordCheckBuffer[0] == 'aaa' &&)
+                if (textSpan.Length == 5 &&
+                    keywordCheckBuffer[0] == 'aaa' &&
+                    keywordCheckBuffer[0] == 'aaa' &&
+                    keywordCheckBuffer[0] == 'aaa' &&
+                    keywordCheckBuffer[0] == 'aaa' &&
+                    keywordCheckBuffer[0] == 'aaa')
                 {
                     textSpan = textSpan with { DecorationByte = (byte)GenericDecorationKind.Keyword };
                     lexerOutput.SyntaxTokenList.Add(new SyntaxToken(SyntaxKind.UlongTokenKeyword, textSpan));
@@ -1607,8 +1755,16 @@ public static class CSharpLexer
 
                     
             case 938: // unchecked
-                if (textSpan.Length == aaa &&
-                    keywordCheckBuffer[0] == 'aaa' &&)
+                if (textSpan.Length == 9 &&
+                    keywordCheckBuffer[0] == 'aaa' &&
+                    keywordCheckBuffer[0] == 'aaa' &&
+                    keywordCheckBuffer[0] == 'aaa' &&
+                    keywordCheckBuffer[0] == 'aaa' &&
+                    keywordCheckBuffer[0] == 'aaa' &&
+                    keywordCheckBuffer[0] == 'aaa' &&
+                    keywordCheckBuffer[0] == 'aaa' &&
+                    keywordCheckBuffer[0] == 'aaa' &&
+                    keywordCheckBuffer[0] == 'aaa')
                 {
                     textSpan = textSpan with { DecorationByte = (byte)GenericDecorationKind.Keyword };
                     lexerOutput.SyntaxTokenList.Add(new SyntaxToken(SyntaxKind.UncheckedTokenKeyword, textSpan));
@@ -1617,8 +1773,13 @@ public static class CSharpLexer
 
                     
             case 642: // unsafe
-                if (textSpan.Length == aaa &&
-                    keywordCheckBuffer[0] == 'aaa' &&)
+                if (textSpan.Length == 6 &&
+                    keywordCheckBuffer[0] == 'aaa' &&
+                    keywordCheckBuffer[0] == 'aaa' &&
+                    keywordCheckBuffer[0] == 'aaa' &&
+                    keywordCheckBuffer[0] == 'aaa' &&
+                    keywordCheckBuffer[0] == 'aaa' &&
+                    keywordCheckBuffer[0] == 'aaa')
                 {
                     textSpan = textSpan with { DecorationByte = (byte)GenericDecorationKind.Keyword };
                     lexerOutput.SyntaxTokenList.Add(new SyntaxToken(SyntaxKind.UnsafeTokenKeyword, textSpan));
@@ -1627,8 +1788,12 @@ public static class CSharpLexer
 
                     
             case 550: // using
-                if (textSpan.Length == aaa &&
-                    keywordCheckBuffer[0] == 'aaa' &&)
+                if (textSpan.Length == 5 &&
+                    keywordCheckBuffer[0] == 'aaa' &&
+                    keywordCheckBuffer[0] == 'aaa' &&
+                    keywordCheckBuffer[0] == 'aaa' &&
+                    keywordCheckBuffer[0] == 'aaa' &&
+                    keywordCheckBuffer[0] == 'aaa')
                 {
                     textSpan = textSpan with { DecorationByte = (byte)GenericDecorationKind.Keyword };
                     lexerOutput.SyntaxTokenList.Add(new SyntaxToken(SyntaxKind.UsingTokenKeyword, textSpan));
@@ -1637,8 +1802,14 @@ public static class CSharpLexer
 
                     
             case 775: // virtual
-                if (textSpan.Length == aaa &&
-                    keywordCheckBuffer[0] == 'aaa' &&)
+                if (textSpan.Length == 7 &&
+                    keywordCheckBuffer[0] == 'aaa' &&
+                    keywordCheckBuffer[0] == 'aaa' &&
+                    keywordCheckBuffer[0] == 'aaa' &&
+                    keywordCheckBuffer[0] == 'aaa' &&
+                    keywordCheckBuffer[0] == 'aaa' &&
+                    keywordCheckBuffer[0] == 'aaa' &&
+                    keywordCheckBuffer[0] == 'aaa')
                 {
                     textSpan = textSpan with { DecorationByte = (byte)GenericDecorationKind.Keyword };
                     lexerOutput.SyntaxTokenList.Add(new SyntaxToken(SyntaxKind.VirtualTokenKeyword, textSpan));
@@ -1669,8 +1840,12 @@ public static class CSharpLexer
                 
                 break;
             case 517: // break
-                if (textSpan.Length == aaa &&
-                    keywordCheckBuffer[0] == 'aaa' &&)
+                if (textSpan.Length == 5 &&
+                    keywordCheckBuffer[0] == 'aaa' &&
+                    keywordCheckBuffer[0] == 'aaa' &&
+                    keywordCheckBuffer[0] == 'aaa' &&
+                    keywordCheckBuffer[0] == 'aaa' &&
+                    keywordCheckBuffer[0] == 'aaa')
                 {
                     textSpan = textSpan with { DecorationByte = (byte)GenericDecorationKind.KeywordControl };
                     lexerOutput.SyntaxTokenList.Add(new SyntaxToken(SyntaxKind.BreakTokenKeyword, textSpan));
@@ -1679,8 +1854,11 @@ public static class CSharpLexer
 
                     
             case 412: // case
-                if (textSpan.Length == aaa &&
-                    keywordCheckBuffer[0] == 'aaa' &&)
+                if (textSpan.Length == 4 &&
+                    keywordCheckBuffer[0] == 'aaa' &&
+                    keywordCheckBuffer[0] == 'aaa' &&
+                    keywordCheckBuffer[0] == 'aaa' &&
+                    keywordCheckBuffer[0] == 'aaa')
                 {
                     textSpan = textSpan with { DecorationByte = (byte)GenericDecorationKind.KeywordControl };
                     lexerOutput.SyntaxTokenList.Add(new SyntaxToken(SyntaxKind.CaseTokenKeyword, textSpan));
@@ -1689,7 +1867,14 @@ public static class CSharpLexer
 
                     
             case 869: // continue
-                if (textSpan.Length == aaa &&
+                if (textSpan.Length == 8 &&
+                    keywordCheckBuffer[0] == 'aaa' &&
+                    keywordCheckBuffer[0] == 'aaa' &&
+                    keywordCheckBuffer[0] == 'aaa' &&
+                    keywordCheckBuffer[0] == 'aaa' &&
+                    keywordCheckBuffer[0] == 'aaa' &&
+                    keywordCheckBuffer[0] == 'aaa' &&
+                    keywordCheckBuffer[0] == 'aaa' &&
                     keywordCheckBuffer[0] == 'aaa' &&)
                 {
                     textSpan = textSpan with { DecorationByte = (byte)GenericDecorationKind.KeywordControl };
@@ -1699,8 +1884,9 @@ public static class CSharpLexer
 
                     
             case 211: // do
-                if (textSpan.Length == aaa &&
-                    keywordCheckBuffer[0] == 'aaa' &&)
+                if (textSpan.Length == 2 &&
+                    keywordCheckBuffer[0] == 'aaa' &&
+                    keywordCheckBuffer[0] == 'aaa')
                 {
                     textSpan = textSpan with { DecorationByte = (byte)GenericDecorationKind.KeywordControl };
                     lexerOutput.SyntaxTokenList.Add(new SyntaxToken(SyntaxKind.DoTokenKeyword, textSpan));
@@ -1709,8 +1895,10 @@ public static class CSharpLexer
 
                     
             case 327: // for
-                if (textSpan.Length == aaa &&
-                    keywordCheckBuffer[0] == 'aaa' &&)
+                if (textSpan.Length == 3 &&
+                    keywordCheckBuffer[0] == 'aaa' &&
+                    keywordCheckBuffer[0] == 'aaa' &&
+                    keywordCheckBuffer[0] == 'aaa')
                 {
                     textSpan = textSpan with { DecorationByte = (byte)GenericDecorationKind.KeywordControl };
                     lexerOutput.SyntaxTokenList.Add(new SyntaxToken(SyntaxKind.ForTokenKeyword, textSpan));
@@ -1719,8 +1907,14 @@ public static class CSharpLexer
 
                     
             case 728: // foreach
-                if (textSpan.Length == aaa &&
-                    keywordCheckBuffer[0] == 'aaa' &&)
+                if (textSpan.Length == 7 &&
+                    keywordCheckBuffer[0] == 'aaa' &&
+                    keywordCheckBuffer[0] == 'aaa' &&
+                    keywordCheckBuffer[0] == 'aaa' &&
+                    keywordCheckBuffer[0] == 'aaa' &&
+                    keywordCheckBuffer[0] == 'aaa' &&
+                    keywordCheckBuffer[0] == 'aaa' &&
+                    keywordCheckBuffer[0] == 'aaa')
                 {
                     textSpan = textSpan with { DecorationByte = (byte)GenericDecorationKind.KeywordControl };
                     lexerOutput.SyntaxTokenList.Add(new SyntaxToken(SyntaxKind.ForeachTokenKeyword, textSpan));
@@ -1751,8 +1945,9 @@ public static class CSharpLexer
                 
                 break;
             case 207: // if
-                if (textSpan.Length == aaa &&
-                    keywordCheckBuffer[0] == 'aaa' &&)
+                if (textSpan.Length == 2 &&
+                    keywordCheckBuffer[0] == 'aaa' &&
+                    keywordCheckBuffer[0] == 'aaa')
                 {
                     textSpan = textSpan with { DecorationByte = (byte)GenericDecorationKind.KeywordControl };
                     lexerOutput.SyntaxTokenList.Add(new SyntaxToken(SyntaxKind.IfTokenKeyword, textSpan));
@@ -1761,8 +1956,13 @@ public static class CSharpLexer
 
                     
             case 672: // return
-                if (textSpan.Length == aaa &&
-                    keywordCheckBuffer[0] == 'aaa' &&)
+                if (textSpan.Length == 6 &&
+                    keywordCheckBuffer[0] == 'aaa' &&
+                    keywordCheckBuffer[0] == 'aaa' &&
+                    keywordCheckBuffer[0] == 'aaa' &&
+                    keywordCheckBuffer[0] == 'aaa' &&
+                    keywordCheckBuffer[0] == 'aaa' &&
+                    keywordCheckBuffer[0] == 'aaa')
                 {
                     textSpan = textSpan with { DecorationByte = (byte)GenericDecorationKind.KeywordControl };
                     lexerOutput.SyntaxTokenList.Add(new SyntaxToken(SyntaxKind.ReturnTokenKeyword, textSpan));
@@ -1771,8 +1971,13 @@ public static class CSharpLexer
 
                     
             case 658: // switch
-                if (textSpan.Length == aaa &&
-                    keywordCheckBuffer[0] == 'aaa' &&)
+                if (textSpan.Length == 6 &&
+                    keywordCheckBuffer[0] == 'aaa' &&
+                    keywordCheckBuffer[0] == 'aaa' &&
+                    keywordCheckBuffer[0] == 'aaa' &&
+                    keywordCheckBuffer[0] == 'aaa' &&
+                    keywordCheckBuffer[0] == 'aaa' &&
+                    keywordCheckBuffer[0] == 'aaa')
                 {
                     textSpan = textSpan with { DecorationByte = (byte)GenericDecorationKind.KeywordControl };
                     lexerOutput.SyntaxTokenList.Add(new SyntaxToken(SyntaxKind.SwitchTokenKeyword, textSpan));
@@ -1781,8 +1986,12 @@ public static class CSharpLexer
 
                     
             case 564: // throw
-                if (textSpan.Length == aaa &&
-                    keywordCheckBuffer[0] == 'aaa' &&)
+                if (textSpan.Length == 5 &&
+                    keywordCheckBuffer[0] == 'aaa' &&
+                    keywordCheckBuffer[0] == 'aaa' &&
+                    keywordCheckBuffer[0] == 'aaa' &&
+                    keywordCheckBuffer[0] == 'aaa' &&
+                    keywordCheckBuffer[0] == 'aaa')
                 {
                     textSpan = textSpan with { DecorationByte = (byte)GenericDecorationKind.KeywordControl };
                     lexerOutput.SyntaxTokenList.Add(new SyntaxToken(SyntaxKind.ThrowTokenKeyword, textSpan));
@@ -1791,8 +2000,12 @@ public static class CSharpLexer
 
                     
             case 537: // while
-                if (textSpan.Length == aaa &&
-                    keywordCheckBuffer[0] == 'aaa' &&)
+                if (textSpan.Length == 5 &&
+                    keywordCheckBuffer[0] == 'aaa' &&
+                    keywordCheckBuffer[0] == 'aaa' &&
+                    keywordCheckBuffer[0] == 'aaa' &&
+                    keywordCheckBuffer[0] == 'aaa' &&
+                    keywordCheckBuffer[0] == 'aaa')
                 {
                     textSpan = textSpan with { DecorationByte = (byte)GenericDecorationKind.KeywordControl };
                     lexerOutput.SyntaxTokenList.Add(new SyntaxToken(SyntaxKind.WhileTokenKeyword, textSpan));
@@ -1801,8 +2014,10 @@ public static class CSharpLexer
 
                     
             case 297: // add
-                if (textSpan.Length == aaa &&
-                    keywordCheckBuffer[0] == 'aaa' &&)
+                if (textSpan.Length == 3 &&
+                    keywordCheckBuffer[0] == 'aaa' &&
+                    keywordCheckBuffer[0] == 'aaa' &&
+                    keywordCheckBuffer[0] == 'aaa')
                 {
                     textSpan = textSpan with { DecorationByte = (byte)GenericDecorationKind.Keyword };
                     lexerOutput.SyntaxTokenList.Add(new SyntaxToken(SyntaxKind.AddTokenContextualKeyword, textSpan));
@@ -1811,8 +2026,10 @@ public static class CSharpLexer
 
                     
             case 307: // and
-                if (textSpan.Length == aaa &&
-                    keywordCheckBuffer[0] == 'aaa' &&)
+                if (textSpan.Length == 3 &&
+                    keywordCheckBuffer[0] == 'aaa' &&
+                    keywordCheckBuffer[0] == 'aaa' &&
+                    keywordCheckBuffer[0] == 'aaa')
                 {
                     textSpan = textSpan with { DecorationByte = (byte)GenericDecorationKind.Keyword };
                     lexerOutput.SyntaxTokenList.Add(new SyntaxToken(SyntaxKind.AndTokenContextualKeyword, textSpan));
@@ -1821,8 +2038,12 @@ public static class CSharpLexer
 
                     
             case 522: // alias
-                if (textSpan.Length == aaa &&
-                    keywordCheckBuffer[0] == 'aaa' &&)
+                if (textSpan.Length == 5 &&
+                    keywordCheckBuffer[0] == 'aaa' &&
+                    keywordCheckBuffer[0] == 'aaa' &&
+                    keywordCheckBuffer[0] == 'aaa' &&
+                    keywordCheckBuffer[0] == 'aaa' &&
+                    keywordCheckBuffer[0] == 'aaa')
                 {
                     textSpan = textSpan with { DecorationByte = (byte)GenericDecorationKind.Keyword };
                     lexerOutput.SyntaxTokenList.Add(new SyntaxToken(SyntaxKind.AliasTokenContextualKeyword, textSpan));
@@ -1831,8 +2052,16 @@ public static class CSharpLexer
 
                     
             case 940: // ascending
-                if (textSpan.Length == aaa &&
-                    keywordCheckBuffer[0] == 'aaa' &&)
+                if (textSpan.Length == 9 &&
+                    keywordCheckBuffer[0] == 'aaa' &&
+                    keywordCheckBuffer[0] == 'aaa' &&
+                    keywordCheckBuffer[0] == 'aaa' &&
+                    keywordCheckBuffer[0] == 'aaa' &&
+                    keywordCheckBuffer[0] == 'aaa' &&
+                    keywordCheckBuffer[0] == 'aaa' &&
+                    keywordCheckBuffer[0] == 'aaa' &&
+                    keywordCheckBuffer[0] == 'aaa' &&
+                    keywordCheckBuffer[0] == 'aaa')
                 {
                     textSpan = textSpan with { DecorationByte = (byte)GenericDecorationKind.Keyword };
                     lexerOutput.SyntaxTokenList.Add(new SyntaxToken(SyntaxKind.AscendingTokenContextualKeyword, textSpan));
@@ -1841,8 +2070,11 @@ public static class CSharpLexer
 
                     
             case 429: // args
-                if (textSpan.Length == aaa &&
-                    keywordCheckBuffer[0] == 'aaa' &&)
+                if (textSpan.Length == 4 &&
+                    keywordCheckBuffer[0] == 'aaa' &&
+                    keywordCheckBuffer[0] == 'aaa' &&
+                    keywordCheckBuffer[0] == 'aaa' &&
+                    keywordCheckBuffer[0] == 'aaa')
                 {
                     textSpan = textSpan with { DecorationByte = (byte)GenericDecorationKind.Keyword };
                     lexerOutput.SyntaxTokenList.Add(new SyntaxToken(SyntaxKind.ArgsTokenContextualKeyword, textSpan));
@@ -1851,8 +2083,12 @@ public static class CSharpLexer
 
                     
             case 542: // async
-                if (textSpan.Length == aaa &&
-                    keywordCheckBuffer[0] == 'aaa' &&)
+                if (textSpan.Length == 5 &&
+                    keywordCheckBuffer[0] == 'aaa' &&
+                    keywordCheckBuffer[0] == 'aaa' &&
+                    keywordCheckBuffer[0] == 'aaa' &&
+                    keywordCheckBuffer[0] == 'aaa' &&
+                    keywordCheckBuffer[0] == 'aaa')
                 {
                     textSpan = textSpan with { DecorationByte = (byte)GenericDecorationKind.Keyword };
                     lexerOutput.SyntaxTokenList.Add(new SyntaxToken(SyntaxKind.AsyncTokenContextualKeyword, textSpan));
@@ -1861,8 +2097,9 @@ public static class CSharpLexer
 
                     
             case 219: // by
-                if (textSpan.Length == aaa &&
-                    keywordCheckBuffer[0] == 'aaa' &&)
+                if (textSpan.Length == 2 &&
+                    keywordCheckBuffer[0] == 'aaa' &&
+                    keywordCheckBuffer[0] == 'aaa')
                 {
                     textSpan = textSpan with { DecorationByte = (byte)GenericDecorationKind.Keyword };
                     lexerOutput.SyntaxTokenList.Add(new SyntaxToken(SyntaxKind.ByTokenContextualKeyword, textSpan));
@@ -1871,8 +2108,17 @@ public static class CSharpLexer
 
                     
             case 1044: // descending
-                if (textSpan.Length == aaa &&
-                    keywordCheckBuffer[0] == 'aaa' &&)
+                if (textSpan.Length == 10 &&
+                    keywordCheckBuffer[0] == 'aaa' &&
+                    keywordCheckBuffer[0] == 'aaa' &&
+                    keywordCheckBuffer[0] == 'aaa' &&
+                    keywordCheckBuffer[0] == 'aaa' &&
+                    keywordCheckBuffer[0] == 'aaa' &&
+                    keywordCheckBuffer[0] == 'aaa' &&
+                    keywordCheckBuffer[0] == 'aaa' &&
+                    keywordCheckBuffer[0] == 'aaa' &&
+                    keywordCheckBuffer[0] == 'aaa' &&
+                    keywordCheckBuffer[0] == 'aaa')
                 {
                     textSpan = textSpan with { DecorationByte = (byte)GenericDecorationKind.Keyword };
                     lexerOutput.SyntaxTokenList.Add(new SyntaxToken(SyntaxKind.DescendingTokenContextualKeyword, textSpan));
@@ -1881,8 +2127,13 @@ public static class CSharpLexer
 
                     
             case 651: // equals
-                if (textSpan.Length == aaa &&
-                    keywordCheckBuffer[0] == 'aaa' &&)
+                if (textSpan.Length == 6 &&
+                    keywordCheckBuffer[0] == 'aaa' &&
+                    keywordCheckBuffer[0] == 'aaa' &&
+                    keywordCheckBuffer[0] == 'aaa' &&
+                    keywordCheckBuffer[0] == 'aaa' &&
+                    keywordCheckBuffer[0] == 'aaa' &&
+                    keywordCheckBuffer[0] == 'aaa')
                 {
                     textSpan = textSpan with { DecorationByte = (byte)GenericDecorationKind.Keyword };
                     lexerOutput.SyntaxTokenList.Add(new SyntaxToken(SyntaxKind.EqualsTokenContextualKeyword, textSpan));
@@ -1891,8 +2142,11 @@ public static class CSharpLexer
 
                     
             case 416: // file
-                if (textSpan.Length == aaa &&
-                    keywordCheckBuffer[0] == 'aaa' &&)
+                if (textSpan.Length == 4 &&
+                    keywordCheckBuffer[0] == 'aaa' &&
+                    keywordCheckBuffer[0] == 'aaa' &&
+                    keywordCheckBuffer[0] == 'aaa' &&
+                    keywordCheckBuffer[0] == 'aaa')
                 {
                     textSpan = textSpan with { DecorationByte = (byte)GenericDecorationKind.Keyword };
                     lexerOutput.SyntaxTokenList.Add(new SyntaxToken(SyntaxKind.FileTokenContextualKeyword, textSpan));
@@ -1901,8 +2155,10 @@ public static class CSharpLexer
 
                     
             case 320: // get
-                if (textSpan.Length == aaa &&
-                    keywordCheckBuffer[0] == 'aaa' &&)
+                if (textSpan.Length == 3 &&
+                    keywordCheckBuffer[0] == 'aaa' &&
+                    keywordCheckBuffer[0] == 'aaa' &&
+                    keywordCheckBuffer[0] == 'aaa')
                 {
                     textSpan = textSpan with { DecorationByte = (byte)GenericDecorationKind.Keyword };
                     lexerOutput.SyntaxTokenList.Add(new SyntaxToken(SyntaxKind.GetTokenContextualKeyword, textSpan));
@@ -1911,8 +2167,13 @@ public static class CSharpLexer
 
                     
             case 625: // global
-                if (textSpan.Length == aaa &&
-                    keywordCheckBuffer[0] == 'aaa' &&)
+                if (textSpan.Length == 6 &&
+                    keywordCheckBuffer[0] == 'aaa' &&
+                    keywordCheckBuffer[0] == 'aaa' &&
+                    keywordCheckBuffer[0] == 'aaa' &&
+                    keywordCheckBuffer[0] == 'aaa' &&
+                    keywordCheckBuffer[0] == 'aaa' &&
+                    keywordCheckBuffer[0] == 'aaa')
                 {
                     textSpan = textSpan with { DecorationByte = (byte)GenericDecorationKind.Keyword };
                     lexerOutput.SyntaxTokenList.Add(new SyntaxToken(SyntaxKind.GlobalTokenContextualKeyword, textSpan));
@@ -1921,8 +2182,12 @@ public static class CSharpLexer
 
                     
             case 557: // group
-                if (textSpan.Length == aaa &&
-                    keywordCheckBuffer[0] == 'aaa' &&)
+                if (textSpan.Length == 5 &&
+                    keywordCheckBuffer[0] == 'aaa' &&
+                    keywordCheckBuffer[0] == 'aaa' &&
+                    keywordCheckBuffer[0] == 'aaa' &&
+                    keywordCheckBuffer[0] == 'aaa' &&
+                    keywordCheckBuffer[0] == 'aaa')
                 {
                     textSpan = textSpan with { DecorationByte = (byte)GenericDecorationKind.Keyword };
                     lexerOutput.SyntaxTokenList.Add(new SyntaxToken(SyntaxKind.GroupTokenContextualKeyword, textSpan));
@@ -1931,8 +2196,11 @@ public static class CSharpLexer
 
                     
             case 442: // into
-                if (textSpan.Length == aaa &&
-                    keywordCheckBuffer[0] == 'aaa' &&)
+                if (textSpan.Length == 4 &&
+                    keywordCheckBuffer[0] == 'aaa' &&
+                    keywordCheckBuffer[0] == 'aaa' &&
+                    keywordCheckBuffer[0] == 'aaa' &&
+                    keywordCheckBuffer[0] == 'aaa')
                 {
                     textSpan = textSpan with { DecorationByte = (byte)GenericDecorationKind.Keyword };
                     lexerOutput.SyntaxTokenList.Add(new SyntaxToken(SyntaxKind.IntoTokenContextualKeyword, textSpan));
@@ -1941,8 +2209,10 @@ public static class CSharpLexer
 
                     
             case 325: // let
-                if (textSpan.Length == aaa &&
-                    keywordCheckBuffer[0] == 'aaa' &&)
+                if (textSpan.Length == 3 &&
+                    keywordCheckBuffer[0] == 'aaa' &&
+                    keywordCheckBuffer[0] == 'aaa' &&
+                    keywordCheckBuffer[0] == 'aaa')
                 {
                     textSpan = textSpan with { DecorationByte = (byte)GenericDecorationKind.Keyword };
                     lexerOutput.SyntaxTokenList.Add(new SyntaxToken(SyntaxKind.LetTokenContextualKeyword, textSpan));
@@ -1951,8 +2221,14 @@ public static class CSharpLexer
 
                     
             case 717: // managed
-                if (textSpan.Length == aaa &&
-                    keywordCheckBuffer[0] == 'aaa' &&)
+                if (textSpan.Length == 7 &&
+                    keywordCheckBuffer[0] == 'aaa' &&
+                    keywordCheckBuffer[0] == 'aaa' &&
+                    keywordCheckBuffer[0] == 'aaa' &&
+                    keywordCheckBuffer[0] == 'aaa' &&
+                    keywordCheckBuffer[0] == 'aaa' &&
+                    keywordCheckBuffer[0] == 'aaa' &&
+                    keywordCheckBuffer[0] == 'aaa')
                 {
                     textSpan = textSpan with { DecorationByte = (byte)GenericDecorationKind.Keyword };
                     lexerOutput.SyntaxTokenList.Add(new SyntaxToken(SyntaxKind.ManagedTokenContextualKeyword, textSpan));
@@ -1961,8 +2237,13 @@ public static class CSharpLexer
 
                     
             case 630: // nameof
-                if (textSpan.Length == aaa &&
-                    keywordCheckBuffer[0] == 'aaa' &&)
+                if (textSpan.Length == 6 &&
+                    keywordCheckBuffer[0] == 'aaa' &&
+                    keywordCheckBuffer[0] == 'aaa' &&
+                    keywordCheckBuffer[0] == 'aaa' &&
+                    keywordCheckBuffer[0] == 'aaa' &&
+                    keywordCheckBuffer[0] == 'aaa' &&
+                    keywordCheckBuffer[0] == 'aaa')
                 {
                     textSpan = textSpan with { DecorationByte = (byte)GenericDecorationKind.Keyword };
                     lexerOutput.SyntaxTokenList.Add(new SyntaxToken(SyntaxKind.NameofTokenContextualKeyword, textSpan));
@@ -1971,8 +2252,10 @@ public static class CSharpLexer
 
                     
             case 337: // not
-                if (textSpan.Length == aaa &&
-                    keywordCheckBuffer[0] == 'aaa' &&)
+                if (textSpan.Length == 3 &&
+                    keywordCheckBuffer[0] == 'aaa' &&
+                    keywordCheckBuffer[0] == 'aaa' &&
+                    keywordCheckBuffer[0] == 'aaa')
                 {
                     textSpan = textSpan with { DecorationByte = (byte)GenericDecorationKind.Keyword };
                     lexerOutput.SyntaxTokenList.Add(new SyntaxToken(SyntaxKind.NotTokenContextualKeyword, textSpan));
@@ -1981,8 +2264,14 @@ public static class CSharpLexer
 
                     
             case 780: // notnull
-                if (textSpan.Length == aaa &&
-                    keywordCheckBuffer[0] == 'aaa' &&)
+                if (textSpan.Length == 7 &&
+                    keywordCheckBuffer[0] == 'aaa' &&
+                    keywordCheckBuffer[0] == 'aaa' &&
+                    keywordCheckBuffer[0] == 'aaa' &&
+                    keywordCheckBuffer[0] == 'aaa' &&
+                    keywordCheckBuffer[0] == 'aaa' &&
+                    keywordCheckBuffer[0] == 'aaa' &&
+                    keywordCheckBuffer[0] == 'aaa')
                 {
                     textSpan = textSpan with { DecorationByte = (byte)GenericDecorationKind.Keyword };
                     lexerOutput.SyntaxTokenList.Add(new SyntaxToken(SyntaxKind.NotnullTokenContextualKeyword, textSpan));
@@ -1991,8 +2280,12 @@ public static class CSharpLexer
 
                     
             case 558: // nuint
-                if (textSpan.Length == aaa &&
-                    keywordCheckBuffer[0] == 'aaa' &&)
+                if (textSpan.Length == 5 &&
+                    keywordCheckBuffer[0] == 'aaa' &&
+                    keywordCheckBuffer[0] == 'aaa' &&
+                    keywordCheckBuffer[0] == 'aaa' &&
+                    keywordCheckBuffer[0] == 'aaa' &&
+                    keywordCheckBuffer[0] == 'aaa')
                 {
                     textSpan = textSpan with { DecorationByte = (byte)GenericDecorationKind.Keyword };
                     lexerOutput.SyntaxTokenList.Add(new SyntaxToken(SyntaxKind.NuintTokenContextualKeyword, textSpan));
@@ -2001,8 +2294,9 @@ public static class CSharpLexer
 
                     
             case 221: // on
-                if (textSpan.Length == aaa &&
-                    keywordCheckBuffer[0] == 'aaa' &&)
+                if (textSpan.Length == 2 &&
+                    keywordCheckBuffer[0] == 'aaa' &&
+                    keywordCheckBuffer[0] == 'aaa')
                 {
                     textSpan = textSpan with { DecorationByte = (byte)GenericDecorationKind.Keyword };
                     lexerOutput.SyntaxTokenList.Add(new SyntaxToken(SyntaxKind.OnTokenContextualKeyword, textSpan));
@@ -2011,8 +2305,9 @@ public static class CSharpLexer
 
                     
             case 225: // or
-                if (textSpan.Length == aaa &&
-                    keywordCheckBuffer[0] == 'aaa' &&)
+                if (textSpan.Length == 2 &&
+                    keywordCheckBuffer[0] == 'aaa' &&
+                    keywordCheckBuffer[0] == 'aaa')
                 {
                     textSpan = textSpan with { DecorationByte = (byte)GenericDecorationKind.Keyword };
                     lexerOutput.SyntaxTokenList.Add(new SyntaxToken(SyntaxKind.OrTokenContextualKeyword, textSpan));
@@ -2021,8 +2316,14 @@ public static class CSharpLexer
 
                     
             case 759: // orderby
-                if (textSpan.Length == aaa &&
-                    keywordCheckBuffer[0] == 'aaa' &&)
+                if (textSpan.Length == 7 &&
+                    keywordCheckBuffer[0] == 'aaa' &&
+                    keywordCheckBuffer[0] == 'aaa' &&
+                    keywordCheckBuffer[0] == 'aaa' &&
+                    keywordCheckBuffer[0] == 'aaa' &&
+                    keywordCheckBuffer[0] == 'aaa' &&
+                    keywordCheckBuffer[0] == 'aaa' &&
+                    keywordCheckBuffer[0] == 'aaa')
                 {
                     textSpan = textSpan with { DecorationByte = (byte)GenericDecorationKind.Keyword };
                     lexerOutput.SyntaxTokenList.Add(new SyntaxToken(SyntaxKind.OrderbyTokenContextualKeyword, textSpan));
@@ -2031,8 +2332,14 @@ public static class CSharpLexer
 
                     
             case 749: // partial
-                if (textSpan.Length == aaa &&
-                    keywordCheckBuffer[0] == 'aaa' &&)
+                if (textSpan.Length == 7 &&
+                    keywordCheckBuffer[0] == 'aaa' &&
+                    keywordCheckBuffer[0] == 'aaa' &&
+                    keywordCheckBuffer[0] == 'aaa' &&
+                    keywordCheckBuffer[0] == 'aaa' &&
+                    keywordCheckBuffer[0] == 'aaa' &&
+                    keywordCheckBuffer[0] == 'aaa' &&
+                    keywordCheckBuffer[0] == 'aaa')
                 {
                     textSpan = textSpan with { DecorationByte = (byte)GenericDecorationKind.Keyword };
                     lexerOutput.SyntaxTokenList.Add(new SyntaxToken(SyntaxKind.PartialTokenContextualKeyword, textSpan));
@@ -2041,8 +2348,13 @@ public static class CSharpLexer
 
                     
             case 654: // remove
-                if (textSpan.Length == aaa &&
-                    keywordCheckBuffer[0] == 'aaa' &&)
+                if (textSpan.Length == 6 &&
+                    keywordCheckBuffer[0] == 'aaa' &&
+                    keywordCheckBuffer[0] == 'aaa' &&
+                    keywordCheckBuffer[0] == 'aaa' &&
+                    keywordCheckBuffer[0] == 'aaa' &&
+                    keywordCheckBuffer[0] == 'aaa' &&
+                    keywordCheckBuffer[0] == 'aaa')
                 {
                     textSpan = textSpan with { DecorationByte = (byte)GenericDecorationKind.Keyword };
                     lexerOutput.SyntaxTokenList.Add(new SyntaxToken(SyntaxKind.RemoveTokenContextualKeyword, textSpan));
@@ -2051,8 +2363,15 @@ public static class CSharpLexer
 
                     
             case 865: // required
-                if (textSpan.Length == aaa &&
-                    keywordCheckBuffer[0] == 'aaa' &&)
+                if (textSpan.Length == 8 &&
+                    keywordCheckBuffer[0] == 'aaa' &&
+                    keywordCheckBuffer[0] == 'aaa' &&
+                    keywordCheckBuffer[0] == 'aaa' &&
+                    keywordCheckBuffer[0] == 'aaa' &&
+                    keywordCheckBuffer[0] == 'aaa' &&
+                    keywordCheckBuffer[0] == 'aaa' &&
+                    keywordCheckBuffer[0] == 'aaa' &&
+                    keywordCheckBuffer[0] == 'aaa')
                 {
                     textSpan = textSpan with { DecorationByte = (byte)GenericDecorationKind.Keyword };
                     lexerOutput.SyntaxTokenList.Add(new SyntaxToken(SyntaxKind.RequiredTokenContextualKeyword, textSpan));
@@ -2061,8 +2380,13 @@ public static class CSharpLexer
 
                     
             case 638: // scoped
-                if (textSpan.Length == aaa &&
-                    keywordCheckBuffer[0] == 'aaa' &&)
+                if (textSpan.Length == 6 &&
+                    keywordCheckBuffer[0] == 'aaa' &&
+                    keywordCheckBuffer[0] == 'aaa' &&
+                    keywordCheckBuffer[0] == 'aaa' &&
+                    keywordCheckBuffer[0] == 'aaa' &&
+                    keywordCheckBuffer[0] == 'aaa' &&
+                    keywordCheckBuffer[0] == 'aaa')
                 {
                     textSpan = textSpan with { DecorationByte = (byte)GenericDecorationKind.Keyword };
                     lexerOutput.SyntaxTokenList.Add(new SyntaxToken(SyntaxKind.ScopedTokenContextualKeyword, textSpan));
@@ -2071,8 +2395,13 @@ public static class CSharpLexer
 
                     
             case 640: // select
-                if (textSpan.Length == aaa &&
-                    keywordCheckBuffer[0] == 'aaa' &&)
+                if (textSpan.Length == 6 &&
+                    keywordCheckBuffer[0] == 'aaa' &&
+                    keywordCheckBuffer[0] == 'aaa' &&
+                    keywordCheckBuffer[0] == 'aaa' &&
+                    keywordCheckBuffer[0] == 'aaa' &&
+                    keywordCheckBuffer[0] == 'aaa' &&
+                    keywordCheckBuffer[0] == 'aaa')
                 {
                     textSpan = textSpan with { DecorationByte = (byte)GenericDecorationKind.Keyword };
                     lexerOutput.SyntaxTokenList.Add(new SyntaxToken(SyntaxKind.SelectTokenContextualKeyword, textSpan));
@@ -2081,8 +2410,10 @@ public static class CSharpLexer
 
                     
             case 332: // set
-                if (textSpan.Length == aaa &&
-                    keywordCheckBuffer[0] == 'aaa' &&)
+                if (textSpan.Length == 3 &&
+                    keywordCheckBuffer[0] == 'aaa' &&
+                    keywordCheckBuffer[0] == 'aaa' &&
+                    keywordCheckBuffer[0] == 'aaa')
                 {
                     textSpan = textSpan with { DecorationByte = (byte)GenericDecorationKind.Keyword };
                     lexerOutput.SyntaxTokenList.Add(new SyntaxToken(SyntaxKind.SetTokenContextualKeyword, textSpan));
@@ -2091,7 +2422,15 @@ public static class CSharpLexer
 
                     
             case 944: // unmanaged
-                if (textSpan.Length == aaa &&
+                if (textSpan.Length == 9 &&
+                    keywordCheckBuffer[0] == 'aaa' &&
+                    keywordCheckBuffer[0] == 'aaa' &&
+                    keywordCheckBuffer[0] == 'aaa' &&
+                    keywordCheckBuffer[0] == 'aaa' &&
+                    keywordCheckBuffer[0] == 'aaa' &&
+                    keywordCheckBuffer[0] == 'aaa' &&
+                    keywordCheckBuffer[0] == 'aaa' &&
+                    keywordCheckBuffer[0] == 'aaa' &&
                     keywordCheckBuffer[0] == 'aaa' &&)
                 {
                     textSpan = textSpan with { DecorationByte = (byte)GenericDecorationKind.Keyword };
@@ -2101,8 +2440,12 @@ public static class CSharpLexer
 
                     
             case 541: // value
-                if (textSpan.Length == aaa &&
-                    keywordCheckBuffer[0] == 'aaa' &&)
+                if (textSpan.Length == 5 &&
+                    keywordCheckBuffer[0] == 'aaa' &&
+                    keywordCheckBuffer[0] == 'aaa' &&
+                    keywordCheckBuffer[0] == 'aaa' &&
+                    keywordCheckBuffer[0] == 'aaa' &&
+                    keywordCheckBuffer[0] == 'aaa')
                 {
                     textSpan = textSpan with { DecorationByte = (byte)GenericDecorationKind.Keyword };
                     lexerOutput.SyntaxTokenList.Add(new SyntaxToken(SyntaxKind.ValueTokenContextualKeyword, textSpan));
@@ -2111,8 +2454,10 @@ public static class CSharpLexer
 
                     
             case 329: // var
-                if (textSpan.Length == aaa &&
-                    keywordCheckBuffer[0] == 'aaa' &&)
+                if (textSpan.Length == 3 &&
+                    keywordCheckBuffer[0] == 'aaa' &&
+                    keywordCheckBuffer[0] == 'aaa' &&
+                    keywordCheckBuffer[0] == 'aaa')
                 {
                     textSpan = textSpan with { DecorationByte = (byte)GenericDecorationKind.Keyword };
                     lexerOutput.SyntaxTokenList.Add(new SyntaxToken(SyntaxKind.VarTokenContextualKeyword, textSpan));
@@ -2121,8 +2466,12 @@ public static class CSharpLexer
 
                     
             case 539: // where
-                if (textSpan.Length == aaa &&
-                    keywordCheckBuffer[0] == 'aaa' &&)
+                if (textSpan.Length == 5 &&
+                    keywordCheckBuffer[0] == 'aaa' &&
+                    keywordCheckBuffer[0] == 'aaa' &&
+                    keywordCheckBuffer[0] == 'aaa' &&
+                    keywordCheckBuffer[0] == 'aaa' &&
+                    keywordCheckBuffer[0] == 'aaa')
                 {
                     textSpan = textSpan with { DecorationByte = (byte)GenericDecorationKind.Keyword };
                     lexerOutput.SyntaxTokenList.Add(new SyntaxToken(SyntaxKind.WhereTokenContextualKeyword, textSpan));
@@ -2131,8 +2480,11 @@ public static class CSharpLexer
 
                     
             case 444: // with
-                if (textSpan.Length == aaa &&
-                    keywordCheckBuffer[0] == 'aaa' &&)
+                if (textSpan.Length == 4 &&
+                    keywordCheckBuffer[0] == 'aaa' &&
+                    keywordCheckBuffer[0] == 'aaa' &&
+                    keywordCheckBuffer[0] == 'aaa' &&
+                    keywordCheckBuffer[0] == 'aaa')
                 {
                     textSpan = textSpan with { DecorationByte = (byte)GenericDecorationKind.Keyword };
                     lexerOutput.SyntaxTokenList.Add(new SyntaxToken(SyntaxKind.WithTokenContextualKeyword, textSpan));
@@ -2141,8 +2493,12 @@ public static class CSharpLexer
 
                     
             case 535: // yield
-                if (textSpan.Length == aaa &&
-                    keywordCheckBuffer[0] == 'aaa' &&)
+                if (textSpan.Length == 5 &&
+                    keywordCheckBuffer[0] == 'aaa' &&
+                    keywordCheckBuffer[0] == 'aaa' &&
+                    keywordCheckBuffer[0] == 'aaa' &&
+                    keywordCheckBuffer[0] == 'aaa' &&
+                    keywordCheckBuffer[0] == 'aaa')
                 {
                     textSpan = textSpan with { DecorationByte = (byte)GenericDecorationKind.KeywordControl };
                     lexerOutput.SyntaxTokenList.Add(new SyntaxToken(SyntaxKind.YieldTokenContextualKeyword, textSpan));
