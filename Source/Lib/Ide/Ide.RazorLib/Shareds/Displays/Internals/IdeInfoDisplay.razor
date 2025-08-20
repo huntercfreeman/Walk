@@ -158,11 +158,19 @@
         Recent Changes:
 		<div>
 		    <div>
-                <div>v <em class="di_em">69.0.0 </em> (2025-08-19)</div>
+                <div>v <em class="di_em">70.0.0 </em> (2025-08-20)</div>
                 <ul>
                     <li>
-                        Draft PR
+                        Fix demo.
                     </li>
+                    <li>
+                        C# parser is twice as fast by checking length before comparing strings.
+                    </li>
+                </ul>
+            </div>
+            <div>
+                <div>v <em class="di_em">69.0.0 </em> (2025-08-19)</div>
+                <ul>
                     <li>
                         Change C# Lexer to avoid string logic when lexing keywords.
                     </li>
@@ -270,98 +278,6 @@
                     </li>
                     <li>
                         More IdeMainLayout.razor optimizations (text editor group related)
-                    </li>
-                </ul>
-            </div>
-            <div>
-                <div>v <em class="di_em">63.0.0 </em> (2025-08-12)</div>
-                <ul>
-                    <li>
-                        Some IdeMainLayout.razor optimizations
-                    </li>
-                    <li>
-                        Fix open/new .NET Solution 'File' buttons missing and remove console write message
-                    </li>
-                    <li>
-                        Panel grid was reworked
-                        (
-                            resizing is a bit off at the moment
-                            and having it be 100% consistent is my next goal
-                            after accepting this commit.
-                        ).
-                    </li>
-                    <li>
-                        UI optimizations (ElementDimensions)
-                    </li>
-                </ul>
-            </div>
-            <div>
-                <div>v <em class="di_em">62.0.0 </em> (2025-08-11)</div>
-                <ul>
-                    <li>
-                        Clear startup controls every solution wide parse
-                        but when finished parsing try to restore the originally selected
-                        startup project if there was one.
-                    </li>
-                    <li>
-                        Inline startup controls
-                    </li>
-                    <li>
-                        Main layout ResizableRow inlined
-                    </li>
-                    <li>
-                        Main layout ResizableColumn inlined
-                    </li>
-                    <li>
-                        Clear tooltip on goto definition
-                    </li>
-                </ul>
-            </div>
-            <div>
-                <div>v <em class="di_em">61.0.0 </em> (2025-08-10)</div>
-                <ul>
-                    <li>
-                        CommonUiIsland.razor.cs
-                    </li>
-                    <li>
-                        CSS optimizations.
-                    </li>
-                    <li>
-                        PanelGroup optimizations
-                    </li>
-                    <li>
-                        Measure character width with "JavaScript alone".
-                        JavaScript inserts the text, measures it, and deletes the text all in one JSInterop invocation.
-                    </li>
-                    <li>
-                        Avoid dynamic component for panel body where applicable
-                    </li>
-                    <li>
-                        I'm making some EXTREME UI optimizations.
-                        This is only some of the changes.
-                    </li>
-                </ul>
-            </div>
-            <div>
-                <div>v <em class="di_em">60.0.0 </em> (2025-08-09)</div>
-                <ul>
-                    <li>
-                        Pool_NamespaceClauseNode_%: 98.0%
-                    </li>
-                    <li>
-                        Pool_ConstructorInvocationNode_%: 95.5%
-                    </li>
-                    <li>
-                        Pool_FunctionInvocationNode_%: 90.0%
-                    </li>
-                    <li>
-                        DimensionUnitPurposeKind.cs
-                    </li>
-                    <li>
-                        ProgressBarDisplay.razor optimizations
-                    </li>
-                    <li>
-                        FunctionInvocationNode pool 64.1%
                     </li>
                 </ul>
             </div>
