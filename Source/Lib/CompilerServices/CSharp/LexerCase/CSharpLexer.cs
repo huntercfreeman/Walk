@@ -897,8 +897,7 @@ public static class CSharpLexer
                     binder.KeywordCheckBuffer[6] == 'c' &&
                     binder.KeywordCheckBuffer[7] == 't')
                 {
-                    textSpan = textSpan with { DecorationByte = (byte)GenericDecorationKind.Keyword };
-                    lexerOutput.SyntaxTokenList.Add(new SyntaxToken(SyntaxKind.AbstractTokenKeyword, textSpan));
+                    lexerOutput.SyntaxTokenList.Add(new SyntaxToken(SyntaxKind.AbstractTokenKeyword, textSpan with { DecorationByte = (byte)GenericDecorationKind.Keyword }));
                     return;
                 }
                 
@@ -908,8 +907,7 @@ public static class CSharpLexer
                     binder.KeywordCheckBuffer[0] == 'a' &&
                     binder.KeywordCheckBuffer[1] == 's')
                 {
-                    textSpan = textSpan with { DecorationByte = (byte)GenericDecorationKind.Keyword };
-                    lexerOutput.SyntaxTokenList.Add(new SyntaxToken(SyntaxKind.AsTokenKeyword, textSpan));
+                    lexerOutput.SyntaxTokenList.Add(new SyntaxToken(SyntaxKind.AsTokenKeyword, textSpan with { DecorationByte = (byte)GenericDecorationKind.Keyword }));
                     return;
                 }
             
@@ -921,8 +919,7 @@ public static class CSharpLexer
                     binder.KeywordCheckBuffer[2] == 's' &&
                     binder.KeywordCheckBuffer[3] == 'e')
                 {
-                    textSpan = textSpan with { DecorationByte = (byte)GenericDecorationKind.Keyword };
-                    lexerOutput.SyntaxTokenList.Add(new SyntaxToken(SyntaxKind.BaseTokenKeyword, textSpan));
+                    lexerOutput.SyntaxTokenList.Add(new SyntaxToken(SyntaxKind.BaseTokenKeyword, textSpan with { DecorationByte = (byte)GenericDecorationKind.Keyword }));
                     return;
                 }
             
@@ -934,8 +931,7 @@ public static class CSharpLexer
                     binder.KeywordCheckBuffer[2] == 'o' &&
                     binder.KeywordCheckBuffer[3] == 'l')
                 {
-                    textSpan = textSpan with { DecorationByte = (byte)GenericDecorationKind.Keyword };
-                    lexerOutput.SyntaxTokenList.Add(new SyntaxToken(SyntaxKind.BoolTokenKeyword, textSpan));
+                    lexerOutput.SyntaxTokenList.Add(new SyntaxToken(SyntaxKind.BoolTokenKeyword, textSpan with { DecorationByte = (byte)GenericDecorationKind.Keyword }));
                     return;
                 }
 
@@ -951,8 +947,7 @@ public static class CSharpLexer
                     binder.KeywordCheckBuffer[3] == 'e')
                 {
                     // byte
-                    textSpan = textSpan with { DecorationByte = (byte)GenericDecorationKind.Keyword };
-                    lexerOutput.SyntaxTokenList.Add(new SyntaxToken(SyntaxKind.ByteTokenKeyword, textSpan));
+                    lexerOutput.SyntaxTokenList.Add(new SyntaxToken(SyntaxKind.ByteTokenKeyword, textSpan with { DecorationByte = (byte)GenericDecorationKind.Keyword }));
                     return;
                 }
                 else if (binder.KeywordCheckBuffer[0] == 'f' &&
@@ -961,8 +956,7 @@ public static class CSharpLexer
                          binder.KeywordCheckBuffer[3] == 'm')
                 {
                     // from
-                    textSpan = textSpan with { DecorationByte = (byte)GenericDecorationKind.Keyword };
-                    lexerOutput.SyntaxTokenList.Add(new SyntaxToken(SyntaxKind.FromTokenContextualKeyword, textSpan));
+                    lexerOutput.SyntaxTokenList.Add(new SyntaxToken(SyntaxKind.FromTokenContextualKeyword, textSpan with { DecorationByte = (byte)GenericDecorationKind.Keyword }));
                     return;
                 }
                 else if (binder.KeywordCheckBuffer[0] == 'i' &&
@@ -971,8 +965,7 @@ public static class CSharpLexer
                          binder.KeywordCheckBuffer[3] == 't')
                 {
                     // init
-                    textSpan = textSpan with { DecorationByte = (byte)GenericDecorationKind.Keyword };
-                    lexerOutput.SyntaxTokenList.Add(new SyntaxToken(SyntaxKind.InitTokenContextualKeyword, textSpan));
+                    lexerOutput.SyntaxTokenList.Add(new SyntaxToken(SyntaxKind.InitTokenContextualKeyword, textSpan with { DecorationByte = (byte)GenericDecorationKind.Keyword }));
                     return;
                 }
                 
@@ -985,8 +978,7 @@ public static class CSharpLexer
                     binder.KeywordCheckBuffer[3] == 'c' &&
                     binder.KeywordCheckBuffer[4] == 'h')
                 {
-                    textSpan = textSpan with { DecorationByte = (byte)GenericDecorationKind.Keyword };
-                    lexerOutput.SyntaxTokenList.Add(new SyntaxToken(SyntaxKind.CatchTokenKeyword, textSpan));
+                    lexerOutput.SyntaxTokenList.Add(new SyntaxToken(SyntaxKind.CatchTokenKeyword, textSpan with { DecorationByte = (byte)GenericDecorationKind.Keyword }));
                     return;
                 }
 
@@ -998,8 +990,7 @@ public static class CSharpLexer
                     binder.KeywordCheckBuffer[2] == 'a' &&
                     binder.KeywordCheckBuffer[3] == 'r')
                 {
-                    textSpan = textSpan with { DecorationByte = (byte)GenericDecorationKind.Keyword };
-                    lexerOutput.SyntaxTokenList.Add(new SyntaxToken(SyntaxKind.CharTokenKeyword, textSpan));
+                    lexerOutput.SyntaxTokenList.Add(new SyntaxToken(SyntaxKind.CharTokenKeyword, textSpan with { DecorationByte = (byte)GenericDecorationKind.Keyword }));
                     return;
                 }
 
@@ -1014,8 +1005,7 @@ public static class CSharpLexer
                     binder.KeywordCheckBuffer[5] == 'e' &&
                     binder.KeywordCheckBuffer[6] == 'd')
                 {
-                    textSpan = textSpan with { DecorationByte = (byte)GenericDecorationKind.Keyword };
-                    lexerOutput.SyntaxTokenList.Add(new SyntaxToken(SyntaxKind.CheckedTokenKeyword, textSpan));
+                    lexerOutput.SyntaxTokenList.Add(new SyntaxToken(SyntaxKind.CheckedTokenKeyword, textSpan with { DecorationByte = (byte)GenericDecorationKind.Keyword }));
                     return;
                 }
 
@@ -1032,8 +1022,7 @@ public static class CSharpLexer
                     binder.KeywordCheckBuffer[4] == 's')
                 {
                     // class
-                    textSpan = textSpan with { DecorationByte = (byte)GenericDecorationKind.Keyword };
-                    lexerOutput.SyntaxTokenList.Add(new SyntaxToken(SyntaxKind.ClassTokenKeyword, textSpan));
+                    lexerOutput.SyntaxTokenList.Add(new SyntaxToken(SyntaxKind.ClassTokenKeyword, textSpan with { DecorationByte = (byte)GenericDecorationKind.Keyword }));
                     return;
                 }
                 else if (binder.KeywordCheckBuffer[0] == 'f' &&
@@ -1043,8 +1032,7 @@ public static class CSharpLexer
                          binder.KeywordCheckBuffer[4] == 't')
                 {
                     // float
-                    textSpan = textSpan with { DecorationByte = (byte)GenericDecorationKind.Keyword };
-                    lexerOutput.SyntaxTokenList.Add(new SyntaxToken(SyntaxKind.FloatTokenKeyword, textSpan));
+                    lexerOutput.SyntaxTokenList.Add(new SyntaxToken(SyntaxKind.FloatTokenKeyword, textSpan with { DecorationByte = (byte)GenericDecorationKind.Keyword }));
                     return;
                 }
                 else if (binder.KeywordCheckBuffer[0] == 'a' &&
@@ -1054,8 +1042,7 @@ public static class CSharpLexer
                          binder.KeywordCheckBuffer[4] == 't')
                 {
                     // await
-                    textSpan = textSpan with { DecorationByte = (byte)GenericDecorationKind.Keyword };
-                    lexerOutput.SyntaxTokenList.Add(new SyntaxToken(SyntaxKind.AwaitTokenContextualKeyword, textSpan));
+                    lexerOutput.SyntaxTokenList.Add(new SyntaxToken(SyntaxKind.AwaitTokenContextualKeyword, textSpan with { DecorationByte = (byte)GenericDecorationKind.Keyword }));
                     return;
                 }
                 
@@ -1072,8 +1059,7 @@ public static class CSharpLexer
                     binder.KeywordCheckBuffer[4] == 't')
                 {
                     // const
-                    textSpan = textSpan with { DecorationByte = (byte)GenericDecorationKind.Keyword };
-                    lexerOutput.SyntaxTokenList.Add(new SyntaxToken(SyntaxKind.ConstTokenKeyword, textSpan));
+                    lexerOutput.SyntaxTokenList.Add(new SyntaxToken(SyntaxKind.ConstTokenKeyword, textSpan with { DecorationByte = (byte)GenericDecorationKind.Keyword }));
                     return;
                 }
                 else if (binder.KeywordCheckBuffer[0] == 's' &&
@@ -1083,8 +1069,7 @@ public static class CSharpLexer
                          binder.KeywordCheckBuffer[4] == 'e')
                 {
                     // sbyte
-                    textSpan = textSpan with { DecorationByte = (byte)GenericDecorationKind.Keyword };
-                    lexerOutput.SyntaxTokenList.Add(new SyntaxToken(SyntaxKind.SbyteTokenKeyword, textSpan));
+                    lexerOutput.SyntaxTokenList.Add(new SyntaxToken(SyntaxKind.SbyteTokenKeyword, textSpan with { DecorationByte = (byte)GenericDecorationKind.Keyword }));
                     return;
                 }
                 
@@ -1099,8 +1084,7 @@ public static class CSharpLexer
                     binder.KeywordCheckBuffer[5] == 'a' &&
                     binder.KeywordCheckBuffer[6] == 'l')
                 {
-                    textSpan = textSpan with { DecorationByte = (byte)GenericDecorationKind.Keyword };
-                    lexerOutput.SyntaxTokenList.Add(new SyntaxToken(SyntaxKind.DecimalTokenKeyword, textSpan));
+                    lexerOutput.SyntaxTokenList.Add(new SyntaxToken(SyntaxKind.DecimalTokenKeyword, textSpan with { DecorationByte = (byte)GenericDecorationKind.Keyword }));
                     return;
                 }
 
@@ -1119,8 +1103,7 @@ public static class CSharpLexer
                     binder.KeywordCheckBuffer[6] == 't')
                 {
                     // default
-                    textSpan = textSpan with { DecorationByte = (byte)GenericDecorationKind.Keyword };
-                    lexerOutput.SyntaxTokenList.Add(new SyntaxToken(SyntaxKind.DefaultTokenKeyword, textSpan));
+                    lexerOutput.SyntaxTokenList.Add(new SyntaxToken(SyntaxKind.DefaultTokenKeyword, textSpan with { DecorationByte = (byte)GenericDecorationKind.Keyword }));
                     return;
                 }
                 else if (binder.KeywordCheckBuffer[0] == 'd' &&
@@ -1132,8 +1115,7 @@ public static class CSharpLexer
                          binder.KeywordCheckBuffer[6] == 'c')
                 {
                     // dynamic
-                    textSpan = textSpan with { DecorationByte = (byte)GenericDecorationKind.Keyword };
-                    lexerOutput.SyntaxTokenList.Add(new SyntaxToken(SyntaxKind.DynamicTokenContextualKeyword, textSpan));
+                    lexerOutput.SyntaxTokenList.Add(new SyntaxToken(SyntaxKind.DynamicTokenContextualKeyword, textSpan with { DecorationByte = (byte)GenericDecorationKind.Keyword }));
                     return;
                 }
                 
@@ -1149,8 +1131,7 @@ public static class CSharpLexer
                     binder.KeywordCheckBuffer[6] == 't' &&
                     binder.KeywordCheckBuffer[7] == 'e')
                 {
-                    textSpan = textSpan with { DecorationByte = (byte)GenericDecorationKind.Keyword };
-                    lexerOutput.SyntaxTokenList.Add(new SyntaxToken(SyntaxKind.DelegateTokenKeyword, textSpan));
+                    lexerOutput.SyntaxTokenList.Add(new SyntaxToken(SyntaxKind.DelegateTokenKeyword, textSpan with { DecorationByte = (byte)GenericDecorationKind.Keyword }));
                     return;
                 }
 
@@ -1164,8 +1145,7 @@ public static class CSharpLexer
                     binder.KeywordCheckBuffer[4] == 'l' &&
                     binder.KeywordCheckBuffer[5] == 'e')
                 {
-                    textSpan = textSpan with { DecorationByte = (byte)GenericDecorationKind.Keyword };
-                    lexerOutput.SyntaxTokenList.Add(new SyntaxToken(SyntaxKind.DoubleTokenKeyword, textSpan));
+                    lexerOutput.SyntaxTokenList.Add(new SyntaxToken(SyntaxKind.DoubleTokenKeyword, textSpan with { DecorationByte = (byte)GenericDecorationKind.Keyword }));
                     return;
                 }
 
@@ -1177,8 +1157,7 @@ public static class CSharpLexer
                     binder.KeywordCheckBuffer[2] == 'u' &&
                     binder.KeywordCheckBuffer[3] == 'm')
                 {
-                    textSpan = textSpan with { DecorationByte = (byte)GenericDecorationKind.Keyword };
-                    lexerOutput.SyntaxTokenList.Add(new SyntaxToken(SyntaxKind.EnumTokenKeyword, textSpan));
+                    lexerOutput.SyntaxTokenList.Add(new SyntaxToken(SyntaxKind.EnumTokenKeyword, textSpan with { DecorationByte = (byte)GenericDecorationKind.Keyword }));
                     return;
                 }
 
@@ -1191,8 +1170,7 @@ public static class CSharpLexer
                     binder.KeywordCheckBuffer[3] == 'n' &&
                     binder.KeywordCheckBuffer[4] == 't')
                 {
-                    textSpan = textSpan with { DecorationByte = (byte)GenericDecorationKind.Keyword };
-                    lexerOutput.SyntaxTokenList.Add(new SyntaxToken(SyntaxKind.EventTokenKeyword, textSpan));
+                    lexerOutput.SyntaxTokenList.Add(new SyntaxToken(SyntaxKind.EventTokenKeyword, textSpan with { DecorationByte = (byte)GenericDecorationKind.Keyword }));
                     return;
                 }
 
@@ -1208,8 +1186,7 @@ public static class CSharpLexer
                     binder.KeywordCheckBuffer[6] == 'i' &&
                     binder.KeywordCheckBuffer[7] == 't')
                 {
-                    textSpan = textSpan with { DecorationByte = (byte)GenericDecorationKind.Keyword };
-                    lexerOutput.SyntaxTokenList.Add(new SyntaxToken(SyntaxKind.ExplicitTokenKeyword, textSpan));
+                    lexerOutput.SyntaxTokenList.Add(new SyntaxToken(SyntaxKind.ExplicitTokenKeyword, textSpan with { DecorationByte = (byte)GenericDecorationKind.Keyword }));
                     return;
                 }
 
@@ -1223,8 +1200,7 @@ public static class CSharpLexer
                     binder.KeywordCheckBuffer[4] == 'r' &&
                     binder.KeywordCheckBuffer[5] == 'n')
                 {
-                    textSpan = textSpan with { DecorationByte = (byte)GenericDecorationKind.Keyword };
-                    lexerOutput.SyntaxTokenList.Add(new SyntaxToken(SyntaxKind.ExternTokenKeyword, textSpan));
+                    lexerOutput.SyntaxTokenList.Add(new SyntaxToken(SyntaxKind.ExternTokenKeyword, textSpan with { DecorationByte = (byte)GenericDecorationKind.Keyword }));
                     return;
                 }
 
@@ -1237,8 +1213,7 @@ public static class CSharpLexer
                     binder.KeywordCheckBuffer[3] == 's' &&
                     binder.KeywordCheckBuffer[4] == 'e')
                 {
-                    textSpan = textSpan with { DecorationByte = (byte)GenericDecorationKind.Keyword };
-                    lexerOutput.SyntaxTokenList.Add(new SyntaxToken(SyntaxKind.FalseTokenKeyword, textSpan));
+                    lexerOutput.SyntaxTokenList.Add(new SyntaxToken(SyntaxKind.FalseTokenKeyword, textSpan with { DecorationByte = (byte)GenericDecorationKind.Keyword }));
                     return;
                 }
 
@@ -1253,8 +1228,7 @@ public static class CSharpLexer
                     binder.KeywordCheckBuffer[5] == 'l' &&
                     binder.KeywordCheckBuffer[6] == 'y')
                 {
-                    textSpan = textSpan with { DecorationByte = (byte)GenericDecorationKind.Keyword };
-                    lexerOutput.SyntaxTokenList.Add(new SyntaxToken(SyntaxKind.FinallyTokenKeyword, textSpan));
+                    lexerOutput.SyntaxTokenList.Add(new SyntaxToken(SyntaxKind.FinallyTokenKeyword, textSpan with { DecorationByte = (byte)GenericDecorationKind.Keyword }));
                     return;
                 }
 
@@ -1267,8 +1241,7 @@ public static class CSharpLexer
                     binder.KeywordCheckBuffer[3] == 'e' &&
                     binder.KeywordCheckBuffer[4] == 'd')
                 {
-                    textSpan = textSpan with { DecorationByte = (byte)GenericDecorationKind.Keyword };
-                    lexerOutput.SyntaxTokenList.Add(new SyntaxToken(SyntaxKind.FixedTokenKeyword, textSpan));
+                    lexerOutput.SyntaxTokenList.Add(new SyntaxToken(SyntaxKind.FixedTokenKeyword, textSpan with { DecorationByte = (byte)GenericDecorationKind.Keyword }));
                     return;
                 }
 
@@ -1284,8 +1257,7 @@ public static class CSharpLexer
                     binder.KeywordCheckBuffer[6] == 'i' &&
                     binder.KeywordCheckBuffer[7] == 't')
                 {
-                    textSpan = textSpan with { DecorationByte = (byte)GenericDecorationKind.Keyword };
-                    lexerOutput.SyntaxTokenList.Add(new SyntaxToken(SyntaxKind.ImplicitTokenKeyword, textSpan));
+                    lexerOutput.SyntaxTokenList.Add(new SyntaxToken(SyntaxKind.ImplicitTokenKeyword, textSpan with { DecorationByte = (byte)GenericDecorationKind.Keyword }));
                     return;
                 }
 
@@ -1295,8 +1267,7 @@ public static class CSharpLexer
                     binder.KeywordCheckBuffer[0] == 'i' &&
                     binder.KeywordCheckBuffer[1] == 'n')
                 {
-                    textSpan = textSpan with { DecorationByte = (byte)GenericDecorationKind.Keyword };
-                    lexerOutput.SyntaxTokenList.Add(new SyntaxToken(SyntaxKind.InTokenKeyword, textSpan));
+                    lexerOutput.SyntaxTokenList.Add(new SyntaxToken(SyntaxKind.InTokenKeyword, textSpan with { DecorationByte = (byte)GenericDecorationKind.Keyword }));
                     return;
                 }
 
@@ -1307,8 +1278,7 @@ public static class CSharpLexer
                     binder.KeywordCheckBuffer[1] == 'n' &&
                     binder.KeywordCheckBuffer[2] == 't')
                 {
-                    textSpan = textSpan with { DecorationByte = (byte)GenericDecorationKind.Keyword };
-                    lexerOutput.SyntaxTokenList.Add(new SyntaxToken(SyntaxKind.IntTokenKeyword, textSpan));
+                    lexerOutput.SyntaxTokenList.Add(new SyntaxToken(SyntaxKind.IntTokenKeyword, textSpan with { DecorationByte = (byte)GenericDecorationKind.Keyword }));
                     return;
                 }
 
@@ -1325,8 +1295,7 @@ public static class CSharpLexer
                     binder.KeywordCheckBuffer[7] == 'c' &&
                     binder.KeywordCheckBuffer[8] == 'e')
                 {
-                    textSpan = textSpan with { DecorationByte = (byte)GenericDecorationKind.Keyword };
-                    lexerOutput.SyntaxTokenList.Add(new SyntaxToken(SyntaxKind.InterfaceTokenKeyword, textSpan));
+                    lexerOutput.SyntaxTokenList.Add(new SyntaxToken(SyntaxKind.InterfaceTokenKeyword, textSpan with { DecorationByte = (byte)GenericDecorationKind.Keyword }));
                     return;
                 }
 
@@ -1342,8 +1311,7 @@ public static class CSharpLexer
                     binder.KeywordCheckBuffer[6] == 'a' &&
                     binder.KeywordCheckBuffer[7] == 'l')
                 {
-                    textSpan = textSpan with { DecorationByte = (byte)GenericDecorationKind.Keyword };
-                    lexerOutput.SyntaxTokenList.Add(new SyntaxToken(SyntaxKind.InternalTokenKeyword, textSpan));
+                    lexerOutput.SyntaxTokenList.Add(new SyntaxToken(SyntaxKind.InternalTokenKeyword, textSpan with { DecorationByte = (byte)GenericDecorationKind.Keyword }));
                     return;
                 }
 
@@ -1353,8 +1321,7 @@ public static class CSharpLexer
                     binder.KeywordCheckBuffer[0] == 'i' &&
                     binder.KeywordCheckBuffer[1] == 's')
                 {
-                    textSpan = textSpan with { DecorationByte = (byte)GenericDecorationKind.Keyword };
-                    lexerOutput.SyntaxTokenList.Add(new SyntaxToken(SyntaxKind.IsTokenKeyword, textSpan));
+                    lexerOutput.SyntaxTokenList.Add(new SyntaxToken(SyntaxKind.IsTokenKeyword, textSpan with { DecorationByte = (byte)GenericDecorationKind.Keyword }));
                     return;
                 }
 
@@ -1370,8 +1337,7 @@ public static class CSharpLexer
                     binder.KeywordCheckBuffer[3] == 'k')
                 {
                     // lock
-                    textSpan = textSpan with { DecorationByte = (byte)GenericDecorationKind.Keyword };
-                    lexerOutput.SyntaxTokenList.Add(new SyntaxToken(SyntaxKind.LockTokenKeyword, textSpan));
+                    lexerOutput.SyntaxTokenList.Add(new SyntaxToken(SyntaxKind.LockTokenKeyword, textSpan with { DecorationByte = (byte)GenericDecorationKind.Keyword }));
                     return;
                 }
                 else if (binder.KeywordCheckBuffer[0] == 'e' &&
@@ -1380,8 +1346,7 @@ public static class CSharpLexer
                          binder.KeywordCheckBuffer[3] == 'e')
                 {
                     // else
-                    textSpan = textSpan with { DecorationByte = (byte)GenericDecorationKind.KeywordControl };
-                    lexerOutput.SyntaxTokenList.Add(new SyntaxToken(SyntaxKind.ElseTokenKeyword, textSpan));
+                    lexerOutput.SyntaxTokenList.Add(new SyntaxToken(SyntaxKind.ElseTokenKeyword, textSpan with { DecorationByte = (byte)GenericDecorationKind.KeywordControl }));
                     return;
                 }
                 
@@ -1397,8 +1362,7 @@ public static class CSharpLexer
                     binder.KeywordCheckBuffer[3] == 'g')
                 {
                     // long
-                    textSpan = textSpan with { DecorationByte = (byte)GenericDecorationKind.Keyword };
-                    lexerOutput.SyntaxTokenList.Add(new SyntaxToken(SyntaxKind.LongTokenKeyword, textSpan));
+                    lexerOutput.SyntaxTokenList.Add(new SyntaxToken(SyntaxKind.LongTokenKeyword, textSpan with { DecorationByte = (byte)GenericDecorationKind.Keyword }));
                     return;
                 }
                 else if (binder.KeywordCheckBuffer[0] == 'j' &&
@@ -1407,8 +1371,7 @@ public static class CSharpLexer
                          binder.KeywordCheckBuffer[3] == 'n')
                 {
                     // join
-                    textSpan = textSpan with { DecorationByte = (byte)GenericDecorationKind.Keyword };
-                    lexerOutput.SyntaxTokenList.Add(new SyntaxToken(SyntaxKind.JoinTokenContextualKeyword, textSpan));
+                    lexerOutput.SyntaxTokenList.Add(new SyntaxToken(SyntaxKind.JoinTokenContextualKeyword, textSpan with { DecorationByte = (byte)GenericDecorationKind.Keyword }));
                     return;
                 }
                 
@@ -1425,8 +1388,7 @@ public static class CSharpLexer
                     binder.KeywordCheckBuffer[7] == 'c' &&
                     binder.KeywordCheckBuffer[8] == 'e')
                 {
-                    textSpan = textSpan with { DecorationByte = (byte)GenericDecorationKind.Keyword };
-                    lexerOutput.SyntaxTokenList.Add(new SyntaxToken(SyntaxKind.NamespaceTokenKeyword, textSpan));
+                    lexerOutput.SyntaxTokenList.Add(new SyntaxToken(SyntaxKind.NamespaceTokenKeyword, textSpan with { DecorationByte = (byte)GenericDecorationKind.Keyword }));
                     return;
                 }
 
@@ -1437,8 +1399,7 @@ public static class CSharpLexer
                     binder.KeywordCheckBuffer[1] == 'e' &&
                     binder.KeywordCheckBuffer[2] == 'w')
                 {
-                    textSpan = textSpan with { DecorationByte = (byte)GenericDecorationKind.Keyword };
-                    lexerOutput.SyntaxTokenList.Add(new SyntaxToken(SyntaxKind.NewTokenKeyword, textSpan));
+                    lexerOutput.SyntaxTokenList.Add(new SyntaxToken(SyntaxKind.NewTokenKeyword, textSpan with { DecorationByte = (byte)GenericDecorationKind.Keyword }));
                     return;
                 }
 
@@ -1450,8 +1411,7 @@ public static class CSharpLexer
                     binder.KeywordCheckBuffer[2] == 'l' &&
                     binder.KeywordCheckBuffer[3] == 'l')
                 {
-                    textSpan = textSpan with { DecorationByte = (byte)GenericDecorationKind.Keyword };
-                    lexerOutput.SyntaxTokenList.Add(new SyntaxToken(SyntaxKind.NullTokenKeyword, textSpan));
+                    lexerOutput.SyntaxTokenList.Add(new SyntaxToken(SyntaxKind.NullTokenKeyword, textSpan with { DecorationByte = (byte)GenericDecorationKind.Keyword }));
                     return;
                 }
 
@@ -1465,8 +1425,7 @@ public static class CSharpLexer
                     binder.KeywordCheckBuffer[4] == 'c' &&
                     binder.KeywordCheckBuffer[5] == 't')
                 {
-                    textSpan = textSpan with { DecorationByte = (byte)GenericDecorationKind.Keyword };
-                    lexerOutput.SyntaxTokenList.Add(new SyntaxToken(SyntaxKind.ObjectTokenKeyword, textSpan));
+                    lexerOutput.SyntaxTokenList.Add(new SyntaxToken(SyntaxKind.ObjectTokenKeyword, textSpan with { DecorationByte = (byte)GenericDecorationKind.Keyword }));
                     return;
                 }
 
@@ -1482,8 +1441,7 @@ public static class CSharpLexer
                     binder.KeywordCheckBuffer[6] == 'o' &&
                     binder.KeywordCheckBuffer[7] == 'r')
                 {
-                    textSpan = textSpan with { DecorationByte = (byte)GenericDecorationKind.Keyword };
-                    lexerOutput.SyntaxTokenList.Add(new SyntaxToken(SyntaxKind.OperatorTokenKeyword, textSpan));
+                    lexerOutput.SyntaxTokenList.Add(new SyntaxToken(SyntaxKind.OperatorTokenKeyword, textSpan with { DecorationByte = (byte)GenericDecorationKind.Keyword }));
                     return;
                 }
 
@@ -1494,8 +1452,7 @@ public static class CSharpLexer
                     binder.KeywordCheckBuffer[1] == 'u' &&
                     binder.KeywordCheckBuffer[2] == 't')
                 {
-                    textSpan = textSpan with { DecorationByte = (byte)GenericDecorationKind.Keyword };
-                    lexerOutput.SyntaxTokenList.Add(new SyntaxToken(SyntaxKind.OutTokenKeyword, textSpan));
+                    lexerOutput.SyntaxTokenList.Add(new SyntaxToken(SyntaxKind.OutTokenKeyword, textSpan with { DecorationByte = (byte)GenericDecorationKind.Keyword }));
                     return;
                 }
 
@@ -1515,8 +1472,7 @@ public static class CSharpLexer
                     binder.KeywordCheckBuffer[7] == 'e')
                 {
                     // override
-                    textSpan = textSpan with { DecorationByte = (byte)GenericDecorationKind.Keyword };
-                    lexerOutput.SyntaxTokenList.Add(new SyntaxToken(SyntaxKind.OverrideTokenKeyword, textSpan));
+                    lexerOutput.SyntaxTokenList.Add(new SyntaxToken(SyntaxKind.OverrideTokenKeyword, textSpan with { DecorationByte = (byte)GenericDecorationKind.Keyword }));
                     return;
                 }
                 else if (binder.KeywordCheckBuffer[0] == 'v' &&
@@ -1529,8 +1485,7 @@ public static class CSharpLexer
                          binder.KeywordCheckBuffer[7] == 'e')
                 {
                     // volatile
-                    textSpan = textSpan with { DecorationByte = (byte)GenericDecorationKind.Keyword };
-                    lexerOutput.SyntaxTokenList.Add(new SyntaxToken(SyntaxKind.VolatileTokenKeyword, textSpan));
+                    lexerOutput.SyntaxTokenList.Add(new SyntaxToken(SyntaxKind.VolatileTokenKeyword, textSpan with { DecorationByte = (byte)GenericDecorationKind.Keyword }));
                     return;
                 }
                     
@@ -1544,8 +1499,7 @@ public static class CSharpLexer
                     binder.KeywordCheckBuffer[4] == 'm' &&
                     binder.KeywordCheckBuffer[5] == 's')
                 {
-                    textSpan = textSpan with { DecorationByte = (byte)GenericDecorationKind.Keyword };
-                    lexerOutput.SyntaxTokenList.Add(new SyntaxToken(SyntaxKind.ParamsTokenKeyword, textSpan));
+                    lexerOutput.SyntaxTokenList.Add(new SyntaxToken(SyntaxKind.ParamsTokenKeyword, textSpan with { DecorationByte = (byte)GenericDecorationKind.Keyword }));
                     return;
                 }
 
@@ -1560,8 +1514,7 @@ public static class CSharpLexer
                     binder.KeywordCheckBuffer[5] == 't' &&
                     binder.KeywordCheckBuffer[6] == 'e')
                 {
-                    textSpan = textSpan with { DecorationByte = (byte)GenericDecorationKind.Keyword };
-                    lexerOutput.SyntaxTokenList.Add(new SyntaxToken(SyntaxKind.PrivateTokenKeyword, textSpan));
+                    lexerOutput.SyntaxTokenList.Add(new SyntaxToken(SyntaxKind.PrivateTokenKeyword, textSpan with { DecorationByte = (byte)GenericDecorationKind.Keyword }));
                     return;
                 }
 
@@ -1578,8 +1531,7 @@ public static class CSharpLexer
                     binder.KeywordCheckBuffer[7] == 'e' &&
                     binder.KeywordCheckBuffer[8] == 'd')
                 {
-                    textSpan = textSpan with { DecorationByte = (byte)GenericDecorationKind.Keyword };
-                    lexerOutput.SyntaxTokenList.Add(new SyntaxToken(SyntaxKind.ProtectedTokenKeyword, textSpan));
+                    lexerOutput.SyntaxTokenList.Add(new SyntaxToken(SyntaxKind.ProtectedTokenKeyword, textSpan with { DecorationByte = (byte)GenericDecorationKind.Keyword }));
                     return;
                 }
 
@@ -1597,8 +1549,7 @@ public static class CSharpLexer
                     binder.KeywordCheckBuffer[5] == 'c')
                 {
                     // public
-                    textSpan = textSpan with { DecorationByte = (byte)GenericDecorationKind.Keyword };
-                    lexerOutput.SyntaxTokenList.Add(new SyntaxToken(SyntaxKind.PublicTokenKeyword, textSpan));
+                    lexerOutput.SyntaxTokenList.Add(new SyntaxToken(SyntaxKind.PublicTokenKeyword, textSpan with { DecorationByte = (byte)GenericDecorationKind.Keyword }));
                     return;
                 }
                 else if (binder.KeywordCheckBuffer[0] == 'r' &&
@@ -1609,8 +1560,7 @@ public static class CSharpLexer
                          binder.KeywordCheckBuffer[5] == 'd')
                 {
                     // record
-                    textSpan = textSpan with { DecorationByte = (byte)GenericDecorationKind.Keyword };
-                    lexerOutput.SyntaxTokenList.Add(new SyntaxToken(SyntaxKind.RecordTokenContextualKeyword, textSpan));
+                    lexerOutput.SyntaxTokenList.Add(new SyntaxToken(SyntaxKind.RecordTokenContextualKeyword, textSpan with { DecorationByte = (byte)GenericDecorationKind.Keyword }));
                     return;
                 }
                 
@@ -1626,8 +1576,7 @@ public static class CSharpLexer
                     binder.KeywordCheckBuffer[6] == 'l' &&
                     binder.KeywordCheckBuffer[7] == 'y')
                 {
-                    textSpan = textSpan with { DecorationByte = (byte)GenericDecorationKind.Keyword };
-                    lexerOutput.SyntaxTokenList.Add(new SyntaxToken(SyntaxKind.ReadonlyTokenKeyword, textSpan));
+                    lexerOutput.SyntaxTokenList.Add(new SyntaxToken(SyntaxKind.ReadonlyTokenKeyword, textSpan with { DecorationByte = (byte)GenericDecorationKind.Keyword }));
                     return;
                 }
 
@@ -1638,8 +1587,7 @@ public static class CSharpLexer
                     binder.KeywordCheckBuffer[1] == 'e' &&
                     binder.KeywordCheckBuffer[2] == 'f')
                 {
-                    textSpan = textSpan with { DecorationByte = (byte)GenericDecorationKind.Keyword };
-                    lexerOutput.SyntaxTokenList.Add(new SyntaxToken(SyntaxKind.RefTokenKeyword, textSpan));
+                    lexerOutput.SyntaxTokenList.Add(new SyntaxToken(SyntaxKind.RefTokenKeyword, textSpan with { DecorationByte = (byte)GenericDecorationKind.Keyword }));
                     return;
                 }
 
@@ -1653,8 +1601,7 @@ public static class CSharpLexer
                     binder.KeywordCheckBuffer[4] == 'e' &&
                     binder.KeywordCheckBuffer[5] == 'd')
                 {
-                    textSpan = textSpan with { DecorationByte = (byte)GenericDecorationKind.Keyword };
-                    lexerOutput.SyntaxTokenList.Add(new SyntaxToken(SyntaxKind.SealedTokenKeyword, textSpan));
+                    lexerOutput.SyntaxTokenList.Add(new SyntaxToken(SyntaxKind.SealedTokenKeyword, textSpan with { DecorationByte = (byte)GenericDecorationKind.Keyword }));
                     return;
                 }
 
@@ -1667,8 +1614,7 @@ public static class CSharpLexer
                     binder.KeywordCheckBuffer[3] == 'r' &&
                     binder.KeywordCheckBuffer[4] == 't')
                 {
-                    textSpan = textSpan with { DecorationByte = (byte)GenericDecorationKind.Keyword };
-                    lexerOutput.SyntaxTokenList.Add(new SyntaxToken(SyntaxKind.ShortTokenKeyword, textSpan));
+                    lexerOutput.SyntaxTokenList.Add(new SyntaxToken(SyntaxKind.ShortTokenKeyword, textSpan with { DecorationByte = (byte)GenericDecorationKind.Keyword }));
                     return;
                 }
 
@@ -1682,8 +1628,7 @@ public static class CSharpLexer
                     binder.KeywordCheckBuffer[4] == 'o' &&
                     binder.KeywordCheckBuffer[5] == 'f')
                 {
-                    textSpan = textSpan with { DecorationByte = (byte)GenericDecorationKind.Keyword };
-                    lexerOutput.SyntaxTokenList.Add(new SyntaxToken(SyntaxKind.SizeofTokenKeyword, textSpan));
+                    lexerOutput.SyntaxTokenList.Add(new SyntaxToken(SyntaxKind.SizeofTokenKeyword, textSpan with { DecorationByte = (byte)GenericDecorationKind.Keyword }));
                     return;
                 }
 
@@ -1701,8 +1646,7 @@ public static class CSharpLexer
                     binder.KeywordCheckBuffer[8] == 'o' &&
                     binder.KeywordCheckBuffer[9] == 'c')
                 {
-                    textSpan = textSpan with { DecorationByte = (byte)GenericDecorationKind.Keyword };
-                    lexerOutput.SyntaxTokenList.Add(new SyntaxToken(SyntaxKind.StackallocTokenKeyword, textSpan));
+                    lexerOutput.SyntaxTokenList.Add(new SyntaxToken(SyntaxKind.StackallocTokenKeyword, textSpan with { DecorationByte = (byte)GenericDecorationKind.Keyword }));
                     return;
                 }
 
@@ -1716,8 +1660,7 @@ public static class CSharpLexer
                     binder.KeywordCheckBuffer[4] == 'i' &&
                     binder.KeywordCheckBuffer[5] == 'c')
                 {
-                    textSpan = textSpan with { DecorationByte = (byte)GenericDecorationKind.Keyword };
-                    lexerOutput.SyntaxTokenList.Add(new SyntaxToken(SyntaxKind.StaticTokenKeyword, textSpan));
+                    lexerOutput.SyntaxTokenList.Add(new SyntaxToken(SyntaxKind.StaticTokenKeyword, textSpan with { DecorationByte = (byte)GenericDecorationKind.Keyword }));
                     return;
                 }
 
@@ -1735,8 +1678,7 @@ public static class CSharpLexer
                     binder.KeywordCheckBuffer[5] == 'g')
                 {
                     // string
-                    textSpan = textSpan with { DecorationByte = (byte)GenericDecorationKind.Keyword };
-                    lexerOutput.SyntaxTokenList.Add(new SyntaxToken(SyntaxKind.StringTokenKeyword, textSpan));
+                    lexerOutput.SyntaxTokenList.Add(new SyntaxToken(SyntaxKind.StringTokenKeyword, textSpan with { DecorationByte = (byte)GenericDecorationKind.Keyword }));
                     return;
                 }
                 else if (binder.KeywordCheckBuffer[0] == 't' &&
@@ -1747,8 +1689,7 @@ public static class CSharpLexer
                          binder.KeywordCheckBuffer[5] == 'f')
                 {
                     // typeof
-                    textSpan = textSpan with { DecorationByte = (byte)GenericDecorationKind.Keyword };
-                    lexerOutput.SyntaxTokenList.Add(new SyntaxToken(SyntaxKind.TypeofTokenKeyword, textSpan));
+                    lexerOutput.SyntaxTokenList.Add(new SyntaxToken(SyntaxKind.TypeofTokenKeyword, textSpan with { DecorationByte = (byte)GenericDecorationKind.Keyword }));
                     return;
                 }
                 
@@ -1766,8 +1707,7 @@ public static class CSharpLexer
                     binder.KeywordCheckBuffer[5] == 't')
                 {
                     // struct
-                    textSpan = textSpan with { DecorationByte = (byte)GenericDecorationKind.Keyword };
-                    lexerOutput.SyntaxTokenList.Add(new SyntaxToken(SyntaxKind.StructTokenKeyword, textSpan));
+                    lexerOutput.SyntaxTokenList.Add(new SyntaxToken(SyntaxKind.StructTokenKeyword, textSpan with { DecorationByte = (byte)GenericDecorationKind.Keyword }));
                     return;
                 }
                 else if (binder.KeywordCheckBuffer[0] == 'u' &&
@@ -1778,8 +1718,7 @@ public static class CSharpLexer
                          binder.KeywordCheckBuffer[5] == 't')
                 {
                     // ushort
-                    textSpan = textSpan with { DecorationByte = (byte)GenericDecorationKind.Keyword };
-                    lexerOutput.SyntaxTokenList.Add(new SyntaxToken(SyntaxKind.UshortTokenKeyword, textSpan));
+                    lexerOutput.SyntaxTokenList.Add(new SyntaxToken(SyntaxKind.UshortTokenKeyword, textSpan with { DecorationByte = (byte)GenericDecorationKind.Keyword }));
                     return;
                 }
                 
@@ -1791,8 +1730,7 @@ public static class CSharpLexer
                     binder.KeywordCheckBuffer[2] == 'i' &&
                     binder.KeywordCheckBuffer[3] == 's')
                 {
-                    textSpan = textSpan with { DecorationByte = (byte)GenericDecorationKind.Keyword };
-                    lexerOutput.SyntaxTokenList.Add(new SyntaxToken(SyntaxKind.ThisTokenKeyword, textSpan));
+                    lexerOutput.SyntaxTokenList.Add(new SyntaxToken(SyntaxKind.ThisTokenKeyword, textSpan with { DecorationByte = (byte)GenericDecorationKind.Keyword }));
                     return;
                 }
 
@@ -1808,8 +1746,7 @@ public static class CSharpLexer
                     binder.KeywordCheckBuffer[3] == 'e')
                 {
                     // true
-                    textSpan = textSpan with { DecorationByte = (byte)GenericDecorationKind.Keyword };
-                    lexerOutput.SyntaxTokenList.Add(new SyntaxToken(SyntaxKind.TrueTokenKeyword, textSpan));
+                    lexerOutput.SyntaxTokenList.Add(new SyntaxToken(SyntaxKind.TrueTokenKeyword, textSpan with { DecorationByte = (byte)GenericDecorationKind.Keyword }));
                     return;
                 }
                 else if (binder.KeywordCheckBuffer[0] == 'u' &&
@@ -1818,8 +1755,7 @@ public static class CSharpLexer
                          binder.KeywordCheckBuffer[3] == 't')
                 {
                     // uint
-                    textSpan = textSpan with { DecorationByte = (byte)GenericDecorationKind.Keyword };
-                    lexerOutput.SyntaxTokenList.Add(new SyntaxToken(SyntaxKind.UintTokenKeyword, textSpan));
+                    lexerOutput.SyntaxTokenList.Add(new SyntaxToken(SyntaxKind.UintTokenKeyword, textSpan with { DecorationByte = (byte)GenericDecorationKind.Keyword }));
                     return;
                 }
                 
@@ -1830,8 +1766,7 @@ public static class CSharpLexer
                     binder.KeywordCheckBuffer[1] == 'r' &&
                     binder.KeywordCheckBuffer[2] == 'y')
                 {
-                    textSpan = textSpan with { DecorationByte = (byte)GenericDecorationKind.Keyword };
-                    lexerOutput.SyntaxTokenList.Add(new SyntaxToken(SyntaxKind.TryTokenKeyword, textSpan));
+                    lexerOutput.SyntaxTokenList.Add(new SyntaxToken(SyntaxKind.TryTokenKeyword, textSpan with { DecorationByte = (byte)GenericDecorationKind.Keyword }));
                     return;
                 }
 
@@ -1844,8 +1779,7 @@ public static class CSharpLexer
                     binder.KeywordCheckBuffer[3] == 'n' &&
                     binder.KeywordCheckBuffer[4] == 'g')
                 {
-                    textSpan = textSpan with { DecorationByte = (byte)GenericDecorationKind.Keyword };
-                    lexerOutput.SyntaxTokenList.Add(new SyntaxToken(SyntaxKind.UlongTokenKeyword, textSpan));
+                    lexerOutput.SyntaxTokenList.Add(new SyntaxToken(SyntaxKind.UlongTokenKeyword, textSpan with { DecorationByte = (byte)GenericDecorationKind.Keyword }));
                     return;
                 }
 
@@ -1862,8 +1796,7 @@ public static class CSharpLexer
                     binder.KeywordCheckBuffer[7] == 'e' &&
                     binder.KeywordCheckBuffer[8] == 'd')
                 {
-                    textSpan = textSpan with { DecorationByte = (byte)GenericDecorationKind.Keyword };
-                    lexerOutput.SyntaxTokenList.Add(new SyntaxToken(SyntaxKind.UncheckedTokenKeyword, textSpan));
+                    lexerOutput.SyntaxTokenList.Add(new SyntaxToken(SyntaxKind.UncheckedTokenKeyword, textSpan with { DecorationByte = (byte)GenericDecorationKind.Keyword }));
                     return;
                 }
 
@@ -1877,8 +1810,7 @@ public static class CSharpLexer
                     binder.KeywordCheckBuffer[4] == 'f' &&
                     binder.KeywordCheckBuffer[5] == 'e')
                 {
-                    textSpan = textSpan with { DecorationByte = (byte)GenericDecorationKind.Keyword };
-                    lexerOutput.SyntaxTokenList.Add(new SyntaxToken(SyntaxKind.UnsafeTokenKeyword, textSpan));
+                    lexerOutput.SyntaxTokenList.Add(new SyntaxToken(SyntaxKind.UnsafeTokenKeyword, textSpan with { DecorationByte = (byte)GenericDecorationKind.Keyword }));
                     return;
                 }
 
@@ -1891,8 +1823,7 @@ public static class CSharpLexer
                     binder.KeywordCheckBuffer[3] == 'n' &&
                     binder.KeywordCheckBuffer[4] == 'g')
                 {
-                    textSpan = textSpan with { DecorationByte = (byte)GenericDecorationKind.Keyword };
-                    lexerOutput.SyntaxTokenList.Add(new SyntaxToken(SyntaxKind.UsingTokenKeyword, textSpan));
+                    lexerOutput.SyntaxTokenList.Add(new SyntaxToken(SyntaxKind.UsingTokenKeyword, textSpan with { DecorationByte = (byte)GenericDecorationKind.Keyword }));
                     return;
                 }
 
@@ -1907,8 +1838,7 @@ public static class CSharpLexer
                     binder.KeywordCheckBuffer[5] == 'a' &&
                     binder.KeywordCheckBuffer[6] == 'l')
                 {
-                    textSpan = textSpan with { DecorationByte = (byte)GenericDecorationKind.Keyword };
-                    lexerOutput.SyntaxTokenList.Add(new SyntaxToken(SyntaxKind.VirtualTokenKeyword, textSpan));
+                    lexerOutput.SyntaxTokenList.Add(new SyntaxToken(SyntaxKind.VirtualTokenKeyword, textSpan with { DecorationByte = (byte)GenericDecorationKind.Keyword }));
                     return;
                 }
 
@@ -1924,8 +1854,7 @@ public static class CSharpLexer
                     binder.KeywordCheckBuffer[3] == 'd')
                 {
                     // void
-                    textSpan = textSpan with { DecorationByte = (byte)GenericDecorationKind.Keyword };
-                    lexerOutput.SyntaxTokenList.Add(new SyntaxToken(SyntaxKind.VoidTokenKeyword, textSpan));
+                    lexerOutput.SyntaxTokenList.Add(new SyntaxToken(SyntaxKind.VoidTokenKeyword, textSpan with { DecorationByte = (byte)GenericDecorationKind.Keyword }));
                     return;
                 }
                 else if (binder.KeywordCheckBuffer[0] == 'w' &&
@@ -1934,8 +1863,7 @@ public static class CSharpLexer
                          binder.KeywordCheckBuffer[3] == 'n')
                 {
                     // when
-                    textSpan = textSpan with { DecorationByte = (byte)GenericDecorationKind.Keyword };
-                    lexerOutput.SyntaxTokenList.Add(new SyntaxToken(SyntaxKind.WhenTokenContextualKeyword, textSpan));
+                    lexerOutput.SyntaxTokenList.Add(new SyntaxToken(SyntaxKind.WhenTokenContextualKeyword, textSpan with { DecorationByte = (byte)GenericDecorationKind.Keyword }));
                     return;
                 }
                 
@@ -1948,8 +1876,7 @@ public static class CSharpLexer
                     binder.KeywordCheckBuffer[3] == 'a' &&
                     binder.KeywordCheckBuffer[4] == 'k')
                 {
-                    textSpan = textSpan with { DecorationByte = (byte)GenericDecorationKind.KeywordControl };
-                    lexerOutput.SyntaxTokenList.Add(new SyntaxToken(SyntaxKind.BreakTokenKeyword, textSpan));
+                    lexerOutput.SyntaxTokenList.Add(new SyntaxToken(SyntaxKind.BreakTokenKeyword, textSpan with { DecorationByte = (byte)GenericDecorationKind.KeywordControl }));
                     return;
                 }
 
@@ -1961,8 +1888,7 @@ public static class CSharpLexer
                     binder.KeywordCheckBuffer[2] == 's' &&
                     binder.KeywordCheckBuffer[3] == 'e')
                 {
-                    textSpan = textSpan with { DecorationByte = (byte)GenericDecorationKind.KeywordControl };
-                    lexerOutput.SyntaxTokenList.Add(new SyntaxToken(SyntaxKind.CaseTokenKeyword, textSpan));
+                    lexerOutput.SyntaxTokenList.Add(new SyntaxToken(SyntaxKind.CaseTokenKeyword, textSpan with { DecorationByte = (byte)GenericDecorationKind.KeywordControl }));
                     return;
                 }
 
@@ -1978,8 +1904,7 @@ public static class CSharpLexer
                     binder.KeywordCheckBuffer[6] == 'u' &&
                     binder.KeywordCheckBuffer[7] == 'e')
                 {
-                    textSpan = textSpan with { DecorationByte = (byte)GenericDecorationKind.KeywordControl };
-                    lexerOutput.SyntaxTokenList.Add(new SyntaxToken(SyntaxKind.ContinueTokenKeyword, textSpan));
+                    lexerOutput.SyntaxTokenList.Add(new SyntaxToken(SyntaxKind.ContinueTokenKeyword, textSpan with { DecorationByte = (byte)GenericDecorationKind.KeywordControl }));
                     return;
                 }
 
@@ -1989,8 +1914,7 @@ public static class CSharpLexer
                     binder.KeywordCheckBuffer[0] == 'd' &&
                     binder.KeywordCheckBuffer[1] == 'o')
                 {
-                    textSpan = textSpan with { DecorationByte = (byte)GenericDecorationKind.KeywordControl };
-                    lexerOutput.SyntaxTokenList.Add(new SyntaxToken(SyntaxKind.DoTokenKeyword, textSpan));
+                    lexerOutput.SyntaxTokenList.Add(new SyntaxToken(SyntaxKind.DoTokenKeyword, textSpan with { DecorationByte = (byte)GenericDecorationKind.KeywordControl }));
                     return;
                 }
 
@@ -2001,8 +1925,7 @@ public static class CSharpLexer
                     binder.KeywordCheckBuffer[1] == 'o' &&
                     binder.KeywordCheckBuffer[2] == 'r')
                 {
-                    textSpan = textSpan with { DecorationByte = (byte)GenericDecorationKind.KeywordControl };
-                    lexerOutput.SyntaxTokenList.Add(new SyntaxToken(SyntaxKind.ForTokenKeyword, textSpan));
+                    lexerOutput.SyntaxTokenList.Add(new SyntaxToken(SyntaxKind.ForTokenKeyword, textSpan with { DecorationByte = (byte)GenericDecorationKind.KeywordControl }));
                     return;
                 }
 
@@ -2017,8 +1940,7 @@ public static class CSharpLexer
                     binder.KeywordCheckBuffer[5] == 'c' &&
                     binder.KeywordCheckBuffer[6] == 'h')
                 {
-                    textSpan = textSpan with { DecorationByte = (byte)GenericDecorationKind.KeywordControl };
-                    lexerOutput.SyntaxTokenList.Add(new SyntaxToken(SyntaxKind.ForeachTokenKeyword, textSpan));
+                    lexerOutput.SyntaxTokenList.Add(new SyntaxToken(SyntaxKind.ForeachTokenKeyword, textSpan with { DecorationByte = (byte)GenericDecorationKind.KeywordControl }));
                     return;
                 }
 
@@ -2034,8 +1956,7 @@ public static class CSharpLexer
                     binder.KeywordCheckBuffer[3] == 'o')
                 {
                     // goto
-                    textSpan = textSpan with { DecorationByte = (byte)GenericDecorationKind.KeywordControl };
-                    lexerOutput.SyntaxTokenList.Add(new SyntaxToken(SyntaxKind.GotoTokenKeyword, textSpan));
+                    lexerOutput.SyntaxTokenList.Add(new SyntaxToken(SyntaxKind.GotoTokenKeyword, textSpan with { DecorationByte = (byte)GenericDecorationKind.KeywordControl }));
                     return;
                 }
                 else if (binder.KeywordCheckBuffer[0] == 'n' &&
@@ -2044,8 +1965,7 @@ public static class CSharpLexer
                          binder.KeywordCheckBuffer[3] == 't')
                 {
                     // nint
-                    textSpan = textSpan with { DecorationByte = (byte)GenericDecorationKind.Keyword };
-                    lexerOutput.SyntaxTokenList.Add(new SyntaxToken(SyntaxKind.NintTokenContextualKeyword, textSpan));
+                    lexerOutput.SyntaxTokenList.Add(new SyntaxToken(SyntaxKind.NintTokenContextualKeyword, textSpan with { DecorationByte = (byte)GenericDecorationKind.Keyword }));
                     return;
                 }
                 
@@ -2055,8 +1975,7 @@ public static class CSharpLexer
                     binder.KeywordCheckBuffer[0] == 'i' &&
                     binder.KeywordCheckBuffer[1] == 'f')
                 {
-                    textSpan = textSpan with { DecorationByte = (byte)GenericDecorationKind.KeywordControl };
-                    lexerOutput.SyntaxTokenList.Add(new SyntaxToken(SyntaxKind.IfTokenKeyword, textSpan));
+                    lexerOutput.SyntaxTokenList.Add(new SyntaxToken(SyntaxKind.IfTokenKeyword, textSpan with { DecorationByte = (byte)GenericDecorationKind.KeywordControl }));
                     return;
                 }
 
@@ -2070,8 +1989,7 @@ public static class CSharpLexer
                     binder.KeywordCheckBuffer[4] == 'r' &&
                     binder.KeywordCheckBuffer[5] == 'n')
                 {
-                    textSpan = textSpan with { DecorationByte = (byte)GenericDecorationKind.KeywordControl };
-                    lexerOutput.SyntaxTokenList.Add(new SyntaxToken(SyntaxKind.ReturnTokenKeyword, textSpan));
+                    lexerOutput.SyntaxTokenList.Add(new SyntaxToken(SyntaxKind.ReturnTokenKeyword, textSpan with { DecorationByte = (byte)GenericDecorationKind.KeywordControl }));
                     return;
                 }
 
@@ -2085,8 +2003,7 @@ public static class CSharpLexer
                     binder.KeywordCheckBuffer[4] == 'c' &&
                     binder.KeywordCheckBuffer[5] == 'h')
                 {
-                    textSpan = textSpan with { DecorationByte = (byte)GenericDecorationKind.KeywordControl };
-                    lexerOutput.SyntaxTokenList.Add(new SyntaxToken(SyntaxKind.SwitchTokenKeyword, textSpan));
+                    lexerOutput.SyntaxTokenList.Add(new SyntaxToken(SyntaxKind.SwitchTokenKeyword, textSpan with { DecorationByte = (byte)GenericDecorationKind.KeywordControl }));
                     return;
                 }
 
@@ -2099,8 +2016,7 @@ public static class CSharpLexer
                     binder.KeywordCheckBuffer[3] == 'o' &&
                     binder.KeywordCheckBuffer[4] == 'w')
                 {
-                    textSpan = textSpan with { DecorationByte = (byte)GenericDecorationKind.KeywordControl };
-                    lexerOutput.SyntaxTokenList.Add(new SyntaxToken(SyntaxKind.ThrowTokenKeyword, textSpan));
+                    lexerOutput.SyntaxTokenList.Add(new SyntaxToken(SyntaxKind.ThrowTokenKeyword, textSpan with { DecorationByte = (byte)GenericDecorationKind.KeywordControl }));
                     return;
                 }
 
@@ -2113,8 +2029,7 @@ public static class CSharpLexer
                     binder.KeywordCheckBuffer[3] == 'l' &&
                     binder.KeywordCheckBuffer[4] == 'e')
                 {
-                    textSpan = textSpan with { DecorationByte = (byte)GenericDecorationKind.KeywordControl };
-                    lexerOutput.SyntaxTokenList.Add(new SyntaxToken(SyntaxKind.WhileTokenKeyword, textSpan));
+                    lexerOutput.SyntaxTokenList.Add(new SyntaxToken(SyntaxKind.WhileTokenKeyword, textSpan with { DecorationByte = (byte)GenericDecorationKind.KeywordControl }));
                     return;
                 }
 
@@ -2125,8 +2040,7 @@ public static class CSharpLexer
                     binder.KeywordCheckBuffer[1] == 'd' &&
                     binder.KeywordCheckBuffer[2] == 'd')
                 {
-                    textSpan = textSpan with { DecorationByte = (byte)GenericDecorationKind.Keyword };
-                    lexerOutput.SyntaxTokenList.Add(new SyntaxToken(SyntaxKind.AddTokenContextualKeyword, textSpan));
+                    lexerOutput.SyntaxTokenList.Add(new SyntaxToken(SyntaxKind.AddTokenContextualKeyword, textSpan with { DecorationByte = (byte)GenericDecorationKind.Keyword }));
                     return;
                 }
 
@@ -2137,8 +2051,7 @@ public static class CSharpLexer
                     binder.KeywordCheckBuffer[1] == 'n' &&
                     binder.KeywordCheckBuffer[2] == 'd')
                 {
-                    textSpan = textSpan with { DecorationByte = (byte)GenericDecorationKind.Keyword };
-                    lexerOutput.SyntaxTokenList.Add(new SyntaxToken(SyntaxKind.AndTokenContextualKeyword, textSpan));
+                    lexerOutput.SyntaxTokenList.Add(new SyntaxToken(SyntaxKind.AndTokenContextualKeyword, textSpan with { DecorationByte = (byte)GenericDecorationKind.Keyword }));
                     return;
                 }
 
@@ -2151,8 +2064,7 @@ public static class CSharpLexer
                     binder.KeywordCheckBuffer[3] == 'a' &&
                     binder.KeywordCheckBuffer[4] == 's')
                 {
-                    textSpan = textSpan with { DecorationByte = (byte)GenericDecorationKind.Keyword };
-                    lexerOutput.SyntaxTokenList.Add(new SyntaxToken(SyntaxKind.AliasTokenContextualKeyword, textSpan));
+                    lexerOutput.SyntaxTokenList.Add(new SyntaxToken(SyntaxKind.AliasTokenContextualKeyword, textSpan with { DecorationByte = (byte)GenericDecorationKind.Keyword }));
                     return;
                 }
 
@@ -2169,8 +2081,7 @@ public static class CSharpLexer
                     binder.KeywordCheckBuffer[7] == 'n' &&
                     binder.KeywordCheckBuffer[8] == 'g')
                 {
-                    textSpan = textSpan with { DecorationByte = (byte)GenericDecorationKind.Keyword };
-                    lexerOutput.SyntaxTokenList.Add(new SyntaxToken(SyntaxKind.AscendingTokenContextualKeyword, textSpan));
+                    lexerOutput.SyntaxTokenList.Add(new SyntaxToken(SyntaxKind.AscendingTokenContextualKeyword, textSpan with { DecorationByte = (byte)GenericDecorationKind.Keyword }));
                     return;
                 }
 
@@ -2182,8 +2093,7 @@ public static class CSharpLexer
                     binder.KeywordCheckBuffer[2] == 'g' &&
                     binder.KeywordCheckBuffer[3] == 's')
                 {
-                    textSpan = textSpan with { DecorationByte = (byte)GenericDecorationKind.Keyword };
-                    lexerOutput.SyntaxTokenList.Add(new SyntaxToken(SyntaxKind.ArgsTokenContextualKeyword, textSpan));
+                    lexerOutput.SyntaxTokenList.Add(new SyntaxToken(SyntaxKind.ArgsTokenContextualKeyword, textSpan with { DecorationByte = (byte)GenericDecorationKind.Keyword }));
                     return;
                 }
 
@@ -2196,8 +2106,7 @@ public static class CSharpLexer
                     binder.KeywordCheckBuffer[3] == 'n' &&
                     binder.KeywordCheckBuffer[4] == 'c')
                 {
-                    textSpan = textSpan with { DecorationByte = (byte)GenericDecorationKind.Keyword };
-                    lexerOutput.SyntaxTokenList.Add(new SyntaxToken(SyntaxKind.AsyncTokenContextualKeyword, textSpan));
+                    lexerOutput.SyntaxTokenList.Add(new SyntaxToken(SyntaxKind.AsyncTokenContextualKeyword, textSpan with { DecorationByte = (byte)GenericDecorationKind.Keyword }));
                     return;
                 }
 
@@ -2207,8 +2116,7 @@ public static class CSharpLexer
                     binder.KeywordCheckBuffer[0] == 'b' &&
                     binder.KeywordCheckBuffer[1] == 'y')
                 {
-                    textSpan = textSpan with { DecorationByte = (byte)GenericDecorationKind.Keyword };
-                    lexerOutput.SyntaxTokenList.Add(new SyntaxToken(SyntaxKind.ByTokenContextualKeyword, textSpan));
+                    lexerOutput.SyntaxTokenList.Add(new SyntaxToken(SyntaxKind.ByTokenContextualKeyword, textSpan with { DecorationByte = (byte)GenericDecorationKind.Keyword }));
                     return;
                 }
 
@@ -2226,8 +2134,7 @@ public static class CSharpLexer
                     binder.KeywordCheckBuffer[8] == 'n' &&
                     binder.KeywordCheckBuffer[9] == 'g')
                 {
-                    textSpan = textSpan with { DecorationByte = (byte)GenericDecorationKind.Keyword };
-                    lexerOutput.SyntaxTokenList.Add(new SyntaxToken(SyntaxKind.DescendingTokenContextualKeyword, textSpan));
+                    lexerOutput.SyntaxTokenList.Add(new SyntaxToken(SyntaxKind.DescendingTokenContextualKeyword, textSpan with { DecorationByte = (byte)GenericDecorationKind.Keyword }));
                     return;
                 }
 
@@ -2241,8 +2148,7 @@ public static class CSharpLexer
                     binder.KeywordCheckBuffer[4] == 'l' &&
                     binder.KeywordCheckBuffer[5] == 's')
                 {
-                    textSpan = textSpan with { DecorationByte = (byte)GenericDecorationKind.Keyword };
-                    lexerOutput.SyntaxTokenList.Add(new SyntaxToken(SyntaxKind.EqualsTokenContextualKeyword, textSpan));
+                    lexerOutput.SyntaxTokenList.Add(new SyntaxToken(SyntaxKind.EqualsTokenContextualKeyword, textSpan with { DecorationByte = (byte)GenericDecorationKind.Keyword }));
                     return;
                 }
 
@@ -2254,8 +2160,7 @@ public static class CSharpLexer
                     binder.KeywordCheckBuffer[2] == 'l' &&
                     binder.KeywordCheckBuffer[3] == 'e')
                 {
-                    textSpan = textSpan with { DecorationByte = (byte)GenericDecorationKind.Keyword };
-                    lexerOutput.SyntaxTokenList.Add(new SyntaxToken(SyntaxKind.FileTokenContextualKeyword, textSpan));
+                    lexerOutput.SyntaxTokenList.Add(new SyntaxToken(SyntaxKind.FileTokenContextualKeyword, textSpan with { DecorationByte = (byte)GenericDecorationKind.Keyword }));
                     return;
                 }
 
@@ -2266,8 +2171,7 @@ public static class CSharpLexer
                     binder.KeywordCheckBuffer[1] == 'e' &&
                     binder.KeywordCheckBuffer[2] == 't')
                 {
-                    textSpan = textSpan with { DecorationByte = (byte)GenericDecorationKind.Keyword };
-                    lexerOutput.SyntaxTokenList.Add(new SyntaxToken(SyntaxKind.GetTokenContextualKeyword, textSpan));
+                    lexerOutput.SyntaxTokenList.Add(new SyntaxToken(SyntaxKind.GetTokenContextualKeyword, textSpan with { DecorationByte = (byte)GenericDecorationKind.Keyword }));
                     return;
                 }
 
@@ -2281,8 +2185,7 @@ public static class CSharpLexer
                     binder.KeywordCheckBuffer[4] == 'a' &&
                     binder.KeywordCheckBuffer[5] == 'l')
                 {
-                    textSpan = textSpan with { DecorationByte = (byte)GenericDecorationKind.Keyword };
-                    lexerOutput.SyntaxTokenList.Add(new SyntaxToken(SyntaxKind.GlobalTokenContextualKeyword, textSpan));
+                    lexerOutput.SyntaxTokenList.Add(new SyntaxToken(SyntaxKind.GlobalTokenContextualKeyword, textSpan with { DecorationByte = (byte)GenericDecorationKind.Keyword }));
                     return;
                 }
 
@@ -2295,8 +2198,7 @@ public static class CSharpLexer
                     binder.KeywordCheckBuffer[3] == 'u' &&
                     binder.KeywordCheckBuffer[4] == 'p')
                 {
-                    textSpan = textSpan with { DecorationByte = (byte)GenericDecorationKind.Keyword };
-                    lexerOutput.SyntaxTokenList.Add(new SyntaxToken(SyntaxKind.GroupTokenContextualKeyword, textSpan));
+                    lexerOutput.SyntaxTokenList.Add(new SyntaxToken(SyntaxKind.GroupTokenContextualKeyword, textSpan with { DecorationByte = (byte)GenericDecorationKind.Keyword }));
                     return;
                 }
 
@@ -2308,8 +2210,7 @@ public static class CSharpLexer
                     binder.KeywordCheckBuffer[2] == 't' &&
                     binder.KeywordCheckBuffer[3] == 'o')
                 {
-                    textSpan = textSpan with { DecorationByte = (byte)GenericDecorationKind.Keyword };
-                    lexerOutput.SyntaxTokenList.Add(new SyntaxToken(SyntaxKind.IntoTokenContextualKeyword, textSpan));
+                    lexerOutput.SyntaxTokenList.Add(new SyntaxToken(SyntaxKind.IntoTokenContextualKeyword, textSpan with { DecorationByte = (byte)GenericDecorationKind.Keyword }));
                     return;
                 }
 
@@ -2320,8 +2221,7 @@ public static class CSharpLexer
                     binder.KeywordCheckBuffer[1] == 'e' &&
                     binder.KeywordCheckBuffer[2] == 't')
                 {
-                    textSpan = textSpan with { DecorationByte = (byte)GenericDecorationKind.Keyword };
-                    lexerOutput.SyntaxTokenList.Add(new SyntaxToken(SyntaxKind.LetTokenContextualKeyword, textSpan));
+                    lexerOutput.SyntaxTokenList.Add(new SyntaxToken(SyntaxKind.LetTokenContextualKeyword, textSpan with { DecorationByte = (byte)GenericDecorationKind.Keyword }));
                     return;
                 }
 
@@ -2336,8 +2236,7 @@ public static class CSharpLexer
                     binder.KeywordCheckBuffer[5] == 'e' &&
                     binder.KeywordCheckBuffer[6] == 'd')
                 {
-                    textSpan = textSpan with { DecorationByte = (byte)GenericDecorationKind.Keyword };
-                    lexerOutput.SyntaxTokenList.Add(new SyntaxToken(SyntaxKind.ManagedTokenContextualKeyword, textSpan));
+                    lexerOutput.SyntaxTokenList.Add(new SyntaxToken(SyntaxKind.ManagedTokenContextualKeyword, textSpan with { DecorationByte = (byte)GenericDecorationKind.Keyword }));
                     return;
                 }
 
@@ -2351,8 +2250,7 @@ public static class CSharpLexer
                     binder.KeywordCheckBuffer[4] == 'o' &&
                     binder.KeywordCheckBuffer[5] == 'f')
                 {
-                    textSpan = textSpan with { DecorationByte = (byte)GenericDecorationKind.Keyword };
-                    lexerOutput.SyntaxTokenList.Add(new SyntaxToken(SyntaxKind.NameofTokenContextualKeyword, textSpan));
+                    lexerOutput.SyntaxTokenList.Add(new SyntaxToken(SyntaxKind.NameofTokenContextualKeyword, textSpan with { DecorationByte = (byte)GenericDecorationKind.Keyword }));
                     return;
                 }
 
@@ -2363,8 +2261,7 @@ public static class CSharpLexer
                     binder.KeywordCheckBuffer[1] == 'o' &&
                     binder.KeywordCheckBuffer[2] == 't')
                 {
-                    textSpan = textSpan with { DecorationByte = (byte)GenericDecorationKind.Keyword };
-                    lexerOutput.SyntaxTokenList.Add(new SyntaxToken(SyntaxKind.NotTokenContextualKeyword, textSpan));
+                    lexerOutput.SyntaxTokenList.Add(new SyntaxToken(SyntaxKind.NotTokenContextualKeyword, textSpan with { DecorationByte = (byte)GenericDecorationKind.Keyword }));
                     return;
                 }
 
@@ -2379,8 +2276,7 @@ public static class CSharpLexer
                     binder.KeywordCheckBuffer[5] == 'l' &&
                     binder.KeywordCheckBuffer[6] == 'l')
                 {
-                    textSpan = textSpan with { DecorationByte = (byte)GenericDecorationKind.Keyword };
-                    lexerOutput.SyntaxTokenList.Add(new SyntaxToken(SyntaxKind.NotnullTokenContextualKeyword, textSpan));
+                    lexerOutput.SyntaxTokenList.Add(new SyntaxToken(SyntaxKind.NotnullTokenContextualKeyword, textSpan with { DecorationByte = (byte)GenericDecorationKind.Keyword }));
                     return;
                 }
 
@@ -2393,8 +2289,7 @@ public static class CSharpLexer
                     binder.KeywordCheckBuffer[3] == 'n' &&
                     binder.KeywordCheckBuffer[4] == 't')
                 {
-                    textSpan = textSpan with { DecorationByte = (byte)GenericDecorationKind.Keyword };
-                    lexerOutput.SyntaxTokenList.Add(new SyntaxToken(SyntaxKind.NuintTokenContextualKeyword, textSpan));
+                    lexerOutput.SyntaxTokenList.Add(new SyntaxToken(SyntaxKind.NuintTokenContextualKeyword, textSpan with { DecorationByte = (byte)GenericDecorationKind.Keyword }));
                     return;
                 }
 
@@ -2404,8 +2299,7 @@ public static class CSharpLexer
                     binder.KeywordCheckBuffer[0] == 'o' &&
                     binder.KeywordCheckBuffer[1] == 'n')
                 {
-                    textSpan = textSpan with { DecorationByte = (byte)GenericDecorationKind.Keyword };
-                    lexerOutput.SyntaxTokenList.Add(new SyntaxToken(SyntaxKind.OnTokenContextualKeyword, textSpan));
+                    lexerOutput.SyntaxTokenList.Add(new SyntaxToken(SyntaxKind.OnTokenContextualKeyword, textSpan with { DecorationByte = (byte)GenericDecorationKind.Keyword }));
                     return;
                 }
 
@@ -2415,8 +2309,7 @@ public static class CSharpLexer
                     binder.KeywordCheckBuffer[0] == 'o' &&
                     binder.KeywordCheckBuffer[1] == 'r')
                 {
-                    textSpan = textSpan with { DecorationByte = (byte)GenericDecorationKind.Keyword };
-                    lexerOutput.SyntaxTokenList.Add(new SyntaxToken(SyntaxKind.OrTokenContextualKeyword, textSpan));
+                    lexerOutput.SyntaxTokenList.Add(new SyntaxToken(SyntaxKind.OrTokenContextualKeyword, textSpan with { DecorationByte = (byte)GenericDecorationKind.Keyword }));
                     return;
                 }
 
@@ -2431,8 +2324,7 @@ public static class CSharpLexer
                     binder.KeywordCheckBuffer[5] == 'b' &&
                     binder.KeywordCheckBuffer[6] == 'y')
                 {
-                    textSpan = textSpan with { DecorationByte = (byte)GenericDecorationKind.Keyword };
-                    lexerOutput.SyntaxTokenList.Add(new SyntaxToken(SyntaxKind.OrderbyTokenContextualKeyword, textSpan));
+                    lexerOutput.SyntaxTokenList.Add(new SyntaxToken(SyntaxKind.OrderbyTokenContextualKeyword, textSpan with { DecorationByte = (byte)GenericDecorationKind.Keyword }));
                     return;
                 }
 
@@ -2447,8 +2339,7 @@ public static class CSharpLexer
                     binder.KeywordCheckBuffer[5] == 'a' &&
                     binder.KeywordCheckBuffer[6] == 'l')
                 {
-                    textSpan = textSpan with { DecorationByte = (byte)GenericDecorationKind.Keyword };
-                    lexerOutput.SyntaxTokenList.Add(new SyntaxToken(SyntaxKind.PartialTokenContextualKeyword, textSpan));
+                    lexerOutput.SyntaxTokenList.Add(new SyntaxToken(SyntaxKind.PartialTokenContextualKeyword, textSpan with { DecorationByte = (byte)GenericDecorationKind.Keyword }));
                     return;
                 }
 
@@ -2462,8 +2353,7 @@ public static class CSharpLexer
                     binder.KeywordCheckBuffer[4] == 'v' &&
                     binder.KeywordCheckBuffer[5] == 'e')
                 {
-                    textSpan = textSpan with { DecorationByte = (byte)GenericDecorationKind.Keyword };
-                    lexerOutput.SyntaxTokenList.Add(new SyntaxToken(SyntaxKind.RemoveTokenContextualKeyword, textSpan));
+                    lexerOutput.SyntaxTokenList.Add(new SyntaxToken(SyntaxKind.RemoveTokenContextualKeyword, textSpan with { DecorationByte = (byte)GenericDecorationKind.Keyword }));
                     return;
                 }
 
@@ -2479,8 +2369,7 @@ public static class CSharpLexer
                     binder.KeywordCheckBuffer[6] == 'e' &&
                     binder.KeywordCheckBuffer[7] == 'd')
                 {
-                    textSpan = textSpan with { DecorationByte = (byte)GenericDecorationKind.Keyword };
-                    lexerOutput.SyntaxTokenList.Add(new SyntaxToken(SyntaxKind.RequiredTokenContextualKeyword, textSpan));
+                    lexerOutput.SyntaxTokenList.Add(new SyntaxToken(SyntaxKind.RequiredTokenContextualKeyword, textSpan with { DecorationByte = (byte)GenericDecorationKind.Keyword }));
                     return;
                 }
 
@@ -2494,8 +2383,7 @@ public static class CSharpLexer
                     binder.KeywordCheckBuffer[4] == 'e' &&
                     binder.KeywordCheckBuffer[5] == 'd')
                 {
-                    textSpan = textSpan with { DecorationByte = (byte)GenericDecorationKind.Keyword };
-                    lexerOutput.SyntaxTokenList.Add(new SyntaxToken(SyntaxKind.ScopedTokenContextualKeyword, textSpan));
+                    lexerOutput.SyntaxTokenList.Add(new SyntaxToken(SyntaxKind.ScopedTokenContextualKeyword, textSpan with { DecorationByte = (byte)GenericDecorationKind.Keyword }));
                     return;
                 }
 
@@ -2509,8 +2397,7 @@ public static class CSharpLexer
                     binder.KeywordCheckBuffer[4] == 'c' &&
                     binder.KeywordCheckBuffer[5] == 't')
                 {
-                    textSpan = textSpan with { DecorationByte = (byte)GenericDecorationKind.Keyword };
-                    lexerOutput.SyntaxTokenList.Add(new SyntaxToken(SyntaxKind.SelectTokenContextualKeyword, textSpan));
+                    lexerOutput.SyntaxTokenList.Add(new SyntaxToken(SyntaxKind.SelectTokenContextualKeyword, textSpan with { DecorationByte = (byte)GenericDecorationKind.Keyword }));
                     return;
                 }
 
@@ -2521,8 +2408,7 @@ public static class CSharpLexer
                     binder.KeywordCheckBuffer[1] == 'e' &&
                     binder.KeywordCheckBuffer[2] == 't')
                 {
-                    textSpan = textSpan with { DecorationByte = (byte)GenericDecorationKind.Keyword };
-                    lexerOutput.SyntaxTokenList.Add(new SyntaxToken(SyntaxKind.SetTokenContextualKeyword, textSpan));
+                    lexerOutput.SyntaxTokenList.Add(new SyntaxToken(SyntaxKind.SetTokenContextualKeyword, textSpan with { DecorationByte = (byte)GenericDecorationKind.Keyword }));
                     return;
                 }
 
@@ -2539,8 +2425,7 @@ public static class CSharpLexer
                     binder.KeywordCheckBuffer[7] == 'e' &&
                     binder.KeywordCheckBuffer[8] == 'd')
                 {
-                    textSpan = textSpan with { DecorationByte = (byte)GenericDecorationKind.Keyword };
-                    lexerOutput.SyntaxTokenList.Add(new SyntaxToken(SyntaxKind.UnmanagedTokenContextualKeyword, textSpan));
+                    lexerOutput.SyntaxTokenList.Add(new SyntaxToken(SyntaxKind.UnmanagedTokenContextualKeyword, textSpan with { DecorationByte = (byte)GenericDecorationKind.Keyword }));
                     return;
                 }
 
@@ -2553,8 +2438,7 @@ public static class CSharpLexer
                     binder.KeywordCheckBuffer[3] == 'u' &&
                     binder.KeywordCheckBuffer[4] == 'e')
                 {
-                    textSpan = textSpan with { DecorationByte = (byte)GenericDecorationKind.Keyword };
-                    lexerOutput.SyntaxTokenList.Add(new SyntaxToken(SyntaxKind.ValueTokenContextualKeyword, textSpan));
+                    lexerOutput.SyntaxTokenList.Add(new SyntaxToken(SyntaxKind.ValueTokenContextualKeyword, textSpan with { DecorationByte = (byte)GenericDecorationKind.Keyword }));
                     return;
                 }
 
@@ -2565,8 +2449,7 @@ public static class CSharpLexer
                     binder.KeywordCheckBuffer[1] == 'a' &&
                     binder.KeywordCheckBuffer[2] == 'r')
                 {
-                    textSpan = textSpan with { DecorationByte = (byte)GenericDecorationKind.Keyword };
-                    lexerOutput.SyntaxTokenList.Add(new SyntaxToken(SyntaxKind.VarTokenContextualKeyword, textSpan));
+                    lexerOutput.SyntaxTokenList.Add(new SyntaxToken(SyntaxKind.VarTokenContextualKeyword, textSpan with { DecorationByte = (byte)GenericDecorationKind.Keyword }));
                     return;
                 }
 
@@ -2579,8 +2462,7 @@ public static class CSharpLexer
                     binder.KeywordCheckBuffer[3] == 'r' &&
                     binder.KeywordCheckBuffer[4] == 'e')
                 {
-                    textSpan = textSpan with { DecorationByte = (byte)GenericDecorationKind.Keyword };
-                    lexerOutput.SyntaxTokenList.Add(new SyntaxToken(SyntaxKind.WhereTokenContextualKeyword, textSpan));
+                    lexerOutput.SyntaxTokenList.Add(new SyntaxToken(SyntaxKind.WhereTokenContextualKeyword, textSpan with { DecorationByte = (byte)GenericDecorationKind.Keyword }));
                     return;
                 }
 
@@ -2592,8 +2474,7 @@ public static class CSharpLexer
                     binder.KeywordCheckBuffer[2] == 't' &&
                     binder.KeywordCheckBuffer[3] == 'h')
                 {
-                    textSpan = textSpan with { DecorationByte = (byte)GenericDecorationKind.Keyword };
-                    lexerOutput.SyntaxTokenList.Add(new SyntaxToken(SyntaxKind.WithTokenContextualKeyword, textSpan));
+                    lexerOutput.SyntaxTokenList.Add(new SyntaxToken(SyntaxKind.WithTokenContextualKeyword, textSpan with { DecorationByte = (byte)GenericDecorationKind.Keyword }));
                     return;
                 }
 
@@ -2606,8 +2487,7 @@ public static class CSharpLexer
                     binder.KeywordCheckBuffer[3] == 'l' &&
                     binder.KeywordCheckBuffer[4] == 'd')
                 {
-                    textSpan = textSpan with { DecorationByte = (byte)GenericDecorationKind.KeywordControl };
-                    lexerOutput.SyntaxTokenList.Add(new SyntaxToken(SyntaxKind.YieldTokenContextualKeyword, textSpan));
+                    lexerOutput.SyntaxTokenList.Add(new SyntaxToken(SyntaxKind.YieldTokenContextualKeyword, textSpan with { DecorationByte = (byte)GenericDecorationKind.KeywordControl }));
                     return;
                 }
 

@@ -1056,15 +1056,15 @@ public ref struct CSharpParserModel
                             break;
                         }
                     }
-                    else
+                    /*else
                     {
                         ++Walk.Common.RazorLib.Installations.Models.WalkDebugSomething.AvoidStringLogicByCheckingCharIntSum;
-                    }
+                    }*/
                 }
-                else
+                /*else
                 {
                     ++Walk.Common.RazorLib.Installations.Models.WalkDebugSomething.AvoidStringLogicByCheckingLength;
-                }
+                }*/
             }
         }
         
@@ -1087,15 +1087,15 @@ public ref struct CSharpParserModel
                                 break;
                             }
                         }
-                        else
+                        /*else
                         {
                             ++Walk.Common.RazorLib.Installations.Models.WalkDebugSomething.AvoidStringLogicByCheckingCharIntSum;
-                        }
+                        }*/
                     }
-                    else
+                    /*else
                     {
                         ++Walk.Common.RazorLib.Installations.Models.WalkDebugSomething.AvoidStringLogicByCheckingLength;
-                    }
+                    }*/
                 }
                 if (typeDefinitionNode is not null)
                 {
@@ -1139,15 +1139,15 @@ public ref struct CSharpParserModel
                             break;
                         }
                     }
-                    else
+                    /*else
                     {
                         ++Walk.Common.RazorLib.Installations.Models.WalkDebugSomething.AvoidStringLogicByCheckingCharIntSum;
-                    }
+                    }*/
                 }
-                else
+                /*else
                 {
                     ++Walk.Common.RazorLib.Installations.Models.WalkDebugSomething.AvoidStringLogicByCheckingLength;
-                }
+                }*/
             }
         }
         
@@ -1250,15 +1250,15 @@ public ref struct CSharpParserModel
                             break;
                         }
                     }
-                    else
+                    /*else
                     {
                         ++Walk.Common.RazorLib.Installations.Models.WalkDebugSomething.AvoidStringLogicByCheckingCharIntSum;
-                    }
+                    }*/
                 }
-                else
+                /*else
                 {
                     ++Walk.Common.RazorLib.Installations.Models.WalkDebugSomething.AvoidStringLogicByCheckingLength;
-                }
+                }*/
             }
         }
         
@@ -1421,15 +1421,15 @@ public ref struct CSharpParserModel
                             break;
                         }
                     }
-                    else
+                    /*else
                     {
                         ++Walk.Common.RazorLib.Installations.Models.WalkDebugSomething.AvoidStringLogicByCheckingCharIntSum;
-                    }
+                    }*/
                 }
-                else
+                /*else
                 {
                     ++Walk.Common.RazorLib.Installations.Models.WalkDebugSomething.AvoidStringLogicByCheckingLength;
-                }
+                }*/
             }
         }
         
@@ -1551,15 +1551,15 @@ public ref struct CSharpParserModel
                             break;
                         }
                     }
-                    else
+                    /*else
                     {
                         ++Walk.Common.RazorLib.Installations.Models.WalkDebugSomething.AvoidStringLogicByCheckingCharIntSum;
-                    }
+                    }*/
                 }
-                else
+                /*else
                 {
                     ++Walk.Common.RazorLib.Installations.Models.WalkDebugSomething.AvoidStringLogicByCheckingLength;
-                }
+                }*/
             }
         }
         
@@ -1608,15 +1608,15 @@ public ref struct CSharpParserModel
                             break;
                         }
                     }
-                    else
+                    /*else
                     {
                         ++Walk.Common.RazorLib.Installations.Models.WalkDebugSomething.AvoidStringLogicByCheckingCharIntSum;
-                    }
+                    }*/
                 }
-                else
+                /*else
                 {
                     ++Walk.Common.RazorLib.Installations.Models.WalkDebugSomething.AvoidStringLogicByCheckingLength;
-                }
+                }*/
             }
         }
         
@@ -1684,15 +1684,15 @@ public ref struct CSharpParserModel
                             break;
                         }
                     }
-                    else
+                    /*else
                     {
                         ++Walk.Common.RazorLib.Installations.Models.WalkDebugSomething.AvoidStringLogicByCheckingCharIntSum;
-                    }
+                    }*/
                 }
-                else
+                /*else
                 {
                     ++Walk.Common.RazorLib.Installations.Models.WalkDebugSomething.AvoidStringLogicByCheckingLength;
-                }
+                }*/
             }
         }
         
@@ -1729,15 +1729,15 @@ public ref struct CSharpParserModel
                             break;
                         }
                     }
-                    else
+                    /*else
                     {
                         ++Walk.Common.RazorLib.Installations.Models.WalkDebugSomething.AvoidStringLogicByCheckingCharIntSum;
-                    }
+                    }*/
                 }
-                else
+                /*else
                 {
                     ++Walk.Common.RazorLib.Installations.Models.WalkDebugSomething.AvoidStringLogicByCheckingLength;
-                }
+                }*/
             }
         }
         
@@ -1785,15 +1785,15 @@ public ref struct CSharpParserModel
                             break;
                         }
                     }
-                    else
+                    /*else
                     {
                         ++Walk.Common.RazorLib.Installations.Models.WalkDebugSomething.AvoidStringLogicByCheckingCharIntSum;
-                    }
+                    }*/
                 }
-                else
+                /*else
                 {
                     ++Walk.Common.RazorLib.Installations.Models.WalkDebugSomething.AvoidStringLogicByCheckingLength;
-                }
+                }*/
             }
         }
 
