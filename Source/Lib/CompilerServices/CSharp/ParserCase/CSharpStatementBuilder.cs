@@ -12,7 +12,8 @@ public class CSharpStatementBuilder
         ParseLambdaStatementScopeStack.Clear();
     }
     
-    public bool StatementIsEmpty => ChildList.Count == 0 && MostRecentNode is null;
+    public bool StatementIsEmpty => ChildList.Count == 0 &&
+                                    MostRecentNode == Walk.Extensions.CompilerServices.Syntax.Nodes.EmptyExpressionNode.Empty;
 
     public List<SyntaxToken> ChildList { get; } = new();
     public ISyntaxNode MostRecentNode { get; set; }

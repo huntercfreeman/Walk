@@ -534,11 +534,8 @@ public static class ParseTokens
         var shouldBacktrack = false;
         IExpressionNode backtrackNode = EmptyExpressionNode.Empty;
         
-        // TODO: Is this missing an else in order to set...
-        // ...'parserModel.MostRecentLeftHandSideAssignmentExpressionTypeClauseNode = CSharpFacts.Types.Void.ToTypeReference();'
-        // when this if is not true? Every inner branch is setting MostRecentLeftHandSideAssignmentExpressionTypeClauseNode.
-        //
-        if (parserModel.StatementBuilder.MostRecentNode is not null)
+        // No, this is not missing an else
+        if (parserModel.StatementBuilder.MostRecentNode != EmptyExpressionNode.Empty)
         {
             var previousNode = parserModel.StatementBuilder.MostRecentNode;
             
