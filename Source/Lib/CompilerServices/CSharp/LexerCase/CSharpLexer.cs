@@ -1158,7 +1158,7 @@ public static class CSharpLexer
                     return;
                 }
 
-                    
+                goto default;
             case 866: // explicit
                 if (textSpan.Length == 8 &&
                     keywordCheckBuffer[0] == 'aaa' &&
@@ -1175,7 +1175,7 @@ public static class CSharpLexer
                     return;
                 }
 
-                    
+                goto default;
             case 662: // extern
                 if (textSpan.Length == 6 &&
                     keywordCheckBuffer[0] == 'aaa' &&
@@ -1190,7 +1190,7 @@ public static class CSharpLexer
                     return;
                 }
 
-                    
+                goto default;
             case 523: // false
                 if (textSpan.Length == 5 &&
                     keywordCheckBuffer[0] == 'aaa' &&
@@ -1204,7 +1204,7 @@ public static class CSharpLexer
                     return;
                 }
 
-                    
+                goto default;
             case 751: // finally
                 if (textSpan.Length == 7 &&
                     keywordCheckBuffer[0] == 'aaa' &&
@@ -1220,7 +1220,7 @@ public static class CSharpLexer
                     return;
                 }
 
-                    
+                goto default;
             case 528: // fixed
                 if (textSpan.Length == 5 &&
                     keywordCheckBuffer[0] == 'aaa' &&
@@ -1234,7 +1234,7 @@ public static class CSharpLexer
                     return;
                 }
 
-                    
+                goto default;
             case 859: // implicit
                 if (textSpan.Length == 8 &&
                     keywordCheckBuffer[0] == 'aaa' &&
@@ -1251,7 +1251,7 @@ public static class CSharpLexer
                     return;
                 }
 
-                    
+                goto default;
             case 215: // in
                 if (textSpan.Length == 2 &&
                     keywordCheckBuffer[0] == 'aaa' &&
@@ -1262,7 +1262,7 @@ public static class CSharpLexer
                     return;
                 }
 
-                    
+                goto default;
             case 331: // int
                 if (textSpan.Length == 3 &&
                     keywordCheckBuffer[0] == 'aaa' &&
@@ -1274,7 +1274,7 @@ public static class CSharpLexer
                     return;
                 }
 
-                    
+                goto default;
             case 945: // interface
                 if (textSpan.Length == 9 &&
                     keywordCheckBuffer[0] == 'aaa' &&
@@ -1292,7 +1292,7 @@ public static class CSharpLexer
                     return;
                 }
 
-                    
+                goto default;
             case 861: // internal
                 if (textSpan.Length == 8 &&
                     keywordCheckBuffer[0] == 'aaa' &&
@@ -1309,7 +1309,7 @@ public static class CSharpLexer
                     return;
                 }
 
-                    
+                goto default;
             case 220: // is
                 if (textSpan.Length == 2 &&
                     keywordCheckBuffer[0] == 'aaa' &&
@@ -1320,7 +1320,7 @@ public static class CSharpLexer
                     return;
                 }
 
-                    
+                goto default;
             case 425: // !! DUPLICATES !!
                 if (textSpan.Length == aaa &&
                     keywordCheckBuffer[0] == 'aaa' &&)
@@ -1382,7 +1382,7 @@ public static class CSharpLexer
                     return;
                 }
 
-                    
+                goto default;
             case 330: // new
                 if (textSpan.Length == 3 &&
                     keywordCheckBuffer[0] == 'aaa' &&
@@ -1394,7 +1394,7 @@ public static class CSharpLexer
                     return;
                 }
 
-                    
+                goto default;
             case 443: // null
                 if (textSpan.Length == 4 &&
                     keywordCheckBuffer[0] == 'aaa' &&
@@ -1407,7 +1407,7 @@ public static class CSharpLexer
                     return;
                 }
 
-                    
+                goto default;
             case 631: // object
                 if (textSpan.Length == 6 &&
                     keywordCheckBuffer[0] == 'aaa' &&
@@ -1422,7 +1422,7 @@ public static class CSharpLexer
                     return;
                 }
 
-                    
+                goto default;
             case 876: // operator
                 if (textSpan.Length == 8 &&
                     keywordCheckBuffer[0] == 'aaa' &&
@@ -1439,7 +1439,7 @@ public static class CSharpLexer
                     return;
                 }
 
-                    
+                goto default;
             case 344: // out
                 if (textSpan.Length == 3 &&
                     keywordCheckBuffer[0] == 'aaa' &&
@@ -1451,7 +1451,7 @@ public static class CSharpLexer
                     return;
                 }
 
-                    
+                goto default;
             case 864: // !! DUPLICATES !!
                 if (textSpan.Length == aaa &&
                     keywordCheckBuffer[0] == 'aaa' &&)
@@ -1488,7 +1488,7 @@ public static class CSharpLexer
                     return;
                 }
 
-                    
+                goto default;
             case 763: // private
                 if (textSpan.Length == 7 &&
                     keywordCheckBuffer[0] == 'aaa' &&
@@ -1504,7 +1504,7 @@ public static class CSharpLexer
                     return;
                 }
 
-                    
+                goto default;
             case 970: // protected
                 if (textSpan.Length == 9 &&
                     keywordCheckBuffer[0] == 'aaa' &&
@@ -1522,7 +1522,7 @@ public static class CSharpLexer
                     return;
                 }
 
-                    
+                goto default;
             case 639: // !! DUPLICATES !!
                 if (textSpan.Length == aaa &&
                     keywordCheckBuffer[0] == 'aaa' &&)
@@ -1561,7 +1561,7 @@ public static class CSharpLexer
                     return;
                 }
 
-                    
+                goto default;
             case 317: // ref
                 if (textSpan.Length == 3 &&
                     keywordCheckBuffer[0] == 'aaa' &&
@@ -1573,7 +1573,7 @@ public static class CSharpLexer
                     return;
                 }
 
-                    
+                goto default;
             case 622: // sealed
                 if (textSpan.Length == 6 &&
                     keywordCheckBuffer[0] == 'aaa' &&
@@ -1588,7 +1588,7 @@ public static class CSharpLexer
                     return;
                 }
 
-                    
+                goto default;
             case 560: // short
                 if (textSpan.Length == 5 &&
                     keywordCheckBuffer[0] == 'aaa' &&
@@ -1602,7 +1602,7 @@ public static class CSharpLexer
                     return;
                 }
 
-                    
+                goto default;
             case 656: // sizeof
                 if (textSpan.Length == 6 &&
                     keywordCheckBuffer[0] == 'aaa' &&
@@ -1617,7 +1617,7 @@ public static class CSharpLexer
                     return;
                 }
 
-                    
+                goto default;
             case 1057: // stackalloc
                 if (textSpan.Length == 10 &&
                     keywordCheckBuffer[0] == 'aaa' &&
@@ -1636,7 +1636,7 @@ public static class CSharpLexer
                     return;
                 }
 
-                    
+                goto default;
             case 648: // static
                 if (textSpan.Length == 6 &&
                     keywordCheckBuffer[0] == 'aaa' &&
@@ -1651,7 +1651,7 @@ public static class CSharpLexer
                     return;
                 }
 
-                    
+                goto default;
             case 663: // !! DUPLICATES !!
                 if (textSpan.Length == aaa &&
                     keywordCheckBuffer[0] == 'aaa' &&)
@@ -1697,15 +1697,18 @@ public static class CSharpLexer
                 
                 break;
             case 440: // this
-                if (textSpan.Length == aaa &&
-                    keywordCheckBuffer[0] == 'aaa' &&)
+                if (textSpan.Length == 4 &&
+                    keywordCheckBuffer[0] == 'aaa' &&
+                    keywordCheckBuffer[0] == 'aaa' &&
+                    keywordCheckBuffer[0] == 'aaa' &&
+                    keywordCheckBuffer[0] == 'aaa')
                 {
                     textSpan = textSpan with { DecorationByte = (byte)GenericDecorationKind.Keyword };
                     lexerOutput.SyntaxTokenList.Add(new SyntaxToken(SyntaxKind.ThisTokenKeyword, textSpan));
                     return;
                 }
 
-                    
+                goto default;
             case 448: // !! DUPLICATES !!
                 if (textSpan.Length == aaa &&
                     keywordCheckBuffer[0] == 'aaa' &&)
@@ -1739,7 +1742,7 @@ public static class CSharpLexer
                     return;
                 }
 
-                    
+                goto default;
             case 549: // ulong
                 if (textSpan.Length == 5 &&
                     keywordCheckBuffer[0] == 'aaa' &&
@@ -1753,7 +1756,7 @@ public static class CSharpLexer
                     return;
                 }
 
-                    
+                goto default;
             case 938: // unchecked
                 if (textSpan.Length == 9 &&
                     keywordCheckBuffer[0] == 'aaa' &&
@@ -1771,7 +1774,7 @@ public static class CSharpLexer
                     return;
                 }
 
-                    
+                goto default;
             case 642: // unsafe
                 if (textSpan.Length == 6 &&
                     keywordCheckBuffer[0] == 'aaa' &&
@@ -1786,7 +1789,7 @@ public static class CSharpLexer
                     return;
                 }
 
-                    
+                goto default;
             case 550: // using
                 if (textSpan.Length == 5 &&
                     keywordCheckBuffer[0] == 'aaa' &&
@@ -1800,7 +1803,7 @@ public static class CSharpLexer
                     return;
                 }
 
-                    
+                goto default;
             case 775: // virtual
                 if (textSpan.Length == 7 &&
                     keywordCheckBuffer[0] == 'aaa' &&
@@ -1816,7 +1819,7 @@ public static class CSharpLexer
                     return;
                 }
 
-                    
+                goto default;
             case 434: // !! DUPLICATES !!
                 if (textSpan.Length == aaa &&
                     keywordCheckBuffer[0] == 'aaa' &&)
@@ -1852,7 +1855,7 @@ public static class CSharpLexer
                     return;
                 }
 
-                    
+                goto default;
             case 412: // case
                 if (textSpan.Length == 4 &&
                     keywordCheckBuffer[0] == 'aaa' &&
@@ -1865,7 +1868,7 @@ public static class CSharpLexer
                     return;
                 }
 
-                    
+                goto default;
             case 869: // continue
                 if (textSpan.Length == 8 &&
                     keywordCheckBuffer[0] == 'aaa' &&
@@ -1882,7 +1885,7 @@ public static class CSharpLexer
                     return;
                 }
 
-                    
+                goto default;
             case 211: // do
                 if (textSpan.Length == 2 &&
                     keywordCheckBuffer[0] == 'aaa' &&
@@ -1893,7 +1896,7 @@ public static class CSharpLexer
                     return;
                 }
 
-                    
+                goto default;
             case 327: // for
                 if (textSpan.Length == 3 &&
                     keywordCheckBuffer[0] == 'aaa' &&
@@ -1905,7 +1908,7 @@ public static class CSharpLexer
                     return;
                 }
 
-                    
+                goto default;
             case 728: // foreach
                 if (textSpan.Length == 7 &&
                     keywordCheckBuffer[0] == 'aaa' &&
@@ -1921,7 +1924,7 @@ public static class CSharpLexer
                     return;
                 }
 
-                    
+                goto default;
             case 441: // !! DUPLICATES !!
                 if (textSpan.Length == aaa &&
                     keywordCheckBuffer[0] == 'aaa' &&)
@@ -1954,7 +1957,7 @@ public static class CSharpLexer
                     return;
                 }
 
-                    
+                goto default;
             case 672: // return
                 if (textSpan.Length == 6 &&
                     keywordCheckBuffer[0] == 'aaa' &&
@@ -1969,7 +1972,7 @@ public static class CSharpLexer
                     return;
                 }
 
-                    
+                goto default;
             case 658: // switch
                 if (textSpan.Length == 6 &&
                     keywordCheckBuffer[0] == 'aaa' &&
@@ -1984,7 +1987,7 @@ public static class CSharpLexer
                     return;
                 }
 
-                    
+                goto default;
             case 564: // throw
                 if (textSpan.Length == 5 &&
                     keywordCheckBuffer[0] == 'aaa' &&
@@ -1998,7 +2001,7 @@ public static class CSharpLexer
                     return;
                 }
 
-                    
+                goto default;
             case 537: // while
                 if (textSpan.Length == 5 &&
                     keywordCheckBuffer[0] == 'aaa' &&
@@ -2012,7 +2015,7 @@ public static class CSharpLexer
                     return;
                 }
 
-                    
+                goto default;
             case 297: // add
                 if (textSpan.Length == 3 &&
                     keywordCheckBuffer[0] == 'aaa' &&
@@ -2024,7 +2027,7 @@ public static class CSharpLexer
                     return;
                 }
 
-                    
+                goto default;
             case 307: // and
                 if (textSpan.Length == 3 &&
                     keywordCheckBuffer[0] == 'aaa' &&
@@ -2036,7 +2039,7 @@ public static class CSharpLexer
                     return;
                 }
 
-                    
+                goto default;
             case 522: // alias
                 if (textSpan.Length == 5 &&
                     keywordCheckBuffer[0] == 'aaa' &&
@@ -2050,7 +2053,7 @@ public static class CSharpLexer
                     return;
                 }
 
-                    
+                goto default;
             case 940: // ascending
                 if (textSpan.Length == 9 &&
                     keywordCheckBuffer[0] == 'aaa' &&
@@ -2068,7 +2071,7 @@ public static class CSharpLexer
                     return;
                 }
 
-                    
+                goto default;
             case 429: // args
                 if (textSpan.Length == 4 &&
                     keywordCheckBuffer[0] == 'aaa' &&
@@ -2081,7 +2084,7 @@ public static class CSharpLexer
                     return;
                 }
 
-                    
+                goto default;
             case 542: // async
                 if (textSpan.Length == 5 &&
                     keywordCheckBuffer[0] == 'aaa' &&
@@ -2095,7 +2098,7 @@ public static class CSharpLexer
                     return;
                 }
 
-                    
+                goto default;
             case 219: // by
                 if (textSpan.Length == 2 &&
                     keywordCheckBuffer[0] == 'aaa' &&
@@ -2106,7 +2109,7 @@ public static class CSharpLexer
                     return;
                 }
 
-                    
+                goto default;
             case 1044: // descending
                 if (textSpan.Length == 10 &&
                     keywordCheckBuffer[0] == 'aaa' &&
@@ -2125,7 +2128,7 @@ public static class CSharpLexer
                     return;
                 }
 
-                    
+                goto default;
             case 651: // equals
                 if (textSpan.Length == 6 &&
                     keywordCheckBuffer[0] == 'aaa' &&
@@ -2140,7 +2143,7 @@ public static class CSharpLexer
                     return;
                 }
 
-                    
+                goto default;
             case 416: // file
                 if (textSpan.Length == 4 &&
                     keywordCheckBuffer[0] == 'aaa' &&
@@ -2153,7 +2156,7 @@ public static class CSharpLexer
                     return;
                 }
 
-                    
+                goto default;
             case 320: // get
                 if (textSpan.Length == 3 &&
                     keywordCheckBuffer[0] == 'aaa' &&
@@ -2165,7 +2168,7 @@ public static class CSharpLexer
                     return;
                 }
 
-                    
+                goto default;
             case 625: // global
                 if (textSpan.Length == 6 &&
                     keywordCheckBuffer[0] == 'aaa' &&
@@ -2180,7 +2183,7 @@ public static class CSharpLexer
                     return;
                 }
 
-                    
+                goto default;
             case 557: // group
                 if (textSpan.Length == 5 &&
                     keywordCheckBuffer[0] == 'aaa' &&
@@ -2194,7 +2197,7 @@ public static class CSharpLexer
                     return;
                 }
 
-                    
+                goto default;
             case 442: // into
                 if (textSpan.Length == 4 &&
                     keywordCheckBuffer[0] == 'aaa' &&
@@ -2207,7 +2210,7 @@ public static class CSharpLexer
                     return;
                 }
 
-                    
+                goto default;
             case 325: // let
                 if (textSpan.Length == 3 &&
                     keywordCheckBuffer[0] == 'aaa' &&
@@ -2219,7 +2222,7 @@ public static class CSharpLexer
                     return;
                 }
 
-                    
+                goto default;
             case 717: // managed
                 if (textSpan.Length == 7 &&
                     keywordCheckBuffer[0] == 'aaa' &&
@@ -2235,7 +2238,7 @@ public static class CSharpLexer
                     return;
                 }
 
-                    
+                goto default;
             case 630: // nameof
                 if (textSpan.Length == 6 &&
                     keywordCheckBuffer[0] == 'aaa' &&
@@ -2250,7 +2253,7 @@ public static class CSharpLexer
                     return;
                 }
 
-                    
+                goto default;
             case 337: // not
                 if (textSpan.Length == 3 &&
                     keywordCheckBuffer[0] == 'aaa' &&
@@ -2262,7 +2265,7 @@ public static class CSharpLexer
                     return;
                 }
 
-                    
+                goto default;
             case 780: // notnull
                 if (textSpan.Length == 7 &&
                     keywordCheckBuffer[0] == 'aaa' &&
@@ -2278,7 +2281,7 @@ public static class CSharpLexer
                     return;
                 }
 
-                    
+                goto default;
             case 558: // nuint
                 if (textSpan.Length == 5 &&
                     keywordCheckBuffer[0] == 'aaa' &&
@@ -2292,7 +2295,7 @@ public static class CSharpLexer
                     return;
                 }
 
-                    
+                goto default;
             case 221: // on
                 if (textSpan.Length == 2 &&
                     keywordCheckBuffer[0] == 'aaa' &&
@@ -2303,7 +2306,7 @@ public static class CSharpLexer
                     return;
                 }
 
-                    
+                goto default;
             case 225: // or
                 if (textSpan.Length == 2 &&
                     keywordCheckBuffer[0] == 'aaa' &&
@@ -2314,7 +2317,7 @@ public static class CSharpLexer
                     return;
                 }
 
-                    
+                goto default;
             case 759: // orderby
                 if (textSpan.Length == 7 &&
                     keywordCheckBuffer[0] == 'aaa' &&
@@ -2330,7 +2333,7 @@ public static class CSharpLexer
                     return;
                 }
 
-                    
+                goto default;
             case 749: // partial
                 if (textSpan.Length == 7 &&
                     keywordCheckBuffer[0] == 'aaa' &&
@@ -2346,7 +2349,7 @@ public static class CSharpLexer
                     return;
                 }
 
-                    
+                goto default;
             case 654: // remove
                 if (textSpan.Length == 6 &&
                     keywordCheckBuffer[0] == 'aaa' &&
@@ -2361,7 +2364,7 @@ public static class CSharpLexer
                     return;
                 }
 
-                    
+                goto default;
             case 865: // required
                 if (textSpan.Length == 8 &&
                     keywordCheckBuffer[0] == 'aaa' &&
@@ -2378,7 +2381,7 @@ public static class CSharpLexer
                     return;
                 }
 
-                    
+                goto default;
             case 638: // scoped
                 if (textSpan.Length == 6 &&
                     keywordCheckBuffer[0] == 'aaa' &&
@@ -2393,7 +2396,7 @@ public static class CSharpLexer
                     return;
                 }
 
-                    
+                goto default;
             case 640: // select
                 if (textSpan.Length == 6 &&
                     keywordCheckBuffer[0] == 'aaa' &&
@@ -2408,7 +2411,7 @@ public static class CSharpLexer
                     return;
                 }
 
-                    
+                goto default;
             case 332: // set
                 if (textSpan.Length == 3 &&
                     keywordCheckBuffer[0] == 'aaa' &&
@@ -2420,7 +2423,7 @@ public static class CSharpLexer
                     return;
                 }
 
-                    
+                goto default;
             case 944: // unmanaged
                 if (textSpan.Length == 9 &&
                     keywordCheckBuffer[0] == 'aaa' &&
@@ -2438,7 +2441,7 @@ public static class CSharpLexer
                     return;
                 }
 
-                    
+                goto default;
             case 541: // value
                 if (textSpan.Length == 5 &&
                     keywordCheckBuffer[0] == 'aaa' &&
@@ -2452,7 +2455,7 @@ public static class CSharpLexer
                     return;
                 }
 
-                    
+                goto default;
             case 329: // var
                 if (textSpan.Length == 3 &&
                     keywordCheckBuffer[0] == 'aaa' &&
@@ -2464,7 +2467,7 @@ public static class CSharpLexer
                     return;
                 }
 
-                    
+                goto default;
             case 539: // where
                 if (textSpan.Length == 5 &&
                     keywordCheckBuffer[0] == 'aaa' &&
@@ -2478,7 +2481,7 @@ public static class CSharpLexer
                     return;
                 }
 
-                    
+                goto default;
             case 444: // with
                 if (textSpan.Length == 4 &&
                     keywordCheckBuffer[0] == 'aaa' &&
@@ -2491,7 +2494,7 @@ public static class CSharpLexer
                     return;
                 }
 
-                    
+                goto default;
             case 535: // yield
                 if (textSpan.Length == 5 &&
                     keywordCheckBuffer[0] == 'aaa' &&
