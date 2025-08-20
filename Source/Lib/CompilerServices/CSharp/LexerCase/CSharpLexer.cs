@@ -903,11 +903,6 @@ public static class CSharpLexer
                 
                 goto default;
             case 212: // as
-                Console.WriteLine("as?");
-                Console.WriteLine(textSpan.Length);
-                Console.WriteLine(keywordCheckBuffer[0]);
-                Console.WriteLine(keywordCheckBuffer[1]);
-                
                 if (textSpan.Length == 2 &&
                     keywordCheckBuffer[0] == 'a' &&
                     keywordCheckBuffer[1] == 's')
