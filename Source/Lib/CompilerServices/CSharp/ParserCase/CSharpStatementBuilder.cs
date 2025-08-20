@@ -7,7 +7,7 @@ public class CSharpStatementBuilder
 {
     public CSharpStatementBuilder()
     {
-        MostRecentNode = null;
+        MostRecentNode = Walk.Extensions.CompilerServices.Syntax.Nodes.EmptyExpressionNode.Empty;
         ChildList.Clear();
         ParseLambdaStatementScopeStack.Clear();
     }
@@ -15,7 +15,7 @@ public class CSharpStatementBuilder
     public bool StatementIsEmpty => ChildList.Count == 0 && MostRecentNode is null;
 
     public List<SyntaxToken> ChildList { get; } = new();
-    public ISyntaxNode? MostRecentNode { get; set; }
+    public ISyntaxNode MostRecentNode { get; set; }
     
     /// <summary>
     /// Prior to finishing a statement, you must check whether ParseLambdaStatementScopeStack has a child that needs to be parsed.
@@ -65,26 +65,29 @@ public class CSharpStatementBuilder
     /// </summary>
     public bool FinishStatement(int finishTokenIndex, ref CSharpParserModel parserModel)
     {
-        if (MostRecentNode is not null)
+        switch (MostRecentNode.SyntaxKind)
         {
-            if (MostRecentNode.SyntaxKind == SyntaxKind.VariableReferenceNode)
+            case SyntaxKind.VariableReferenceNode:
             {
                 parserModel.Return_VariableReferenceNode(
                     (Walk.Extensions.CompilerServices.Syntax.Nodes.VariableReferenceNode)MostRecentNode);
+                break;
             }
-            else if (MostRecentNode.SyntaxKind == SyntaxKind.FunctionInvocationNode)
+            case SyntaxKind.FunctionInvocationNode:
             {
                 parserModel.Return_FunctionInvocationNode(
                     (Walk.Extensions.CompilerServices.Syntax.Nodes.FunctionInvocationNode)MostRecentNode);
+                break;
             }
-            else if (MostRecentNode.SyntaxKind == SyntaxKind.ConstructorInvocationExpressionNode)
+            case SyntaxKind.ConstructorInvocationExpressionNode:
             {
                 parserModel.Return_ConstructorInvocationExpressionNode(
                     (Walk.Extensions.CompilerServices.Syntax.Nodes.ConstructorInvocationExpressionNode)MostRecentNode);
+                break;
             }
         }
     
-        MostRecentNode = null;
+        MostRecentNode = Walk.Extensions.CompilerServices.Syntax.Nodes.EmptyExpressionNode.Empty;
         ChildList.Clear();
         
         /*if (ChildList.Count != 0)
