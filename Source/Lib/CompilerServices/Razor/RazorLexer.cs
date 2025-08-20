@@ -14,168 +14,6 @@ public static class RazorLexer
 
     public static RazorLexerOutput Lex(StreamReaderWrap streamReaderWrap)
     {
-        /*var keywordList = new List<string>
-        {
-            // NonContextualKeywords-NonControl
-            // ================================
-            "abstract",
-            "as",
-            "base",
-            "bool",
-            "byte",
-            "catch",
-            "char",
-            "checked",
-            "class",
-            "const",
-            "decimal",
-            "default",
-            "delegate",
-            "double",
-            "enum",
-            "event",
-            "explicit",
-            "extern",
-            "false",
-            "finally",
-            "fixed",
-            "float",
-            "implicit",
-            "in",
-            "int",
-            "interface",
-            "internal",
-            "is",
-            "lock",
-            "long",
-            "namespace",
-            "new",
-            "null",
-            "object",
-            "operator",
-            "out",
-            "override",
-            "params",
-            "private",
-            "protected",
-            "public",
-            "readonly",
-            "ref",
-            "sbyte",
-            "sealed",
-            "short",
-            "sizeof",
-            "stackalloc",
-            "static",
-            "string",
-            "struct",
-            "this",
-            "true",
-            "try",
-            "typeof",
-            "uint",
-            "ulong",
-            "unchecked",
-            "unsafe",
-            "ushort",
-            "using",
-            "virtual",
-            "void",
-            "volatile",
-            // NonContextualKeywords-IsControl
-            // ===============================
-            "break",
-            "case",
-            "continue",
-            "do",
-            "else",
-            "for",
-            "foreach",
-            "goto",
-            "if",
-            "return",
-            "switch",
-            "throw",
-            "while",
-            // ContextualKeywords-NotControl
-            // =============================
-            "add",
-            "and",
-            "alias",
-            "ascending",
-            "args",
-            "async",
-            "await",
-            "by",
-            "descending",
-            "dynamic",
-            "equals",
-            "file",
-            "from",
-            "get",
-            "global",
-            "group",
-            "init",
-            "into",
-            "join",
-            "let",
-            "managed",
-            "nameof",
-            "nint",
-            "not",
-            "notnull",
-            "nuint",
-            "on",
-            "or",
-            "orderby",
-            "partial",
-            "record",
-            "remove",
-            "required",
-            "scoped",
-            "select",
-            "set",
-            "unmanaged",
-            "value",
-            "var",
-            "when",
-            "where",
-            "with",
-            // ContextualKeywords-IsControl
-            // ============================
-            "yield",
-        };
-        
-        Console.WriteLine("=======================");
-        Console.WriteLine("=======================");
-        
-        // var hashSet = new HashSet<int>();
-        
-        var longestKeyword = string.Empty;
-        
-        foreach (var keyword in keywordList)
-        {
-            if (keyword.Length > longestKeyword.Length)
-                longestKeyword = keyword;
-        
-            var sum = 0;
-            foreach (var character in keyword)
-            {
-                sum += (int)character;
-            }
-            
-            // if (!hashSet.Add(sum))
-            // {
-            //    Console.WriteLine($"!DUPLICATE!:{sum}/{keyword}");
-            //}
-            Console.WriteLine($"case {sum}: // {keyword}");
-        }
-        
-        Console.WriteLine($"{longestKeyword} {longestKeyword.Length}");
-        
-        Console.WriteLine("=======================");
-        Console.WriteLine("=======================");*/
-    
         var context = RazorLexerContextKind.Expect_TagOrText;
         var output = new RazorLexerOutput();
         
@@ -2417,7 +2255,167 @@ var keywordList = new List<string>
         Console.WriteLine("=======================");
 */
 
-
+/*var keywordList = new List<string>
+        {
+            // NonContextualKeywords-NonControl
+            // ================================
+            "abstract",
+            "as",
+            "base",
+            "bool",
+            "byte",
+            "catch",
+            "char",
+            "checked",
+            "class",
+            "const",
+            "decimal",
+            "default",
+            "delegate",
+            "double",
+            "enum",
+            "event",
+            "explicit",
+            "extern",
+            "false",
+            "finally",
+            "fixed",
+            "float",
+            "implicit",
+            "in",
+            "int",
+            "interface",
+            "internal",
+            "is",
+            "lock",
+            "long",
+            "namespace",
+            "new",
+            "null",
+            "object",
+            "operator",
+            "out",
+            "override",
+            "params",
+            "private",
+            "protected",
+            "public",
+            "readonly",
+            "ref",
+            "sbyte",
+            "sealed",
+            "short",
+            "sizeof",
+            "stackalloc",
+            "static",
+            "string",
+            "struct",
+            "this",
+            "true",
+            "try",
+            "typeof",
+            "uint",
+            "ulong",
+            "unchecked",
+            "unsafe",
+            "ushort",
+            "using",
+            "virtual",
+            "void",
+            "volatile",
+            // NonContextualKeywords-IsControl
+            // ===============================
+            "break",
+            "case",
+            "continue",
+            "do",
+            "else",
+            "for",
+            "foreach",
+            "goto",
+            "if",
+            "return",
+            "switch",
+            "throw",
+            "while",
+            // ContextualKeywords-NotControl
+            // =============================
+            "add",
+            "and",
+            "alias",
+            "ascending",
+            "args",
+            "async",
+            "await",
+            "by",
+            "descending",
+            "dynamic",
+            "equals",
+            "file",
+            "from",
+            "get",
+            "global",
+            "group",
+            "init",
+            "into",
+            "join",
+            "let",
+            "managed",
+            "nameof",
+            "nint",
+            "not",
+            "notnull",
+            "nuint",
+            "on",
+            "or",
+            "orderby",
+            "partial",
+            "record",
+            "remove",
+            "required",
+            "scoped",
+            "select",
+            "set",
+            "unmanaged",
+            "value",
+            "var",
+            "when",
+            "where",
+            "with",
+            // ContextualKeywords-IsControl
+            // ============================
+            "yield",
+        };
+        
+        Console.WriteLine("=======================");
+        Console.WriteLine("=======================");
+        
+        // var hashSet = new HashSet<int>();
+        
+        var longestKeyword = string.Empty;
+        
+        foreach (var keyword in keywordList)
+        {
+            if (keyword.Length > longestKeyword.Length)
+                longestKeyword = keyword;
+        
+            var sum = 0;
+            foreach (var character in keyword)
+            {
+                sum += (int)character;
+            }
+            
+            // if (!hashSet.Add(sum))
+            // {
+            //    Console.WriteLine($"!DUPLICATE!:{sum}/{keyword}");
+            //}
+            Console.WriteLine($"case {sum}: // {keyword}");
+        }
+        
+        Console.WriteLine($"{longestKeyword} {longestKeyword.Length}");
+        
+        Console.WriteLine("=======================");
+        Console.WriteLine("=======================");*/
 
 
 
