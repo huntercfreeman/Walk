@@ -1203,6 +1203,7 @@ public static class ParseExpressions
             
             if (parserModel.TryGetLabelDeclarationHierarchically(
                     ambiguousIdentifierTokenText,
+                    ambiguousIdentifierExpressionNode.Token.TextSpan,
                     out var labelDefinitionNode))
             {
                 var token = ambiguousIdentifierExpressionNode.Token;

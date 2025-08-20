@@ -553,6 +553,7 @@ public ref struct CSharpParserModel
         if (TryGetLabelDeclarationNodeByScope(
                 CurrentCodeBlockOwner.Unsafe_SelfIndexKey,
                 text,
+                labelDeclarationNode.IdentifierToken.TextSpan,
                 out var existingLabelDeclarationNode))
         {
             if (existingLabelDeclarationNode.IsFabricated)
@@ -1594,12 +1595,22 @@ public ref struct CSharpParserModel
             if (x.Unsafe_ParentIndexKey == scopeIndexKey &&
                 x.SyntaxKind == SyntaxKind.VariableDeclarationNode)
             {
-                if (GetIdentifierTextSpan(x).Length == variableIdentifierText.Length)
+                var otherTextSpan = GetIdentifierTextSpan(x);
+                if (otherTextSpan.Length == variableIdentifierText.Length)
                 {
-                    if (GetIdentifierText(x, ResourceUri, Compilation) == variableIdentifierText)
+                    if (otherTextSpan.CharIntSum == 0 ||
+                        variableDeclarationNode.IdentifierToken.TextSpan.CharIntSum == 0 ||
+                        otherTextSpan.CharIntSum == variableDeclarationNode.IdentifierToken.TextSpan.CharIntSum)
                     {
-                        matchNode = (VariableDeclarationNode)x;
-                        break;
+                        if (GetIdentifierText(x, ResourceUri, Compilation) == variableIdentifierText)
+                        {
+                            matchNode = (VariableDeclarationNode)x;
+                            break;
+                        }
+                    }
+                    else
+                    {
+                        ++Walk.Common.RazorLib.Installations.Models.WalkDebugSomething.AvoidStringLogicByCheckingCharIntSum;
                     }
                 }
                 else
@@ -1618,6 +1629,7 @@ public ref struct CSharpParserModel
     
     public readonly bool TryGetLabelDeclarationHierarchically(
         string identifierText,
+        TextEditorTextSpan identifierTextSpan,
         out LabelDeclarationNode? labelDeclarationNode)
     {
         int initialScopeIndexKey = CurrentCodeBlockOwner.Unsafe_SelfIndexKey;
@@ -1629,6 +1641,7 @@ public ref struct CSharpParserModel
             if (TryGetLabelDeclarationNodeByScope(
                     localScope.Unsafe_SelfIndexKey,
                     identifierText,
+                    identifierTextSpan,
                     out labelDeclarationNode))
             {
                 return true;
@@ -1647,6 +1660,7 @@ public ref struct CSharpParserModel
     public readonly bool TryGetLabelDeclarationNodeByScope(
         int scopeIndexKey,
         string labelIdentifierText,
+        TextEditorTextSpan labelIdentifierTextSpan,
         out LabelDeclarationNode labelDeclarationNode)
     {
         labelDeclarationNode = null;
@@ -1657,12 +1671,22 @@ public ref struct CSharpParserModel
             if (x.Unsafe_ParentIndexKey == scopeIndexKey &&
                 x.SyntaxKind == SyntaxKind.LabelDeclarationNode)
             {
-                if (GetIdentifierTextSpan(x).Length == labelIdentifierText.Length)
+                var otherTextSpan = GetIdentifierTextSpan(x);
+                if (otherTextSpan.Length == labelIdentifierText.Length)
                 {
-                    if (GetIdentifierText(x, ResourceUri, Compilation) == labelIdentifierText)
+                    if (otherTextSpan.CharIntSum == 0 ||
+                        labelIdentifierTextSpan.CharIntSum == 0 ||
+                        otherTextSpan.CharIntSum == labelIdentifierTextSpan.CharIntSum)
                     {
-                        labelDeclarationNode = (LabelDeclarationNode)x;
-                        break;
+                        if (GetIdentifierText(x, ResourceUri, Compilation) == labelIdentifierText)
+                        {
+                            labelDeclarationNode = (LabelDeclarationNode)x;
+                            break;
+                        }
+                    }
+                    else
+                    {
+                        ++Walk.Common.RazorLib.Installations.Models.WalkDebugSomething.AvoidStringLogicByCheckingCharIntSum;
                     }
                 }
                 else
@@ -1748,12 +1772,22 @@ public ref struct CSharpParserModel
             if (x.Unsafe_ParentIndexKey == scopeIndexKey &&
                 x.SyntaxKind == SyntaxKind.LabelDeclarationNode)
             {
-                if (GetIdentifierTextSpan(x).Length == labelIdentifierText.Length)
+                var otherTextSpan = GetIdentifierTextSpan(x);
+                if (otherTextSpan.Length == labelIdentifierText.Length)
                 {
-                    if (GetIdentifierText(x, ResourceUri, Compilation) == labelIdentifierText)
+                    if (otherTextSpan.CharIntSum == 0 ||
+                        labelDeclarationNode.IdentifierToken.TextSpan.CharIntSum == 0 ||
+                        otherTextSpan.CharIntSum == labelDeclarationNode.IdentifierToken.TextSpan.CharIntSum)
                     {
-                        matchNode = (LabelDeclarationNode)x;
-                        break;
+                        if (GetIdentifierText(x, ResourceUri, Compilation) == labelIdentifierText)
+                        {
+                            matchNode = (LabelDeclarationNode)x;
+                            break;
+                        }
+                    }
+                    else
+                    {
+                        ++Walk.Common.RazorLib.Installations.Models.WalkDebugSomething.AvoidStringLogicByCheckingCharIntSum;
                     }
                 }
                 else
