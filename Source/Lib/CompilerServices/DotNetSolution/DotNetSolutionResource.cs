@@ -1,7 +1,7 @@
 using Walk.TextEditor.RazorLib.Lexers.Models;
 using Walk.TextEditor.RazorLib.CompilerServices;
 
-namespace Walk.CompilerServices.DotNetSolution.CompilerServiceCase;
+namespace Walk.CompilerServices.DotNetSolution;
 
 public class DotNetSolutionResource : CompilerServiceResource
 {

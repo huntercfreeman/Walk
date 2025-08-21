@@ -11,7 +11,8 @@ public static class ParseTokens
     public static void ParseIdentifierToken(ref CSharpParserModel parserModel)
     {
         if (parserModel.TokenWalker.Current.TextSpan.Length == 1 &&
-            parserModel.GetTextSpanText(parserModel.TokenWalker.Current.TextSpan) == "_")
+            // 95 is ASCII code for '_'
+            parserModel.TokenWalker.Current.TextSpan.CharIntSum == 95)
         {
             if (!parserModel.TryGetVariableDeclarationHierarchically(
                     parserModel.ResourceUri,
@@ -533,16 +534,14 @@ public static class ParseTokens
         var shouldBacktrack = false;
         IExpressionNode backtrackNode = EmptyExpressionNode.Empty;
         
-        if (parserModel.StatementBuilder.MostRecentNode is not null)
+        // No, this is not missing an else
+        if (parserModel.StatementBuilder.MostRecentNode != EmptyExpressionNode.Empty)
         {
             var previousNode = parserModel.StatementBuilder.MostRecentNode;
             
             if (previousNode.SyntaxKind == SyntaxKind.VariableReferenceNode)
             {
                 shouldBacktrack = true;
-                // TODO: VariableReferenceNode contains a property which is 'VariableDeclarationNode' this seems odd for the reference to have the declaration...
-                //       ...as a member.
-                // TODO: Yeah this is throwing null reference exceptions because of that 'VariableDeclarationNode'.
                 parserModel.MostRecentLeftHandSideAssignmentExpressionTypeClauseNode = ((VariableReferenceNode)previousNode).ResultTypeReference;
                 backtrackNode = (VariableReferenceNode)previousNode;
             }

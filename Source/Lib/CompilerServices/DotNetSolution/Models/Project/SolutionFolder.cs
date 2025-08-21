@@ -14,8 +14,6 @@ public class SolutionFolder : ISolutionMember
         ProjectTypeGuid = Guid.Empty;
         ActualName = actualName;
         ProjectIdGuid = Guid.Empty;
-        OpenAssociatedGroupToken = default;
-        CloseAssociatedGroupToken = null;
         IsSlnx = true;
     }
     
@@ -23,16 +21,12 @@ public class SolutionFolder : ISolutionMember
         string displayName,
         Guid projectTypeGuid,
         string actualName,
-        Guid projectIdGuid,
-        SyntaxToken openAssociatedGroupToken,
-        SyntaxToken? closeAssociatedGroupToken)
+        Guid projectIdGuid)
     {
         DisplayName = displayName;
         ProjectTypeGuid = projectTypeGuid;
         ActualName = actualName;
         ProjectIdGuid = projectIdGuid;
-        OpenAssociatedGroupToken = openAssociatedGroupToken;
-        CloseAssociatedGroupToken = closeAssociatedGroupToken;
         IsSlnx = false;
     }
 
@@ -40,8 +34,6 @@ public class SolutionFolder : ISolutionMember
     public Guid ProjectTypeGuid { get; }
     public Guid ProjectIdGuid { get; }
     public string ActualName { get; }
-    public SyntaxToken OpenAssociatedGroupToken { get; set; }
-    public SyntaxToken? CloseAssociatedGroupToken { get; set; }
     
     public bool IsSlnx { get; set; }
     

@@ -10,16 +10,12 @@ public class CSharpProjectModel : IDotNetProject
         Guid projectTypeGuid,
         string relativePathFromSolutionFileString,
         Guid projectIdGuid,
-        SyntaxToken openAssociatedGroupToken,
-        SyntaxToken? closeAssociatedGroupToken,
         AbsolutePath absolutePath)
     {
         DisplayName = displayName;
         ProjectTypeGuid = projectTypeGuid;
         RelativePathFromSolutionFileString = relativePathFromSolutionFileString;
         ProjectIdGuid = projectIdGuid;
-        OpenAssociatedGroupToken = openAssociatedGroupToken;
-        CloseAssociatedGroupToken = closeAssociatedGroupToken;
         AbsolutePath = absolutePath;
     }
 
@@ -27,8 +23,6 @@ public class CSharpProjectModel : IDotNetProject
     public Guid ProjectTypeGuid { get; }
     public string RelativePathFromSolutionFileString { get; }
     public Guid ProjectIdGuid { get; }
-    public SyntaxToken OpenAssociatedGroupToken { get; set; }
-    public SyntaxToken? CloseAssociatedGroupToken { get; set; }
     public AbsolutePath AbsolutePath { get; set; }
     public DotNetProjectKind DotNetProjectKind => DotNetProjectKind.CSharpProject;
     public List<AbsolutePath>? ReferencedAbsolutePathList { get; set; }

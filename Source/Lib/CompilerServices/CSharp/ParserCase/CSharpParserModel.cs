@@ -824,16 +824,16 @@ public ref struct CSharpParserModel
         if (CurrentCodeBlockOwner.Unsafe_SelfIndexKey == 0)
             return;
         
-        if (Compilation.CompilationUnitKind == CompilationUnitKind.SolutionWide_MinimumLocalsData &&
+        /*if (Compilation.CompilationUnitKind == CompilationUnitKind.SolutionWide_MinimumLocalsData &&
             (CurrentCodeBlockOwner.SyntaxKind == SyntaxKind.FunctionDefinitionNode ||
              CurrentCodeBlockOwner.SyntaxKind == SyntaxKind.ArbitraryCodeBlockNode))
         {
-            /*for (int i = Compilation.NodeList.Count - 1; i >= 0; i--)
+            for (int i = Compilation.NodeList.Count - 1; i >= 0; i--)
             {
                 if (Compilation.NodeList[i].Unsafe_ParentIndexKey == CurrentCodeBlockOwner.Unsafe_SelfIndexKey)
                     Compilation.NodeList.RemoveAt(i);
-            }*/
-        }
+            }
+        }*/
         
         CurrentCodeBlockOwner.Scope_EndExclusiveIndex = textSpan.EndExclusiveIndex;
         CurrentCodeBlockOwner = GetParent(CurrentCodeBlockOwner, Compilation);
@@ -977,16 +977,6 @@ public ref struct CSharpParserModel
         }
     }
     
-    public readonly void SetOpenCodeBlockTextSpan(ICodeBlockOwner codeBlockOwner, int codeBlock_StartInclusiveIndex)
-    {
-        codeBlockOwner.CodeBlock_StartInclusiveIndex = codeBlock_StartInclusiveIndex;
-    }
-    
-    public readonly void SetCloseCodeBlockTextSpan(ICodeBlockOwner codeBlockOwner, int codeBlock_EndExclusiveIndex)
-    {
-        codeBlockOwner.CodeBlock_EndExclusiveIndex = codeBlock_EndExclusiveIndex;
-    }
-    
     /// <summary>
     /// Search hierarchically through all the scopes, starting at the <see cref="initialScope"/>.<br/><br/>
     /// If a match is found, then set the out parameter to it and return true.<br/><br/>
@@ -1046,9 +1036,8 @@ public ref struct CSharpParserModel
                 var otherTextSpan = GetIdentifierTextSpan(x);
                 if (otherTextSpan.Length == typeIdentifierText.Length)
                 {
-                    if (otherTextSpan.CharIntSum == 0 ||
-                        typeIdentifierTextSpan.CharIntSum == 0 ||
-                        otherTextSpan.CharIntSum == typeIdentifierTextSpan.CharIntSum)
+                    // It was validated that neither CharIntSum is 0 here so removing the checks
+                    if (otherTextSpan.CharIntSum == typeIdentifierTextSpan.CharIntSum)
                     {
                         if (GetIdentifierText(x, resourceUri, compilationUnit) == typeIdentifierText)
                         {
@@ -1056,15 +1045,7 @@ public ref struct CSharpParserModel
                             break;
                         }
                     }
-                    /*else
-                    {
-                        ++Walk.Common.RazorLib.Installations.Models.WalkDebugSomething.AvoidStringLogicByCheckingCharIntSum;
-                    }*/
                 }
-                /*else
-                {
-                    ++Walk.Common.RazorLib.Installations.Models.WalkDebugSomething.AvoidStringLogicByCheckingLength;
-                }*/
             }
         }
         
@@ -1077,9 +1058,8 @@ public ref struct CSharpParserModel
                     var otherTextSpan = GetIdentifierTextSpan(x);
                     if (otherTextSpan.Length == typeIdentifierText.Length)
                     {
-                        if (otherTextSpan.CharIntSum == 0 ||
-                            typeIdentifierTextSpan.CharIntSum == 0 ||
-                            otherTextSpan.CharIntSum == typeIdentifierTextSpan.CharIntSum)
+                        // It was validated that neither CharIntSum is 0 here so removing the checks
+                        if (otherTextSpan.CharIntSum == typeIdentifierTextSpan.CharIntSum)
                         {
                             if (GetIdentifierText(x, resourceUri, compilationUnit) == typeIdentifierText)
                             {
@@ -1087,15 +1067,7 @@ public ref struct CSharpParserModel
                                 break;
                             }
                         }
-                        /*else
-                        {
-                            ++Walk.Common.RazorLib.Installations.Models.WalkDebugSomething.AvoidStringLogicByCheckingCharIntSum;
-                        }*/
                     }
-                    /*else
-                    {
-                        ++Walk.Common.RazorLib.Installations.Models.WalkDebugSomething.AvoidStringLogicByCheckingLength;
-                    }*/
                 }
                 if (typeDefinitionNode is not null)
                 {
@@ -1129,9 +1101,8 @@ public ref struct CSharpParserModel
                 var otherTextSpan = GetIdentifierTextSpan(x);
                 if (otherTextSpan.Length == typeIdentifierText.Length)
                 {
-                    if (otherTextSpan.CharIntSum == 0 ||
-                        typeDefinitionNode.TypeIdentifierToken.TextSpan.CharIntSum == 0 ||
-                        otherTextSpan.CharIntSum == typeDefinitionNode.TypeIdentifierToken.TextSpan.CharIntSum)
+                    // It was validated that neither CharIntSum is 0 here so removing the checks
+                    if (otherTextSpan.CharIntSum == typeDefinitionNode.TypeIdentifierToken.TextSpan.CharIntSum)
                     {
                         if (GetIdentifierText(x, resourceUri, compilationUnit) == typeIdentifierText)
                         {
@@ -1139,15 +1110,7 @@ public ref struct CSharpParserModel
                             break;
                         }
                     }
-                    /*else
-                    {
-                        ++Walk.Common.RazorLib.Installations.Models.WalkDebugSomething.AvoidStringLogicByCheckingCharIntSum;
-                    }*/
                 }
-                /*else
-                {
-                    ++Walk.Common.RazorLib.Installations.Models.WalkDebugSomething.AvoidStringLogicByCheckingLength;
-                }*/
             }
         }
         
@@ -1240,9 +1203,8 @@ public ref struct CSharpParserModel
                 var otherTextSpan = GetIdentifierTextSpan(x);
                 if (otherTextSpan.Length == functionIdentifierText.Length)
                 {
-                    if (otherTextSpan.CharIntSum == 0 ||
-                        functionIdentifierTextSpan.CharIntSum == 0 ||
-                        otherTextSpan.CharIntSum == functionIdentifierTextSpan.CharIntSum)
+                    // It was validated that neither CharIntSum is 0 here so removing the checks
+                    if (otherTextSpan.CharIntSum == functionIdentifierTextSpan.CharIntSum)
                     {
                         if (GetIdentifierText(x, resourceUri, compilationUnit) == functionIdentifierText)
                         {
@@ -1250,15 +1212,7 @@ public ref struct CSharpParserModel
                             break;
                         }
                     }
-                    /*else
-                    {
-                        ++Walk.Common.RazorLib.Installations.Models.WalkDebugSomething.AvoidStringLogicByCheckingCharIntSum;
-                    }*/
                 }
-                /*else
-                {
-                    ++Walk.Common.RazorLib.Installations.Models.WalkDebugSomething.AvoidStringLogicByCheckingLength;
-                }*/
             }
         }
         
@@ -1411,9 +1365,8 @@ public ref struct CSharpParserModel
                 var otherTextSpan = GetIdentifierTextSpan(x);
                 if (otherTextSpan.Length == variableIdentifierText.Length)
                 {
-                    if (otherTextSpan.CharIntSum == 0 ||
-                        variableIdentifierTextSpan.CharIntSum == 0 ||
-                        otherTextSpan.CharIntSum == variableIdentifierTextSpan.CharIntSum)
+                    // It was validated that neither CharIntSum is 0 here so removing the checks
+                    if (otherTextSpan.CharIntSum == variableIdentifierTextSpan.CharIntSum)
                     {
                         if (GetIdentifierText(x, resourceUri, compilationUnit) == variableIdentifierText)
                         {
@@ -1421,15 +1374,7 @@ public ref struct CSharpParserModel
                             break;
                         }
                     }
-                    /*else
-                    {
-                        ++Walk.Common.RazorLib.Installations.Models.WalkDebugSomething.AvoidStringLogicByCheckingCharIntSum;
-                    }*/
                 }
-                /*else
-                {
-                    ++Walk.Common.RazorLib.Installations.Models.WalkDebugSomething.AvoidStringLogicByCheckingLength;
-                }*/
             }
         }
         
@@ -1541,9 +1486,8 @@ public ref struct CSharpParserModel
                 var otherTextSpan = GetIdentifierTextSpan(x);
                 if (otherTextSpan.Length == variableIdentifierText.Length)
                 {
-                    if (otherTextSpan.CharIntSum == 0 ||
-                        variableDeclarationNode.IdentifierToken.TextSpan.CharIntSum == 0 ||
-                        otherTextSpan.CharIntSum == variableDeclarationNode.IdentifierToken.TextSpan.CharIntSum)
+                    // It was validated that neither CharIntSum is 0 here so removing the checks
+                    if (otherTextSpan.CharIntSum == variableDeclarationNode.IdentifierToken.TextSpan.CharIntSum)
                     {
                         if (GetIdentifierText(x, ResourceUri, Compilation) == variableIdentifierText)
                         {
@@ -1551,15 +1495,7 @@ public ref struct CSharpParserModel
                             break;
                         }
                     }
-                    /*else
-                    {
-                        ++Walk.Common.RazorLib.Installations.Models.WalkDebugSomething.AvoidStringLogicByCheckingCharIntSum;
-                    }*/
                 }
-                /*else
-                {
-                    ++Walk.Common.RazorLib.Installations.Models.WalkDebugSomething.AvoidStringLogicByCheckingLength;
-                }*/
             }
         }
         
@@ -1598,9 +1534,8 @@ public ref struct CSharpParserModel
                 var otherTextSpan = GetIdentifierTextSpan(x);
                 if (otherTextSpan.Length == variableIdentifierText.Length)
                 {
-                    if (otherTextSpan.CharIntSum == 0 ||
-                        variableDeclarationNode.IdentifierToken.TextSpan.CharIntSum == 0 ||
-                        otherTextSpan.CharIntSum == variableDeclarationNode.IdentifierToken.TextSpan.CharIntSum)
+                    // It was validated that neither CharIntSum is 0 here so removing the checks
+                    if (otherTextSpan.CharIntSum == variableDeclarationNode.IdentifierToken.TextSpan.CharIntSum)
                     {
                         if (GetIdentifierText(x, ResourceUri, Compilation) == variableIdentifierText)
                         {
@@ -1608,15 +1543,7 @@ public ref struct CSharpParserModel
                             break;
                         }
                     }
-                    /*else
-                    {
-                        ++Walk.Common.RazorLib.Installations.Models.WalkDebugSomething.AvoidStringLogicByCheckingCharIntSum;
-                    }*/
                 }
-                /*else
-                {
-                    ++Walk.Common.RazorLib.Installations.Models.WalkDebugSomething.AvoidStringLogicByCheckingLength;
-                }*/
             }
         }
         
@@ -1674,9 +1601,8 @@ public ref struct CSharpParserModel
                 var otherTextSpan = GetIdentifierTextSpan(x);
                 if (otherTextSpan.Length == labelIdentifierText.Length)
                 {
-                    if (otherTextSpan.CharIntSum == 0 ||
-                        labelIdentifierTextSpan.CharIntSum == 0 ||
-                        otherTextSpan.CharIntSum == labelIdentifierTextSpan.CharIntSum)
+                    // It was validated that neither CharIntSum is 0 here so removing the checks
+                    if (otherTextSpan.CharIntSum == labelIdentifierTextSpan.CharIntSum)
                     {
                         if (GetIdentifierText(x, ResourceUri, Compilation) == labelIdentifierText)
                         {
@@ -1684,15 +1610,7 @@ public ref struct CSharpParserModel
                             break;
                         }
                     }
-                    /*else
-                    {
-                        ++Walk.Common.RazorLib.Installations.Models.WalkDebugSomething.AvoidStringLogicByCheckingCharIntSum;
-                    }*/
                 }
-                /*else
-                {
-                    ++Walk.Common.RazorLib.Installations.Models.WalkDebugSomething.AvoidStringLogicByCheckingLength;
-                }*/
             }
         }
         
@@ -1719,9 +1637,8 @@ public ref struct CSharpParserModel
                 var otherTextSpan = GetIdentifierTextSpan(x);
                 if (otherTextSpan.Length == labelIdentifierText.Length)
                 {
-                    if (otherTextSpan.CharIntSum == 0 ||
-                        labelIdentifierTextSpan.CharIntSum == 0 ||
-                        otherTextSpan.CharIntSum == labelIdentifierTextSpan.CharIntSum)
+                    // It was validated that neither CharIntSum is 0 here so removing the checks
+                    if (otherTextSpan.CharIntSum == labelIdentifierTextSpan.CharIntSum)
                     {
                         if (GetIdentifierText(x, ResourceUri, Compilation) == labelIdentifierText)
                         {
@@ -1729,15 +1646,7 @@ public ref struct CSharpParserModel
                             break;
                         }
                     }
-                    /*else
-                    {
-                        ++Walk.Common.RazorLib.Installations.Models.WalkDebugSomething.AvoidStringLogicByCheckingCharIntSum;
-                    }*/
                 }
-                /*else
-                {
-                    ++Walk.Common.RazorLib.Installations.Models.WalkDebugSomething.AvoidStringLogicByCheckingLength;
-                }*/
             }
         }
         
@@ -1775,9 +1684,8 @@ public ref struct CSharpParserModel
                 var otherTextSpan = GetIdentifierTextSpan(x);
                 if (otherTextSpan.Length == labelIdentifierText.Length)
                 {
-                    if (otherTextSpan.CharIntSum == 0 ||
-                        labelDeclarationNode.IdentifierToken.TextSpan.CharIntSum == 0 ||
-                        otherTextSpan.CharIntSum == labelDeclarationNode.IdentifierToken.TextSpan.CharIntSum)
+                    // It was validated that neither CharIntSum is 0 here so removing the checks
+                    if (otherTextSpan.CharIntSum == labelDeclarationNode.IdentifierToken.TextSpan.CharIntSum)
                     {
                         if (GetIdentifierText(x, ResourceUri, Compilation) == labelIdentifierText)
                         {
@@ -1785,15 +1693,7 @@ public ref struct CSharpParserModel
                             break;
                         }
                     }
-                    /*else
-                    {
-                        ++Walk.Common.RazorLib.Installations.Models.WalkDebugSomething.AvoidStringLogicByCheckingCharIntSum;
-                    }*/
                 }
-                /*else
-                {
-                    ++Walk.Common.RazorLib.Installations.Models.WalkDebugSomething.AvoidStringLogicByCheckingLength;
-                }*/
             }
         }
 

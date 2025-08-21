@@ -15,7 +15,7 @@ using Walk.CompilerServices.CSharp.CompilerServiceCase;
 using Walk.CompilerServices.CSharpProject.CompilerServiceCase;
 using Walk.CompilerServices.Css;
 using Walk.CompilerServices.Css.Decoration;
-using Walk.CompilerServices.DotNetSolution.CompilerServiceCase;
+using Walk.CompilerServices.DotNetSolution;
 using Walk.CompilerServices.Json;
 using Walk.CompilerServices.Json.Decoration;
 using Walk.CompilerServices.Razor;

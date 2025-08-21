@@ -1130,6 +1130,13 @@ public static class ParseExpressions
         
         if (ambiguousIdentifierExpressionNode.Token.SyntaxKind == SyntaxKind.IdentifierToken &&
             ambiguousIdentifierExpressionNode.Token.TextSpan.Length == 1 &&
+            // ParseTokens.cs checks for 'CharIntSum' of '95' since that is the ASCII code for '_'
+            //
+            // Here, it could be done but in particular it is so impactful for ParseTokens.cs
+            // since you didn't already create a variable which contained the text.
+            //
+            // TODO: Decide on checking 'CharIntSum' of '95' here or the text.
+            //
             ambiguousIdentifierTokenText == "_")
         {
             if (!parserModel.TryGetVariableDeclarationHierarchically(

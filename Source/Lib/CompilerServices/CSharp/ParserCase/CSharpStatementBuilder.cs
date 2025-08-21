@@ -7,15 +7,16 @@ public class CSharpStatementBuilder
 {
     public CSharpStatementBuilder()
     {
-        MostRecentNode = null;
+        MostRecentNode = Walk.Extensions.CompilerServices.Syntax.Nodes.EmptyExpressionNode.Empty;
         ChildList.Clear();
         ParseLambdaStatementScopeStack.Clear();
     }
     
-    public bool StatementIsEmpty => ChildList.Count == 0 && MostRecentNode is null;
+    public bool StatementIsEmpty => ChildList.Count == 0 &&
+                                    MostRecentNode == Walk.Extensions.CompilerServices.Syntax.Nodes.EmptyExpressionNode.Empty;
 
     public List<SyntaxToken> ChildList { get; } = new();
-    public ISyntaxNode? MostRecentNode { get; set; }
+    public ISyntaxNode MostRecentNode { get; set; }
     
     /// <summary>
     /// Prior to finishing a statement, you must check whether ParseLambdaStatementScopeStack has a child that needs to be parsed.
@@ -65,26 +66,29 @@ public class CSharpStatementBuilder
     /// </summary>
     public bool FinishStatement(int finishTokenIndex, ref CSharpParserModel parserModel)
     {
-        if (MostRecentNode is not null)
+        switch (MostRecentNode.SyntaxKind)
         {
-            if (MostRecentNode.SyntaxKind == SyntaxKind.VariableReferenceNode)
+            case SyntaxKind.VariableReferenceNode:
             {
-                var variableReferenceNode = (Walk.Extensions.CompilerServices.Syntax.Nodes.VariableReferenceNode)MostRecentNode;
-                parserModel.Return_VariableReferenceNode(variableReferenceNode);
+                parserModel.Return_VariableReferenceNode(
+                    (Walk.Extensions.CompilerServices.Syntax.Nodes.VariableReferenceNode)MostRecentNode);
+                break;
             }
-            else if (MostRecentNode.SyntaxKind == SyntaxKind.FunctionInvocationNode)
+            case SyntaxKind.FunctionInvocationNode:
             {
-                var functionInvocationNode = (Walk.Extensions.CompilerServices.Syntax.Nodes.FunctionInvocationNode)MostRecentNode;
-                parserModel.Return_FunctionInvocationNode(functionInvocationNode);
+                parserModel.Return_FunctionInvocationNode(
+                    (Walk.Extensions.CompilerServices.Syntax.Nodes.FunctionInvocationNode)MostRecentNode);
+                break;
             }
-            else if (MostRecentNode.SyntaxKind == SyntaxKind.ConstructorInvocationExpressionNode)
+            case SyntaxKind.ConstructorInvocationExpressionNode:
             {
-                var constructorInvocationExpressionNode = (Walk.Extensions.CompilerServices.Syntax.Nodes.ConstructorInvocationExpressionNode)MostRecentNode;
-                parserModel.Return_ConstructorInvocationExpressionNode(constructorInvocationExpressionNode);
+                parserModel.Return_ConstructorInvocationExpressionNode(
+                    (Walk.Extensions.CompilerServices.Syntax.Nodes.ConstructorInvocationExpressionNode)MostRecentNode);
+                break;
             }
         }
     
-        MostRecentNode = null;
+        MostRecentNode = Walk.Extensions.CompilerServices.Syntax.Nodes.EmptyExpressionNode.Empty;
         ChildList.Clear();
         
         /*if (ChildList.Count != 0)

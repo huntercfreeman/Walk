@@ -53,6 +53,13 @@ public record struct TextEditorTextSpan(
     /// One must check whether this value is != 0, prior to performing a string equality prediction with it.
     ///
     /// Because, not every text span is made while iterating the text, thus this isn't always available.
+    ///
+    /// !!!!
+    /// It was verified that in the CSharpParserModel, all of these values
+    /// are non-zero.
+    ///
+    /// Thus, any checks for zero have been removed from that location in particular.
+    /// !!!!
     /// </summary>
     public int CharIntSum { get; init; }
 

@@ -32,6 +32,8 @@ public sealed class VariableReferenceNode : IExpressionNode
     public SyntaxToken VariableIdentifierToken { get; set; }
     /// <summary>
     /// The <see cref="VariableDeclarationNode"/> is null when the variable is undeclared
+    ///
+    /// TODO: Do not store the VariableDeclarationNode
     /// </summary>
     public VariableDeclarationNode VariableDeclarationNode { get; set; }
     public TypeReference ResultTypeReference
