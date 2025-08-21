@@ -1,8 +1,6 @@
 using Walk.CompilerServices.CSharp.BinderCase;
 using Walk.Extensions.CompilerServices.Syntax;
-using Walk.TextEditor.RazorLib.CompilerServices;
 using Walk.TextEditor.RazorLib.Decorations.Models;
-using Walk.TextEditor.RazorLib.Exceptions;
 using Walk.TextEditor.RazorLib.Lexers.Models;
 
 namespace Walk.CompilerServices.CSharp.LexerCase;

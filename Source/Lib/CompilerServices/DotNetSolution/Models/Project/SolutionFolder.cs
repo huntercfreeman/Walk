@@ -1,5 +1,3 @@
-using Walk.Extensions.CompilerServices.Syntax;
-
 namespace Walk.CompilerServices.DotNetSolution.Models.Project;
 
 public class SolutionFolder : ISolutionMember
