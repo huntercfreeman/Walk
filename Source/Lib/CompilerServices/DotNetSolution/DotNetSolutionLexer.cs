@@ -17,6 +17,7 @@ public static class DotNetSolutionLexer
         ProjectListings_Expect_ProjectIdGuid,
         ProjectListings_Expect_EndProjectKeyword,
         Global,
+        GlobalSectionNestedProjects,
     }
 
     public static DotNetSolutionLexerOutput Lex(StreamReaderWrap streamReaderWrap)
@@ -38,6 +39,7 @@ public static class DotNetSolutionLexer
         Guid projectIdGuid = default;
         
         var hasSeenGlobal = false;
+        var hasSeenGlobalSectionNestedProjects = false;
         
         while (!streamReaderWrap.IsEof)
         {
@@ -105,7 +107,7 @@ public static class DotNetSolutionLexer
                         {
                             var startKeywordPosition = streamReaderWrap.PositionIndex;
                             
-                            if (TrySkipProjectText(streamReaderWrap, output.TextSpanList))
+                            if (TrySkipProjectText(streamReaderWrap))
                             {
                                 output.TextSpanList.Add(new TextEditorTextSpan(
                                     startKeywordPosition,
@@ -121,15 +123,8 @@ public static class DotNetSolutionLexer
                     {
                         if (streamReaderWrap.CurrentCharacter == 'P')
                         {
-                            var startKeywordPosition = streamReaderWrap.PositionIndex;
-                                
-                            if (TrySkipProjectText(streamReaderWrap, output.TextSpanList))
+                            if (TrySkipProjectText(streamReaderWrap))
                             {
-                                output.TextSpanList.Add(new TextEditorTextSpan(
-                                    startKeywordPosition,
-                                    streamReaderWrap.PositionIndex,
-                                    (byte)XmlDecorationKind.TagNameNone));
-                                    
                                 context = DotNetSolutionLexerContextKind.ProjectListings_Expect_ProjectTypeGuid;
                                 continue;
                             }
@@ -139,7 +134,7 @@ public static class DotNetSolutionLexer
                     {
                         if (streamReaderWrap.CurrentCharacter == 'E')
                         {
-                            if (TrySkipEndProjectText(streamReaderWrap, output.TextSpanList))
+                            if (TrySkipEndProjectText(streamReaderWrap))
                             {
                                 context = DotNetSolutionLexerContextKind.ProjectListings_Expect_ProjectKeyword;
                                 
@@ -176,15 +171,38 @@ public static class DotNetSolutionLexer
                         context = DotNetSolutionLexerContextKind.ProjectListings_Expect_EndProjectKeyword;
                     }
                     
-                    if (!hasSeenGlobal && streamReaderWrap.CurrentCharacter == 'G')
+                    if (!hasSeenGlobal)
                     {
-                        if (TrySkipGlobalText(streamReaderWrap, output.TextSpanList))
+                        if (streamReaderWrap.CurrentCharacter == 'G')
                         {
-                            hasSeenGlobal = true;
-                            context = DotNetSolutionLexerContextKind.Global;
-                            continue;
+                            if (TrySkipGlobalText(streamReaderWrap))
+                            {
+                                hasSeenGlobal = true;
+                                context = DotNetSolutionLexerContextKind.Global;
+                                continue;
+                            }
                         }
                     }
+                    else if (!hasSeenGlobalSectionNestedProjects)
+                    {
+                        if (streamReaderWrap.CurrentCharacter == 'G')
+                        {
+                            var startKeywordPosition = streamReaderWrap.PositionIndex;
+                            
+                            if (TrySkipGlobalSectionNestedProjectsText(streamReaderWrap))
+                            {
+                                output.TextSpanList.Add(new TextEditorTextSpan(
+                                    startKeywordPosition,
+                                    streamReaderWrap.PositionIndex,
+                                    (byte)XmlDecorationKind.TagNameNone));
+                            
+                                hasSeenGlobalSectionNestedProjects = true;
+                                context = DotNetSolutionLexerContextKind.GlobalSectionNestedProjects;
+                                continue;
+                            }
+                        }
+                    }
+
                     goto default;
                 case '0':
                 case '1':
@@ -444,81 +462,246 @@ public static class DotNetSolutionLexer
         return output;
     }
     
-    private static bool TrySkipProjectText(StreamReaderWrap streamReaderWrap, List<TextEditorTextSpan> textSpanList)
+    private static bool TrySkipProjectText(StreamReaderWrap streamReaderWrap)
     {
         // "Project".Length == 7
         for (int i = 0; i < 7; i++)
         {
-            if (i == 0 && streamReaderWrap.CurrentCharacter != 'P' ||
-                i == 1 && streamReaderWrap.CurrentCharacter != 'r' ||
-                i == 2 && streamReaderWrap.CurrentCharacter != 'o' ||
-                i == 3 && streamReaderWrap.CurrentCharacter != 'j' ||
-                i == 4 && streamReaderWrap.CurrentCharacter != 'e' ||
-                i == 5 && streamReaderWrap.CurrentCharacter != 'c' ||
-                i == 6 && streamReaderWrap.CurrentCharacter != 't')
+            switch (i)
             {
-                return false;
+                case 0:
+                    if (streamReaderWrap.CurrentCharacter != 'P')
+                        return false;
+                    break;
+                case 1:
+                    if (streamReaderWrap.CurrentCharacter != 'r')
+                        return false;
+                    break;
+                case 2:
+                    if (streamReaderWrap.CurrentCharacter != 'o')
+                        return false;
+                    break;
+                case 3:
+                    if (streamReaderWrap.CurrentCharacter != 'j')
+                        return false;
+                    break;
+                case 4:
+                    if (streamReaderWrap.CurrentCharacter != 'e')
+                        return false;
+                    break;
+                case 5:
+                    if (streamReaderWrap.CurrentCharacter != 'c')
+                        return false;
+                    break;
+                case 6:
+                    if (streamReaderWrap.CurrentCharacter != 't')
+                        return false;
+                    break;
             }
             
             _ = streamReaderWrap.ReadCharacter();
-            
-            if (i == 6)
-                return true;
         }
         
-        return false;
+        return true;
     }
     
-    private static bool TrySkipEndProjectText(StreamReaderWrap streamReaderWrap, List<TextEditorTextSpan> textSpanList)
+    private static bool TrySkipEndProjectText(StreamReaderWrap streamReaderWrap)
     {
-        // "EndProject".Length == 10
-        for (int i = 0; i < 10; i++)
+        // "End".Length == 3
+        for (int i = 0; i < 3; i++)
         {
-            if (i == 0 && streamReaderWrap.CurrentCharacter != 'E' ||
-                i == 1 && streamReaderWrap.CurrentCharacter != 'n' ||
-                i == 2 && streamReaderWrap.CurrentCharacter != 'd' ||
-                i == 3 && streamReaderWrap.CurrentCharacter != 'P' ||
-                i == 4 && streamReaderWrap.CurrentCharacter != 'r' ||
-                i == 5 && streamReaderWrap.CurrentCharacter != 'o' ||
-                i == 6 && streamReaderWrap.CurrentCharacter != 'j' ||
-                i == 7 && streamReaderWrap.CurrentCharacter != 'e' ||
-                i == 8 && streamReaderWrap.CurrentCharacter != 'c' ||
-                i == 9 && streamReaderWrap.CurrentCharacter != 't')
+            if (i == 0)
             {
-                return false;
+                if (streamReaderWrap.CurrentCharacter != 'E')
+                    return false;
+                break;
+            }
+            else if (i == 1)
+            {
+                if (streamReaderWrap.CurrentCharacter != 'n')
+                    return false;
+                break;
+            }
+            else if (i == 2)
+            {
+                if (streamReaderWrap.CurrentCharacter != 'd')
+                    return false;
+                break;
             }
 
             _ = streamReaderWrap.ReadCharacter();
-            
-            if (i == 9)
-                return true;
         }
         
-        return false;
+        return TrySkipProjectText(streamReaderWrap);
     }
     
-    private static bool TrySkipGlobalText(StreamReaderWrap streamReaderWrap, List<TextEditorTextSpan> textSpanList)
+    private static bool TrySkipGlobalText(StreamReaderWrap streamReaderWrap)
     {
         // "Global".Length == 6
         for (int i = 0; i < 6; i++)
         {
-            if (i == 0 && streamReaderWrap.CurrentCharacter != 'G' ||
-                i == 1 && streamReaderWrap.CurrentCharacter != 'l' ||
-                i == 2 && streamReaderWrap.CurrentCharacter != 'o' ||
-                i == 3 && streamReaderWrap.CurrentCharacter != 'b' ||
-                i == 4 && streamReaderWrap.CurrentCharacter != 'a' ||
-                i == 5 && streamReaderWrap.CurrentCharacter != 'l')
+            switch (i)
             {
-                return false;
+                case 0:
+                    if (streamReaderWrap.CurrentCharacter != 'G')
+                        return false;
+                    break;
+                case 1:
+                    if (streamReaderWrap.CurrentCharacter != 'l')
+                        return false;
+                    break;
+                case 2:
+                    if (streamReaderWrap.CurrentCharacter != 'o')
+                        return false;
+                    break;
+                case 3:
+                    if (streamReaderWrap.CurrentCharacter != 'b')
+                        return false;
+                    break;
+                case 4:
+                    if (streamReaderWrap.CurrentCharacter != 'a')
+                        return false;
+                    break;
+                case 5:
+                    if (streamReaderWrap.CurrentCharacter != 'l')
+                        return false;
+                    break;
             }
 
             _ = streamReaderWrap.ReadCharacter();
-            
-            if (i == 5)
-                return true;
         }
         
-        return false;
+        return true;
+    }
+    
+    private static bool TrySkipGlobalSectionNestedProjectsText(StreamReaderWrap streamReaderWrap)
+    {
+        if (!TrySkipGlobalText(streamReaderWrap))
+            return false;
+        
+        // "Section".Length == 7
+        for (int i = 0; i < 7; i++)
+        {
+            switch (i)
+            {
+                case 0:
+                    if (streamReaderWrap.CurrentCharacter != 'S')
+                        return false;
+                    break;
+                case 1:
+                    if (streamReaderWrap.CurrentCharacter != 'e')
+                        return false;
+                    break;
+                case 2:
+                    if (streamReaderWrap.CurrentCharacter != 'c')
+                        return false;
+                    break;
+                case 3:
+                    if (streamReaderWrap.CurrentCharacter != 't')
+                        return false;
+                    break;
+                case 4:
+                    if (streamReaderWrap.CurrentCharacter != 'i')
+                        return false;
+                    break;
+                case 5:
+                    if (streamReaderWrap.CurrentCharacter != 'o')
+                        return false;
+                    break;
+                case 6:
+                    if (streamReaderWrap.CurrentCharacter != 'n')
+                        return false;
+                    break;
+            }
+
+            _ = streamReaderWrap.ReadCharacter();
+        }
+        
+        if (streamReaderWrap.CurrentCharacter != '(')
+        {
+            return false;
+        }
+        else
+        {
+            _ = streamReaderWrap.ReadCharacter();
+        }
+        
+        // "NestedProjects".Length == 14
+        for (int i = 0; i < 14; i++)
+        {
+            switch (i)
+            {
+                case 0:
+                    if (streamReaderWrap.CurrentCharacter != 'N')
+                        return false;
+                    break;
+                case 1:
+                    if (streamReaderWrap.CurrentCharacter != 'e')
+                        return false;
+                    break;
+                case 2:
+                    if (streamReaderWrap.CurrentCharacter != 's')
+                        return false;
+                    break;
+                case 3:
+                    if (streamReaderWrap.CurrentCharacter != 't')
+                        return false;
+                    break;
+                case 4:
+                    if (streamReaderWrap.CurrentCharacter != 'e')
+                        return false;
+                    break;
+                case 5:
+                    if (streamReaderWrap.CurrentCharacter != 'd')
+                        return false;
+                    break;
+                case 6:
+                    if (streamReaderWrap.CurrentCharacter != 'P')
+                        return false;
+                    break;
+                case 7:
+                    if (streamReaderWrap.CurrentCharacter != 'r')
+                        return false;
+                    break;
+                case 8:
+                    if (streamReaderWrap.CurrentCharacter != 'o')
+                        return false;
+                    break;
+                case 9:
+                    if (streamReaderWrap.CurrentCharacter != 'j')
+                        return false;
+                    break;
+                case 10:
+                    if (streamReaderWrap.CurrentCharacter != 'e')
+                        return false;
+                    break;
+                case 11:
+                    if (streamReaderWrap.CurrentCharacter != 'c')
+                        return false;
+                    break;
+                case 12:
+                    if (streamReaderWrap.CurrentCharacter != 't')
+                        return false;
+                    break;
+                case 13:
+                    if (streamReaderWrap.CurrentCharacter != 's')
+                        return false;
+                    break;
+            }
+
+            _ = streamReaderWrap.ReadCharacter();
+        }
+        
+        if (streamReaderWrap.CurrentCharacter != ')')
+        {
+            return false;
+        }
+        else
+        {
+            _ = streamReaderWrap.ReadCharacter();
+        }
+        
+        return true;
     }
     
     private static Guid LexGuid(StreamReaderWrap streamReaderWrap, StringBuilder stringBuilder)
