@@ -516,8 +516,6 @@ public partial class DotNetService
                 Guid.Empty,
                 relativePathProject,
                 Guid.Empty,
-                new(),
-                new(),
                 default(AbsolutePath)));
         }
 
