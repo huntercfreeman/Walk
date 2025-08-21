@@ -190,7 +190,8 @@ public ref struct CSharpParserModel
         typeClauseNode.TypeKind = TypeKind.None;
         typeClauseNode.HasQuestionMark = false;
         typeClauseNode.ArrayRank = 0;
-        typeClauseNode._isFabricated = false;
+        // IsFabricated is not currently being used for this type, so the pooling logic doesn't need to reset it.
+        //typeClauseNode._isFabricated = false;
         typeClauseNode.IsParsingGenericParameters = false;
         typeClauseNode.ExplicitDefinitionTextSpan = default;
         typeClauseNode.ExplicitDefinitionResourceUri = default;
@@ -263,8 +264,9 @@ public ref struct CSharpParserModel
     /// </summary>
     public readonly void Return_NamespaceClauseNode(NamespaceClauseNode namespaceClauseNode)
     {
-        namespaceClauseNode._isFabricated = false;
-        
+        // IsFabricated is not currently being used for this type, so the pooling logic doesn't need to reset it.
+        //namespaceClauseNode._isFabricated = false;
+
         namespaceClauseNode.NamespacePrefixNode = null;
         namespaceClauseNode.PreviousNamespaceClauseNode = null;
         namespaceClauseNode.StartOfMemberAccessChainPositionIndex = default;
@@ -359,9 +361,10 @@ public ref struct CSharpParserModel
         
         functionInvocationNode.ResourceUri = default;
         functionInvocationNode.ExplicitDefinitionTextSpan = default;
-        
-        functionInvocationNode._isFabricated = false;
-        
+
+        // IsFabricated is not currently being used for this type, so the pooling logic doesn't need to reset it.
+        //functionInvocationNode._isFabricated = false;
+
         functionInvocationNode.IsParsingFunctionParameters = false;
         functionInvocationNode.IsParsingGenericParameters = false;
     
@@ -405,7 +408,8 @@ public ref struct CSharpParserModel
     
         constructorInvocationExpressionNode.ConstructorInvocationStageKind = ConstructorInvocationStageKind.Unset;
     
-        constructorInvocationExpressionNode._isFabricated = false;
+        // IsFabricated is not currently being used for this type, so the pooling logic doesn't need to reset it.
+        //constructorInvocationExpressionNode._isFabricated = false;
         
         constructorInvocationExpressionNode.IsParsingFunctionParameters = false;
         
