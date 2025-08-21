@@ -17,7 +17,9 @@ public static class DotNetSolutionLexer
         ProjectListings_Expect_ProjectIdGuid,
         ProjectListings_Expect_EndProjectKeyword,
         Global,
-        GlobalSectionNestedProjects,
+        GlobalSectionNestedProjects_Expect_ChildGuid,
+        GlobalSectionNestedProjects_Expect_ParentGuid,
+        Finish
     }
 
     public static DotNetSolutionLexerOutput Lex(StreamReaderWrap streamReaderWrap)
@@ -33,13 +35,16 @@ public static class DotNetSolutionLexer
         
         var indexOfMostRecentTagOpen = -1;
         
-        Guid projectTypeGuid = default;
+        Guid projectTypeGuid = Guid.Empty;
         string projectName = default;
         string projectPath = default;
-        Guid projectIdGuid = default;
+        Guid projectIdGuid = Guid.Empty;
         
         var hasSeenGlobal = false;
         var hasSeenGlobalSectionNestedProjects = false;
+        
+        var childGuid = Guid.Empty;
+        var parentGuid = Guid.Empty;
         
         while (!streamReaderWrap.IsEof)
         {
@@ -101,74 +106,102 @@ public static class DotNetSolutionLexer
                 case 'Z':
                 /* Underscore */
                 case '_':
-                    if (context == DotNetSolutionLexerContextKind.Header)
+                    switch (context)
                     {
-                        if (streamReaderWrap.CurrentCharacter == 'P')
+                        case DotNetSolutionLexerContextKind.Header:
                         {
-                            var startKeywordPosition = streamReaderWrap.PositionIndex;
+                            if (streamReaderWrap.CurrentCharacter == 'P')
+                            {
+                                var startKeywordPosition = streamReaderWrap.PositionIndex;
+                                
+                                if (TrySkipProjectText(streamReaderWrap))
+                                {
+                                    output.TextSpanList.Add(new TextEditorTextSpan(
+                                        startKeywordPosition,
+                                        streamReaderWrap.PositionIndex,
+                                        (byte)XmlDecorationKind.TagNameNone));
+                                    
+                                    context = DotNetSolutionLexerContextKind.ProjectListings_Expect_ProjectTypeGuid;
+                                    continue;
+                                }
+                            }
+                            break;
+                        }
+                        case DotNetSolutionLexerContextKind.ProjectListings_Expect_ProjectKeyword:
+                        {
+                            if (streamReaderWrap.CurrentCharacter == 'P')
+                            {
+                                if (TrySkipProjectText(streamReaderWrap))
+                                {
+                                    context = DotNetSolutionLexerContextKind.ProjectListings_Expect_ProjectTypeGuid;
+                                    continue;
+                                }
+                            }
+                            break;
+                        }
+                        case DotNetSolutionLexerContextKind.ProjectListings_Expect_EndProjectKeyword:
+                        {
+                            if (streamReaderWrap.CurrentCharacter == 'E')
+                            {
+                                if (TrySkipEndProjectText(streamReaderWrap))
+                                {
+                                    context = DotNetSolutionLexerContextKind.ProjectListings_Expect_ProjectKeyword;
+                                    
+                                    if (projectTypeGuid == SolutionFolder.SolutionFolderProjectTypeGuid)
+                                    {
+                                        output.SolutionFolderList.Add(new SolutionFolder(
+                                            projectName,
+                                            projectTypeGuid,
+                                            projectPath,
+                                            projectIdGuid));
+                                    }
+                                    else
+                                    {
+                                        output.DotNetProjectList.Add(new CSharpProjectModel(
+                                            projectName,
+                                            projectTypeGuid,
+                                            projectPath,
+                                            projectIdGuid,
+                                            absolutePath: default));
+                                    }
+                                    
+                                    continue;
+                                }
+                            }
+                            break;
+                        }
+                        case DotNetSolutionLexerContextKind.ProjectListings_Expect_ProjectTypeGuid:
+                        {
+                            projectTypeGuid = LexGuid(streamReaderWrap, stringBuilder, true);
+                            context = DotNetSolutionLexerContextKind.ProjectListings_Expect_ProjectName;
+                            break;
+                        }
+                        case DotNetSolutionLexerContextKind.ProjectListings_Expect_ProjectIdGuid:
+                        {
+                            projectIdGuid = LexGuid(streamReaderWrap, stringBuilder, true);
+                            context = DotNetSolutionLexerContextKind.ProjectListings_Expect_EndProjectKeyword;
+                            break;
+                        }
+                        case DotNetSolutionLexerContextKind.GlobalSectionNestedProjects_Expect_ChildGuid:
+                        case DotNetSolutionLexerContextKind.GlobalSectionNestedProjects_Expect_ParentGuid:
+                        {
+                            if (streamReaderWrap.CurrentCharacter == 'E')
+                            {
+                                var startKeywordPosition = streamReaderWrap.PositionIndex;
                             
-                            if (TrySkipProjectText(streamReaderWrap))
-                            {
-                                output.TextSpanList.Add(new TextEditorTextSpan(
-                                    startKeywordPosition,
-                                    streamReaderWrap.PositionIndex,
-                                    (byte)XmlDecorationKind.TagNameNone));
-                                
-                                context = DotNetSolutionLexerContextKind.ProjectListings_Expect_ProjectTypeGuid;
-                                continue;
-                            }
-                        }
-                    }
-                    else if (context == DotNetSolutionLexerContextKind.ProjectListings_Expect_ProjectKeyword)
-                    {
-                        if (streamReaderWrap.CurrentCharacter == 'P')
-                        {
-                            if (TrySkipProjectText(streamReaderWrap))
-                            {
-                                context = DotNetSolutionLexerContextKind.ProjectListings_Expect_ProjectTypeGuid;
-                                continue;
-                            }
-                        }
-                    }
-                    else if (context == DotNetSolutionLexerContextKind.ProjectListings_Expect_EndProjectKeyword)
-                    {
-                        if (streamReaderWrap.CurrentCharacter == 'E')
-                        {
-                            if (TrySkipEndProjectText(streamReaderWrap))
-                            {
-                                context = DotNetSolutionLexerContextKind.ProjectListings_Expect_ProjectKeyword;
-                                
-                                if (projectTypeGuid == SolutionFolder.SolutionFolderProjectTypeGuid)
+                                if (TrySkipEndGlobalSectionText(streamReaderWrap))
                                 {
-                                    output.SolutionFolderList.Add(new SolutionFolder(
-                                        projectName,
-                                        projectTypeGuid,
-                                        projectPath,
-                                        projectIdGuid));
-                                }
-                                else
-                                {
-                                    output.DotNetProjectList.Add(new CSharpProjectModel(
-                                        projectName,
-                                        projectTypeGuid,
-                                        projectPath,
-                                        projectIdGuid,
-                                        absolutePath: default));
-                                }
+                                    output.TextSpanList.Add(new TextEditorTextSpan(
+                                        startKeywordPosition,
+                                        streamReaderWrap.PositionIndex,
+                                        (byte)XmlDecorationKind.TagNameNone));
                                 
-                                continue;
+                                    context = DotNetSolutionLexerContextKind.Finish;
+                                    continue;
+                                }
                             }
+                            break;
                         }
-                    }
-                    else if (context == DotNetSolutionLexerContextKind.ProjectListings_Expect_ProjectTypeGuid)
-                    {
-                        projectTypeGuid = LexGuid(streamReaderWrap, stringBuilder);
-                        context = DotNetSolutionLexerContextKind.ProjectListings_Expect_ProjectName;
-                    }
-                    else if (context == DotNetSolutionLexerContextKind.ProjectListings_Expect_ProjectIdGuid)
-                    {
-                        projectIdGuid = LexGuid(streamReaderWrap, stringBuilder);
-                        context = DotNetSolutionLexerContextKind.ProjectListings_Expect_EndProjectKeyword;
                     }
                     
                     if (!hasSeenGlobal)
@@ -197,7 +230,7 @@ public static class DotNetSolutionLexer
                                     (byte)XmlDecorationKind.TagNameNone));
                             
                                 hasSeenGlobalSectionNestedProjects = true;
-                                context = DotNetSolutionLexerContextKind.GlobalSectionNestedProjects;
+                                context = DotNetSolutionLexerContextKind.GlobalSectionNestedProjects_Expect_ChildGuid;
                                 continue;
                             }
                         }
@@ -216,12 +249,12 @@ public static class DotNetSolutionLexer
                 case '9':
                     if (context == DotNetSolutionLexerContextKind.ProjectListings_Expect_ProjectTypeGuid)
                     {
-                        projectTypeGuid = LexGuid(streamReaderWrap, stringBuilder);
+                        projectTypeGuid = LexGuid(streamReaderWrap, stringBuilder, true);
                         context = DotNetSolutionLexerContextKind.ProjectListings_Expect_ProjectName;
                     }
                     else if (context == DotNetSolutionLexerContextKind.ProjectListings_Expect_ProjectIdGuid)
                     {
-                        projectIdGuid = LexGuid(streamReaderWrap, stringBuilder);
+                        projectIdGuid = LexGuid(streamReaderWrap, stringBuilder, true);
                         context = DotNetSolutionLexerContextKind.ProjectListings_Expect_EndProjectKeyword;
                     }
                     goto default;
@@ -344,9 +377,42 @@ public static class DotNetSolutionLexer
                 }
                 case '{':
                 {
-                    /*if (interpolatedExpressionUnmatchedBraceCount != -1)
-                        ++interpolatedExpressionUnmatchedBraceCount;*/
-                
+                    if (context == DotNetSolutionLexerContextKind.GlobalSectionNestedProjects_Expect_ChildGuid)
+                    {
+                        _ = streamReaderWrap.ReadCharacter();
+                        
+                        var startGuidPosition = streamReaderWrap.PositionIndex;
+                            
+                        childGuid = LexGuid(streamReaderWrap, stringBuilder);
+                        
+                        output.TextSpanList.Add(new TextEditorTextSpan(
+                            startGuidPosition,
+                            streamReaderWrap.PositionIndex,
+                            (byte)XmlDecorationKind.AttributeName));
+                        
+                        context = DotNetSolutionLexerContextKind.GlobalSectionNestedProjects_Expect_ParentGuid;
+                    }
+                    else if (context == DotNetSolutionLexerContextKind.GlobalSectionNestedProjects_Expect_ParentGuid)
+                    {
+                        _ = streamReaderWrap.ReadCharacter();
+                        
+                        var startGuidPosition = streamReaderWrap.PositionIndex;
+                        
+                        parentGuid = LexGuid(streamReaderWrap, stringBuilder);
+                        
+                        output.TextSpanList.Add(new TextEditorTextSpan(
+                            startGuidPosition,
+                            streamReaderWrap.PositionIndex,
+                            (byte)XmlDecorationKind.AttributeValue));
+                        
+                        context = DotNetSolutionLexerContextKind.GlobalSectionNestedProjects_Expect_ChildGuid;
+                        
+                        output.GuidNestedProjectEntryList.Add(new GuidNestedProjectEntry(
+                            childGuid,
+                            parentGuid));
+                    }
+                    // TODO: Highlight the end section thing
+                    
                     goto default;
                 }
                 case '}':
@@ -514,25 +580,90 @@ public static class DotNetSolutionLexer
             {
                 if (streamReaderWrap.CurrentCharacter != 'E')
                     return false;
-                break;
             }
             else if (i == 1)
             {
                 if (streamReaderWrap.CurrentCharacter != 'n')
                     return false;
-                break;
             }
             else if (i == 2)
             {
                 if (streamReaderWrap.CurrentCharacter != 'd')
                     return false;
-                break;
             }
 
             _ = streamReaderWrap.ReadCharacter();
         }
         
         return TrySkipProjectText(streamReaderWrap);
+    }
+    
+    private static bool TrySkipEndGlobalSectionText(StreamReaderWrap streamReaderWrap)
+    {
+        // "End".Length == 3
+        for (int i = 0; i < 3; i++)
+        {
+            if (i == 0)
+            {
+                if (streamReaderWrap.CurrentCharacter != 'E')
+                    return false;
+            }
+            else if (i == 1)
+            {
+                if (streamReaderWrap.CurrentCharacter != 'n')
+                    return false;
+            }
+            else if (i == 2)
+            {
+                if (streamReaderWrap.CurrentCharacter != 'd')
+                    return false;
+            }
+
+            _ = streamReaderWrap.ReadCharacter();
+        }
+        
+        if (!TrySkipGlobalText(streamReaderWrap))
+            return false;
+            
+        // "Section".Length == 7
+        for (int i = 0; i < 7; i++)
+        {
+            switch (i)
+            {
+                case 0:
+                    if (streamReaderWrap.CurrentCharacter != 'S')
+                        return false;
+                    break;
+                case 1:
+                    if (streamReaderWrap.CurrentCharacter != 'e')
+                        return false;
+                    break;
+                case 2:
+                    if (streamReaderWrap.CurrentCharacter != 'c')
+                        return false;
+                    break;
+                case 3:
+                    if (streamReaderWrap.CurrentCharacter != 't')
+                        return false;
+                    break;
+                case 4:
+                    if (streamReaderWrap.CurrentCharacter != 'i')
+                        return false;
+                    break;
+                case 5:
+                    if (streamReaderWrap.CurrentCharacter != 'o')
+                        return false;
+                    break;
+                case 6:
+                    if (streamReaderWrap.CurrentCharacter != 'n')
+                        return false;
+                    break;
+            }
+
+            _ = streamReaderWrap.ReadCharacter();
+        }
+        
+        return true;
     }
     
     private static bool TrySkipGlobalText(StreamReaderWrap streamReaderWrap)
@@ -704,7 +835,7 @@ public static class DotNetSolutionLexer
         return true;
     }
     
-    private static Guid LexGuid(StreamReaderWrap streamReaderWrap, StringBuilder stringBuilder)
+    private static Guid LexGuid(StreamReaderWrap streamReaderWrap, StringBuilder stringBuilder, bool shouldFindDoubleQuote = false)
     {
         stringBuilder.Clear();
         
@@ -722,13 +853,15 @@ public static class DotNetSolutionLexer
             _ = streamReaderWrap.ReadCharacter();
         }
         
-        // Double quote wrapping the guids is causing a false
-        // entry into the strings that get lexed.
-        while (!streamReaderWrap.IsEof)
+        // Double quote wrapping the guids is causing a false entry into the strings that get lexed.
+        if (shouldFindDoubleQuote)
         {
-            if (streamReaderWrap.CurrentCharacter == '"')
-                break;
-            _ = streamReaderWrap.ReadCharacter();
+            while (!streamReaderWrap.IsEof)
+            {
+                if (streamReaderWrap.CurrentCharacter == '"')
+                    break;
+                _ = streamReaderWrap.ReadCharacter();
+            }
         }
         
         // TODO: Use the Guid.Parse(...) overload that takes a span

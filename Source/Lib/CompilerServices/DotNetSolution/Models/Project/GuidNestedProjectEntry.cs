@@ -1,5 +1,5 @@
 namespace Walk.CompilerServices.DotNetSolution.Models.Project;
 
-public record GuidNestedProjectEntry(
+public record struct GuidNestedProjectEntry(
     Guid ChildProjectIdGuid,
     Guid SolutionFolderIdGuid);
