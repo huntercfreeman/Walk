@@ -10,10 +10,9 @@ using Walk.Common.RazorLib.Keys.Models;
 using Walk.Common.RazorLib.Notifications.Models;
 using Walk.Common.RazorLib.Reactives.Models;
 using Walk.Common.RazorLib.TreeViews.Models;
-using Walk.CompilerServices.DotNetSolution.CompilerServiceCase;
+using Walk.CompilerServices.DotNetSolution;
 using Walk.CompilerServices.DotNetSolution.Models;
 using Walk.CompilerServices.DotNetSolution.Models.Project;
-using Walk.CompilerServices.DotNetSolution.SyntaxActors;
 using Walk.CompilerServices.CSharp.CompilerServiceCase;
 using Walk.Extensions.DotNet.AppDatas.Models;
 using Walk.Extensions.DotNet.CommandLines.Models;
@@ -204,8 +203,6 @@ public partial class DotNetService
     {
         var dotNetSolutionAbsolutePathString = inSolutionAbsolutePath.Value;
 
-        var content = IdeService.TextEditorService.CommonService.FileSystemProvider.File.ReadAllText(dotNetSolutionAbsolutePathString);
-
         var tokenBuilder = new StringBuilder();
         var formattedBuilder = new StringBuilder();
 
@@ -218,38 +215,12 @@ public partial class DotNetService
 
         var resourceUri = new ResourceUri(solutionAbsolutePath.Value);
 
-        if (IdeService.TextEditorService.Model_GetOrDefault(resourceUri) is null)
-        {
-            IdeService.TextEditorService.WorkerArbitrary.PostUnique(editContext =>
-            {
-                var extension = ExtensionNoPeriodFacts.DOT_NET_SOLUTION;
-
-                if (dotNetSolutionAbsolutePathString.EndsWith(ExtensionNoPeriodFacts.DOT_NET_SOLUTION_X))
-                    extension = ExtensionNoPeriodFacts.DOT_NET_SOLUTION_X;
-
-                IdeService.TextEditorService.Model_RegisterTemplated(
-                    editContext,
-                    extension,
-                    resourceUri,
-                    DateTime.UtcNow,
-                    content);
-
-                IdeService.TextEditorService
-                    .GetCompilerService(extension)
-                    .RegisterResource(
-                        resourceUri,
-                        shouldTriggerResourceWasModified: true);
-
-                return ValueTask.CompletedTask;
-            });
-        }
-
         DotNetSolutionModel dotNetSolutionModel;
 
         if (dotNetSolutionAbsolutePathString.EndsWith(ExtensionNoPeriodFacts.DOT_NET_SOLUTION_X))
-            dotNetSolutionModel = ParseSlnx(solutionAbsolutePath, resourceUri, content, tokenBuilder, formattedBuilder);
+            dotNetSolutionModel = ParseSlnx(solutionAbsolutePath, resourceUri, tokenBuilder, formattedBuilder);
         else
-            dotNetSolutionModel = ParseSln(solutionAbsolutePath, resourceUri, content);
+            dotNetSolutionModel = ParseSln(solutionAbsolutePath, resourceUri);
 
         dotNetSolutionModel.DotNetProjectList = SortProjectReferences(dotNetSolutionModel, tokenBuilder, formattedBuilder);
 
@@ -440,7 +411,6 @@ public partial class DotNetService
     public DotNetSolutionModel ParseSlnx(
         AbsolutePath solutionAbsolutePath,
         ResourceUri resourceUri,
-        string content,
         StringBuilder tokenBuilder,
         StringBuilder formattedBuilder)
     {
@@ -551,9 +521,6 @@ public partial class DotNetService
                 default(AbsolutePath)));
         }
 
-        var dotNetSolutionHeader = new DotNetSolutionHeader();
-        var dotNetSolutionGlobal = new DotNetSolutionGlobal();
-
         // You have to iterate in reverse so ascending will put longest words to shortest (when iterating reverse).
         var childSolutionFolderList = solutionFolderList.OrderBy(x => x.ActualName).ToList();
         var parentSolutionFolderList = new List<SolutionFolder>(childSolutionFolderList);
@@ -581,40 +548,28 @@ public partial class DotNetService
 
         return new DotNetSolutionModel(
             solutionAbsolutePath,
-            dotNetSolutionHeader,
             dotNetProjectList,
             solutionFolderList,
             guidNestedProjectEntryList: null,
-            stringNestedProjectEntryList,
-            dotNetSolutionGlobal,
-            content);
+            stringNestedProjectEntryList);
     }
 
     public DotNetSolutionModel ParseSln(
         AbsolutePath solutionAbsolutePath,
-        ResourceUri resourceUri,
-        string content)
+        ResourceUri resourceUri)
     {
-        var lexer = new DotNetSolutionLexer(
-            new StringWalker(),
-            resourceUri,
-            content);
-
-        lexer.Lex();
-
-        var parser = new DotNetSolutionParser(lexer);
-
-        var compilationUnit = parser.Parse();
-
+        using StreamReader sr = new StreamReader(solutionAbsolutePath.Value);
+        var lexerOutput = DotNetSolutionLexer.Lex(new StreamReaderWrap(sr));
+        
+        var stringBuilder = new StringBuilder();
+        var getTextBuffer = new char[1];
+        
         return new DotNetSolutionModel(
             solutionAbsolutePath,
-            parser.DotNetSolutionHeader,
-            parser.DotNetProjectList,
-            parser.SolutionFolderList,
-            guidNestedProjectEntryList: parser.NestedProjectEntryList,
-            null,
-            parser.DotNetSolutionGlobal,
-            content);
+            lexerOutput.DotNetProjectList,
+            lexerOutput.SolutionFolderList,
+            lexerOutput.GuidNestedProjectEntryList,
+            stringNestedProjectEntryList: null);
     }
 
     /// <summary>

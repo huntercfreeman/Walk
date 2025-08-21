@@ -11,10 +11,9 @@ using Walk.Extensions.CompilerServices;
 using Walk.Extensions.CompilerServices.Syntax;
 using Walk.Extensions.CompilerServices.Syntax.Nodes;
 using Walk.Extensions.CompilerServices.Syntax.Nodes.Interfaces;
-using Walk.CompilerServices.DotNetSolution.SyntaxActors;
 using Walk.CompilerServices.Xml;
 
-namespace Walk.CompilerServices.DotNetSolution.CompilerServiceCase;
+namespace Walk.CompilerServices.DotNetSolution;
 
 public sealed class DotNetSolutionCompilerService : ICompilerService
 {
@@ -157,13 +156,9 @@ public sealed class DotNetSolutionCompilerService : ICompilerService
         }
         else
         {
-            var lexer = new DotNetSolutionLexer(_textEditorService.__StringWalker, modelModifier.PersistentState.ResourceUri, modelModifier.GetAllText());
-            lexer.Lex();
-            
-            var parser = new DotNetSolutionParser(lexer);
-            var compilationUnit = parser.Parse();
-            
-            syntaxTokenList = lexer.SyntaxTokenList;
+            using StreamReader sr = new StreamReader(modelModifier.PersistentState.ResourceUri.Value);
+            var lexerOutput = DotNetSolutionLexer.Lex(new StreamReaderWrap(sr));
+            syntaxTokenList = lexerOutput.TextSpanList.Select(x => new SyntaxToken(SyntaxKind.NotApplicable, x)).ToList();
         }
         
         lock (_resourceMapLock)
