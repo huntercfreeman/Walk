@@ -2,7 +2,7 @@ using Walk.TextEditor.RazorLib.Decorations.Models;
 
 namespace Walk.CompilerServices.Css;
 
-public class TextEditorCssDecorationMapper : IDecorationMapper
+public class CssDecorationMapper : IDecorationMapper
 {
     public string Map(byte decorationByte)
     {
