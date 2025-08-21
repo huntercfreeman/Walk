@@ -1,4 +1,4 @@
-namespace Walk.CompilerServices.Json.Decoration;
+namespace Walk.CompilerServices.Json;
 
 public enum JsonDecorationKind
 {

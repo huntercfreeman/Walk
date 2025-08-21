@@ -14,10 +14,8 @@ using Walk.Common.RazorLib.FileSystems.Models;
 using Walk.CompilerServices.CSharp.CompilerServiceCase;
 using Walk.CompilerServices.CSharpProject.CompilerServiceCase;
 using Walk.CompilerServices.Css;
-using Walk.CompilerServices.Css.Decoration;
 using Walk.CompilerServices.DotNetSolution;
 using Walk.CompilerServices.Json;
-using Walk.CompilerServices.Json.Decoration;
 using Walk.CompilerServices.Razor;
 using Walk.CompilerServices.Xml;
 using Walk.Extensions.DotNet;
@@ -533,8 +531,8 @@ public static class InitializationHelper
         // Decoration Mapper starts after this point.
         //
         
-        var cssDecorationMapper = new TextEditorCssDecorationMapper();
-        var jsonDecorationMapper = new TextEditorJsonDecorationMapper();
+        var cssDecorationMapper = new CssDecorationMapper();
+        var jsonDecorationMapper = new JsonDecorationMapper();
         var genericDecorationMapper = new GenericDecorationMapper();
         var xmlDecorationMapper = new XmlDecorationMapper();
         var razorDecorationMapper = new RazorDecorationMapper();

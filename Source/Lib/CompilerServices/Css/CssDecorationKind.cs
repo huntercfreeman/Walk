@@ -1,4 +1,4 @@
-namespace Walk.CompilerServices.Css.Decoration;
+namespace Walk.CompilerServices.Css;
 
 public enum CssDecorationKind
 {

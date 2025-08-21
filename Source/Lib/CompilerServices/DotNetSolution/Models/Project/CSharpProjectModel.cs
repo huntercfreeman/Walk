@@ -1,5 +1,4 @@
 using Walk.Common.RazorLib.FileSystems.Models;
-using Walk.Extensions.CompilerServices.Syntax;
 
 namespace Walk.CompilerServices.DotNetSolution.Models.Project;
 

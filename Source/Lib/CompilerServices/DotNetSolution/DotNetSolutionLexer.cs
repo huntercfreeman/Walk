@@ -381,14 +381,14 @@ public static class DotNetSolutionLexer
                     {
                         _ = streamReaderWrap.ReadCharacter();
                         
-                        var startGuidPosition = streamReaderWrap.PositionIndex;
+                        // var startGuidPosition = streamReaderWrap.PositionIndex;
                             
                         childGuid = LexGuid(streamReaderWrap, stringBuilder);
                         
-                        output.TextSpanList.Add(new TextEditorTextSpan(
+                        /*output.TextSpanList.Add(new TextEditorTextSpan(
                             startGuidPosition,
                             streamReaderWrap.PositionIndex,
-                            (byte)XmlDecorationKind.AttributeName));
+                            (byte)XmlDecorationKind.AttributeName));*/
                         
                         context = DotNetSolutionLexerContextKind.GlobalSectionNestedProjects_Expect_ParentGuid;
                     }
@@ -396,14 +396,14 @@ public static class DotNetSolutionLexer
                     {
                         _ = streamReaderWrap.ReadCharacter();
                         
-                        var startGuidPosition = streamReaderWrap.PositionIndex;
+                        // var startGuidPosition = streamReaderWrap.PositionIndex;
                         
                         parentGuid = LexGuid(streamReaderWrap, stringBuilder);
                         
-                        output.TextSpanList.Add(new TextEditorTextSpan(
+                        /*output.TextSpanList.Add(new TextEditorTextSpan(
                             startGuidPosition,
                             streamReaderWrap.PositionIndex,
-                            (byte)XmlDecorationKind.AttributeValue));
+                            (byte)XmlDecorationKind.AttributeValue));*/
                         
                         context = DotNetSolutionLexerContextKind.GlobalSectionNestedProjects_Expect_ChildGuid;
                         

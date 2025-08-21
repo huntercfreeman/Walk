@@ -1,8 +1,8 @@
 using Walk.TextEditor.RazorLib.Decorations.Models;
 
-namespace Walk.CompilerServices.Json.Decoration;
+namespace Walk.CompilerServices.Json;
 
-public class TextEditorJsonDecorationMapper : IDecorationMapper
+public class JsonDecorationMapper : IDecorationMapper
 {
     public string Map(byte decorationByte)
     {
