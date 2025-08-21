@@ -756,8 +756,6 @@ public ref struct CSharpParserModel
         {
             return;
         }
-        
-        var namespaceAndTypeIdentifiers = new NamespaceAndTypeIdentifiers(currentNamespaceStatementText, typeIdentifierText);
 
         typeDefinitionNode.EncompassingNamespaceIdentifierString = currentNamespaceStatementText;
 
