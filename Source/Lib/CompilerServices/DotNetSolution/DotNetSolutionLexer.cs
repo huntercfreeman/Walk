@@ -142,12 +142,25 @@ public static class DotNetSolutionLexer
                             if (TrySkipEndProjectText(streamReaderWrap, output.TextSpanList))
                             {
                                 context = DotNetSolutionLexerContextKind.ProjectListings_Expect_ProjectKeyword;
-                                output.DotNetProjectList.Add(new CSharpProjectModel(
-                                    projectName,
-                                    projectTypeGuid,
-                                    projectPath,
-                                    projectIdGuid,
-                                    absolutePath: default));
+                                
+                                if (projectTypeGuid == SolutionFolder.SolutionFolderProjectTypeGuid)
+                                {
+                                    output.SolutionFolderList.Add(new SolutionFolder(
+                                        projectName,
+                                        projectTypeGuid,
+                                        projectPath,
+                                        projectIdGuid));
+                                }
+                                else
+                                {
+                                    output.DotNetProjectList.Add(new CSharpProjectModel(
+                                        projectName,
+                                        projectTypeGuid,
+                                        projectPath,
+                                        projectIdGuid,
+                                        absolutePath: default));
+                                }
+                                
                                 continue;
                             }
                         }
