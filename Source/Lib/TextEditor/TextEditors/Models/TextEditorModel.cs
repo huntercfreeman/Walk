@@ -1952,7 +1952,7 @@ public sealed class TextEditorModel
     public char GetCharacter(int positionIndex)
     {
         if (positionIndex == CharCount)
-            return ParserFacts.END_OF_FILE;
+            return '\0';
 
         return RichCharacterList[positionIndex].Value;
     }

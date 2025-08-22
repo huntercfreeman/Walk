@@ -108,10 +108,17 @@ public class TerminalInteractive : ITerminalInteractive
         
                 while (!stringWalker.IsEof)
                 {
-                    if (WhitespaceFacts.ALL_LIST.Contains(stringWalker.CurrentCharacter))
+                    if (stringWalker.CurrentCharacter == ' ' ||
+                        stringWalker.CurrentCharacter == '\t' ||
+                        stringWalker.CurrentCharacter == '\r' ||
+                        stringWalker.CurrentCharacter == '\n')
+                    {
                         break;
+                    }
                     else
+                    {
                         targetFileNameBuilder.Append(stringWalker.CurrentCharacter);
+                    }
                 
                     _ = stringWalker.ReadCharacter();
                 }
