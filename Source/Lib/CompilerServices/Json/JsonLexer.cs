@@ -15,9 +15,6 @@ public static class JsonLexer
         var context = CssLexerContextKind.Expect_PropertyName;
         var output = new JsonLexerOutput();
         
-        // TODO: I'm not sure I like the idea of this.
-        var mostRecentStringIndex = -1;
-        
         while (!streamReaderWrap.IsEof)
         {
             switch (streamReaderWrap.CurrentCharacter)
@@ -132,12 +129,24 @@ public static class JsonLexer
                         _ = streamReaderWrap.ReadCharacter();
                     }
                     
-                    mostRecentStringIndex = output.TextSpanList.Count;
-                    output.TextSpanList.Add(new TextEditorTextSpan(
-                        stringStartPosition,
-                        streamReaderWrap.PositionIndex,
-                        (byte)JsonDecorationKind.String,
-                        stringStartByte));
+                    var endPosition = streamReaderWrap.PositionIndex;
+                    
+                    if (streamReaderWrap.CurrentCharacter == ':')
+                    {
+                        output.TextSpanList.Add(new TextEditorTextSpan(
+                            stringStartPosition,
+                            endPosition,
+                            (byte)JsonDecorationKind.PropertyKey,
+                            stringStartByte));
+                    }
+                    else
+                    {
+                        output.TextSpanList.Add(new TextEditorTextSpan(
+                            stringStartPosition,
+                            endPosition,
+                            (byte)JsonDecorationKind.String,
+                            stringStartByte));
+                    }
                     continue;
                 case '/':
                 
@@ -286,12 +295,10 @@ public static class JsonLexer
                 }
                 case '{':
                 {
-                    mostRecentStringIndex = -1;
                     goto default;
                 }
                 case '}':
                 {
-                    mostRecentStringIndex = -1;
                     goto default;
                 }
                 case '<':
@@ -318,12 +325,10 @@ public static class JsonLexer
                 }
                 case '[':
                 {
-                    mostRecentStringIndex = -1;
                     goto default;
                 }
                 case ']':
                 {
-                    mostRecentStringIndex = -1;
                     goto default;
                 }
                 case '$':
@@ -377,14 +382,6 @@ public static class JsonLexer
                     }
                 case ':':
                 {
-                    if (mostRecentStringIndex != -1)
-                    {
-                        output.TextSpanList[mostRecentStringIndex] = output.TextSpanList[mostRecentStringIndex] with
-                        {
-                            DecorationByte = (byte)JsonDecorationKind.PropertyKey
-                        };
-                        mostRecentStringIndex = -1;
-                    }
                     goto default;
                 }
                 case '.':
@@ -393,7 +390,6 @@ public static class JsonLexer
                 }
                 case ',':
                 {
-                    mostRecentStringIndex = -1;
                     goto default;
                 }
                 case '#':
