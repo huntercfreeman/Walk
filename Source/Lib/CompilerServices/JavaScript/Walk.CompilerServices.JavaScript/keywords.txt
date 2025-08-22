@@ -1,0 +1,100 @@
+        /*
+        "await",
+        "break",
+        "case",
+        "catch",
+        "class",
+        "const",
+        "continue",
+        "debugger",
+        "default",
+        "delete",
+        "do",
+        "else",
+        "enum",
+        "export",
+        "extends",
+        "false",
+        "finally",
+        "for",
+        "function",
+        "if",
+        "implements",
+        "import",
+        "in",
+        "instanceof",
+        "interface",
+        "let",
+        "new",
+        "null",
+        "package",
+        "private",
+        "protected",
+        "public",
+        "return",
+        "super",
+        "switch",
+        "static",
+        "this",
+        "throw",
+        "try",
+        "True",
+        "typeof",
+        "var",
+        "void",
+        "while",
+        "with",
+        "yield",
+        */
+
+
+/*
+        "await";
+        "break";
+        "case";
+        "catch";
+        "class";
+        "const";
+        "continue";
+        "debugger";
+        "default";
+        "delete";
+        "do";
+        "else";
+        "enum";
+        "export";
+        "extends";
+        "false";
+        "finally";
+        "for";
+        "function";
+        "if";
+        public const string IMPLEMENTS_KEYWORD = "implements";
+        public const string IMPORT_KEYWORD = "import";
+        public const string IN_KEYWORD = "in";
+        public const string INSTANCEOF_KEYWORD = "instanceof";
+        public const string INTERFACE_KEYWORD = "interface";
+        public const string LET_KEYWORD = "let";
+        public const string NEW_KEYWORD = "new";
+        public const string NULL_KEYWORD = "null";
+        public const string PACKAGE_KEYWORD = "package";
+        public const string PRIVATE_KEYWORD = "private";
+        public const string PROTECTED_KEYWORD = "protected";
+        public const string PUBLIC_KEYWORD = "public";
+        public const string RETURN_KEYWORD = "return";
+        public const string SUPER_KEYWORD = "super";
+        public const string SWITCH_KEYWORD = "switch";
+        public const string STATIC_KEYWORD = "static";
+        public const string THIS_KEYWORD = "this";
+        public const string THROW_KEYWORD = "throw";
+        public const string TRY_KEYWORD = "try";
+        public const string TRUE_KEYWORD = "True";
+        public const string TYPEOF_KEYWORD = "typeof";
+        public const string VAR_KEYWORD = "var";
+        public const string VOID_KEYWORD = "void";
+        public const string WHILE_KEYWORD = "while";
+        public const string WITH_KEYWORD = "with";
+        public const string YIELD_KEYWORD = "yield";
+        */
+        
+        
