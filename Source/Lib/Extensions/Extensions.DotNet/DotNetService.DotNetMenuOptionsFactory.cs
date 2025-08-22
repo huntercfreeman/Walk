@@ -224,13 +224,13 @@ public partial class DotNetService
                     return Task.FromResult(false);
 
                 return Task.FromResult(
-                    absolutePath.Name.EndsWith(ExtensionNoPeriodFacts.C_SHARP_PROJECT));
+                    absolutePath.Name.EndsWith(CommonFacts.C_SHARP_PROJECT));
             },
             InputFilePatterns = new()
             {
                 new InputFilePattern(
                     "C# Project",
-                    absolutePath => absolutePath.Name.EndsWith(ExtensionNoPeriodFacts.C_SHARP_PROJECT))
+                    absolutePath => absolutePath.Name.EndsWith(CommonFacts.C_SHARP_PROJECT))
             }
         });
     }

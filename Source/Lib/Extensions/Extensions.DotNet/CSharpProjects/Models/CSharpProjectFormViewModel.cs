@@ -60,7 +60,7 @@ public class CSharpProjectFormViewModel
         DotNetSolutionModel?.NamespaceString is null
             ? string.Empty
             : DotNetSolutionModel?.AbsolutePath.Value,
-        $"{CSharpProjectNameValue}{EnvironmentProvider.DirectorySeparatorChar}{CSharpProjectNameValue}.{ExtensionNoPeriodFacts.C_SHARP_PROJECT}");
+        $"{CSharpProjectNameValue}{EnvironmentProvider.DirectorySeparatorChar}{CSharpProjectNameValue}.{CommonFacts.C_SHARP_PROJECT}");
 
     public bool TryTakeSnapshot(out CSharpProjectFormViewModelImmutable? viewModelImmutable)
     {

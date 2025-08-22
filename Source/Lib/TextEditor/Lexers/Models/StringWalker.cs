@@ -40,7 +40,7 @@ public class StringWalker
     public string RemainingText => SourceText[PositionIndex..];
 
     /// <summary>Returns if the current character is the end of file character</summary>
-    public bool IsEof => CurrentCharacter == ParserFacts.END_OF_FILE;
+    public bool IsEof => CurrentCharacter == '\0';
     
     public void Initialize(ResourceUri resourceUri, string sourceText)
     {
@@ -53,7 +53,7 @@ public class StringWalker
     public char ReadCharacter()
     {
         if (PositionIndex >= SourceText.Length)
-            return ParserFacts.END_OF_FILE;
+            return '\0';
 
         return SourceText[PositionIndex++];
     }
@@ -65,7 +65,7 @@ public class StringWalker
             throw new WalkTextEditorException($"{nameof(offset)} must be > -1");
 
         if (PositionIndex + offset >= SourceText.Length)
-            return ParserFacts.END_OF_FILE;
+            return '\0';
 
         return SourceText[PositionIndex + offset];
     }
@@ -74,7 +74,7 @@ public class StringWalker
     public char BacktrackCharacter()
     {
         if (PositionIndex == 0)
-            return ParserFacts.END_OF_FILE;
+            return '\0';
 
         PositionIndex--;
 
@@ -94,7 +94,7 @@ public class StringWalker
     {
         for (var i = 0; i < length; i++)
         {
-            if (ReadCharacter() == ParserFacts.END_OF_FILE)
+            if (ReadCharacter() == '\0')
                 break;
         }
     }
@@ -107,35 +107,9 @@ public class StringWalker
             if (PositionIndex == 0)
                 return;
 
-            if (BacktrackCharacter() == ParserFacts.END_OF_FILE)
+            if (BacktrackCharacter() == '\0')
                 break;
         }
-    }
-
-    public string PeekNextWord()
-    {
-        _stringBuilder.Clear();
-
-        var i = 0;
-
-        char peekedChar;
-
-        do
-        {
-            peekedChar = PeekCharacter(i++);
-
-            if (WhitespaceFacts.ALL_LIST.Contains(peekedChar) ||
-                CommonFacts.IsPunctuationCharacter(peekedChar))
-            {
-                break;
-            }
-
-            _stringBuilder.Append(peekedChar);
-        } while (peekedChar != ParserFacts.END_OF_FILE);
-        
-        // 0 of 9,997 allocations
-        Walk.Common.RazorLib.Installations.Models.WalkDebugSomething.StringWalker_StringAllocation++;
-        return _stringBuilder.ToString();
     }
 
     /// <summary>Form a substring of the <see cref="SourceText" /> that starts inclusively at the index <see cref="PositionIndex" /> and has a maximum length of <see cref="substring" />.Length.<br /><br />This method uses <see cref="PeekRange" /> internally and therefore will return a string that ends with <see cref="ParserFacts.END_OF_FILE" /> if an index out of bounds read was performed on <see cref="SourceText" /></summary>
@@ -154,152 +128,21 @@ public class StringWalker
 
         return isMatch;
     }
-
-    public bool PeekForSubstringRange(List<string> substringsList, out string? matchedOn)
-    {
-        foreach (var substring in substringsList)
-        {
-            if (PeekForSubstring(substring))
-            {
-                matchedOn = substring;
-                return true;
-            }
-        }
-
-        matchedOn = null;
-        return false;
-    }
-
+    
     /// <summary>
     /// Provide <see cref="whitespaceOverrideList"/> to override the
     /// default of what qualifies as whitespace.
     /// The default whitespace chars are: <see cref="WhitespaceFacts.ALL_LIST"/>
     /// </summary>
-    public void SkipWhitespace(IEnumerable<char>? whitespaceOverrideList = null)
+    public void SkipWhitespace()
     {
-        var whitespaceCharacterList = whitespaceOverrideList ?? WhitespaceFacts.ALL_LIST;
-
-        while (whitespaceCharacterList.Contains(CurrentCharacter))
+        while (CurrentCharacter == ' ' ||
+               CurrentCharacter == '\t' ||
+               CurrentCharacter == '\r' ||
+               CurrentCharacter == '\n')
         {
-            if (ReadCharacter() == ParserFacts.END_OF_FILE)
+            if (ReadCharacter() == '\0')
                 break;
         }
-    }
-
-    /// <Summary>
-    /// Ex: '1.73', positive only.<br/>
-    /// { 0, ..., 1, ..., 2, ...}
-    /// </Summary>
-    public TextEditorTextSpan ReadUnsignedNumericLiteral()
-    {
-        var startingPosition = PositionIndex;
-        var seenPeriod = false;
-
-        while (!IsEof)
-        {
-            if (!char.IsDigit(CurrentCharacter))
-            {
-                if (CurrentCharacter == '.' && !seenPeriod)
-                    seenPeriod = true;
-                else
-                    break;
-            }
-
-            _ = ReadCharacter();
-        }
-
-        // 6 of 9,997 allocations
-        Walk.Common.RazorLib.Installations.Models.WalkDebugSomething.StringWalker_StringAllocation++;
-        return new TextEditorTextSpan(startingPosition, PositionIndex, 0);
-    }
-
-    public string ReadUntil(char deliminator)
-    {
-        _stringBuilder.Clear();
-
-        while (!IsEof)
-        {
-            if (CurrentCharacter == deliminator)
-                break;
-
-            _stringBuilder.Append(ReadCharacter());
-        }
-
-        // 147 of 9,997 allocations
-        Walk.Common.RazorLib.Installations.Models.WalkDebugSomething.StringWalker_StringAllocation++;
-        return _stringBuilder.ToString();
-    }
-    
-    public void SkipUntil(char deliminator)
-    {
-        while (!IsEof)
-        {
-            if (CurrentCharacter == deliminator)
-                break;
-
-            ReadCharacter();
-        }
-    }
-
-    /// <summary>
-    /// The line ending is NOT included in the returned string
-    /// </summary>
-    public string ReadLine()
-    {
-        _stringBuilder.Clear();
-
-        while (!IsEof)
-        {
-            if (WhitespaceFacts.LINE_ENDING_CHARACTER_LIST.Contains(CurrentCharacter))
-                break;
-
-            _stringBuilder.Append(ReadCharacter());
-        }
-        
-        // 69 of 9,997 allocations
-        Walk.Common.RazorLib.Installations.Models.WalkDebugSomething.StringWalker_StringAllocation++;
-        return _stringBuilder.ToString();
-    }
-
-    /// <summary>
-    /// This method will return immediately upon encountering whitespace.
-    /// Returns a text span with its <see cref="TextEditorTextSpan.StartInclusiveIndex"/> equal to '-1' if no word was found.
-    /// </summary>
-    public (TextEditorTextSpan textSpan, string value) ReadWordTuple(IReadOnlyList<char>? additionalCharactersToBreakOnList = null)
-    {
-        additionalCharactersToBreakOnList ??= Array.Empty<char>();
-
-        // The wordBuilder is appended to everytime a character is consumed.
-        _stringBuilder.Clear();
-
-        // wordBuilderStartInclusiveIndex == -1 is to mean that wordBuilder is empty.
-        var wordBuilderStartInclusiveIndex = -1;
-
-        while (!IsEof)
-        {
-            if (WhitespaceFacts.ALL_LIST.Contains(CurrentCharacter) ||
-                additionalCharactersToBreakOnList.Contains(CurrentCharacter))
-            {
-                break;
-            }
-
-            if (wordBuilderStartInclusiveIndex == -1)
-            {
-                // This is the start of a word as opposed to the continuation of a word
-                wordBuilderStartInclusiveIndex = PositionIndex;
-            }
-
-            _stringBuilder.Append(CurrentCharacter);
-
-            _ = ReadCharacter();
-        }
-        
-        // 9 of 9,997 allocations
-        Walk.Common.RazorLib.Installations.Models.WalkDebugSomething.StringWalker_StringAllocation++;
-        return (new TextEditorTextSpan(
-                wordBuilderStartInclusiveIndex,
-                PositionIndex,
-                0),
-            _stringBuilder.ToString());
     }
 }

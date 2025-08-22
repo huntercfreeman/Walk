@@ -117,7 +117,7 @@ public partial class DotNetSolutionFormDisplay : ComponentBase, IDisposable
                         DotNetService.IdeService.CommonService.EnvironmentProvider.DirectorySeparatorChar +
                         localSolutionName +
                         '.' +
-                        ExtensionNoPeriodFacts.DOT_NET_SOLUTION;
+                        CommonFacts.DOT_NET_SOLUTION;
 
                     var solutionAbsolutePath = DotNetService.IdeService.CommonService.EnvironmentProvider.AbsolutePathFactory(
                         solutionAbsolutePathString,
@@ -154,7 +154,7 @@ public partial class DotNetSolutionFormDisplay : ComponentBase, IDisposable
         var localSolutionFilenameWithExtension =
             localSolutionName +
             '.' +
-            ExtensionNoPeriodFacts.DOT_NET_SOLUTION;
+            CommonFacts.DOT_NET_SOLUTION;
 
         var solutionAbsolutePathString = DotNetService.IdeService.CommonService.EnvironmentProvider.JoinPaths(
             directoryContainingSolution,

@@ -581,7 +581,7 @@ public partial class IdeService : IBackgroundTaskGroup
             "Input File",
             typeof(Walk.Ide.RazorLib.InputFiles.Displays.InputFileDisplay),
             null,
-            Walk.Ide.RazorLib.Htmls.Models.HtmlFacts.Classes.DIALOG_PADDING_0,
+            "di_ide_dialog-padding-0",
             true,
             null);
 

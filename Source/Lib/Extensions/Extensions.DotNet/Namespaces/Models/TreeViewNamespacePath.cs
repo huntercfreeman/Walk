@@ -113,11 +113,11 @@ public class TreeViewNamespacePath : TreeViewWithType<AbsolutePath>
             }
             else
             {
-                if (Item.Name.EndsWith(ExtensionNoPeriodFacts.DOT_NET_SOLUTION))                {                    return;                }
-                else if (Item.Name.EndsWith(ExtensionNoPeriodFacts.C_SHARP_PROJECT))                {
+                if (Item.Name.EndsWith(CommonFacts.DOT_NET_SOLUTION))                {                    return;                }
+                else if (Item.Name.EndsWith(CommonFacts.C_SHARP_PROJECT))                {
                     newChildList = await TreeViewHelperCSharpProject.LoadChildrenAsync(this).ConfigureAwait(false);
                 }
-                else if (Item.Name.EndsWith(ExtensionNoPeriodFacts.RAZOR_MARKUP))                {
+                else if (Item.Name.EndsWith(CommonFacts.RAZOR_MARKUP))                {
                     newChildList = await TreeViewHelperRazorMarkup.LoadChildrenAsync(this).ConfigureAwait(false);
                 }
             }
@@ -136,7 +136,7 @@ public class TreeViewNamespacePath : TreeViewWithType<AbsolutePath>
                 }
                 else
                 {
-                    if (Item.Name.EndsWith(ExtensionNoPeriodFacts.C_SHARP_PROJECT))                    {                        shouldPermitChildToTakeSiblingsAsChildren = true;                    }
+                    if (Item.Name.EndsWith(CommonFacts.C_SHARP_PROJECT))                    {                        shouldPermitChildToTakeSiblingsAsChildren = true;                    }
                 }
                 
                 if (shouldPermitChildToTakeSiblingsAsChildren)
@@ -185,7 +185,7 @@ public class TreeViewNamespacePath : TreeViewWithType<AbsolutePath>
     /// </summary>
     public override void RemoveRelatedFilesFromParent(List<TreeViewNoType> siblingsAndSelfTreeViews)
     {
-        if (Item.Name.EndsWith(ExtensionNoPeriodFacts.RAZOR_MARKUP))
+        if (Item.Name.EndsWith(CommonFacts.RAZOR_MARKUP))
             TreeViewHelperRazorMarkup.FindRelatedFiles(this, siblingsAndSelfTreeViews);
     }
 }

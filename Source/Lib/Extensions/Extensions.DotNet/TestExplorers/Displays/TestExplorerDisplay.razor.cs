@@ -32,13 +32,13 @@ public partial class TestExplorerDisplay : ComponentBase, IDisposable
         {
             DotNetService.IdeService.TextEditorService.WorkerArbitrary.PostUnique(async editContext =>
             {
-                var terminalDecorationMapper = DotNetService.IdeService.TextEditorService.GetDecorationMapper(ExtensionNoPeriodFacts.TERMINAL);
-                var terminalCompilerService = DotNetService.IdeService.TextEditorService.GetCompilerService(ExtensionNoPeriodFacts.TERMINAL);
+                var terminalDecorationMapper = DotNetService.IdeService.TextEditorService.GetDecorationMapper(CommonFacts.TERMINAL);
+                var terminalCompilerService = DotNetService.IdeService.TextEditorService.GetCompilerService(CommonFacts.TERMINAL);
 
                 model = new TextEditorModel(
                     ResourceUriFacts.TestExplorerDetailsTextEditorResourceUri,
                     DateTime.UtcNow,
-                    ExtensionNoPeriodFacts.TERMINAL,
+                    CommonFacts.TERMINAL,
                     "initialContent:TestExplorerDetailsTextEditorResourceUri",
                     terminalDecorationMapper,
                     terminalCompilerService,

@@ -155,7 +155,7 @@ public partial class DotNetService
                 }
             }
 
-            if (treeViewNamespacePath.Item.Name.EndsWith(ExtensionNoPeriodFacts.C_SHARP_PROJECT))
+            if (treeViewNamespacePath.Item.Name.EndsWith(CommonFacts.C_SHARP_PROJECT))
             {
                 await treeViewNamespacePath.LoadChildListAsync().ConfigureAwait(false);
             }

@@ -62,7 +62,7 @@ public static class IdeFacts
     {
         return extensionNoPeriod switch
         {
-            ExtensionNoPeriodFacts.C_SHARP_PROJECT => new() { BIN, OBJ },
+            CommonFacts.C_SHARP_PROJECT => new() { BIN, OBJ },
             _ => _empty
         };
     }
@@ -83,7 +83,7 @@ public static class IdeFacts
     {
         return extensionNoPeriod switch
         {
-            ExtensionNoPeriodFacts.C_SHARP_PROJECT => new() { Properties, WwwRoot },
+            CommonFacts.C_SHARP_PROJECT => new() { Properties, WwwRoot },
             _ => _empty
         };
     }

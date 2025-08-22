@@ -217,7 +217,7 @@ public partial class DotNetService
 
         DotNetSolutionModel dotNetSolutionModel;
 
-        if (dotNetSolutionAbsolutePathString.EndsWith(ExtensionNoPeriodFacts.DOT_NET_SOLUTION_X))
+        if (dotNetSolutionAbsolutePathString.EndsWith(CommonFacts.DOT_NET_SOLUTION_X))
             dotNetSolutionModel = ParseSlnx(solutionAbsolutePath, resourceUri, tokenBuilder, formattedBuilder);
         else
             dotNetSolutionModel = ParseSln(solutionAbsolutePath, resourceUri);
@@ -251,7 +251,7 @@ public partial class DotNetService
             dotNetSolutionModel.Key,
             dotNetSolutionModel));
 
-        var dotNetSolutionCompilerService = (DotNetSolutionCompilerService)IdeService.TextEditorService.GetCompilerService(ExtensionNoPeriodFacts.DOT_NET_SOLUTION);
+        var dotNetSolutionCompilerService = (DotNetSolutionCompilerService)IdeService.TextEditorService.GetCompilerService(CommonFacts.DOT_NET_SOLUTION);
 
         dotNetSolutionCompilerService.ResourceWasModified(
             new ResourceUri(solutionAbsolutePath.Value),
@@ -326,7 +326,7 @@ public partial class DotNetService
         IdeService.TextEditorService.WorkerArbitrary.EnqueueUniqueTextEditorWork(
             new UniqueTextEditorWork(IdeService.TextEditorService, editContext =>
             {
-                var compilerService = IdeService.TextEditorService.GetCompilerService(ExtensionNoPeriodFacts.C_SHARP_CLASS);
+                var compilerService = IdeService.TextEditorService.GetCompilerService(CommonFacts.C_SHARP_CLASS);
                 var cSharpCompilerService = compilerService as CSharpCompilerService;
 
                 try

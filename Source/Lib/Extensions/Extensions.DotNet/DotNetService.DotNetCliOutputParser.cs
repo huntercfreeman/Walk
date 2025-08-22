@@ -55,7 +55,8 @@ public partial class DotNetService
             // Once inside this while loop for the first time
             // stringWalker.CurrentCharacter == the first character of the output
 
-            if (WhitespaceFacts.LINE_ENDING_CHARACTER_LIST.Contains(stringWalker.CurrentCharacter))
+            if (stringWalker.CurrentCharacter == '\r' ||
+                stringWalker.CurrentCharacter == '\n')
             {
                 if (stringWalker.CurrentCharacter == '\r' &&
                     stringWalker.NextCharacter == '\n')
@@ -218,7 +219,7 @@ public partial class DotNetService
                         {
                             while (stringWalker.CurrentCharacter != '[')
                             {
-                                if (stringWalker.BacktrackCharacter() == ParserFacts.END_OF_FILE)
+                                if (stringWalker.BacktrackCharacter() == '\0')
                                 {
                                     badState = true;
                                     break;

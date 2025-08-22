@@ -17,7 +17,7 @@ public class TreeViewHelperCSharpProject
             return cSharpProjectTreeView.ChildList;
         
         var ancestorDirectory = parentDirectoryOfCSharpProject;
-        var hiddenFiles = IdeFacts.GetHiddenFilesByContainerFileExtension(ExtensionNoPeriodFacts.C_SHARP_PROJECT);
+        var hiddenFiles = IdeFacts.GetHiddenFilesByContainerFileExtension(CommonFacts.C_SHARP_PROJECT);
 
         var directoryPathStringsList = await cSharpProjectTreeView.CommonService.FileSystemProvider.Directory
             .GetDirectoriesAsync(ancestorDirectory)
@@ -40,7 +40,7 @@ public class TreeViewHelperCSharpProject
                     false);
             });
 
-        var uniqueDirectories = IdeFacts.GetUniqueFilesByContainerFileExtension(ExtensionNoPeriodFacts.C_SHARP_PROJECT);
+        var uniqueDirectories = IdeFacts.GetUniqueFilesByContainerFileExtension(CommonFacts.C_SHARP_PROJECT);
         var foundUniqueDirectories = new List<TreeViewNamespacePath>();
         var foundDefaultDirectories = new List<TreeViewNamespacePath>();
 
@@ -61,7 +61,7 @@ public class TreeViewHelperCSharpProject
 
         var childFileTreeViewModels = filePathStringsList
             .OrderBy(pathString => pathString)
-            .Where(x => !x.EndsWith(ExtensionNoPeriodFacts.C_SHARP_PROJECT))
+            .Where(x => !x.EndsWith(CommonFacts.C_SHARP_PROJECT))
             .Select(x =>
             {
                 var absolutePath = cSharpProjectTreeView.CommonService.EnvironmentProvider.AbsolutePathFactory(x, false, tokenBuilder, formattedBuilder, AbsolutePathNameKind.NameWithExtension);

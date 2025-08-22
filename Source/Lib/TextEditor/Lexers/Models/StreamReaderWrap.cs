@@ -170,7 +170,7 @@ public class StreamReaderWrap
         else
         {
             if (StreamReader.EndOfStream)
-                return ParserFacts.END_OF_FILE;
+                return '\0';
 
             // This is duplicated more than once inside the Peek(int) code.
 
@@ -329,7 +329,7 @@ public class StreamReaderWrap
     {
         for (var i = 0; i < length; i++)
         {
-            if (ReadCharacter() == ParserFacts.END_OF_FILE)
+            if (ReadCharacter() == '\0')
                 break;
         }
     }
