@@ -8,5 +8,6 @@ public enum CssDecorationKind
     PropertyName,
     PropertyValue,
     UnexpectedToken,
-    Identifier
+    Identifier,
+    Function,
 }

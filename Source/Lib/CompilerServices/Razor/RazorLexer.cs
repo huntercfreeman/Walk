@@ -110,8 +110,8 @@ public static class RazorLexer
                                 if (!char.IsLetterOrDigit(streamReaderWrap.CurrentCharacter))
                                 {
                                     if (streamReaderWrap.CurrentCharacter != '_' &&
-                                             streamReaderWrap.CurrentCharacter != '-' &&
-                                             streamReaderWrap.CurrentCharacter != ':')
+                                        streamReaderWrap.CurrentCharacter != '-' &&
+                                        streamReaderWrap.CurrentCharacter != ':')
                                     {
                                         break;
                                     }
