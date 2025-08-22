@@ -9,7 +9,7 @@ public partial class TextEditorService
 
     public IReadOnlyDictionary<string, IDecorationMapper> DecorationMapperMap => _decorationMapperMap;
 
-    public TextEditorDecorationMapperDefault DefaultDecorationMapper { get; }
+    public TextEditorDecorationMapperDefault DefaultDecorationMapper { get; } = new TextEditorDecorationMapperDefault();
 
     public void RegisterDecorationMapper(string fileExtensionNoPeriod, IDecorationMapper decorationMapper)
     {
@@ -28,7 +28,7 @@ public partial class TextEditorService
 
     public IReadOnlyList<ICompilerService> CompilerServiceList => _compilerServiceMap.Values.ToList();
 
-    public CompilerServiceDoNothing CompilerServiceDoNothing { get; }
+    public CompilerServiceDoNothing CompilerServiceDoNothing { get; } = new CompilerServiceDoNothing();
 
     public void RegisterCompilerService(string fileExtensionNoPeriod, ICompilerService compilerService)
     {
