@@ -85,13 +85,55 @@ public static class JsonLexer
                 case '"':
                     goto default;
                 case '/':
+                
+                    if (streamReaderWrap.PeekCharacter(1) == '*')
+                    {
+                        var commentStartPosition = streamReaderWrap.PositionIndex;
+                        var commentStartByte = streamReaderWrap.ByteIndex;
+                        _ = streamReaderWrap.ReadCharacter();
+                        _ = streamReaderWrap.ReadCharacter();
+                        while (!streamReaderWrap.IsEof)
+                        {
+                            if (streamReaderWrap.CurrentCharacter == '*' &&
+                                streamReaderWrap.PeekCharacter(1) == '/')
+                            {
+                                _ = streamReaderWrap.ReadCharacter();
+                                _ = streamReaderWrap.ReadCharacter();
+                                break;
+                            }
+                            _ = streamReaderWrap.ReadCharacter();
+                        }
+                        
+                        output.TextSpanList.Add(new TextEditorTextSpan(
+                            commentStartPosition,
+                            streamReaderWrap.PositionIndex,
+                            (byte)JsonDecorationKind.BlockComment,
+                            commentStartByte));
+                        continue;
+                    }
+                
                     if (streamReaderWrap.PeekCharacter(1) == '/')
                     {
-                        goto default;
-                    }
-                    else if (streamReaderWrap.PeekCharacter(1) == '*')
-                    {
-                        goto default;
+                        var commentStartPosition = streamReaderWrap.PositionIndex;
+                        var commentStartByte = streamReaderWrap.ByteIndex;
+                        _ = streamReaderWrap.ReadCharacter();
+                        _ = streamReaderWrap.ReadCharacter();
+                        while (!streamReaderWrap.IsEof)
+                        {
+                            if (streamReaderWrap.CurrentCharacter == '\r' ||
+                                streamReaderWrap.CurrentCharacter == '\n')
+                            {
+                                break;
+                            }
+                            _ = streamReaderWrap.ReadCharacter();
+                        }
+                        
+                        output.TextSpanList.Add(new TextEditorTextSpan(
+                            commentStartPosition,
+                            streamReaderWrap.PositionIndex,
+                            (byte)JsonDecorationKind.LineComment,
+                            commentStartByte));
+                        continue;
                     }
                     else
                     {
