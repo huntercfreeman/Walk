@@ -131,6 +131,15 @@ public static class JsonLexer
                     
                     var endPosition = streamReaderWrap.PositionIndex;
                     
+                    while (!streamReaderWrap.IsEof)
+                    {
+                        if (!char.IsWhiteSpace(streamReaderWrap.CurrentCharacter))
+                        {
+                            break;
+                        }
+                        _ = streamReaderWrap.ReadCharacter();
+                    }
+                    
                     if (streamReaderWrap.CurrentCharacter == ':')
                     {
                         output.TextSpanList.Add(new TextEditorTextSpan(
