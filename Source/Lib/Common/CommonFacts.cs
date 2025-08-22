@@ -71,6 +71,31 @@ public static class CommonFacts
     public static int IndefiniteQueueKey { get; } = 1;
     /* End BackgroundTaskFacts */
     
+    /* Start ExtensionNoPeriodFacts */
+    public const string DOT_NET_SOLUTION = "sln";
+    public const string DOT_NET_SOLUTION_X = "slnx";
+    public const string C_SHARP_PROJECT = "csproj";
+    public const string C_SHARP_CLASS = "cs";
+    public const string CSHTML_CLASS = "cshtml";
+    public const string RAZOR_MARKUP = "razor";
+    public const string RAZOR_CODEBEHIND = "razor.cs";
+    public const string JSON = "json";
+    public const string HTML = "html";
+    public const string XML = "xml";
+    public const string CSS = "css";
+    public const string JAVA_SCRIPT = "js";
+    public const string TYPE_SCRIPT = "ts";
+    public const string MARK_DOWN = "md";
+    public const string F_SHARP = "fs";
+    public const string PYTHON = "py";
+    public const string C = "c";
+    public const string H = "h";
+    public const string CPP = "cpp";
+    public const string HPP = "hpp";
+    public const string TERMINAL = "terminal";
+    public const string TXT = "txt";
+    /* End ExtensionNoPeriodFacts */
+    
     /* Start KeyboardKeyFacts */
     public static bool IsMetaKey(KeyboardEventArgs keyboardEventArgs)
     {
@@ -463,7 +488,7 @@ public static class CommonFacts
         "C# Class",
         "di_ide_c-sharp-class",
         FileTemplateKind.CSharp,
-        filename => filename.EndsWith('.' + ExtensionNoPeriodFacts.C_SHARP_CLASS),
+        filename => filename.EndsWith('.' + CommonFacts.C_SHARP_CLASS),
         _ => _emptyFileTemplateList,
         true,
         CSharpClassCreateFileFunc);
@@ -472,7 +497,7 @@ public static class CommonFacts
         "Razor codebehind",
         "di_ide_razor-codebehind-class",
         FileTemplateKind.Razor,
-        filename => filename.EndsWith('.' + ExtensionNoPeriodFacts.RAZOR_CODEBEHIND),
+        filename => filename.EndsWith('.' + CommonFacts.RAZOR_CODEBEHIND),
         _ => _emptyFileTemplateList,
         true,
         RazorCodebehindCreateFileFunc);
@@ -481,7 +506,7 @@ public static class CommonFacts
         "Razor markup",
         "di_ide_razor-markup-class",
         FileTemplateKind.Razor,
-        filename => filename.EndsWith('.' + ExtensionNoPeriodFacts.RAZOR_MARKUP),
+        filename => filename.EndsWith('.' + CommonFacts.RAZOR_MARKUP),
         fileName => new List<IFileTemplate>
         {
             RazorCodebehind
@@ -520,7 +545,7 @@ public static class CommonFacts
         var templatedFileAbsolutePathString = templateParameter.ParentDirectory.Value +
             emptyFileAbsolutePath.Name +
             '.' +
-            ExtensionNoPeriodFacts.C_SHARP_CLASS;
+            CommonFacts.C_SHARP_CLASS;
 
         var templatedFileAbsolutePath = templateParameter.EnvironmentProvider.AbsolutePathFactory(
             templatedFileAbsolutePathString,
@@ -569,7 +594,7 @@ public class {fileNameNoExtension}
         var templatedFileAbsolutePathString = templateParameter.ParentDirectory.Value +
             emptyFileAbsolutePath.Name +
             '.' +
-            ExtensionNoPeriodFacts.RAZOR_MARKUP;
+            CommonFacts.RAZOR_MARKUP;
 
         var templatedFileAbsolutePath = templateParameter.EnvironmentProvider.AbsolutePathFactory(
             templatedFileAbsolutePathString,
@@ -604,7 +629,7 @@ public class {fileNameNoExtension}
     {
         string GetContent(string fileNameNoExtension, string namespaceString)
         {
-            var className = fileNameNoExtension.Replace('.' + ExtensionNoPeriodFacts.RAZOR_MARKUP, string.Empty);
+            var className = fileNameNoExtension.Replace('.' + CommonFacts.RAZOR_MARKUP, string.Empty);
 
             var interpolatedResult = $@"using Microsoft.AspNetCore.Components;
 
@@ -636,10 +661,10 @@ public partial class {className} : ComponentBase
         var templatedFileAbsolutePathString = templateParameter.ParentDirectory.Value +
             emptyFileAbsolutePath.Name;
 
-        if (templatedFileAbsolutePathString.EndsWith('.' + ExtensionNoPeriodFacts.RAZOR_MARKUP))
-            templatedFileAbsolutePathString += '.' + ExtensionNoPeriodFacts.C_SHARP_CLASS;
+        if (templatedFileAbsolutePathString.EndsWith('.' + CommonFacts.RAZOR_MARKUP))
+            templatedFileAbsolutePathString += '.' + CommonFacts.C_SHARP_CLASS;
         else
-            templatedFileAbsolutePathString += '.' + ExtensionNoPeriodFacts.RAZOR_CODEBEHIND;
+            templatedFileAbsolutePathString += '.' + CommonFacts.RAZOR_CODEBEHIND;
 
         var templatedFileAbsolutePath = templateParameter.EnvironmentProvider.AbsolutePathFactory(
             templatedFileAbsolutePathString,

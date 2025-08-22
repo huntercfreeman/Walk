@@ -94,7 +94,7 @@ public class TerminalOutputFormatterExpand : ITerminalOutputFormatter
                 "terminal",
                 string.Empty,
                 new TerminalDecorationMapper(),
-                _textEditorService.GetCompilerService(ExtensionNoPeriodFacts.TERMINAL),
+                _textEditorService.GetCompilerService(CommonFacts.TERMINAL),
                 _textEditorService)
             {
                 UseUnsetOverride = true,

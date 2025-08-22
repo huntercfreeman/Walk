@@ -38,7 +38,7 @@ public partial class TextEditorSettingsPreview : ComponentBase
             {
                 TextEditorService.Model_RegisterTemplated(
                     editContext,
-                    ExtensionNoPeriodFacts.TXT,
+                    CommonFacts.TXT,
                     ResourceUriFacts.SettingsPreviewTextEditorResourceUri,
                     DateTime.UtcNow,
                     "Preview settings here",

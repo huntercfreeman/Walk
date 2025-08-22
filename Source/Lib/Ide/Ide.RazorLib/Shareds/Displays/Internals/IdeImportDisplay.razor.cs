@@ -119,7 +119,7 @@ public partial class IdeImportDisplay : ComponentBase, IDisposable
                                 _activeCancellationToken.Value)
                             .ConfigureAwait(false);
 
-                        if (entry.Name.EndsWith(ExtensionNoPeriodFacts.DOT_NET_SOLUTION))
+                        if (entry.Name.EndsWith(CommonFacts.DOT_NET_SOLUTION))
                             PromptUserOpenSolution(absoluteFilePathString);
                     }
 

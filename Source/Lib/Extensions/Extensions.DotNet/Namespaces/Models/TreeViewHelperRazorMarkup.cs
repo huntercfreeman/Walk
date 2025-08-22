@@ -60,8 +60,8 @@ public class TreeViewHelperRazorMarkup
         // .razor files look to remove .razor.cs and .razor.css files
         var matches = new[]
         {
-            razorMarkupTreeView.Item.Name + '.' + ExtensionNoPeriodFacts.C_SHARP_CLASS,
-            razorMarkupTreeView.Item.Name + '.' + ExtensionNoPeriodFacts.CSS
+            razorMarkupTreeView.Item.Name + '.' + CommonFacts.C_SHARP_CLASS,
+            razorMarkupTreeView.Item.Name + '.' + CommonFacts.CSS
         };
 
         var relatedFiles = siblingsAndSelfTreeViews

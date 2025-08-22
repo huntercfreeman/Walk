@@ -148,7 +148,7 @@ public sealed class DotNetSolutionCompilerService : ICompilerService
     {
         List<SyntaxToken> syntaxTokenList;
     
-        if (modelModifier.PersistentState.ResourceUri.Value.EndsWith(ExtensionNoPeriodFacts.DOT_NET_SOLUTION_X))
+        if (modelModifier.PersistentState.ResourceUri.Value.EndsWith(CommonFacts.DOT_NET_SOLUTION_X))
         {
             using StreamReader sr = new StreamReader(modelModifier.PersistentState.ResourceUri.Value);
             var lexerOutput = XmlLexer.Lex(new StreamReaderWrap(sr));

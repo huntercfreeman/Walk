@@ -77,7 +77,7 @@ public partial class SolutionExplorerContextMenu : ComponentBase
             }
             else
             {
-                if (treeViewNamespacePath.Item.Name.EndsWith(ExtensionNoPeriodFacts.C_SHARP_PROJECT))
+                if (treeViewNamespacePath.Item.Name.EndsWith(CommonFacts.C_SHARP_PROJECT))
                 {
                     menuOptionList.AddRange(GetCSharpProjectMenuOptions(treeViewNamespacePath)
                         .Union(GetDebugMenuOptions(treeViewNamespacePath)));
@@ -88,8 +88,8 @@ public partial class SolutionExplorerContextMenu : ComponentBase
         }
         else if (treeViewModel is TreeViewSolution treeViewSolution)
         {
-            if (treeViewSolution.Item.AbsolutePath.Name.EndsWith(ExtensionNoPeriodFacts.DOT_NET_SOLUTION) ||
-                treeViewSolution.Item.AbsolutePath.Name.EndsWith(ExtensionNoPeriodFacts.DOT_NET_SOLUTION_X))
+            if (treeViewSolution.Item.AbsolutePath.Name.EndsWith(CommonFacts.DOT_NET_SOLUTION) ||
+                treeViewSolution.Item.AbsolutePath.Name.EndsWith(CommonFacts.DOT_NET_SOLUTION_X))
             {
                 if (treeViewSolution.Parent is null || treeViewSolution.Parent is TreeViewAdhoc)
                     menuOptionList.AddRange(GetDotNetSolutionMenuOptions(treeViewSolution));
@@ -132,7 +132,7 @@ public partial class SolutionExplorerContextMenu : ComponentBase
         {
             if (selectedNode is TreeViewNamespacePath treeViewNamespacePath)
             {
-                if (treeViewNamespacePath.Item.Name.EndsWith(ExtensionNoPeriodFacts.C_SHARP_PROJECT))
+                if (treeViewNamespacePath.Item.Name.EndsWith(CommonFacts.C_SHARP_PROJECT))
                     getFileOptions = false;
                 else if (getFileOptions)
                     filenameList.Add(treeViewNamespacePath.Item.Name + " __FROM__ " + (treeViewNamespacePath.Item.CreateSubstringParentDirectory() ?? "null"));
@@ -539,13 +539,13 @@ public partial class SolutionExplorerContextMenu : ComponentBase
                 if (absolutePath.Value is null || absolutePath.IsDirectory)
                     return Task.FromResult(false);
 
-                return Task.FromResult(absolutePath.Name.EndsWith(ExtensionNoPeriodFacts.C_SHARP_PROJECT));
+                return Task.FromResult(absolutePath.Name.EndsWith(CommonFacts.C_SHARP_PROJECT));
             },
             InputFilePatterns = new()
             {
                 new InputFilePattern(
                     "C# Project",
-                    absolutePath => absolutePath.Name.EndsWith(ExtensionNoPeriodFacts.C_SHARP_PROJECT))
+                    absolutePath => absolutePath.Name.EndsWith(CommonFacts.C_SHARP_PROJECT))
             }
         });
     }

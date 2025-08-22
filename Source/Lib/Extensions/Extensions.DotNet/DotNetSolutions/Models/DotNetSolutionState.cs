@@ -52,15 +52,15 @@ public record DotNetSolutionState(
                     return Task.FromResult(false);
 
                 return Task.FromResult(
-                    absolutePath.Name.EndsWith(ExtensionNoPeriodFacts.DOT_NET_SOLUTION) ||
-                    absolutePath.Name.EndsWith(ExtensionNoPeriodFacts.DOT_NET_SOLUTION_X));
+                    absolutePath.Name.EndsWith(CommonFacts.DOT_NET_SOLUTION) ||
+                    absolutePath.Name.EndsWith(CommonFacts.DOT_NET_SOLUTION_X));
             },
             InputFilePatterns = new()
             {
                 new InputFilePattern(
                     ".NET Solution",
-                    absolutePath => absolutePath.Name.EndsWith(ExtensionNoPeriodFacts.DOT_NET_SOLUTION) ||
-                                    absolutePath.Name.EndsWith(ExtensionNoPeriodFacts.DOT_NET_SOLUTION_X))
+                    absolutePath => absolutePath.Name.EndsWith(CommonFacts.DOT_NET_SOLUTION) ||
+                                    absolutePath.Name.EndsWith(CommonFacts.DOT_NET_SOLUTION_X))
             }
         });
     }
