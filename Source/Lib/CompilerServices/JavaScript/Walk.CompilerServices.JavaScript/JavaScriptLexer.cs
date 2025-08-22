@@ -1077,7 +1077,30 @@ public static class JavaScriptLexer
                 
                 goto default;
             default:
-                textSpanList.Add(textSpan);
+                
+                var endPosition = streamReaderWrap.PositionIndex;
+                
+                while (!streamReaderWrap.IsEof)
+                {
+                    if (!char.IsWhiteSpace(streamReaderWrap.CurrentCharacter))
+                    {
+                        break;
+                    }
+                    _ = streamReaderWrap.ReadCharacter();
+                }
+                
+                if (streamReaderWrap.CurrentCharacter == '(')
+                {
+                    textSpanList.Add(textSpan with { DecorationByte = (byte)GenericDecorationKind.Function });
+                }
+                else if (streamReaderWrap.CurrentCharacter == ':')
+                {
+                    textSpanList.Add(textSpan with { DecorationByte = (byte)GenericDecorationKind.Field });
+                }
+                else
+                {
+                    textSpanList.Add(textSpan);
+                }
                 return;
         }
     }
