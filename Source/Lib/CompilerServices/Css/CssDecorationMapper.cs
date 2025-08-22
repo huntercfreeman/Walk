@@ -15,6 +15,7 @@ public class CssDecorationMapper : IDecorationMapper
             CssDecorationKind.PropertyName => "di_css-property-name",
             CssDecorationKind.PropertyValue => "di_css-property-value",
             CssDecorationKind.Comment => "di_comment",
+            CssDecorationKind.Function => "di_method",
             _ => string.Empty,
         };
     }

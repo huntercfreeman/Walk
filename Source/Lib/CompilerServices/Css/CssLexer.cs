@@ -16,7 +16,6 @@ public static class CssLexer
         var output = new CssLexerOutput();
         
         var braceMatching = 0;
-        var inUrl = false;
         
         while (!streamReaderWrap.IsEof)
         {
@@ -93,7 +92,15 @@ public static class CssLexer
                         _ = streamReaderWrap.ReadCharacter();
                     }
                     
-                    if (braceMatching == 0)
+                    if (streamReaderWrap.CurrentCharacter == '(')
+                    {
+                        output.TextSpanList.Add(new TextEditorTextSpan(
+                            textStartPosition,
+                            streamReaderWrap.PositionIndex,
+                            (byte)CssDecorationKind.Function,
+                            textStartByte));
+                    }
+                    else if (braceMatching == 0)
                     {
                         output.TextSpanList.Add(new TextEditorTextSpan(
                             textStartPosition,
@@ -229,25 +236,40 @@ public static class CssLexer
                 }
                 case ';':
                 {
-                    if (!inUrl)
-                        context = CssLexerContextKind.Expect_PropertyName;
+                    context = CssLexerContextKind.Expect_PropertyName;
                     goto default;
                 }
                 case '(':
                 {
-                    if (context == CssLexerContextKind.Expect_PropertyValue)
-                        inUrl = true;
-                    goto default;
+                    _ = streamReaderWrap.ReadCharacter();
+                    
+                    var positionIndex = streamReaderWrap.PositionIndex;
+                    var byteIndex = streamReaderWrap.ByteIndex;
+                    
+                    while (!streamReaderWrap.IsEof)
+                    {
+                        if (streamReaderWrap.CurrentCharacter == ')')
+                        {
+                            output.TextSpanList.Add(new TextEditorTextSpan(
+                                positionIndex,
+                                streamReaderWrap.PositionIndex,
+                                (byte)CssDecorationKind.None,
+                                byteIndex));
+                            _ = streamReaderWrap.ReadCharacter();
+                            break;
+                        }
+                        _ = streamReaderWrap.ReadCharacter();
+                    }
+                    continue;
                 }
                 case ')':
                 {
-                    if (context == CssLexerContextKind.Expect_PropertyValue)
-                        inUrl = false;
                     goto default;
                 }
                 case '{':
                 {
                     ++braceMatching;
+                    context = CssLexerContextKind.Expect_PropertyName;
                     goto default;
                 }
                 case '}':
