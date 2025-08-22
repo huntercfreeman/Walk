@@ -511,7 +511,6 @@ public static class InitializationHelper
         var razorCompilerService = new RazorCompilerService(DotNetService.TextEditorService, cSharpCompilerService);
         var xmlCompilerService = new XmlCompilerService(DotNetService.TextEditorService);
         var terminalCompilerService = new TerminalCompilerService(DotNetService.IdeService);
-        var defaultCompilerService = new CompilerServiceDoNothing();
 
         DotNetService.TextEditorService.RegisterCompilerService(ExtensionNoPeriodFacts.HTML, xmlCompilerService);
         DotNetService.TextEditorService.RegisterCompilerService(ExtensionNoPeriodFacts.XML, xmlCompilerService);
@@ -537,7 +536,6 @@ public static class InitializationHelper
         var xmlDecorationMapper = new XmlDecorationMapper();
         var razorDecorationMapper = new RazorDecorationMapper();
         var terminalDecorationMapper = new TerminalDecorationMapper();
-        var defaultDecorationMapper = new TextEditorDecorationMapperDefault();
 
         DotNetService.TextEditorService.RegisterDecorationMapper(ExtensionNoPeriodFacts.HTML, xmlDecorationMapper);
         DotNetService.TextEditorService.RegisterDecorationMapper(ExtensionNoPeriodFacts.XML, xmlDecorationMapper);
