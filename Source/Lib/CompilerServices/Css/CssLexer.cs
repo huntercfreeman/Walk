@@ -148,6 +148,8 @@ public static class CssLexer
                     {
                         var commentStartPosition = streamReaderWrap.PositionIndex;
                         var commentStartByte = streamReaderWrap.ByteIndex;
+                        _ = streamReaderWrap.ReadCharacter();
+                        _ = streamReaderWrap.ReadCharacter();
                         while (!streamReaderWrap.IsEof)
                         {
                             if (streamReaderWrap.CurrentCharacter == '*' &&
@@ -165,9 +167,9 @@ public static class CssLexer
                             streamReaderWrap.PositionIndex,
                             (byte)CssDecorationKind.Comment,
                             commentStartByte));
+                        continue;
                     }
-                    
-                    if (streamReaderWrap.PeekCharacter(1) == '/')
+                    else if (streamReaderWrap.PeekCharacter(1) == '/')
                     {
                         goto default;
                     }

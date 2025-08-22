@@ -4,9 +4,19 @@ namespace Walk.CompilerServices.Json;
 
 public static class JsonLexer
 {
+    public enum CssLexerContextKind
+    {
+        Expect_PropertyName,
+        Expect_PropertyValue,
+    }
+
     public static JsonLexerOutput Lex(StreamReaderWrap streamReaderWrap)
     {
+        var context = CssLexerContextKind.Expect_PropertyName;
         var output = new JsonLexerOutput();
+        
+        // TODO: I'm not sure I like the idea of this.
+        var mostRecentStringIndex = -1;
         
         while (!streamReaderWrap.IsEof)
         {
@@ -68,6 +78,26 @@ public static class JsonLexer
                 case 'Z':
                 /* Underscore */
                 case '_':
+                    var textStartPosition = streamReaderWrap.PositionIndex;
+                    var textStartByte = streamReaderWrap.ByteIndex;
+                    while (!streamReaderWrap.IsEof)
+                    {
+                        if (!char.IsLetterOrDigit(streamReaderWrap.CurrentCharacter))
+                        {
+                            if (streamReaderWrap.CurrentCharacter != '_' &&
+                                streamReaderWrap.CurrentCharacter != '-')
+                            {
+                                break;
+                            }
+                        }
+                        _ = streamReaderWrap.ReadCharacter();
+                    }
+                    
+                    output.TextSpanList.Add(new TextEditorTextSpan(
+                        textStartPosition,
+                        streamReaderWrap.PositionIndex,
+                        (byte)JsonDecorationKind.Keyword,
+                        textStartByte));
                     goto default;
                 case '0':
                 case '1':
@@ -83,15 +113,82 @@ public static class JsonLexer
                 case '\'':
                     goto default;
                 case '"':
-                    goto default;
+                    var stringStartPosition = streamReaderWrap.PositionIndex;
+                    var stringStartByte = streamReaderWrap.ByteIndex;
+                    _ = streamReaderWrap.ReadCharacter();
+                    while (!streamReaderWrap.IsEof)
+                    {
+                        if (streamReaderWrap.CurrentCharacter == '\\' &&
+                            streamReaderWrap.PeekCharacter(1) == '"')
+                        {
+                            _ = streamReaderWrap.ReadCharacter();
+                            _ = streamReaderWrap.ReadCharacter();
+                        }
+                        else if (streamReaderWrap.CurrentCharacter == '"')
+                        {
+                            _ = streamReaderWrap.ReadCharacter();
+                            break;
+                        }
+                        _ = streamReaderWrap.ReadCharacter();
+                    }
+                    
+                    mostRecentStringIndex = output.TextSpanList.Count;
+                    output.TextSpanList.Add(new TextEditorTextSpan(
+                        stringStartPosition,
+                        streamReaderWrap.PositionIndex,
+                        (byte)JsonDecorationKind.String,
+                        stringStartByte));
+                    continue;
                 case '/':
+                
+                    if (streamReaderWrap.PeekCharacter(1) == '*')
+                    {
+                        var commentStartPosition = streamReaderWrap.PositionIndex;
+                        var commentStartByte = streamReaderWrap.ByteIndex;
+                        _ = streamReaderWrap.ReadCharacter();
+                        _ = streamReaderWrap.ReadCharacter();
+                        while (!streamReaderWrap.IsEof)
+                        {
+                            if (streamReaderWrap.CurrentCharacter == '*' &&
+                                streamReaderWrap.PeekCharacter(1) == '/')
+                            {
+                                _ = streamReaderWrap.ReadCharacter();
+                                _ = streamReaderWrap.ReadCharacter();
+                                break;
+                            }
+                            _ = streamReaderWrap.ReadCharacter();
+                        }
+                        
+                        output.TextSpanList.Add(new TextEditorTextSpan(
+                            commentStartPosition,
+                            streamReaderWrap.PositionIndex,
+                            (byte)JsonDecorationKind.BlockComment,
+                            commentStartByte));
+                        continue;
+                    }
+                
                     if (streamReaderWrap.PeekCharacter(1) == '/')
                     {
-                        goto default;
-                    }
-                    else if (streamReaderWrap.PeekCharacter(1) == '*')
-                    {
-                        goto default;
+                        var commentStartPosition = streamReaderWrap.PositionIndex;
+                        var commentStartByte = streamReaderWrap.ByteIndex;
+                        _ = streamReaderWrap.ReadCharacter();
+                        _ = streamReaderWrap.ReadCharacter();
+                        while (!streamReaderWrap.IsEof)
+                        {
+                            if (streamReaderWrap.CurrentCharacter == '\r' ||
+                                streamReaderWrap.CurrentCharacter == '\n')
+                            {
+                                break;
+                            }
+                            _ = streamReaderWrap.ReadCharacter();
+                        }
+                        
+                        output.TextSpanList.Add(new TextEditorTextSpan(
+                            commentStartPosition,
+                            streamReaderWrap.PositionIndex,
+                            (byte)JsonDecorationKind.LineComment,
+                            commentStartByte));
+                        continue;
                     }
                     else
                     {
@@ -189,19 +286,12 @@ public static class JsonLexer
                 }
                 case '{':
                 {
-                    /*if (interpolatedExpressionUnmatchedBraceCount != -1)
-                        ++interpolatedExpressionUnmatchedBraceCount;*/
-                
+                    mostRecentStringIndex = -1;
                     goto default;
                 }
                 case '}':
                 {
-                    /*if (interpolatedExpressionUnmatchedBraceCount != -1)
-                    {
-                        if (--interpolatedExpressionUnmatchedBraceCount <= 0)
-                            goto forceExit;
-                    }*/
-                
+                    mostRecentStringIndex = -1;
                     goto default;
                 }
                 case '<':
@@ -228,10 +318,12 @@ public static class JsonLexer
                 }
                 case '[':
                 {
+                    mostRecentStringIndex = -1;
                     goto default;
                 }
                 case ']':
                 {
+                    mostRecentStringIndex = -1;
                     goto default;
                 }
                 case '$':
@@ -285,6 +377,14 @@ public static class JsonLexer
                     }
                 case ':':
                 {
+                    if (mostRecentStringIndex != -1)
+                    {
+                        output.TextSpanList[mostRecentStringIndex] = output.TextSpanList[mostRecentStringIndex] with
+                        {
+                            DecorationByte = (byte)JsonDecorationKind.PropertyKey
+                        };
+                        mostRecentStringIndex = -1;
+                    }
                     goto default;
                 }
                 case '.':
@@ -293,6 +393,7 @@ public static class JsonLexer
                 }
                 case ',':
                 {
+                    mostRecentStringIndex = -1;
                     goto default;
                 }
                 case '#':
