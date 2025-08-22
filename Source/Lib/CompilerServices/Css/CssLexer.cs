@@ -92,11 +92,22 @@ public static class CssLexer
                         _ = streamReaderWrap.ReadCharacter();
                     }
                     
+                    var endPosition = streamReaderWrap.PositionIndex;
+                    
+                    while (!streamReaderWrap.IsEof)
+                    {
+                        if (!char.IsWhiteSpace(streamReaderWrap.CurrentCharacter))
+                        {
+                            break;
+                        }
+                        _ = streamReaderWrap.ReadCharacter();
+                    }
+                    
                     if (streamReaderWrap.CurrentCharacter == '(')
                     {
                         output.TextSpanList.Add(new TextEditorTextSpan(
                             textStartPosition,
-                            streamReaderWrap.PositionIndex,
+                            endPosition,
                             (byte)CssDecorationKind.Function,
                             textStartByte));
                     }
@@ -104,7 +115,7 @@ public static class CssLexer
                     {
                         output.TextSpanList.Add(new TextEditorTextSpan(
                             textStartPosition,
-                            streamReaderWrap.PositionIndex,
+                            endPosition,
                             (byte)CssDecorationKind.Identifier,
                             textStartByte));
                     }
@@ -114,7 +125,7 @@ public static class CssLexer
                         {
                             output.TextSpanList.Add(new TextEditorTextSpan(
                                 textStartPosition,
-                                streamReaderWrap.PositionIndex,
+                                endPosition,
                                 (byte)CssDecorationKind.PropertyName,
                                 textStartByte));
                         }
@@ -122,7 +133,7 @@ public static class CssLexer
                         {
                             output.TextSpanList.Add(new TextEditorTextSpan(
                                 textStartPosition,
-                                streamReaderWrap.PositionIndex,
+                                endPosition,
                                 (byte)CssDecorationKind.PropertyValue,
                                 textStartByte));
                         }

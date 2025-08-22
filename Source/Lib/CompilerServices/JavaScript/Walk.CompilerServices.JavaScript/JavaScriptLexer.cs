@@ -83,17 +83,110 @@ public static class JavaScriptLexer
                 case '9':
                     goto default;
                 case '\'':
-                    goto default;
+                {
+                    var stringStartPosition = streamReaderWrap.PositionIndex;
+                    var stringStartByte = streamReaderWrap.ByteIndex;
+                    _ = streamReaderWrap.ReadCharacter();
+                    while (!streamReaderWrap.IsEof)
+                    {
+                        if (streamReaderWrap.CurrentCharacter == '\\' &&
+                            streamReaderWrap.PeekCharacter(1) == '\'')
+                        {
+                            _ = streamReaderWrap.ReadCharacter();
+                            _ = streamReaderWrap.ReadCharacter();
+                        }
+                        else if (streamReaderWrap.CurrentCharacter == '\'')
+                        {
+                            _ = streamReaderWrap.ReadCharacter();
+                            break;
+                        }
+                        _ = streamReaderWrap.ReadCharacter();
+                    }
+                    
+                    output.TextSpanList.Add(new TextEditorTextSpan(
+                        stringStartPosition,
+                        streamReaderWrap.PositionIndex,
+                        (byte)GenericDecorationKind.StringLiteral,
+                        stringStartByte));
+                    continue;
+                }
                 case '"':
-                    goto default;
+                {
+                    var stringStartPosition = streamReaderWrap.PositionIndex;
+                    var stringStartByte = streamReaderWrap.ByteIndex;
+                    _ = streamReaderWrap.ReadCharacter();
+                    while (!streamReaderWrap.IsEof)
+                    {
+                        if (streamReaderWrap.CurrentCharacter == '\\' &&
+                            streamReaderWrap.PeekCharacter(1) == '"')
+                        {
+                            _ = streamReaderWrap.ReadCharacter();
+                            _ = streamReaderWrap.ReadCharacter();
+                        }
+                        else if (streamReaderWrap.CurrentCharacter == '"')
+                        {
+                            _ = streamReaderWrap.ReadCharacter();
+                            break;
+                        }
+                        _ = streamReaderWrap.ReadCharacter();
+                    }
+                    
+                    output.TextSpanList.Add(new TextEditorTextSpan(
+                        stringStartPosition,
+                        streamReaderWrap.PositionIndex,
+                        (byte)GenericDecorationKind.StringLiteral,
+                        stringStartByte));
+                    continue;
+                }
                 case '/':
+                    if (streamReaderWrap.PeekCharacter(1) == '*')
+                    {
+                        var commentStartPosition = streamReaderWrap.PositionIndex;
+                        var commentStartByte = streamReaderWrap.ByteIndex;
+                        _ = streamReaderWrap.ReadCharacter();
+                        _ = streamReaderWrap.ReadCharacter();
+                        while (!streamReaderWrap.IsEof)
+                        {
+                            if (streamReaderWrap.CurrentCharacter == '*' &&
+                                streamReaderWrap.PeekCharacter(1) == '/')
+                            {
+                                _ = streamReaderWrap.ReadCharacter();
+                                _ = streamReaderWrap.ReadCharacter();
+                                break;
+                            }
+                            _ = streamReaderWrap.ReadCharacter();
+                        }
+                        
+                        output.TextSpanList.Add(new TextEditorTextSpan(
+                            commentStartPosition,
+                            streamReaderWrap.PositionIndex,
+                            (byte)GenericDecorationKind.CommentSingleLine,
+                            commentStartByte));
+                        continue;
+                    }
+                
                     if (streamReaderWrap.PeekCharacter(1) == '/')
                     {
-                        goto default;
-                    }
-                    else if (streamReaderWrap.PeekCharacter(1) == '*')
-                    {
-                        goto default;
+                        var commentStartPosition = streamReaderWrap.PositionIndex;
+                        var commentStartByte = streamReaderWrap.ByteIndex;
+                        _ = streamReaderWrap.ReadCharacter();
+                        _ = streamReaderWrap.ReadCharacter();
+                        while (!streamReaderWrap.IsEof)
+                        {
+                            if (streamReaderWrap.CurrentCharacter == '\r' ||
+                                streamReaderWrap.CurrentCharacter == '\n')
+                            {
+                                break;
+                            }
+                            _ = streamReaderWrap.ReadCharacter();
+                        }
+                        
+                        output.TextSpanList.Add(new TextEditorTextSpan(
+                            commentStartPosition,
+                            streamReaderWrap.PositionIndex,
+                            (byte)GenericDecorationKind.CommentMultiLine,
+                            commentStartByte));
+                        continue;
                     }
                     else
                     {
@@ -359,7 +452,7 @@ public static class JavaScriptLexer
         var textSpan = new TextEditorTextSpan(
             entryPositionIndex,
             streamReaderWrap.PositionIndex,
-            (byte)GenericDecorationKind.None,
+            (byte)GenericDecorationKind.Variable,
             byteEntryIndex,
             characterIntSum);
         
@@ -984,7 +1077,30 @@ public static class JavaScriptLexer
                 
                 goto default;
             default:
-                textSpanList.Add(textSpan);
+                
+                var endPosition = streamReaderWrap.PositionIndex;
+                
+                while (!streamReaderWrap.IsEof)
+                {
+                    if (!char.IsWhiteSpace(streamReaderWrap.CurrentCharacter))
+                    {
+                        break;
+                    }
+                    _ = streamReaderWrap.ReadCharacter();
+                }
+                
+                if (streamReaderWrap.CurrentCharacter == '(')
+                {
+                    textSpanList.Add(textSpan with { DecorationByte = (byte)GenericDecorationKind.Function });
+                }
+                else if (streamReaderWrap.CurrentCharacter == ':')
+                {
+                    textSpanList.Add(textSpan with { DecorationByte = (byte)GenericDecorationKind.Field });
+                }
+                else
+                {
+                    textSpanList.Add(textSpan);
+                }
                 return;
         }
     }
