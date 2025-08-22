@@ -144,11 +144,30 @@ public static class CssLexer
                 case '"':
                     goto default;
                 case '/':
-                    if (streamReaderWrap.PeekCharacter(1) == '/')
+                    if (streamReaderWrap.PeekCharacter(1) == '*')
                     {
-                        goto default;
+                        var commentStartPosition = streamReaderWrap.PositionIndex;
+                        var commentStartByte = streamReaderWrap.ByteIndex;
+                        while (!streamReaderWrap.IsEof)
+                        {
+                            if (streamReaderWrap.CurrentCharacter == '*' &&
+                                streamReaderWrap.PeekCharacter(1) == '/')
+                            {
+                                _ = streamReaderWrap.ReadCharacter();
+                                _ = streamReaderWrap.ReadCharacter();
+                                break;
+                            }
+                            _ = streamReaderWrap.ReadCharacter();
+                        }
+                        
+                        output.TextSpanList.Add(new TextEditorTextSpan(
+                            commentStartPosition,
+                            streamReaderWrap.PositionIndex,
+                            (byte)CssDecorationKind.Comment,
+                            commentStartByte));
                     }
-                    else if (streamReaderWrap.PeekCharacter(1) == '*')
+                    
+                    if (streamReaderWrap.PeekCharacter(1) == '/')
                     {
                         goto default;
                     }
