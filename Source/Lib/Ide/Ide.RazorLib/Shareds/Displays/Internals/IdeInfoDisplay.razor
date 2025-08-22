@@ -161,7 +161,7 @@
                 <div>v <em class="di_em">72.0.0 </em> (2025-08-22)</div>
                 <ul>
                     <li>
-                        Draft PR
+                        Delete dead code from Extensions.CompilerServices
                     </li>
                     <li>
                         JavaScript lexer "80% implemented"
@@ -266,65 +266,6 @@
                     <li>
                         This contains the AbsolutePath optimizations that were more clearly safe and non-breaking.
                         I'm going to after this look into some more optimizations.
-                    </li>
-                </ul>
-            </div>
-            <div>
-                <div>v <em class="di_em">65.0.0 </em> (2025-08-14)</div>
-                <ul>
-                    <li>
-                        Avoid AbsolutePath allocation when doing solution wide parse.
-                    </li>
-                    <li>
-                        Some better null checks.
-                        
-                        I opened Visual Studio since the StreamReader change meant I return a null.
-                        I wanted to see the nullability warnings.
-                        
-                        And they're just all over the place.
-                        
-                        These cover the StreamReader change so that it doesn't NRE.
-                    </li>
-                    <li>
-                        StreamReader checks File.Exists(...)
-                        One example of this being needed was
-                         when you deleted a file.
-                         
-                         If you went to some other file that referenced the deleted file.
-                         Then that other file would throw a not found exception everytime
-                         it tried to parse. So you'd end up with only Lexer syntax highlighting.
-                         
-                         The demo still starts off with two exception notifications
-                    </li>
-                    <li>
-                        Some MenuOptionRecord optimizations
-                    </li>
-                </ul>
-            </div>
-            <div>
-                <div>v <em class="di_em">64.0.0 </em> (2025-08-13)</div>
-                <ul>
-                    <li>
-                        Remove redundant Options_SetFromLocalStorageAsync(...) invocations
-                    </li>
-                    <li>
-                        website demo: Move the 'Ensure Parent Directories Exist' step to be done a single time
-                    </li>
-                    <li>
-                        Website_WriteAllText(...)
-                    </li>
-                    <li>
-                        MultiBadgeDisplay
-                    </li>
-                    <li>
-                        Some CSS optimizations
-                    </li>
-                    <li>
-                        Some quick optimizations to the demo, still more can be done but I want
-                        to get back to looking at the app itself.
-                    </li>
-                    <li>
-                        More IdeMainLayout.razor optimizations (text editor group related)
                     </li>
                 </ul>
             </div>
