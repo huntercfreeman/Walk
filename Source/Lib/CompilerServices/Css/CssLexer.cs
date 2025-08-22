@@ -4,9 +4,19 @@ namespace Walk.CompilerServices.Css;
 
 public static class CssLexer
 {
+    public enum CssLexerContextKind
+    {
+        Expect_PropertyName,
+        Expect_PropertyValue,
+    }
+    
     public static CssLexerOutput Lex(StreamReaderWrap streamReaderWrap)
     {
+        var context = CssLexerContextKind.Expect_PropertyName;
         var output = new CssLexerOutput();
+        
+        var braceMatching = 0;
+        var inUrl = false;
         
         while (!streamReaderWrap.IsEof)
         {
@@ -68,7 +78,49 @@ public static class CssLexer
                 case 'Z':
                 /* Underscore */
                 case '_':
-                    goto default;
+                    var textStartPosition = streamReaderWrap.PositionIndex;
+                    var textStartByte = streamReaderWrap.ByteIndex;
+                    while (!streamReaderWrap.IsEof)
+                    {
+                        if (!char.IsLetterOrDigit(streamReaderWrap.CurrentCharacter))
+                        {
+                            if (streamReaderWrap.CurrentCharacter != '_' &&
+                                streamReaderWrap.CurrentCharacter != '-')
+                            {
+                                break;
+                            }
+                        }
+                        _ = streamReaderWrap.ReadCharacter();
+                    }
+                    
+                    if (braceMatching == 0)
+                    {
+                        output.TextSpanList.Add(new TextEditorTextSpan(
+                            textStartPosition,
+                            streamReaderWrap.PositionIndex,
+                            (byte)CssDecorationKind.Identifier,
+                            textStartByte));
+                    }
+                    else
+                    {
+                        if (context == CssLexerContextKind.Expect_PropertyName)
+                        {
+                            output.TextSpanList.Add(new TextEditorTextSpan(
+                                textStartPosition,
+                                streamReaderWrap.PositionIndex,
+                                (byte)CssDecorationKind.PropertyName,
+                                textStartByte));
+                        }
+                        else
+                        {
+                            output.TextSpanList.Add(new TextEditorTextSpan(
+                                textStartPosition,
+                                streamReaderWrap.PositionIndex,
+                                (byte)CssDecorationKind.PropertyValue,
+                                textStartByte));
+                        }
+                    }
+                    continue;
                 case '0':
                 case '1':
                 case '2':
@@ -177,31 +229,30 @@ public static class CssLexer
                 }
                 case ';':
                 {
+                    if (!inUrl)
+                        context = CssLexerContextKind.Expect_PropertyName;
                     goto default;
                 }
                 case '(':
                 {
+                    if (context == CssLexerContextKind.Expect_PropertyValue)
+                        inUrl = true;
                     goto default;
                 }
                 case ')':
                 {
+                    if (context == CssLexerContextKind.Expect_PropertyValue)
+                        inUrl = false;
                     goto default;
                 }
                 case '{':
                 {
-                    /*if (interpolatedExpressionUnmatchedBraceCount != -1)
-                        ++interpolatedExpressionUnmatchedBraceCount;*/
-                
+                    ++braceMatching;
                     goto default;
                 }
                 case '}':
                 {
-                    /*if (interpolatedExpressionUnmatchedBraceCount != -1)
-                    {
-                        if (--interpolatedExpressionUnmatchedBraceCount <= 0)
-                            goto forceExit;
-                    }*/
-                
+                    --braceMatching;
                     goto default;
                 }
                 case '<':
@@ -285,7 +336,18 @@ public static class CssLexer
                     }
                 case ':':
                 {
-                    goto default;
+                    if (streamReaderWrap.PeekCharacter(1) == ':')
+                    {
+                        context = CssLexerContextKind.Expect_PropertyName;
+                        _ = streamReaderWrap.ReadCharacter();
+                        _ = streamReaderWrap.ReadCharacter();
+                        continue;
+                    }
+                    else
+                    {
+                        context = CssLexerContextKind.Expect_PropertyValue;
+                        goto default;
+                    }
                 }
                 case '.':
                 {
@@ -296,6 +358,29 @@ public static class CssLexer
                     goto default;
                 }
                 case '#':
+                    if (context == CssLexerContextKind.Expect_PropertyValue)
+                    {
+                        _ = streamReaderWrap.ReadCharacter();
+                        
+                        var startPosition = streamReaderWrap.PositionIndex;
+                        var startByte = streamReaderWrap.ByteIndex;
+                        
+                        while (!streamReaderWrap.IsEof)
+                        {
+                            if (!char.IsLetterOrDigit(streamReaderWrap.CurrentCharacter))
+                            {
+                                break;
+                            }
+                            _ = streamReaderWrap.ReadCharacter();
+                        }
+                        
+                        output.TextSpanList.Add(new TextEditorTextSpan(
+                            startPosition,
+                            streamReaderWrap.PositionIndex,
+                            (byte)CssDecorationKind.PropertyValue,
+                            startByte));
+                        continue;
+                    }
                     goto default;
                 default:
                     _ = streamReaderWrap.ReadCharacter();
