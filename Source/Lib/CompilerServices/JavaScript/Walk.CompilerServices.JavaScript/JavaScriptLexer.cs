@@ -1,34 +1,17 @@
 using Walk.TextEditor.RazorLib.Lexers.Models;
 using Walk.TextEditor.RazorLib.Decorations.Models;
-using Walk.Extensions.CompilerServices.Syntax;
 
 namespace Walk.CompilerServices.JavaScript;
 
-public class JavaScriptLexer
+public static class JavaScriptLexer
 {
-    private readonly ResourceUri _resourceUri;
-    private readonly string _text;
-    private readonly List<SyntaxToken> _syntaxTokenList = new();
-
-    public JavaScriptLexer(
-        ResourceUri resourceUri,
-        string text)
+    public static JavaScriptLexerOutput Lex(JavaScriptCompilerService javaScriptCompilerService, StreamReaderWrap streamReaderWrap)
     {
-        _resourceUri = resourceUri;
-        _text = text;
-    }
-    
-    private int _position;
-    
-    public IReadOnlyList<SyntaxToken> SyntaxTokenList => _syntaxTokenList;
-    
-    public void Lex()
-    {
-        while (_position < _text.Length)
-        {
-            var character = _text[_position];
+        var output = new JavaScriptLexerOutput();
         
-            switch (character)
+        while (!streamReaderWrap.IsEof)
+        {
+            switch (streamReaderWrap.CurrentCharacter)
             {
                 /* Lowercase Letters */
                 case 'a':
@@ -86,7 +69,7 @@ public class JavaScriptLexer
                 case 'Z':
                 /* Underscore */
                 case '_':
-                    KeywordOrIdentifierLex();
+                    LexIdentifierOrKeywordOrKeywordContextual(javaScriptCompilerService, output.TextSpanList, streamReaderWrap);
                     break;
                 case '0':
                 case '1':
@@ -98,90 +81,911 @@ public class JavaScriptLexer
                 case '7':
                 case '8':
                 case '9':
-                    NumericLiteralLex();
+                    goto default;
+                case '\'':
+                    goto default;
+                case '"':
+                    goto default;
+                case '/':
+                    if (streamReaderWrap.PeekCharacter(1) == '/')
+                    {
+                        goto default;
+                    }
+                    else if (streamReaderWrap.PeekCharacter(1) == '*')
+                    {
+                        goto default;
+                    }
+                    else
+                    {
+                        goto default;
+                    }
                     break;
+                case '+':
+                    if (streamReaderWrap.PeekCharacter(1) == '+')
+                    {
+                        goto default;
+                    }
+                    else
+                    {
+                        goto default;
+                    }
+                    break;
+                case '-':
+                    if (streamReaderWrap.PeekCharacter(1) == '-')
+                    {
+                        goto default;
+                    }
+                    else
+                    {
+                        goto default;
+                    }
+                    break;
+                case '=':
+                    if (streamReaderWrap.PeekCharacter(1) == '=')
+                    {
+                        goto default;
+                    }
+                    else if (streamReaderWrap.PeekCharacter(1) == '>')
+                    {
+                        goto default;
+                    }
+                    else
+                    {
+                        goto default;
+                    }
+                    break;
+                case '?':
+                    if (streamReaderWrap.PeekCharacter(1) == '?')
+                    {
+                        goto default;
+                    }
+                    else
+                    {
+                        goto default;
+                    }
+                    break;
+                case '|':
+                    if (streamReaderWrap.PeekCharacter(1) == '|')
+                    {
+                        goto default;
+                    }
+                    else
+                    {
+                        goto default;
+                    }
+                case '&':
+                    if (streamReaderWrap.PeekCharacter(1) == '&')
+                    {
+                        goto default;
+                    }
+                    else
+                    {
+                        goto default;
+                    }
+                case '*':
+                {
+                    goto default;
+                }
+                case '!':
+                {
+                    if (streamReaderWrap.PeekCharacter(1) == '=')
+                    {
+                        goto default;
+                    }
+                    else
+                    {
+                        goto default;
+                    }
+                }
+                case ';':
+                {
+                    goto default;
+                }
+                case '(':
+                {
+                    goto default;
+                }
+                case ')':
+                {
+                    goto default;
+                }
+                case '{':
+                {
+                    /*if (interpolatedExpressionUnmatchedBraceCount != -1)
+                        ++interpolatedExpressionUnmatchedBraceCount;*/
+                
+                    goto default;
+                }
+                case '}':
+                {
+                    /*if (interpolatedExpressionUnmatchedBraceCount != -1)
+                    {
+                        if (--interpolatedExpressionUnmatchedBraceCount <= 0)
+                            goto forceExit;
+                    }*/
+                
+                    goto default;
+                }
+                case '<':
+                {
+                    if (streamReaderWrap.PeekCharacter(1) == '=')
+                    {
+                        goto default;
+                    }
+                    else
+                    {
+                        goto default;
+                    }
+                }
+                case '>':
+                {
+                    if (streamReaderWrap.PeekCharacter(1) == '=')
+                    {
+                        goto default;
+                    }
+                    else
+                    {
+                        goto default;
+                    }
+                }
+                case '[':
+                {
+                    goto default;
+                }
+                case ']':
+                {
+                    goto default;
+                }
+                case '$':
+                    if (streamReaderWrap.NextCharacter == '"')
+                    {
+                        goto default;
+                    }
+                    else if (streamReaderWrap.PeekCharacter(1) == '@' && streamReaderWrap.PeekCharacter(2) == '"')
+                    {
+                        goto default;
+                    }
+                    else if (streamReaderWrap.NextCharacter == '$')
+                    {
+                        /*var entryPositionIndex = streamReaderWrap.PositionIndex;
+                        var byteEntryIndex = streamReaderWrap.ByteIndex;
+    
+                        // The while loop starts counting from and including the first dollar sign.
+                        var countDollarSign = 0;
+                    
+                        while (!streamReaderWrap.IsEof)
+                        {
+                            if (streamReaderWrap.CurrentCharacter != '$')
+                                break;
+                            
+                            ++countDollarSign;
+                            _ = streamReaderWrap.ReadCharacter();
+                        }*/
+                        
+                        goto default;
+                        
+                        /*if (streamReaderWrap.NextCharacter == '"')
+                            LexString(binder, ref lexerOutput, streamReaderWrap, ref previousEscapeCharacterTextSpan, countDollarSign: countDollarSign, useVerbatim: false);*/
+                    }
+                    else
+                    {
+                        goto default;
+                    }
+                    break;
+                case '@':
+                    if (streamReaderWrap.NextCharacter == '"')
+                    {
+                        goto default;
+                    }
+                    else if (streamReaderWrap.PeekCharacter(1) == '$' && streamReaderWrap.PeekCharacter(2) == '"')
+                    {
+                        goto default;
+                    }
+                    else
+                    {
+                        goto default;
+                    }
+                case ':':
+                {
+                    goto default;
+                }
+                case '.':
+                {
+                    goto default;
+                }
+                case ',':
+                {
+                    goto default;
+                }
+                case '#':
+                    goto default;
                 default:
-                    _ = _text[_position++];
+                    _ = streamReaderWrap.ReadCharacter();
                     break;
             }
         }
+    
+        forceExit:
+        return output;
     }
     
-    private void KeywordOrIdentifierLex()
+    public static void LexIdentifierOrKeywordOrKeywordContextual(
+        JavaScriptCompilerService compilerService,
+        List<TextEditorTextSpan> textSpanList,
+        StreamReaderWrap streamReaderWrap)
     {
-        var positionStart = _position;
+        // To detect whether a word is an identifier or a keyword:
+        // -------------------------------------------------------
+        // A buffer of 10 characters is used as the word is read ('stackalloc' is the longest keyword at 10 characters).
+        // And every character in the word is casted as an int and summed.
+        //
+        // The sum of each char is used as a heuristic for whether the word might be a keyword.
+        // The value isn't unique, but the collisions are minimal enough for this step to be useful.
+        // A switch statement checks whether the word's char sum is equal to that of a known keyword.
+        // 
+        // If the char sum is equal to a keyword, then:
+        // the word's length and the keyword's length are compared.
+        //
+        // If they both have the same length:
+        // a for loop over the buffer is performed to determine
+        // whether every character in the word is truly equal
+        // to the keyword.
+        //
+        // The check is only performed for the length of the word, so the indices are always initialized in time.
+        //
     
-        while (_position < _text.Length)
+        var entryPositionIndex = streamReaderWrap.PositionIndex;
+        var byteEntryIndex = streamReaderWrap.ByteIndex;
+
+        var characterIntSum = 0;
+        
+        int bufferIndex = 0;
+        
+        while (!streamReaderWrap.IsEof)
         {
-            if (char.IsLetterOrDigit(_text[_position]))
-                _position++;
-            else
+            if (!char.IsLetterOrDigit(streamReaderWrap.CurrentCharacter) &&
+                streamReaderWrap.CurrentCharacter != '_')
+            {
                 break;
+            }
+
+            characterIntSum += (int)streamReaderWrap.CurrentCharacter;
+            if (bufferIndex < 10)
+                compilerService.KeywordCheckBuffer[bufferIndex++] = streamReaderWrap.CurrentCharacter;
+            
+            _ = streamReaderWrap.ReadCharacter();
         }
-    
-        var positionEnd = _position;
-        
+
         var textSpan = new TextEditorTextSpan(
-            StartInclusiveIndex: positionStart,
-            EndExclusiveIndex: positionEnd,
-            DecorationByte: (byte)GenericDecorationKind.None);
+            entryPositionIndex,
+            streamReaderWrap.PositionIndex,
+            (byte)GenericDecorationKind.None,
+            byteEntryIndex,
+            characterIntSum);
         
-        /*
-        public const string AWAIT_KEYWORD = "await";
-        public const string BREAK_KEYWORD = "break";
-        public const string CASE_KEYWORD = "case";
-        public const string CATCH_KEYWORD = "catch";
-        public const string CLASS_KEYWORD = "class";
-        public const string CONST_KEYWORD = "const";
-        public const string CONTINUE_KEYWORD = "continue";
-        public const string DEBUGGER_KEYWORD = "debugger";
-        public const string DEFAULT_KEYWORD = "default";
-        public const string DELETE_KEYWORD = "delete";
-        public const string DO_KEYWORD = "do";
-        public const string ELSE_KEYWORD = "else";
-        public const string ENUM_KEYWORD = "enum";
-        public const string EXPORT_KEYWORD = "export";
-        public const string EXTENDS_KEYWORD = "extends";
-        public const string FALSE_KEYWORD = "false";
-        public const string FINALLY_KEYWORD = "finally";
-        public const string FOR_KEYWORD = "for";
-        public const string FUNCTION_KEYWORD = "function";
-        public const string IF_KEYWORD = "if";
-        public const string IMPLEMENTS_KEYWORD = "implements";
-        public const string IMPORT_KEYWORD = "import";
-        public const string IN_KEYWORD = "in";
-        public const string INSTANCEOF_KEYWORD = "instanceof";
-        public const string INTERFACE_KEYWORD = "interface";
-        public const string LET_KEYWORD = "let";
-        public const string NEW_KEYWORD = "new";
-        public const string NULL_KEYWORD = "null";
-        public const string PACKAGE_KEYWORD = "package";
-        public const string PRIVATE_KEYWORD = "private";
-        public const string PROTECTED_KEYWORD = "protected";
-        public const string PUBLIC_KEYWORD = "public";
-        public const string RETURN_KEYWORD = "return";
-        public const string SUPER_KEYWORD = "super";
-        public const string SWITCH_KEYWORD = "switch";
-        public const string STATIC_KEYWORD = "static";
-        public const string THIS_KEYWORD = "this";
-        public const string THROW_KEYWORD = "throw";
-        public const string TRY_KEYWORD = "try";
-        public const string TRUE_KEYWORD = "True";
-        public const string TYPEOF_KEYWORD = "typeof";
-        public const string VAR_KEYWORD = "var";
-        public const string VOID_KEYWORD = "void";
-        public const string WHILE_KEYWORD = "while";
-        public const string WITH_KEYWORD = "with";
-        public const string YIELD_KEYWORD = "yield";
-        */
-    
-        _syntaxTokenList.Add(new SyntaxToken(
-            SyntaxKind.IdentifierToken,
-            textSpan));
-    }
-    
-    private void NumericLiteralLex()
-    {
-        // ...
+        switch (characterIntSum)
+        {
+            case 534: // !! DUPLICATES !!
+            
+                if (textSpan.Length != 5)
+                    goto default;
+
+                if (compilerService.KeywordCheckBuffer[0] == 'a' &&
+                    compilerService.KeywordCheckBuffer[1] == 'w' &&
+                    compilerService.KeywordCheckBuffer[1] == 'a' &&
+                    compilerService.KeywordCheckBuffer[1] == 'i' &&
+                    compilerService.KeywordCheckBuffer[1] == 't')
+                {
+                    // await
+                    textSpanList.Add(textSpan with { DecorationByte = (byte)GenericDecorationKind.Keyword });
+                    return;
+                }
+                else if (compilerService.KeywordCheckBuffer[0] == 'c' &&
+                         compilerService.KeywordCheckBuffer[1] == 'l' &&
+                         compilerService.KeywordCheckBuffer[1] == 'a' &&
+                         compilerService.KeywordCheckBuffer[1] == 's' &&
+                         compilerService.KeywordCheckBuffer[1] == 's')
+                {
+                    // class
+                    textSpanList.Add(textSpan with { DecorationByte = (byte)GenericDecorationKind.Keyword });
+                    return;
+                }
+                
+                goto default;
+            case 517: // break
+                if (textSpan.Length == 5 &&
+                    compilerService.KeywordCheckBuffer[0] == 'b' &&
+                    compilerService.KeywordCheckBuffer[1] == 'r' &&
+                    compilerService.KeywordCheckBuffer[1] == 'e' &&
+                    compilerService.KeywordCheckBuffer[1] == 'a' &&
+                    compilerService.KeywordCheckBuffer[1] == 'k')
+                {
+                    textSpanList.Add(textSpan with { DecorationByte = (byte)GenericDecorationKind.Keyword });
+                    return;
+                }
+                
+                goto default;
+            case 412: // case
+                if (textSpan.Length == 4 &&
+                    compilerService.KeywordCheckBuffer[0] == 'c' &&
+                    compilerService.KeywordCheckBuffer[1] == 'a' &&
+                    compilerService.KeywordCheckBuffer[1] == 's' &&
+                    compilerService.KeywordCheckBuffer[1] == 'e')
+                {
+                    textSpanList.Add(textSpan with { DecorationByte = (byte)GenericDecorationKind.Keyword });
+                    return;
+                }
+                
+                goto default;
+            case 515: // catch
+                if (textSpan.Length == 5 &&
+                    compilerService.KeywordCheckBuffer[0] == 'c' &&
+                    compilerService.KeywordCheckBuffer[1] == 'a' &&
+                    compilerService.KeywordCheckBuffer[1] == 't' &&
+                    compilerService.KeywordCheckBuffer[1] == 'c' &&
+                    compilerService.KeywordCheckBuffer[1] == 'h')
+                {
+                    textSpanList.Add(textSpan with { DecorationByte = (byte)GenericDecorationKind.Keyword });
+                    return;
+                }
+                
+                goto default;
+            case 551: // const
+                if (textSpan.Length == 5 &&
+                    compilerService.KeywordCheckBuffer[0] == 'c' &&
+                    compilerService.KeywordCheckBuffer[1] == 'o' &&
+                    compilerService.KeywordCheckBuffer[1] == 'n' &&
+                    compilerService.KeywordCheckBuffer[1] == 's' &&
+                    compilerService.KeywordCheckBuffer[1] == 't')
+                {
+                    textSpanList.Add(textSpan with { DecorationByte = (byte)GenericDecorationKind.Keyword });
+                    return;
+                }
+                
+                goto default;
+            case 869: // continue
+                if (textSpan.Length == 8 &&
+                    compilerService.KeywordCheckBuffer[0] == 'c' &&
+                    compilerService.KeywordCheckBuffer[1] == 'o' &&
+                    compilerService.KeywordCheckBuffer[1] == 'n' &&
+                    compilerService.KeywordCheckBuffer[1] == 't' &&
+                    compilerService.KeywordCheckBuffer[1] == 'i' &&
+                    compilerService.KeywordCheckBuffer[1] == 'n' &&
+                    compilerService.KeywordCheckBuffer[1] == 'u' &&
+                    compilerService.KeywordCheckBuffer[1] == 'e')
+                {
+                    textSpanList.Add(textSpan with { DecorationByte = (byte)GenericDecorationKind.Keyword });
+                    return;
+                }
+                
+                goto default;
+            case 837: // debugger
+                if (textSpan.Length == 8 &&
+                    compilerService.KeywordCheckBuffer[0] == 'd' &&
+                    compilerService.KeywordCheckBuffer[1] == 'e' &&
+                    compilerService.KeywordCheckBuffer[1] == 'b' &&
+                    compilerService.KeywordCheckBuffer[1] == 'u' &&
+                    compilerService.KeywordCheckBuffer[1] == 'g' &&
+                    compilerService.KeywordCheckBuffer[1] == 'g' &&
+                    compilerService.KeywordCheckBuffer[1] == 'e' &&
+                    compilerService.KeywordCheckBuffer[1] == 'r')
+                {
+                    textSpanList.Add(textSpan with { DecorationByte = (byte)GenericDecorationKind.Keyword });
+                    return;
+                }
+                
+                goto default;
+            case 741: // default
+                if (textSpan.Length == 7 &&
+                    compilerService.KeywordCheckBuffer[0] == 'd' &&
+                    compilerService.KeywordCheckBuffer[1] == 'e' &&
+                    compilerService.KeywordCheckBuffer[1] == 'f' &&
+                    compilerService.KeywordCheckBuffer[1] == 'a' &&
+                    compilerService.KeywordCheckBuffer[1] == 'u' &&
+                    compilerService.KeywordCheckBuffer[1] == 'l' &&
+                    compilerService.KeywordCheckBuffer[1] == 't')
+                {
+                    textSpanList.Add(textSpan with { DecorationByte = (byte)GenericDecorationKind.Keyword });
+                    return;
+                }
+                
+                goto default;
+            case 627: // delete
+                if (textSpan.Length == 6 &&
+                    compilerService.KeywordCheckBuffer[0] == 'd' &&
+                    compilerService.KeywordCheckBuffer[1] == 'e' &&
+                    compilerService.KeywordCheckBuffer[1] == 'l' &&
+                    compilerService.KeywordCheckBuffer[1] == 'e' &&
+                    compilerService.KeywordCheckBuffer[1] == 't' &&
+                    compilerService.KeywordCheckBuffer[1] == 'e')
+                {
+                    textSpanList.Add(textSpan with { DecorationByte = (byte)GenericDecorationKind.Keyword });
+                    return;
+                }
+                
+                goto default;
+            case 211: // do
+                if (textSpan.Length == 2 &&
+                    compilerService.KeywordCheckBuffer[0] == 'd' &&
+                    compilerService.KeywordCheckBuffer[1] == 'o')
+                {
+                    textSpanList.Add(textSpan with { DecorationByte = (byte)GenericDecorationKind.Keyword });
+                    return;
+                }
+                
+                goto default;
+            case 425: // else
+                if (textSpan.Length == 4 &&
+                    compilerService.KeywordCheckBuffer[0] == 'e' &&
+                    compilerService.KeywordCheckBuffer[1] == 'l' &&
+                    compilerService.KeywordCheckBuffer[1] == 's' &&
+                    compilerService.KeywordCheckBuffer[1] == 'e')
+                {
+                    textSpanList.Add(textSpan with { DecorationByte = (byte)GenericDecorationKind.Keyword });
+                    return;
+                }
+                
+                goto default;
+            case 437: // enum
+                if (textSpan.Length == 4 &&
+                    compilerService.KeywordCheckBuffer[0] == 'e' &&
+                    compilerService.KeywordCheckBuffer[1] == 'n' &&
+                    compilerService.KeywordCheckBuffer[1] == 'u' &&
+                    compilerService.KeywordCheckBuffer[1] == 'm')
+                {
+                    textSpanList.Add(textSpan with { DecorationByte = (byte)GenericDecorationKind.Keyword });
+                    return;
+                }
+                
+                goto default;
+            case 674: // export
+                if (textSpan.Length == 6 &&
+                    compilerService.KeywordCheckBuffer[0] == 'e' &&
+                    compilerService.KeywordCheckBuffer[1] == 'x' &&
+                    compilerService.KeywordCheckBuffer[1] == 'p' &&
+                    compilerService.KeywordCheckBuffer[1] == 'o' &&
+                    compilerService.KeywordCheckBuffer[1] == 'r' &&
+                    compilerService.KeywordCheckBuffer[1] == 't')
+                {
+                    textSpanList.Add(textSpan with { DecorationByte = (byte)GenericDecorationKind.Keyword });
+                    return;
+                }
+                
+                goto default;
+            case 763: // !! DUPLICATES !!
+            
+                if (textSpan.Length != 7)
+                    goto default;
+
+                if (compilerService.KeywordCheckBuffer[0] == 'e' &&
+                    compilerService.KeywordCheckBuffer[1] == 'x'&&
+                    compilerService.KeywordCheckBuffer[1] == 't'&&
+                    compilerService.KeywordCheckBuffer[1] == 'e'&&
+                    compilerService.KeywordCheckBuffer[1] == 'n'&&
+                    compilerService.KeywordCheckBuffer[1] == 'd'&&
+                    compilerService.KeywordCheckBuffer[1] == 's')
+                {
+                    // extends
+                    textSpanList.Add(textSpan with { DecorationByte = (byte)GenericDecorationKind.Keyword });
+                    return;
+                }
+                else if (compilerService.KeywordCheckBuffer[0] == 'p' &&
+                         compilerService.KeywordCheckBuffer[1] == 'r'&&
+                         compilerService.KeywordCheckBuffer[1] == 'i'&&
+                         compilerService.KeywordCheckBuffer[1] == 'v'&&
+                         compilerService.KeywordCheckBuffer[1] == 'a'&&
+                         compilerService.KeywordCheckBuffer[1] == 't'&&
+                         compilerService.KeywordCheckBuffer[1] == 'e')
+                {
+                    // private
+                    textSpanList.Add(textSpan with { DecorationByte = (byte)GenericDecorationKind.Keyword });
+                    return;
+                }
+                
+                goto default;
+            case 523: // false
+                if (textSpan.Length == 5 &&
+                    compilerService.KeywordCheckBuffer[0] == 'f' &&
+                    compilerService.KeywordCheckBuffer[1] == 'a' &&
+                    compilerService.KeywordCheckBuffer[1] == 'l' &&
+                    compilerService.KeywordCheckBuffer[1] == 's' &&
+                    compilerService.KeywordCheckBuffer[1] == 'e')
+                {
+                    textSpanList.Add(textSpan with { DecorationByte = (byte)GenericDecorationKind.Keyword });
+                    return;
+                }
+                
+                goto default;
+            case 751: // finally
+                if (textSpan.Length == 7 &&
+                    compilerService.KeywordCheckBuffer[0] == 'f' &&
+                    compilerService.KeywordCheckBuffer[1] == 'i' &&
+                    compilerService.KeywordCheckBuffer[1] == 'n' &&
+                    compilerService.KeywordCheckBuffer[1] == 'a' &&
+                    compilerService.KeywordCheckBuffer[1] == 'l' &&
+                    compilerService.KeywordCheckBuffer[1] == 'l' &&
+                    compilerService.KeywordCheckBuffer[1] == 'y')
+                {
+                    textSpanList.Add(textSpan with { DecorationByte = (byte)GenericDecorationKind.Keyword });
+                    return;
+                }
+                
+                goto default;
+            case 327: // for
+                if (textSpan.Length == 3 &&
+                    compilerService.KeywordCheckBuffer[0] == 'f' &&
+                    compilerService.KeywordCheckBuffer[1] == 'o' &&
+                    compilerService.KeywordCheckBuffer[1] == 'r')
+                {
+                    textSpanList.Add(textSpan with { DecorationByte = (byte)GenericDecorationKind.Keyword });
+                    return;
+                }
+                
+                goto default;
+            case 870: // function
+                if (textSpan.Length == 8 &&
+                    compilerService.KeywordCheckBuffer[0] == 'f' &&
+                    compilerService.KeywordCheckBuffer[1] == 'u' &&
+                    compilerService.KeywordCheckBuffer[1] == 'n' &&
+                    compilerService.KeywordCheckBuffer[1] == 'c' &&
+                    compilerService.KeywordCheckBuffer[1] == 't' &&
+                    compilerService.KeywordCheckBuffer[1] == 'i' &&
+                    compilerService.KeywordCheckBuffer[1] == 'o' &&
+                    compilerService.KeywordCheckBuffer[1] == 'n')
+                {
+                    textSpanList.Add(textSpan with { DecorationByte = (byte)GenericDecorationKind.Keyword });
+                    return;
+                }
+                
+                goto default;
+            case 207: // if
+                if (textSpan.Length == 2 &&
+                    compilerService.KeywordCheckBuffer[0] == 'i' &&
+                    compilerService.KeywordCheckBuffer[1] == 'f')
+                {
+                    textSpanList.Add(textSpan with { DecorationByte = (byte)GenericDecorationKind.Keyword });
+                    return;
+                }
+                
+                goto default;
+            case 1086: // implements
+                if (textSpan.Length == 10 &&
+                    compilerService.KeywordCheckBuffer[0] == 'i' &&
+                    compilerService.KeywordCheckBuffer[1] == 'm' &&
+                    compilerService.KeywordCheckBuffer[1] == 'p' &&
+                    compilerService.KeywordCheckBuffer[1] == 'l' &&
+                    compilerService.KeywordCheckBuffer[1] == 'e' &&
+                    compilerService.KeywordCheckBuffer[1] == 'm' &&
+                    compilerService.KeywordCheckBuffer[1] == 'e' &&
+                    compilerService.KeywordCheckBuffer[1] == 'n' &&
+                    compilerService.KeywordCheckBuffer[1] == 't' &&
+                    compilerService.KeywordCheckBuffer[1] == 's')
+                {
+                    textSpanList.Add(textSpan with { DecorationByte = (byte)GenericDecorationKind.Keyword });
+                    return;
+                }
+                
+                goto default;
+            case 667: // import
+                if (textSpan.Length == 6 &&
+                    compilerService.KeywordCheckBuffer[0] == 'i' &&
+                    compilerService.KeywordCheckBuffer[1] == 'm' &&
+                    compilerService.KeywordCheckBuffer[1] == 'p' &&
+                    compilerService.KeywordCheckBuffer[1] == 'o' &&
+                    compilerService.KeywordCheckBuffer[1] == 'r' &&
+                    compilerService.KeywordCheckBuffer[1] == 't')
+                {
+                    textSpanList.Add(textSpan with { DecorationByte = (byte)GenericDecorationKind.Keyword });
+                    return;
+                }
+                
+                goto default;
+            case 215: // in
+                if (textSpan.Length == 2 &&
+                    compilerService.KeywordCheckBuffer[0] == 'i' &&
+                    compilerService.KeywordCheckBuffer[1] == 'n')
+                {
+                    textSpanList.Add(textSpan with { DecorationByte = (byte)GenericDecorationKind.Keyword });
+                    return;
+                }
+                
+                goto default;
+            case 1066: // instanceof
+                if (textSpan.Length == 10 &&
+                    compilerService.KeywordCheckBuffer[0] == 'i' &&
+                    compilerService.KeywordCheckBuffer[1] == 'n' &&
+                    compilerService.KeywordCheckBuffer[1] == 's' &&
+                    compilerService.KeywordCheckBuffer[1] == 't' &&
+                    compilerService.KeywordCheckBuffer[1] == 'a' &&
+                    compilerService.KeywordCheckBuffer[1] == 'n' &&
+                    compilerService.KeywordCheckBuffer[1] == 'c' &&
+                    compilerService.KeywordCheckBuffer[1] == 'e' &&
+                    compilerService.KeywordCheckBuffer[1] == 'o' &&
+                    compilerService.KeywordCheckBuffer[1] == 'f')
+                {
+                    textSpanList.Add(textSpan with { DecorationByte = (byte)GenericDecorationKind.Keyword });
+                    return;
+                }
+                
+                goto default;
+            case 945: // interface
+                if (textSpan.Length == 9 &&
+                    compilerService.KeywordCheckBuffer[0] == 'i' &&
+                    compilerService.KeywordCheckBuffer[1] == 'n' &&
+                    compilerService.KeywordCheckBuffer[1] == 't' &&
+                    compilerService.KeywordCheckBuffer[1] == 'e' &&
+                    compilerService.KeywordCheckBuffer[1] == 'r' &&
+                    compilerService.KeywordCheckBuffer[1] == 'f' &&
+                    compilerService.KeywordCheckBuffer[1] == 'a' &&
+                    compilerService.KeywordCheckBuffer[1] == 'c' &&
+                    compilerService.KeywordCheckBuffer[1] == 'e')
+                {
+                    textSpanList.Add(textSpan with { DecorationByte = (byte)GenericDecorationKind.Keyword });
+                    return;
+                }
+                
+                goto default;
+            case 325: // let
+                if (textSpan.Length == 3 &&
+                    compilerService.KeywordCheckBuffer[0] == 'l' &&
+                    compilerService.KeywordCheckBuffer[1] == 'e' &&
+                    compilerService.KeywordCheckBuffer[1] == 't')
+                {
+                    textSpanList.Add(textSpan with { DecorationByte = (byte)GenericDecorationKind.Keyword });
+                    return;
+                }
+                
+                goto default;
+            case 330: // new
+                if (textSpan.Length == 3 &&
+                    compilerService.KeywordCheckBuffer[0] == 'n' &&
+                    compilerService.KeywordCheckBuffer[1] == 'e' &&
+                    compilerService.KeywordCheckBuffer[1] == 'w')
+                {
+                    textSpanList.Add(textSpan with { DecorationByte = (byte)GenericDecorationKind.Keyword });
+                    return;
+                }
+                
+                goto default;
+            case 443: // null
+                if (textSpan.Length == 4 &&
+                    compilerService.KeywordCheckBuffer[0] == 'n' &&
+                    compilerService.KeywordCheckBuffer[1] == 'u' &&
+                    compilerService.KeywordCheckBuffer[1] == 'l' &&
+                    compilerService.KeywordCheckBuffer[1] == 'l')
+                {
+                    textSpanList.Add(textSpan with { DecorationByte = (byte)GenericDecorationKind.Keyword });
+                    return;
+                }
+                
+                goto default;
+            case 716: // package
+                if (textSpan.Length == 7 &&
+                    compilerService.KeywordCheckBuffer[0] == 'p' &&
+                    compilerService.KeywordCheckBuffer[1] == 'a' &&
+                    compilerService.KeywordCheckBuffer[1] == 'c' &&
+                    compilerService.KeywordCheckBuffer[1] == 'k' &&
+                    compilerService.KeywordCheckBuffer[1] == 'a' &&
+                    compilerService.KeywordCheckBuffer[1] == 'g' &&
+                    compilerService.KeywordCheckBuffer[1] == 'e')
+                {
+                    textSpanList.Add(textSpan with { DecorationByte = (byte)GenericDecorationKind.Keyword });
+                    return;
+                }
+                
+                goto default;
+            case 970: // protected
+                if (textSpan.Length == 9 &&
+                    compilerService.KeywordCheckBuffer[0] == 'p' &&
+                    compilerService.KeywordCheckBuffer[1] == 'r' &&
+                    compilerService.KeywordCheckBuffer[1] == 'o' &&
+                    compilerService.KeywordCheckBuffer[1] == 't' &&
+                    compilerService.KeywordCheckBuffer[1] == 'e' &&
+                    compilerService.KeywordCheckBuffer[1] == 'c' &&
+                    compilerService.KeywordCheckBuffer[1] == 't' &&
+                    compilerService.KeywordCheckBuffer[1] == 'e' &&
+                    compilerService.KeywordCheckBuffer[1] == 'd')
+                {
+                    textSpanList.Add(textSpan with { DecorationByte = (byte)GenericDecorationKind.Keyword });
+                    return;
+                }
+                
+                goto default;
+            case 639: // public
+                if (textSpan.Length == 6 &&
+                    compilerService.KeywordCheckBuffer[0] == 'a' &&
+                    compilerService.KeywordCheckBuffer[1] == 'a' &&
+                    compilerService.KeywordCheckBuffer[1] == 'a' &&
+                    compilerService.KeywordCheckBuffer[1] == 'a' &&
+                    compilerService.KeywordCheckBuffer[1] == 'a' &&
+                    compilerService.KeywordCheckBuffer[1] == 'a')
+                {
+                    textSpanList.Add(textSpan with { DecorationByte = (byte)GenericDecorationKind.Keyword });
+                    return;
+                }
+                
+                goto default;
+            case 672: // return
+                if (textSpan.Length == 6 &&
+                    compilerService.KeywordCheckBuffer[0] == 'a' &&
+                    compilerService.KeywordCheckBuffer[1] == 'a' &&
+                    compilerService.KeywordCheckBuffer[1] == 'a' &&
+                    compilerService.KeywordCheckBuffer[1] == 'a' &&
+                    compilerService.KeywordCheckBuffer[1] == 'a' &&
+                    compilerService.KeywordCheckBuffer[1] == 'a')
+                {
+                    textSpanList.Add(textSpan with { DecorationByte = (byte)GenericDecorationKind.Keyword });
+                    return;
+                }
+                
+                goto default;
+            case 559: // super
+                if (textSpan.Length == 5 &&
+                    compilerService.KeywordCheckBuffer[0] == 'a' &&
+                    compilerService.KeywordCheckBuffer[1] == 'a' &&
+                    compilerService.KeywordCheckBuffer[1] == 'a' &&
+                    compilerService.KeywordCheckBuffer[1] == 'a' &&
+                    compilerService.KeywordCheckBuffer[1] == 'a')
+                {
+                    textSpanList.Add(textSpan with { DecorationByte = (byte)GenericDecorationKind.Keyword });
+                    return;
+                }
+                
+                goto default;
+            case 658: // switch
+                if (textSpan.Length == 6 &&
+                    compilerService.KeywordCheckBuffer[0] == 'a' &&
+                    compilerService.KeywordCheckBuffer[1] == 'a' &&
+                    compilerService.KeywordCheckBuffer[1] == 'a' &&
+                    compilerService.KeywordCheckBuffer[1] == 'a' &&
+                    compilerService.KeywordCheckBuffer[1] == 'a' &&
+                    compilerService.KeywordCheckBuffer[1] == 'a')
+                {
+                    textSpanList.Add(textSpan with { DecorationByte = (byte)GenericDecorationKind.Keyword });
+                    return;
+                }
+                
+                goto default;
+            case 648: // static
+                if (textSpan.Length == 6 &&
+                    compilerService.KeywordCheckBuffer[0] == 'a' &&
+                    compilerService.KeywordCheckBuffer[1] == 'a' &&
+                    compilerService.KeywordCheckBuffer[1] == 'a' &&
+                    compilerService.KeywordCheckBuffer[1] == 'a' &&
+                    compilerService.KeywordCheckBuffer[1] == 'a' &&
+                    compilerService.KeywordCheckBuffer[1] == 'a')
+                {
+                    textSpanList.Add(textSpan with { DecorationByte = (byte)GenericDecorationKind.Keyword });
+                    return;
+                }
+                
+                goto default;
+            case 440: // this
+                if (textSpan.Length == 4 &&
+                    compilerService.KeywordCheckBuffer[0] == 'a' &&
+                    compilerService.KeywordCheckBuffer[1] == 'a' &&
+                    compilerService.KeywordCheckBuffer[1] == 'a' &&
+                    compilerService.KeywordCheckBuffer[1] == 'a')
+                {
+                    textSpanList.Add(textSpan with { DecorationByte = (byte)GenericDecorationKind.Keyword });
+                    return;
+                }
+                
+                goto default;
+            case 564: // throw
+                if (textSpan.Length == 5 &&
+                    compilerService.KeywordCheckBuffer[0] == 'a' &&
+                    compilerService.KeywordCheckBuffer[1] == 'a' &&
+                    compilerService.KeywordCheckBuffer[1] == 'a' &&
+                    compilerService.KeywordCheckBuffer[1] == 'a' &&
+                    compilerService.KeywordCheckBuffer[1] == 'a')
+                {
+                    textSpanList.Add(textSpan with { DecorationByte = (byte)GenericDecorationKind.Keyword });
+                    return;
+                }
+                
+                goto default;
+            case 351: // try
+                if (textSpan.Length == 3 &&
+                    compilerService.KeywordCheckBuffer[0] == 'a' &&
+                    compilerService.KeywordCheckBuffer[1] == 'a' &&
+                    compilerService.KeywordCheckBuffer[1] == 'a')
+                {
+                    textSpanList.Add(textSpan with { DecorationByte = (byte)GenericDecorationKind.Keyword });
+                    return;
+                }
+                
+                goto default;
+            case 416: // True
+                if (textSpan.Length == 4 &&
+                    compilerService.KeywordCheckBuffer[0] == 'a' &&
+                    compilerService.KeywordCheckBuffer[1] == 'a' &&
+                    compilerService.KeywordCheckBuffer[1] == 'a' &&
+                    compilerService.KeywordCheckBuffer[1] == 'a')
+                {
+                    textSpanList.Add(textSpan with { DecorationByte = (byte)GenericDecorationKind.Keyword });
+                    return;
+                }
+                
+                goto default;
+            case 663: // typeof
+                if (textSpan.Length == 6 &&
+                    compilerService.KeywordCheckBuffer[0] == 'a' &&
+                    compilerService.KeywordCheckBuffer[1] == 'a' &&
+                    compilerService.KeywordCheckBuffer[1] == 'a' &&
+                    compilerService.KeywordCheckBuffer[1] == 'a' &&
+                    compilerService.KeywordCheckBuffer[1] == 'a' &&
+                    compilerService.KeywordCheckBuffer[1] == 'a')
+                {
+                    textSpanList.Add(textSpan with { DecorationByte = (byte)GenericDecorationKind.Keyword });
+                    return;
+                }
+                
+                goto default;
+            case 329: // var
+                if (textSpan.Length == 3 &&
+                    compilerService.KeywordCheckBuffer[0] == 'a' &&
+                    compilerService.KeywordCheckBuffer[1] == 'a' &&
+                    compilerService.KeywordCheckBuffer[1] == 'a')
+                {
+                    textSpanList.Add(textSpan with { DecorationByte = (byte)GenericDecorationKind.Keyword });
+                    return;
+                }
+                
+                goto default;
+            case 434: // void
+                if (textSpan.Length == 4 &&
+                    compilerService.KeywordCheckBuffer[0] == 'a' &&
+                    compilerService.KeywordCheckBuffer[1] == 'a' &&
+                    compilerService.KeywordCheckBuffer[1] == 'a' &&
+                    compilerService.KeywordCheckBuffer[1] == 'a')
+                {
+                    textSpanList.Add(textSpan with { DecorationByte = (byte)GenericDecorationKind.Keyword });
+                    return;
+                }
+                
+                goto default;
+            case 537: // while
+                if (textSpan.Length == 5 &&
+                    compilerService.KeywordCheckBuffer[0] == 'a' &&
+                    compilerService.KeywordCheckBuffer[1] == 'a' &&
+                    compilerService.KeywordCheckBuffer[1] == 'a' &&
+                    compilerService.KeywordCheckBuffer[1] == 'a' &&
+                    compilerService.KeywordCheckBuffer[1] == 'a')
+                {
+                    textSpanList.Add(textSpan with { DecorationByte = (byte)GenericDecorationKind.Keyword });
+                    return;
+                }
+                
+                goto default;
+            case 444: // with
+                if (textSpan.Length == 4 &&
+                    compilerService.KeywordCheckBuffer[0] == 'a' &&
+                    compilerService.KeywordCheckBuffer[1] == 'a' &&
+                    compilerService.KeywordCheckBuffer[1] == 'a' &&
+                    compilerService.KeywordCheckBuffer[1] == 'a')
+                {
+                    textSpanList.Add(textSpan with { DecorationByte = (byte)GenericDecorationKind.Keyword });
+                    return;
+                }
+                
+                goto default;
+            case 535: // yield
+                if (textSpan.Length == 5 &&
+                    compilerService.KeywordCheckBuffer[0] == 'a' &&
+                    compilerService.KeywordCheckBuffer[1] == 'a' &&
+                    compilerService.KeywordCheckBuffer[1] == 'a' &&
+                    compilerService.KeywordCheckBuffer[1] == 'a' &&
+                    compilerService.KeywordCheckBuffer[1] == 'a')
+                {
+                    textSpanList.Add(textSpan with { DecorationByte = (byte)GenericDecorationKind.Keyword });
+                    return;
+                }
+                
+                goto default;
+            default:
+                textSpanList.Add(textSpan);
+                return;
+        }
     }
 }

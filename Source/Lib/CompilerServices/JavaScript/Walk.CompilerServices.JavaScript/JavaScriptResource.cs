@@ -1,19 +1,12 @@
-using Walk.TextEditor.RazorLib.Lexers.Models;
 using Walk.TextEditor.RazorLib.CompilerServices;
+using Walk.TextEditor.RazorLib.Lexers.Models;
 
 namespace Walk.CompilerServices.JavaScript;
 
-public class JavaScriptResource : ICompilerServiceResource
+public class JavaScriptResource : CompilerServiceResource
 {
-    public JavaScriptResource(
-        ResourceUri resourceUri,
-        ICompilerService compilerService)
+    public JavaScriptResource(ResourceUri resourceUri, JavaScriptCompilerService javaScriptCompilerService)
+        : base(resourceUri, javaScriptCompilerService)
     {
-        ResourceUri = resourceUri;
-        CompilerService = compilerService;
     }
-    
-    public ResourceUri ResourceUri { get; }
-    public ICompilerService CompilerService { get; }
-    public ICompilationUnit CompilationUnit { get; set; }
 }

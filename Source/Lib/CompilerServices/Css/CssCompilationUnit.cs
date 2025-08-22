@@ -7,4 +7,3 @@ public class CssCompilationUnit : ICompilationUnit
 {
     public List<TextEditorTextSpan> TextSpanList { get; set; }
 }
-

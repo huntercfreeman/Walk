@@ -18,6 +18,7 @@ using Walk.CompilerServices.DotNetSolution;
 using Walk.CompilerServices.Json;
 using Walk.CompilerServices.Razor;
 using Walk.CompilerServices.Xml;
+using Walk.CompilerServices.JavaScript;
 using Walk.Extensions.DotNet;
 using Walk.Extensions.DotNet.AppDatas.Models;
 using Walk.Extensions.DotNet.CommandLines.Models;
@@ -504,7 +505,7 @@ public static class InitializationHelper
     {
         var cSharpCompilerService = new CSharpCompilerService(DotNetService.TextEditorService);
         var cSharpProjectCompilerService = new CSharpProjectCompilerService(DotNetService.TextEditorService);
-        // var javaScriptCompilerService = new JavaScriptCompilerService(TextEditorService);
+        var javaScriptCompilerService = new JavaScriptCompilerService(DotNetService.TextEditorService);
         var cssCompilerService = new CssCompilerService(DotNetService.TextEditorService);
         var dotNetSolutionCompilerService = new DotNetSolutionCompilerService(DotNetService.TextEditorService);
         var jsonCompilerService = new JsonCompilerService(DotNetService.TextEditorService);
@@ -516,7 +517,7 @@ public static class InitializationHelper
         DotNetService.TextEditorService.RegisterCompilerService(ExtensionNoPeriodFacts.XML, xmlCompilerService);
         DotNetService.TextEditorService.RegisterCompilerService(ExtensionNoPeriodFacts.C_SHARP_PROJECT, cSharpProjectCompilerService);
         DotNetService.TextEditorService.RegisterCompilerService(ExtensionNoPeriodFacts.C_SHARP_CLASS, cSharpCompilerService);
-        // DotNetService.TextEditorService.RegisterCompilerService(ExtensionNoPeriodFacts.JAVA_SCRIPT, JavaScriptCompilerService);
+        DotNetService.TextEditorService.RegisterCompilerService(ExtensionNoPeriodFacts.JAVA_SCRIPT, javaScriptCompilerService);
         DotNetService.TextEditorService.RegisterCompilerService(ExtensionNoPeriodFacts.RAZOR_CODEBEHIND, cSharpCompilerService);
         DotNetService.TextEditorService.RegisterCompilerService(ExtensionNoPeriodFacts.RAZOR_MARKUP, razorCompilerService);
         DotNetService.TextEditorService.RegisterCompilerService(ExtensionNoPeriodFacts.CSHTML_CLASS, razorCompilerService);

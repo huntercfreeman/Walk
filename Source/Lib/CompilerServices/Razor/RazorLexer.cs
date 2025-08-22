@@ -14,41 +14,6 @@ public static class RazorLexer
 
     public static RazorLexerOutput Lex(StreamReaderWrap streamReaderWrap)
     {
-        /*var keywordList = new List<string>
-        {
-            "Pseudo"
-        };
-        
-        Console.WriteLine("=======================");
-        Console.WriteLine("=======================");
-        
-        // var hashSet = new HashSet<int>();
-        
-        var longestKeyword = string.Empty;
-        
-        foreach (var keyword in keywordList)
-        {
-            if (keyword.Length > longestKeyword.Length)
-                longestKeyword = keyword;
-        
-            var sum = 0;
-            foreach (var character in keyword)
-            {
-                sum += (int)character;
-            }
-            
-            // if (!hashSet.Add(sum))
-            // {
-            //    Console.WriteLine($"!DUPLICATE!:{sum}/{keyword}");
-            //}
-            Console.WriteLine($"case {sum}: // {keyword}");
-        }
-        
-        Console.WriteLine($"{longestKeyword} {longestKeyword.Length}");
-        
-        Console.WriteLine("=======================");
-        Console.WriteLine("=======================");*/
-    
         var context = RazorLexerContextKind.Expect_TagOrText;
         var output = new RazorLexerOutput();
         
@@ -2451,6 +2416,8 @@ var keywordList = new List<string>
         
         Console.WriteLine("=======================");
         Console.WriteLine("=======================");*/
+        
+        
 
 
 

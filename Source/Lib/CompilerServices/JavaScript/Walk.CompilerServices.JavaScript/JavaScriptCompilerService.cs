@@ -30,6 +30,8 @@ public class JavaScriptCompilerService : ICompilerService
     public IReadOnlyList<ICompilerServiceResource> CompilerServiceResources { get; }
     
     public IReadOnlyDictionary<string, TypeDefinitionNode> AllTypeDefinitions { get; }
+    
+    public char[] KeywordCheckBuffer { get; } = new char[10];
 
     public void RegisterResource(ResourceUri resourceUri, bool shouldTriggerResourceWasModified)
     {
@@ -142,11 +144,8 @@ public class JavaScriptCompilerService : ICompilerService
 
     public ValueTask ParseAsync(TextEditorEditContext editContext, TextEditorModel modelModifier, bool shouldApplySyntaxHighlighting)
     {
-        var lexer = new JavaScriptLexer(
-            modelModifier.PersistentState.ResourceUri,
-            modelModifier.GetAllText());
-            
-        lexer.Lex();
+        using StreamReader sr = new StreamReader(modelModifier.PersistentState.ResourceUri.Value);
+        var lexerOutput = JavaScriptLexer.Lex(this, new StreamReaderWrap(sr));
     
         lock (_resourceMapLock)
         {
@@ -154,9 +153,9 @@ public class JavaScriptCompilerService : ICompilerService
             {
                 var resource = _resourceMap[modelModifier.PersistentState.ResourceUri];
                 
-                resource.CompilationUnit = new ExtendedCompilationUnit
+                resource.CompilationUnit = new JavaScriptCompilationUnit
                 {
-                    TokenList = lexer.SyntaxTokenList,
+                    TextSpanList = lexerOutput.TextSpanList
                 };
             }
         }
@@ -164,7 +163,7 @@ public class JavaScriptCompilerService : ICompilerService
         editContext.TextEditorService.Model_ApplySyntaxHighlighting(
             editContext,
             modelModifier,
-            lexer.SyntaxTokenList.Select(x => x.TextSpan));
+            lexerOutput.TextSpanList);
 
         ResourceParsed?.Invoke();
         
