@@ -8,12 +8,7 @@ public interface IFileTemplate
     /// </summary>
     public string DisplayName { get; }
     public FileTemplateKind FileTemplateKind { get; }
-    /// <summary>
-    /// Func&lt;string filename, bool isApplicable&gt;
-    /// <br/><br/>
-    /// Take .SingleOrDefault() to find the IsExactTemplate
-    /// </summary>
-    public Func<string, bool> IsExactTemplate { get; }
+    public string FileExtensionNoPeriod { get; }
     /// <summary>
     /// Func&lt;string filename, bool isApplicable&gt;
     /// <br/><br/>

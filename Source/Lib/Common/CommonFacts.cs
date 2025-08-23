@@ -471,7 +471,7 @@ public static class CommonFacts
     public static readonly IFileTemplate CSharpClass = new FileTemplate(
         "C# Class",
         FileTemplateKind.CSharp,
-        filename => filename.EndsWith('.' + CommonFacts.C_SHARP_CLASS),
+        CommonFacts.C_SHARP_CLASS,
         _ => _emptyFileTemplateList,
         true,
         CSharpClassCreateFileFunc);
@@ -479,7 +479,7 @@ public static class CommonFacts
     public static readonly IFileTemplate RazorCodebehind = new FileTemplate(
         "Razor codebehind",
         FileTemplateKind.Razor,
-        filename => filename.EndsWith('.' + CommonFacts.RAZOR_CODEBEHIND),
+        CommonFacts.RAZOR_CODEBEHIND,
         _ => _emptyFileTemplateList,
         true,
         RazorCodebehindCreateFileFunc);
@@ -487,7 +487,7 @@ public static class CommonFacts
     public static readonly IFileTemplate RazorMarkup = new FileTemplate(
         "Razor markup",
         FileTemplateKind.Razor,
-        filename => filename.EndsWith('.' + CommonFacts.RAZOR_MARKUP),
+        CommonFacts.RAZOR_MARKUP,
         fileName => new List<IFileTemplate>
         {
             RazorCodebehind
