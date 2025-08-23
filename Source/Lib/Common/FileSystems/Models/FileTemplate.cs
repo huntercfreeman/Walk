@@ -4,7 +4,6 @@ public class FileTemplate : IFileTemplate
 {
     public FileTemplate(
         string displayName,
-        string codeName,
         FileTemplateKind fileTemplateKind,
         Func<string, bool> isExactTemplate,
         Func<string, List<IFileTemplate>> relatedFileTemplatesFunc,
