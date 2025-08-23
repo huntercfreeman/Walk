@@ -3,6 +3,7 @@ using Walk.Common.RazorLib.Keys.Models;
 using Walk.TextEditor.RazorLib;
 using Walk.TextEditor.RazorLib.TextEditors.Models;
 using Walk.TextEditor.RazorLib.TextEditors.Models.Internals;
+using Walk.TextEditor.RazorLib.TextEditors.Displays.Internals;
 using Walk.Extensions.DotNet;
 
 namespace Walk.Extensions.Config.Installations.Displays;
@@ -31,7 +32,7 @@ public partial class EditorDisplay : ComponentBase, IDisposable
         {
             TabIndex = 0,
             HeaderButtonKinds = TextEditorHeaderButtonKindsList,
-            HeaderComponentType = null,
+            HeaderComponentType = typeof(TextEditorFileExtensionHeaderDisplay),
             TextEditorHtmlElementId = Guid.NewGuid(),
         };
         
