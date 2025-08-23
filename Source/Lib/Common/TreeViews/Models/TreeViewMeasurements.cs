@@ -6,4 +6,6 @@ public record struct TreeViewMeasurements(
     double BoundingClientRectLeft,
     double BoundingClientRectTop,
     double ScrollLeft,
-    double ScrollTop);
+    double ScrollTop,
+    double ScrollWidth,
+    double ScrollHeight);

@@ -57,6 +57,8 @@
             endingIndex = 0;
         }
 
+        <div style="height: @(CommonService.Options_LineHeight * list.Count)px; width: 1px; position: absolute;"></div>
+
         for (int i = startingIndex; i < endingIndex; i++)
         {
             var node = list[i];

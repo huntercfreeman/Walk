@@ -64,6 +64,12 @@ window.walkCommon = {
                 {
                     Y: event.deltaY,
                     ShiftKey: event.shiftKey,
+                    ScrollLeft: element.scrollLeft,
+                    ScrollTop: element.scrollTop,
+                    ScrollWidth: element.scrollWidth,
+                    ScrollHeight: element.scrollHeight,
+                    ViewWidth: element.offsetWidth,
+                    ViewHeight: element.offsetHeight,
                 });
             });
         
@@ -86,6 +92,8 @@ window.walkCommon = {
                             MetaKey: event.metaKey,
                             ScrollLeft: element.scrollLeft,
                             ScrollTop: element.scrollTop,
+                            ScrollWidth: element.scrollWidth,
+                            ScrollHeight: element.scrollHeight,
                             ViewWidth: element.offsetWidth,
                             ViewHeight: element.offsetHeight,
                             BoundingClientRectLeft: boundingClientRect.left,
@@ -107,6 +115,8 @@ window.walkCommon = {
                     ShiftKey: event.shiftKey,
                     ScrollLeft: element.scrollLeft,
                     ScrollTop: element.scrollTop,
+                    ScrollWidth: element.scrollWidth,
+                    ScrollHeight: element.scrollHeight,
                     ViewWidth: element.offsetWidth,
                     ViewHeight: element.offsetHeight,
                     BoundingClientRectLeft: boundingClientRect.left,
@@ -126,6 +136,8 @@ window.walkCommon = {
                     ShiftKey: event.shiftKey,
                     ScrollLeft: element.scrollLeft,
                     ScrollTop: element.scrollTop,
+                    ScrollWidth: element.scrollWidth,
+                    ScrollHeight: element.scrollHeight,
                     ViewWidth: element.offsetWidth,
                     ViewHeight: element.offsetHeight,
                     BoundingClientRectLeft: boundingClientRect.left,
@@ -144,6 +156,8 @@ window.walkCommon = {
                     ShiftKey: event.shiftKey,
                     ScrollLeft: element.scrollLeft,
                     ScrollTop: element.scrollTop,
+                    ScrollWidth: element.scrollWidth,
+                    ScrollHeight: element.scrollHeight,
                     ViewWidth: element.offsetWidth,
                     ViewHeight: element.offsetHeight,
                     BoundingClientRectLeft: boundingClientRect.left,
@@ -162,6 +176,8 @@ window.walkCommon = {
                     ShiftKey: event.shiftKey,
                     ScrollLeft: element.scrollLeft,
                     ScrollTop: element.scrollTop,
+                    ScrollWidth: element.scrollWidth,
+                    ScrollHeight: element.scrollHeight,
                     ViewWidth: element.offsetWidth,
                     ViewHeight: element.offsetHeight,
                     BoundingClientRectLeft: boundingClientRect.left,
@@ -183,6 +199,8 @@ window.walkCommon = {
                 BoundingClientRectTop: 0,
                 ScrollLeft: 0,
                 ScrollTop: 0,
+                ScrollWidth: 0,
+                ScrollHeight: 0,
             };
         }
 
@@ -206,6 +224,8 @@ window.walkCommon = {
                 BoundingClientRectTop: 0,
                 ScrollLeft: 0,
                 ScrollTop: 0,
+                ScrollWidth: 0,
+                ScrollHeight: 0,
             };
         }
 
@@ -218,6 +238,8 @@ window.walkCommon = {
             BoundingClientRectTop: boundingClientRect.top,
             ScrollLeft: element.scrollLeft,
             ScrollTop: element.scrollTop,
+            ScrollWidth: element.scrollWidth,
+            ScrollHeight: element.scrollHeight,
         };
     },
     treeViewScrollVertical: function (elementId, changeInScrollTop) {
