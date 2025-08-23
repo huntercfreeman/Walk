@@ -28,6 +28,26 @@ public partial class TreeViewContainerDisplay : ComponentBase, IDisposable
     private Guid _guidId = Guid.NewGuid();
     private string _htmlId = null!;
     
+    private readonly Guid VERTICAL_scrollbarGuid = Guid.NewGuid();
+    private readonly Guid HORIZONTAL_scrollbarGuid = Guid.NewGuid();
+    
+    private bool VERTICAL_thinksLeftMouseButtonIsDown;
+
+    private double VERTICAL_clientXThresholdToResetScrollTopPosition;
+    private double VERTICAL_scrollTopOnMouseDown;
+
+    private string VERTICAL_ScrollbarElementId;
+    private string VERTICAL_ScrollbarSliderElementId;
+
+    private bool HORIZONTAL_thinksLeftMouseButtonIsDown;
+    private double HORIZONTAL_clientYThresholdToResetScrollLeftPosition;
+    private double HORIZONTAL_scrollLeftOnMouseDown;
+
+    private string HORIZONTAL_ScrollbarElementId;
+    private string HORIZONTAL_ScrollbarSliderElementId;
+    
+    private string CONNECTOR_ScrollbarElementId;
+    
     /// <summary>
     /// UI thread only.
     ///
@@ -46,6 +66,8 @@ public partial class TreeViewContainerDisplay : ComponentBase, IDisposable
     private double _seenScrollLeft;
     private double _seenScrollTop;
     
+    private string ScrollbarSizeCssValue;
+    
     /// <summary>
     /// UI thread only.
     /// </summary>
@@ -62,6 +84,16 @@ public partial class TreeViewContainerDisplay : ComponentBase, IDisposable
         _dotNetHelper = DotNetObjectReference.Create(this);
     
         _htmlId = $"luth_common_treeview-{_guidId}";
+        
+        /*VERTICAL_ScrollbarElementId = $"di_te_{VERTICAL_scrollbarGuid}";
+        VERTICAL_ScrollbarSliderElementId = $"di_te_{VERTICAL_scrollbarGuid}-slider";
+        
+        HORIZONTAL_ScrollbarElementId = $"di_te_{HORIZONTAL_scrollbarGuid}";
+        HORIZONTAL_ScrollbarSliderElementId = $"di_te_{HORIZONTAL_scrollbarGuid}-slider";
+        
+        CONNECTOR_ScrollbarElementId = $"di_te_{Guid.NewGuid()}";
+        
+        ScrollbarSizeCssValue = ScrollbarFacts.SCROLLBAR_SIZE_IN_PIXELS.ToCssValue();*/
         
         CommonService.CommonUiStateChanged += OnTreeViewStateChanged;
     }
@@ -146,8 +178,6 @@ public partial class TreeViewContainerDisplay : ComponentBase, IDisposable
     {
         if (_treeViewContainer is null)
             return;
-    
-        Console.WriteLine("ReceiveOnWheel");
         
         _treeViewMeasurements = _treeViewMeasurements with
         {
@@ -263,7 +293,13 @@ public partial class TreeViewContainerDisplay : ComponentBase, IDisposable
         
         if (treeViewContainerLocal is null)
             return;
-    
+        
+        _treeViewMeasurements = _treeViewMeasurements with
+        {
+            ScrollHeight = eventArgsKeyDown.ScrollHeight,
+            ScrollWidth = eventArgsKeyDown.ScrollWidth
+        };
+        
         for (int i = 0; i < _flatNodeList.Count; i++)
         {
             var node = _flatNodeList[i];

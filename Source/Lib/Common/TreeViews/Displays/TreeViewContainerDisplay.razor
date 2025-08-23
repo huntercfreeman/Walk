@@ -38,28 +38,21 @@
             startingIndex = 0;
         }
             
-        var endingIndex = (int)Math.Ceiling(_treeViewMeasurements.ViewHeight / CommonService.Options_LineHeight) + startingIndex;
-        if (endingIndex > list.Count)
+        var upperLimitIndex = (int)Math.Ceiling(_treeViewMeasurements.ViewHeight / CommonService.Options_LineHeight) + startingIndex;
+        upperLimitIndex += 2;
+        if (upperLimitIndex > list.Count)
         {
-            endingIndex = list.Count;
-        }
-        else if (endingIndex < list.Count - 2)
-        {
-            endingIndex += 2;
-        }
-        else if (endingIndex < list.Count - 1)
-        {
-            endingIndex += 1;
+            upperLimitIndex = list.Count;
         }
         
-        if (endingIndex < 0)
+        if (upperLimitIndex < 0)
         {
-            endingIndex = 0;
+            upperLimitIndex = 0;
         }
 
         <div style="height: @(CommonService.Options_LineHeight * list.Count)px; width: 1px; position: absolute;"></div>
 
-        for (int i = startingIndex; i < endingIndex; i++)
+        for (int i = startingIndex; i < upperLimitIndex; i++)
         {
             var node = list[i];
         
@@ -104,4 +97,30 @@
             </div>
         }
     }
+    
+    @*<div class="di_te_scrollbar-section">
+		
+		<div class="di_te_scrollbar di_te_scrollbar-horizontal"
+		     id="@HORIZONTAL_ScrollbarElementId"
+		     style="@virtualizationResult.HORIZONTAL_ScrollbarCssStyle">
+		    
+		    <div class="di_te_scrollbar-slider"
+		         id="@HORIZONTAL_ScrollbarSliderElementId"
+		         style="@virtualizationResult.HORIZONTAL_SliderCssStyle">
+		    </div>
+		</div><!--
+		
+		--><div class="di_te_scrollbar di_te_scrollbar-vertical"
+		        id="@VERTICAL_ScrollbarElementId">
+		         
+		    <div class="di_te_scrollbar-slider"
+		         id="@VERTICAL_ScrollbarSliderElementId"
+		         style="@virtualizationResult.VERTICAL_SliderCssStyle">
+		    </div>
+		</div><!--
+	    
+		--><div class="di_te_scrollbar di_te_scrollbar-connector"
+		        id="@CONNECTOR_ScrollbarElementId">
+		</div>
+	</div>*@
 </div>
