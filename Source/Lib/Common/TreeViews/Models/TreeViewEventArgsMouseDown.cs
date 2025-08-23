@@ -8,6 +8,8 @@ public record struct TreeViewEventArgsMouseDown(
     bool ShiftKey,
     double ScrollLeft,
     double ScrollTop,
+    double ScrollWidth,
+    double ScrollHeight,
     double ViewWidth,
     double ViewHeight,
     double BoundingClientRectLeft,

@@ -43,6 +43,9 @@ public partial class TreeViewContainerDisplay : ComponentBase, IDisposable
     private TreeViewMeasurements _treeViewMeasurements;
     private DotNetObjectReference<TreeViewContainerDisplay>? _dotNetHelper;
     
+    private double _seenScrollLeft;
+    private double _seenScrollTop;
+    
     /// <summary>
     /// UI thread only.
     /// </summary>
@@ -75,6 +78,87 @@ public partial class TreeViewContainerDisplay : ComponentBase, IDisposable
                 _dotNetHelper,
                 _htmlId);
         }
+        
+        if (_treeViewContainer is not null)
+        {
+            // It is thought that you shouldn't '.ConfigureAwait(false)' for the scrolling JS Interop,
+            // because this could provide a "natural throttle for the scrolling"
+            // since more ITextEditorService edit contexts might have time to be calculated
+            // and thus not every single one of them need be scrolled to.
+            // This idea has not been proven yet.
+            //
+            // (the same is true for rendering the UI, it might avoid some renders
+            //  because the most recent should render took time to get executed).
+            
+            // WARNING: It is only thread safe to read, then assign `_componentData.ScrollLeftChanged` or `_componentData.ScrollTopChanged`...
+            // ...if this method is running synchronously, i.e.: there hasn't been an await.
+            // |
+            // `if (firstRender)` is the only current scenario where an await comes prior to this read and assign.
+            //
+            // ScrollLeft is most likely to shortcircuit, thus it is being put first.
+            
+            var scroll_LeftChanged = _seenScrollLeft != _treeViewMeasurements.ScrollLeft;
+            var scroll_TopChanged = _seenScrollTop != _treeViewMeasurements.ScrollTop;
+            
+            if (scroll_LeftChanged && scroll_TopChanged)
+            {
+                _seenScrollLeft = _treeViewMeasurements.ScrollLeft;
+                _seenScrollTop = _treeViewMeasurements.ScrollTop;
+                
+                await CommonService.JsRuntimeCommonApi.JsRuntime.InvokeVoidAsync(
+                        "walkCommon.treeViewSetScrollPositionBoth",
+                        _htmlId,
+                        _treeViewMeasurements.ScrollLeft,
+                        _treeViewMeasurements.ScrollTop)
+                    .ConfigureAwait(false);
+            }
+            else if (scroll_TopChanged) // ScrollTop is most likely to come next
+            {
+                if (_treeViewMeasurements.ScrollTop < 0)
+                    _treeViewMeasurements.ScrollTop = 0;
+            
+                _seenScrollTop = _treeViewMeasurements.ScrollTop;
+                
+                await CommonService.JsRuntimeCommonApi.JsRuntime.InvokeVoidAsync(
+                        "walkCommon.treeViewSetScrollPositionTop",
+                        _htmlId,
+                        _treeViewMeasurements.ScrollTop)
+                    .ConfigureAwait(false);
+            }
+            else if (scroll_LeftChanged)
+            {
+                if (_treeViewMeasurements.ScrollLeft < 0)
+                    _treeViewMeasurements.ScrollLeft = 0;
+            
+                _seenScrollLeft = _treeViewMeasurements.ScrollLeft;
+                
+                await CommonService.JsRuntimeCommonApi.JsRuntime.InvokeVoidAsync(
+                        "walkCommon.treeViewSetScrollPositionLeft",
+                        _htmlId,
+                        _treeViewMeasurements.ScrollLeft)
+                    .ConfigureAwait(false);
+            }
+        }
+    }
+    
+    [JSInvokable]
+    public async Task ReceiveOnWheel(TreeViewEventArgsMouseDown eventArgsKeyDown)
+    {
+        if (_treeViewContainer is null)
+            return;
+    
+        Console.WriteLine("ReceiveOnWheel");
+        
+        _treeViewMeasurements = _treeViewMeasurements with
+        {
+            ScrollTop = _treeViewMeasurements.ScrollTop + eventArgsKeyDown.Y,
+            ViewWidth = eventArgsKeyDown.ViewWidth,
+            ViewHeight = eventArgsKeyDown.ViewHeight,
+            ScrollWidth = eventArgsKeyDown.ScrollWidth,
+            ScrollHeight = eventArgsKeyDown.ScrollHeight,
+        };
+        ValidateScrollbar();
+        StateHasChanged();
     }
     
     [JSInvokable]
@@ -98,6 +182,8 @@ public partial class TreeViewContainerDisplay : ComponentBase, IDisposable
                         ShiftKey: false,
                         eventArgsKeyDown.ScrollLeft,
                         eventArgsKeyDown.ScrollTop,
+                        eventArgsKeyDown.ScrollWidth,
+                        eventArgsKeyDown.ScrollHeight,
                         eventArgsKeyDown.ViewWidth,
                         eventArgsKeyDown.ViewHeight,
                         eventArgsKeyDown.BoundingClientRectLeft,
@@ -117,6 +203,8 @@ public partial class TreeViewContainerDisplay : ComponentBase, IDisposable
                             ShiftKey: false,
                             eventArgsKeyDown.ScrollLeft,
                             eventArgsKeyDown.ScrollTop,
+                            eventArgsKeyDown.ScrollWidth,
+                            eventArgsKeyDown.ScrollHeight,
                             eventArgsKeyDown.ViewWidth,
                             eventArgsKeyDown.ViewHeight,
                             eventArgsKeyDown.BoundingClientRectLeft,
@@ -137,6 +225,8 @@ public partial class TreeViewContainerDisplay : ComponentBase, IDisposable
                             ShiftKey: false,
                             eventArgsKeyDown.ScrollLeft,
                             eventArgsKeyDown.ScrollTop,
+                            eventArgsKeyDown.ScrollWidth,
+                            eventArgsKeyDown.ScrollHeight,
                             eventArgsKeyDown.ViewWidth,
                             eventArgsKeyDown.ViewHeight,
                             eventArgsKeyDown.BoundingClientRectLeft,
@@ -183,18 +273,21 @@ public partial class TreeViewContainerDisplay : ComponentBase, IDisposable
                 
                 if (top < eventArgsKeyDown.ScrollTop)
                 {
-                    await CommonService.JsRuntimeCommonApi.JsRuntime.InvokeVoidAsync(
-                        "walkCommon.treeViewScrollVertical",
-                        _htmlId,
-                        top - eventArgsKeyDown.ScrollTop);
+                    _treeViewMeasurements = _treeViewMeasurements with
+                    {
+                        ScrollTop = _treeViewMeasurements.ScrollTop + (top - eventArgsKeyDown.ScrollTop)
+                    };
                 }
                 else if (top + (2 * LineHeight) > eventArgsKeyDown.ScrollTop + eventArgsKeyDown.ViewHeight)
                 {
-                    await CommonService.JsRuntimeCommonApi.JsRuntime.InvokeVoidAsync(
-                        "walkCommon.treeViewScrollVertical",
-                        _htmlId,
-                        top - (eventArgsKeyDown.ScrollTop + eventArgsKeyDown.ViewHeight) + (2 * LineHeight));
+                    _treeViewMeasurements = _treeViewMeasurements with
+                    {
+                        ScrollTop = _treeViewMeasurements.ScrollTop + (top - (eventArgsKeyDown.ScrollTop + eventArgsKeyDown.ViewHeight) + (2 * LineHeight))
+                    };
                 }
+                
+                ValidateScrollbar();
+                StateHasChanged();
                 break;
             }
         }
@@ -207,7 +300,11 @@ public partial class TreeViewContainerDisplay : ComponentBase, IDisposable
             eventArgsMouseDown.ViewWidth,
             eventArgsMouseDown.ViewHeight,
             eventArgsMouseDown.BoundingClientRectLeft,
-            eventArgsMouseDown.BoundingClientRectTop);
+            eventArgsMouseDown.BoundingClientRectTop,
+            eventArgsMouseDown.ScrollLeft,
+            eventArgsMouseDown.ScrollTop,
+            eventArgsMouseDown.ScrollWidth,
+            eventArgsMouseDown.ScrollHeight);
         
         if (TreeViewContainerParameter.OnContextMenuFunc is null)
             return;
@@ -279,7 +376,11 @@ public partial class TreeViewContainerDisplay : ComponentBase, IDisposable
             eventArgsMouseDown.ViewWidth,
             eventArgsMouseDown.ViewHeight,
             eventArgsMouseDown.BoundingClientRectLeft,
-            eventArgsMouseDown.BoundingClientRectTop);
+            eventArgsMouseDown.BoundingClientRectTop,
+            eventArgsMouseDown.ScrollLeft,
+            eventArgsMouseDown.ScrollTop,
+            eventArgsMouseDown.ScrollWidth,
+            eventArgsMouseDown.ScrollHeight);
     
         var relativeY = eventArgsMouseDown.Y - _treeViewMeasurements.BoundingClientRectTop + eventArgsMouseDown.ScrollTop;
         relativeY = Math.Max(0, relativeY);
@@ -317,7 +418,11 @@ public partial class TreeViewContainerDisplay : ComponentBase, IDisposable
             eventArgsMouseDown.ViewWidth,
             eventArgsMouseDown.ViewHeight,
             eventArgsMouseDown.BoundingClientRectLeft,
-            eventArgsMouseDown.BoundingClientRectTop);
+            eventArgsMouseDown.BoundingClientRectTop,
+            eventArgsMouseDown.ScrollLeft,
+            eventArgsMouseDown.ScrollTop,
+            eventArgsMouseDown.ScrollWidth,
+            eventArgsMouseDown.ScrollHeight);
     
         var relativeY = eventArgsMouseDown.Y - _treeViewMeasurements.BoundingClientRectTop + eventArgsMouseDown.ScrollTop;
         relativeY = Math.Max(0, relativeY);
@@ -353,7 +458,11 @@ public partial class TreeViewContainerDisplay : ComponentBase, IDisposable
             eventArgsMouseDown.ViewWidth,
             eventArgsMouseDown.ViewHeight,
             eventArgsMouseDown.BoundingClientRectLeft,
-            eventArgsMouseDown.BoundingClientRectTop);
+            eventArgsMouseDown.BoundingClientRectTop,
+            eventArgsMouseDown.ScrollLeft,
+            eventArgsMouseDown.ScrollTop,
+            eventArgsMouseDown.ScrollWidth,
+            eventArgsMouseDown.ScrollHeight);
     
         var relativeY = eventArgsMouseDown.Y - _treeViewMeasurements.BoundingClientRectTop + eventArgsMouseDown.ScrollTop;
         relativeY = Math.Max(0, relativeY);
@@ -514,7 +623,7 @@ public partial class TreeViewContainerDisplay : ComponentBase, IDisposable
     /// <summary>
     /// This method should only be invoked from the "UI thread" due to the usage of `CommonBackgroundTaskApi.UiStringBuilder`.
     /// </summary>
-    private string GetNodeElementCssStyle(TreeViewNoType node)
+    private string GetNodeElementCssStyle(TreeViewNoType node, int index)
     {
         if (!CommonService.IntToCssValueCache.ContainsKey(node.Depth * OffsetPerDepthInPixels))
             CommonService.IntToCssValueCache.Add(node.Depth * OffsetPerDepthInPixels, (node.Depth * OffsetPerDepthInPixels).ToCssValue());
@@ -525,7 +634,43 @@ public partial class TreeViewContainerDisplay : ComponentBase, IDisposable
         CommonService.UiStringBuilder.Append("px; ");
         CommonService.UiStringBuilder.Append(CommonService.Options_LineHeight_CssStyle);
         
+        var topCssValue = (index * CommonService.Options_LineHeight).ToCssValue();
+        CommonService.UiStringBuilder.Append($"top: {topCssValue}px;");
+        
         return CommonService.UiStringBuilder.ToString();
+    }
+    
+    private void ValidateScrollbar()
+    {
+        if (_treeViewMeasurements.ScrollLeft + _treeViewMeasurements.ViewWidth > _treeViewMeasurements.ScrollWidth)
+        {
+            _treeViewMeasurements = _treeViewMeasurements with
+            {
+                ScrollLeft = _treeViewMeasurements.ScrollWidth - _treeViewMeasurements.ViewWidth
+            };
+        }
+        if (_treeViewMeasurements.ScrollTop + _treeViewMeasurements.ViewHeight > _treeViewMeasurements.ScrollHeight)
+        {
+            _treeViewMeasurements = _treeViewMeasurements with
+            {
+                ScrollTop = _treeViewMeasurements.ScrollHeight - _treeViewMeasurements.ViewHeight
+            };
+        }
+    
+        if (_treeViewMeasurements.ScrollLeft < 0)
+        {
+            _treeViewMeasurements = _treeViewMeasurements with
+            {
+                ScrollLeft = 0
+            };
+        }
+        if (_treeViewMeasurements.ScrollTop < 0)
+        {
+            _treeViewMeasurements = _treeViewMeasurements with
+            {
+                ScrollTop = 0
+            };
+        }
     }
     
     public void Dispose()

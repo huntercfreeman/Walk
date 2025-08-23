@@ -277,8 +277,9 @@ ul.di_indent-child-content {
 
 .di_tree-view-state {
     height: 100%;
-    overflow: auto;
+    overflow: hidden;
     outline: none;
+    position: relative;
 }
 
     .di_tree-view-state:focus-within > div.di_selected {
@@ -298,6 +299,9 @@ ul.di_indent-child-content {
         white-space: nowrap;
         outline: none;
         align-items: center;
+        position: absolute;
+        left: 0;
+        width: 100%;
     }
 
         .di_tree-view-state > div.di_selected {

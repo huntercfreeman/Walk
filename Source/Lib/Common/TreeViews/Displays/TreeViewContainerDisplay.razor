@@ -27,7 +27,39 @@
         IndexActiveNode = 0;
         string? cssClass;
 
-        for (int i = 0; i < list.Count; i++)
+        var startingIndex = (int)(_treeViewMeasurements.ScrollTop / CommonService.Options_LineHeight);
+        if (startingIndex > 1)
+            startingIndex -= 2;
+        else if (startingIndex > 0)
+            startingIndex -= 1;
+        
+        if (startingIndex < 0)
+        {
+            startingIndex = 0;
+        }
+            
+        var endingIndex = (int)Math.Ceiling(_treeViewMeasurements.ViewHeight / CommonService.Options_LineHeight) + startingIndex;
+        if (endingIndex > list.Count)
+        {
+            endingIndex = list.Count;
+        }
+        else if (endingIndex < list.Count - 2)
+        {
+            endingIndex += 2;
+        }
+        else if (endingIndex < list.Count - 1)
+        {
+            endingIndex += 1;
+        }
+        
+        if (endingIndex < 0)
+        {
+            endingIndex = 0;
+        }
+
+        <div style="height: @(CommonService.Options_LineHeight * list.Count)px; width: 1px; position: absolute;"></div>
+
+        for (int i = startingIndex; i < endingIndex; i++)
         {
             var node = list[i];
         
@@ -42,7 +74,7 @@
             }
         
             <div class="@cssClass"
-                 style="@GetNodeElementCssStyle(node)">
+                 style="@GetNodeElementCssStyle(node, i)">
 
                 @if (node.IsExpandable)
                 {
