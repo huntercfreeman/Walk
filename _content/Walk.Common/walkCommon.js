@@ -53,6 +53,26 @@ window.walkCommon = {
             return;
         
         if (element) {
+            element.addEventListener('wheel', (event) => {
+                event.preventDefault();
+            }, {
+                passive: false,
+            });
+            
+            element.addEventListener('wheel', (event) => {
+                dotNetHelper.invokeMethodAsync("ReceiveOnWheel",
+                {
+                    Y: event.deltaY,
+                    ShiftKey: event.shiftKey,
+                    ScrollLeft: element.scrollLeft,
+                    ScrollTop: element.scrollTop,
+                    ScrollWidth: element.scrollWidth,
+                    ScrollHeight: element.scrollHeight,
+                    ViewWidth: element.offsetWidth,
+                    ViewHeight: element.offsetHeight,
+                });
+            });
+        
             element.addEventListener('keydown', (event) => {
                 switch(event.key) {
                     case "Shift":
@@ -72,6 +92,8 @@ window.walkCommon = {
                             MetaKey: event.metaKey,
                             ScrollLeft: element.scrollLeft,
                             ScrollTop: element.scrollTop,
+                            ScrollWidth: element.scrollWidth,
+                            ScrollHeight: element.scrollHeight,
                             ViewWidth: element.offsetWidth,
                             ViewHeight: element.offsetHeight,
                             BoundingClientRectLeft: boundingClientRect.left,
@@ -93,6 +115,8 @@ window.walkCommon = {
                     ShiftKey: event.shiftKey,
                     ScrollLeft: element.scrollLeft,
                     ScrollTop: element.scrollTop,
+                    ScrollWidth: element.scrollWidth,
+                    ScrollHeight: element.scrollHeight,
                     ViewWidth: element.offsetWidth,
                     ViewHeight: element.offsetHeight,
                     BoundingClientRectLeft: boundingClientRect.left,
@@ -112,6 +136,8 @@ window.walkCommon = {
                     ShiftKey: event.shiftKey,
                     ScrollLeft: element.scrollLeft,
                     ScrollTop: element.scrollTop,
+                    ScrollWidth: element.scrollWidth,
+                    ScrollHeight: element.scrollHeight,
                     ViewWidth: element.offsetWidth,
                     ViewHeight: element.offsetHeight,
                     BoundingClientRectLeft: boundingClientRect.left,
@@ -130,6 +156,8 @@ window.walkCommon = {
                     ShiftKey: event.shiftKey,
                     ScrollLeft: element.scrollLeft,
                     ScrollTop: element.scrollTop,
+                    ScrollWidth: element.scrollWidth,
+                    ScrollHeight: element.scrollHeight,
                     ViewWidth: element.offsetWidth,
                     ViewHeight: element.offsetHeight,
                     BoundingClientRectLeft: boundingClientRect.left,
@@ -148,6 +176,8 @@ window.walkCommon = {
                     ShiftKey: event.shiftKey,
                     ScrollLeft: element.scrollLeft,
                     ScrollTop: element.scrollTop,
+                    ScrollWidth: element.scrollWidth,
+                    ScrollHeight: element.scrollHeight,
                     ViewWidth: element.offsetWidth,
                     ViewHeight: element.offsetHeight,
                     BoundingClientRectLeft: boundingClientRect.left,
@@ -167,6 +197,10 @@ window.walkCommon = {
                 ViewHeight: 0,
                 BoundingClientRectLeft: 0,
                 BoundingClientRectTop: 0,
+                ScrollLeft: 0,
+                ScrollTop: 0,
+                ScrollWidth: 0,
+                ScrollHeight: 0,
             };
         }
 
@@ -188,6 +222,10 @@ window.walkCommon = {
                 ViewHeight: 0,
                 BoundingClientRectLeft: 0,
                 BoundingClientRectTop: 0,
+                ScrollLeft: 0,
+                ScrollTop: 0,
+                ScrollWidth: 0,
+                ScrollHeight: 0,
             };
         }
 
@@ -198,6 +236,10 @@ window.walkCommon = {
             ViewHeight: element.offsetHeight,
             BoundingClientRectLeft: boundingClientRect.left,
             BoundingClientRectTop: boundingClientRect.top,
+            ScrollLeft: element.scrollLeft,
+            ScrollTop: element.scrollTop,
+            ScrollWidth: element.scrollWidth,
+            ScrollHeight: element.scrollHeight,
         };
     },
     treeViewScrollVertical: function (elementId, changeInScrollTop) {
@@ -208,6 +250,47 @@ window.walkCommon = {
         }
 
 		element.scrollTop = element.scrollTop + changeInScrollTop;
+    },
+    treeViewSetScrollPositionBoth: function (elementId, scrollLeft, scrollTop) {
+        let element = document.getElementById(elementId);
+
+        if (!element) {
+            return;
+        }
+        
+		// 0 is falsey
+        if (scrollLeft || scrollLeft === 0) {
+            element.scrollLeft = scrollLeft;
+        }
+        
+		// 0 is falsey
+        if (scrollTop || scrollTop === 0) {
+            element.scrollTop = scrollTop;
+        }
+    },
+    treeViewSetScrollPositionLeft: function (elementId, scrollLeft) {
+        let element = document.getElementById(elementId);
+
+        if (!element) {
+            return;
+        }
+        
+		// 0 is falsey
+        if (scrollLeft || scrollLeft === 0) {
+            element.scrollLeft = scrollLeft;
+        }
+    },
+    treeViewSetScrollPositionTop: function (elementId, scrollTop) {
+        let element = document.getElementById(elementId);
+
+        if (!element) {
+            return;
+        }
+        
+		// 0 is falsey
+        if (scrollTop || scrollTop === 0) {
+            element.scrollTop = scrollTop;
+        }
     },
     menuInitialize: function (dotNetHelper, elementId) {
         let element = document.getElementById(elementId);
