@@ -109,20 +109,6 @@ public record struct ThemeState(IReadOnlyList<ThemeRecord> ThemeList)
 /* Start IStorageService, LocalStorageService */
 /* End IStorageService, LocalStorageService */
 
-
-
-/* Start IOutlineService */
-public record struct OutlineState(
-    string? ElementId,
-    MeasuredHtmlElementDimensions? MeasuredHtmlElementDimensions,
-    bool NeedsMeasured)
-{
-    public OutlineState() : this(null, null, false)
-    {
-    }
-}
-/* End IOutlineService */
-
 /* Start IPanelService */
 /// <summary>
 /// Once the 'PanelGroupList'/'PanelList' are exposed publically,
