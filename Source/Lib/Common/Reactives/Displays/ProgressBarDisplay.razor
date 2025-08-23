@@ -1,35 +1,37 @@
 <div class="di_progress-bar">
 	@{
 		var localProgressBarModel = ProgressBarModel;
-
-		// Don't bother with string formatting the double, just cast it to an int,
-		// and manually add the '%'.
-		//
-		// String formatting and css can break if the wrong culture is used,
-		// (i.e.: any locations that use a period in place of a comma to deliminate
-		//       1,000 and up.)
-		//
-		// If one uses the correct culture it would be fine, but I'm just not going
-		// to deal with it here, at the least for now.
-		var localDecimalPercentProgress = Math.Ceiling(localProgressBarModel.DecimalPercentProgress * 100);
-		var percentageComplete = $"{localDecimalPercentProgress}%";
+		var localDecimalPercentProgress = (int)Math.Ceiling(localProgressBarModel.DecimalPercentProgress * 100);
+		var percentageCompleteString = $"{localDecimalPercentProgress}%";
 	}
     
     <div class="di_progress-bar-time-elapsed">
-		@($"{localProgressBarModel.GetTimeElapsed().TotalSeconds:N3}") seconds
+        @($"{localProgressBarModel.GetTimeElapsed().TotalSeconds:N3}") seconds
 	</div>
     
     <div class="di_progress-bar" style="display: flex;">
     	<div class="di_progress-bar-fill"
 	         style="@_progressBarFillCssStyle">
 	
+			@{
+			    CommonService.UiStringBuilder.Clear();
+		        CommonService.UiStringBuilder.Append("width: ");
+		        CommonService.UiStringBuilder.Append(percentageCompleteString);
+		        CommonService.UiStringBuilder.Append(";");
+			}
 			<div class="di_progress-bar-fill-slider"
-				 style="background-color: var(--di_active-with-focus-background-color); width: @(percentageComplete); height: 100%;">
+				 style="@CommonService.UiStringBuilder.ToString()">
 			</div>
 	
+			@{
+			    CommonService.UiStringBuilder.Clear();
+		        CommonService.UiStringBuilder.Append("left: calc(50% - ");
+		        CommonService.UiStringBuilder.Append(percentageCompleteString.Length);
+		        CommonService.UiStringBuilder.Append("ch);");
+			}
 			<div class="di_progress-bar-fill-text"
-				 style="position: absolute; left: calc(50% - @(percentageComplete.Length)ch); top: calc(0.2em + 1px);">
-				@percentageComplete
+				 style="@CommonService.UiStringBuilder.ToString()">
+				@percentageCompleteString
 			</div>
 		</div>
 		
