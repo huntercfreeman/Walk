@@ -12,7 +12,6 @@ public class FileTemplate : IFileTemplate
         Func<FileTemplateParameter, FileTemplateResult> constructFileContents)
     {
         DisplayName = displayName;
-        CodeName = codeName;
         FileTemplateKind = fileTemplateKind;
         IsExactTemplate = isExactTemplate;
         RelatedFileTemplatesFunc = relatedFileTemplatesFunc;
@@ -22,7 +21,6 @@ public class FileTemplate : IFileTemplate
 
     public Guid Id { get; } = Guid.NewGuid();
     public string DisplayName { get; }
-    public string CodeName { get; }
     public FileTemplateKind FileTemplateKind { get; }
     public Func<string, bool> IsExactTemplate { get; }
     public Func<string, List<IFileTemplate>> RelatedFileTemplatesFunc { get; }
