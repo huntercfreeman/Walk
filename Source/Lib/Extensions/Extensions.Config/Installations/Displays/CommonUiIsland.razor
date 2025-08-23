@@ -142,7 +142,7 @@
 
 @if (_ctrlIsDown)
 {
-    var textEditorGroup = DotNetService.TextEditorService.Group_GetOrDefault(Walk.TextEditor.RazorLib.TextEditorService.EditorTextEditorGroupKey);
+    var textEditorGroup = DotNetService.TextEditorService.Group_GetTextEditorGroupState().EditorTextEditorGroup;
 
     <div class="di_main-layout-overlay">
         <div>

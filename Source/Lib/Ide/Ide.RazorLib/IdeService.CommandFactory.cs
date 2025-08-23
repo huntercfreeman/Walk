@@ -436,7 +436,7 @@ public partial class IdeService
 
         TextEditorService.WorkerArbitrary.PostUnique(async editContext =>
         {
-            var group = TextEditorService.Group_GetOrDefault(TextEditorService.EditorTextEditorGroupKey);
+            var group = TextEditorService.Group_GetTextEditorGroupState().EditorTextEditorGroup;
             if (group is null)
                 return;
 

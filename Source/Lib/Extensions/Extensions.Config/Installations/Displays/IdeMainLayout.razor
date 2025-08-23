@@ -230,36 +230,7 @@
         </div>
     
         <div class="di_editor" style="@DotNetService.CommonService.EditorElementStyle">
-            <div class="di_section-body di_text-editor-group"
-                 id="@HtmlId">
-            	@{
-        	        var textEditorGroup = DotNetService.TextEditorService.Group_GetTextEditorGroupState().EditorTextEditorGroup;
-        	    }
-        	    
-        	    @if (textEditorGroup.ViewModelKeyList.Count == 0)
-        	    {
-        	        <text>No editors are open currently</text>
-        	    }
-                else
-                {
-            		<div class="di_text-editor-group-tabs-list">
-        				<TabListDisplay @ref="_tabListDisplay"
-        								TabList="@UiThread_GetTabList(textEditorGroup)"/>
-        			</div>
-        	
-        			<div class="di_text-editor-group-active-view-model">
-        				<FindOverlayDisplay ComponentDataKey="_componentDataKey"/>
-        		            
-    					<TextEditorFileExtensionHeaderDisplay ComponentDataKey="_componentDataKey"
-    					                                      TextEditorViewModelKey="textEditorGroup.ActiveViewModelKey"/>
-    	            	
-    	                <TextEditorViewModelSlimDisplay TextEditorViewModelKey="textEditorGroup.ActiveViewModelKey"
-    	                                                ViewModelDisplayOptions="_viewModelDisplayOptions"/>
-    	                           
-    					<TextEditorDefaultFooterDisplay ComponentDataKey="_componentDataKey"/>
-                    </div>
-                }
-            </div>
+            <EditorDisplay/>
         </div>
         
         <div class="di_resize-column"

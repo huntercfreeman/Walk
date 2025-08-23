@@ -1,0 +1,58 @@
+@using Walk.Common.RazorLib.Dropdowns.Displays
+@using Walk.Common.RazorLib.Dropdowns.Models
+@using Walk.Common.RazorLib.Notifications.Models
+@using Walk.Common.RazorLib.Notifications.Models;
+@using Walk.Common.RazorLib.Dynamics.Models
+
+<div class="di_dynamic-tab-list">
+
+	@{
+	    var textEditorState = DotNetService.TextEditorService.TextEditorState;
+	    
+	    var textEditorGroup = DotNetService.TextEditorService.Group_GetTextEditorGroupState().EditorTextEditorGroup;
+	    
+    	_tabCascadingValueBatch.HandleTabButtonOnContextMenu = HandleTabButtonOnContextMenu;
+    	_tabCascadingValueBatch.SubscribeToDragEventForScrolling = SubscribeToDragEventForScrolling;
+    
+    	var appOptionsState = DotNetService.CommonService.GetAppOptionsState();
+    	var iconDriver = new IconDriver(
+			appOptionsState.Options.IconSizeInPixels,
+			appOptionsState.Options.IconSizeInPixels);
+    }
+
+	@foreach (var viewModelKey in textEditorGroup.ViewModelKeyList)
+	{
+        var viewModel = textEditorState.ViewModelGetOrDefault(viewModelKey);
+        
+        if (viewModel is not null)
+        {
+            viewModel.PersistentState.TabGroup = textEditorGroup;
+            ITab? localTabViewModel = viewModel.PersistentState;
+
+            @if (_tabCascadingValueBatch is not null)
+            {
+            	var localTabGroup = localTabViewModel.TabGroup;
+            	// localTabGroup can be null here
+                
+                <button class="@GetCssClass(localTabGroup, localTabViewModel)"
+                        title="@localTabViewModel.TitleVerbose"
+                		@key="localTabViewModel.DynamicViewModelKey"
+                		@onclick="e => OnClick(localTabViewModel, e)"
+                        @onmousedown="e => HandleOnMouseDownAsync(localTabViewModel, e)"
+                        @onmouseup="HandleOnMouseUp"
+                        @onmouseout="e => HandleOnMouseOutAsync(localTabViewModel, e)"
+                		@oncontextmenu:preventDefault="true"
+                		@oncontextmenu="e => ManuallyPropagateOnContextMenu(e, localTabViewModel)">
+                
+                	<span class="di_dynamic-tab-text">@localTabViewModel.Title</span>
+                
+            		<button class="di_button di_button-close"
+            	            @onclick:stopPropagation="true"
+            	            @onclick="e => CloseTabOnClickAsync(localTabViewModel)">
+            	        @IconCloseFragment.Render(iconDriver)
+            	    </button>
+        	    </button>
+            }
+        }
+	}
+</div>
