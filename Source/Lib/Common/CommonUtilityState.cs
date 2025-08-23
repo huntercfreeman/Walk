@@ -1,6 +1,5 @@
 using Microsoft.AspNetCore.Components.Web;
 using Walk.Common.RazorLib.Dimensions.Models;
-using Walk.Common.RazorLib.Keymaps.Models;
 using Walk.Common.RazorLib.Themes.Models;
 using Walk.Common.RazorLib.JavaScriptObjects.Models;
 using Walk.Common.RazorLib.Keys.Models;
@@ -53,25 +52,6 @@ public record struct AppDimensionState(int Width, int Height, int Left, int Top)
     }
 }
 /* End IAppDimensionService */
-
-/* Start IKeymapService */
-/// <summary>
-/// The list provided should not be modified after passing it as a parameter..
-/// Make a shallow copy, and pass the shallow copy, if further modification of your list will be necessary.
-///
-/// ---
-///
-/// Use this state to lookup a <see cref="KeymapLayer"> to determine the 'when' clause of the keybind.
-/// If a <see cref="KeymapLayer"> is used, but isn't registered in this state, it will still function properly
-/// but the 'when' clause cannot be shown when the user inspects the keybind in the keymap.
-/// </summary>
-public record struct KeymapState(List<KeymapLayer> KeymapLayerList)
-{
-    public KeymapState() : this(new List<KeymapLayer>())
-    {
-    }
-}
-/* End IKeymapService */
 
 /* Start IAppOptionsService */
 public record struct AppOptionsState(CommonOptions Options)

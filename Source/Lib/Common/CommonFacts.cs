@@ -1,10 +1,10 @@
 using System.Text;
 using Microsoft.AspNetCore.Components.Web;
 using Walk.Common.RazorLib.Exceptions;
+using Walk.Common.RazorLib.Keymaps.Models;
 using Walk.Common.RazorLib.Panels.Models;
 using Walk.Common.RazorLib.FileSystems.Models;
 using Walk.Common.RazorLib.Keys.Models;
-using Walk.Common.RazorLib.Keymaps.Models;
 using Walk.Common.RazorLib.Themes.Models;
 using Walk.Common.RazorLib.Dimensions.Models;
 using Walk.Common.RazorLib.Dynamics.Models;
@@ -95,11 +95,6 @@ public static class CommonFacts
         return IsMetaKey(keyboardEventArgs.Key, keyboardEventArgs.Code);
     }
     
-    public static bool IsMetaKey(KeymapArgs keymapArgs)
-    {
-        return IsMetaKey(keymapArgs.Key, keymapArgs.Code);
-    }
-
     public static bool IsMetaKey(string key, string code)
     {
         if (key.Length > 1 && !IsWhitespaceCode(code))
@@ -253,13 +248,9 @@ public static class CommonFacts
             keyboardEventArgs.AltKey);
     }
     
-    public static bool CheckIsContextMenuEvent(KeymapArgs keymapArgs)
+    public static bool IsMetaKey(KeymapArgs keymapArgs)
     {
-        return CheckIsContextMenuEvent(
-            keymapArgs.Key,
-            keymapArgs.Code,
-            keymapArgs.ShiftKey,
-            keymapArgs.AltKey);
+        return IsMetaKey(keymapArgs.Key, keymapArgs.Code);
     }
 
     public static bool IsMovementKey(string key)
