@@ -1,5 +1,6 @@
 using System.Text;
 using Walk.TextEditor.RazorLib.Lexers.Models;
+using Walk.TextEditor.RazorLib.Decorations.Models;
 using Walk.CompilerServices.DotNetSolution.Models.Project;
 using Walk.CompilerServices.Xml;
 
@@ -119,7 +120,7 @@ public static class DotNetSolutionLexer
                                     output.TextSpanList.Add(new TextEditorTextSpan(
                                         startKeywordPosition,
                                         streamReaderWrap.PositionIndex,
-                                        (byte)XmlDecorationKind.TagNameNone));
+                                        (byte)GenericDecorationKind.Xml_TagNameNone));
                                     
                                     context = DotNetSolutionLexerContextKind.ProjectListings_Expect_ProjectTypeGuid;
                                     continue;
@@ -194,7 +195,7 @@ public static class DotNetSolutionLexer
                                     output.TextSpanList.Add(new TextEditorTextSpan(
                                         startKeywordPosition,
                                         streamReaderWrap.PositionIndex,
-                                        (byte)XmlDecorationKind.TagNameNone));
+                                        (byte)GenericDecorationKind.Xml_TagNameNone));
                                 
                                     context = DotNetSolutionLexerContextKind.Finish;
                                     continue;
@@ -227,7 +228,7 @@ public static class DotNetSolutionLexer
                                 output.TextSpanList.Add(new TextEditorTextSpan(
                                     startKeywordPosition,
                                     streamReaderWrap.PositionIndex,
-                                    (byte)XmlDecorationKind.TagNameNone));
+                                    (byte)GenericDecorationKind.Xml_TagNameNone));
                             
                                 hasSeenGlobalSectionNestedProjects = true;
                                 context = DotNetSolutionLexerContextKind.GlobalSectionNestedProjects_Expect_ChildGuid;

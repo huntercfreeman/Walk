@@ -531,33 +531,22 @@ public static class InitializationHelper
         // Decoration Mapper starts after this point.
         //
         
-        var cssDecorationMapper = new CssDecorationMapper();
-        var jsonDecorationMapper = new JsonDecorationMapper();
         var genericDecorationMapper = new GenericDecorationMapper();
-        var xmlDecorationMapper = new XmlDecorationMapper();
-        var razorDecorationMapper = new RazorDecorationMapper();
-        var terminalDecorationMapper = new TerminalDecorationMapper();
 
-        DotNetService.TextEditorService.RegisterDecorationMapper(CommonFacts.HTML, xmlDecorationMapper);
-        DotNetService.TextEditorService.RegisterDecorationMapper(CommonFacts.XML, xmlDecorationMapper);
-        DotNetService.TextEditorService.RegisterDecorationMapper(CommonFacts.C_SHARP_PROJECT, xmlDecorationMapper);
+        DotNetService.TextEditorService.RegisterDecorationMapper(CommonFacts.HTML, genericDecorationMapper);
+        DotNetService.TextEditorService.RegisterDecorationMapper(CommonFacts.XML, genericDecorationMapper);
+        DotNetService.TextEditorService.RegisterDecorationMapper(CommonFacts.C_SHARP_PROJECT, genericDecorationMapper);
         DotNetService.TextEditorService.RegisterDecorationMapper(CommonFacts.C_SHARP_CLASS, genericDecorationMapper);
         DotNetService.TextEditorService.RegisterDecorationMapper(CommonFacts.RAZOR_CODEBEHIND, genericDecorationMapper);
-        DotNetService.TextEditorService.RegisterDecorationMapper(CommonFacts.RAZOR_MARKUP, razorDecorationMapper);
-        DotNetService.TextEditorService.RegisterDecorationMapper(CommonFacts.CSHTML_CLASS, razorDecorationMapper);
-        DotNetService.TextEditorService.RegisterDecorationMapper(CommonFacts.CSS, cssDecorationMapper);
+        DotNetService.TextEditorService.RegisterDecorationMapper(CommonFacts.RAZOR_MARKUP, genericDecorationMapper);
+        DotNetService.TextEditorService.RegisterDecorationMapper(CommonFacts.CSHTML_CLASS, genericDecorationMapper);
+        DotNetService.TextEditorService.RegisterDecorationMapper(CommonFacts.CSS, genericDecorationMapper);
         DotNetService.TextEditorService.RegisterDecorationMapper(CommonFacts.JAVA_SCRIPT, genericDecorationMapper);
-        DotNetService.TextEditorService.RegisterDecorationMapper(CommonFacts.JSON, jsonDecorationMapper);
+        DotNetService.TextEditorService.RegisterDecorationMapper(CommonFacts.JSON, genericDecorationMapper);
         DotNetService.TextEditorService.RegisterDecorationMapper(CommonFacts.TYPE_SCRIPT, genericDecorationMapper);
-        DotNetService.TextEditorService.RegisterDecorationMapper(CommonFacts.F_SHARP, genericDecorationMapper);
-        DotNetService.TextEditorService.RegisterDecorationMapper(CommonFacts.C, genericDecorationMapper);
-        DotNetService.TextEditorService.RegisterDecorationMapper(CommonFacts.PYTHON, genericDecorationMapper);
-        DotNetService.TextEditorService.RegisterDecorationMapper(CommonFacts.H, genericDecorationMapper);
-        DotNetService.TextEditorService.RegisterDecorationMapper(CommonFacts.CPP, genericDecorationMapper);
-        DotNetService.TextEditorService.RegisterDecorationMapper(CommonFacts.HPP, genericDecorationMapper);
-        DotNetService.TextEditorService.RegisterDecorationMapper(CommonFacts.DOT_NET_SOLUTION, xmlDecorationMapper);
-        DotNetService.TextEditorService.RegisterDecorationMapper(CommonFacts.DOT_NET_SOLUTION_X, xmlDecorationMapper);
-        DotNetService.TextEditorService.RegisterDecorationMapper(CommonFacts.TERMINAL, terminalDecorationMapper);
+        DotNetService.TextEditorService.RegisterDecorationMapper(CommonFacts.DOT_NET_SOLUTION, genericDecorationMapper);
+        DotNetService.TextEditorService.RegisterDecorationMapper(CommonFacts.DOT_NET_SOLUTION_X, genericDecorationMapper);
+        DotNetService.TextEditorService.RegisterDecorationMapper(CommonFacts.TERMINAL, genericDecorationMapper);
     }
     
     public static void InitializePanelTabs(DotNetService DotNetService)

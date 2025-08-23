@@ -7,6 +7,7 @@ using Walk.Common.RazorLib.Reactives.Models;
 using Walk.TextEditor.RazorLib.TextEditors.Models;
 using Walk.TextEditor.RazorLib.TextEditors.Models.Internals;
 using Walk.TextEditor.RazorLib.Lexers.Models;
+using Walk.TextEditor.RazorLib.Decorations.Models;
 using Walk.Ide.RazorLib;
 using Walk.Ide.RazorLib.Terminals.Models;
 using Walk.Extensions.DotNet.TestExplorers.Models;
@@ -88,7 +89,7 @@ public partial class TestExplorerDetailsDisplay : ComponentBase, IDisposable
                         newDecorationTextSpanList.Add(new TextEditorTextSpan(
                             startPositionInclusive,
                             endPositionExclusive,
-                            (byte)TerminalDecorationKind.Comment));
+                            (byte)GenericDecorationKind.Terminal_Comment));
                     }
 
                     textOffset += spacingBetweenEntries.Length;
@@ -239,7 +240,7 @@ public partial class TestExplorerDetailsDisplay : ComponentBase, IDisposable
                 newDecorationTextSpanList.Add(new TextEditorTextSpan(
                     startPositionInclusive,
                     endPositionExclusive,
-                    (byte)TerminalDecorationKind.Keyword));
+                    (byte)GenericDecorationKind.Terminal_Keyword));
             }
 
             newContent = $"{treeViewStringFragment.Item.Value}:\n";
@@ -281,7 +282,7 @@ public partial class TestExplorerDetailsDisplay : ComponentBase, IDisposable
                 newDecorationTextSpanList.Add(new TextEditorTextSpan(
                     startPositionInclusive,
                     endPositionExclusive,
-                    (byte)TerminalDecorationKind.Keyword));
+                    (byte)GenericDecorationKind.Terminal_Keyword));
             }
 
             newContent = $"{treeViewProjectTestModel.Item.AbsolutePath.Name}:\n";

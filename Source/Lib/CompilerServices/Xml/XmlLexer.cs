@@ -1,4 +1,5 @@
 using Walk.TextEditor.RazorLib.Lexers.Models;
+using Walk.TextEditor.RazorLib.Decorations.Models;
 
 namespace Walk.CompilerServices.Xml;
 
@@ -101,7 +102,7 @@ public static class XmlLexer
                         output.TextSpanList.Add(new TextEditorTextSpan(
                             attributeNameStartPosition,
                             streamReaderWrap.PositionIndex,
-                            (byte)XmlDecorationKind.AttributeName,
+                            (byte)GenericDecorationKind.Xml_AttributeName,
                             attributeNameStartByte));
                         context = XmlLexerContextKind.Expect_AttributeValue;
                         break;
@@ -124,7 +125,7 @@ public static class XmlLexer
                         output.TextSpanList.Add(new TextEditorTextSpan(
                             attributeValueStartPosition,
                             streamReaderWrap.PositionIndex,
-                            (byte)XmlDecorationKind.AttributeValue,
+                            (byte)GenericDecorationKind.Xml_AttributeValue,
                             attributeValueStartByte));
                         context = XmlLexerContextKind.Expect_AttributeName;
                         break;
@@ -144,7 +145,7 @@ public static class XmlLexer
                         output.TextSpanList.Add(new TextEditorTextSpan(
                             textStartPosition,
                             streamReaderWrap.PositionIndex,
-                            (byte)XmlDecorationKind.Text,
+                            (byte)GenericDecorationKind.Xml_Text,
                             textStartByte));
                         context = XmlLexerContextKind.Expect_TagOrText;
                         break;
@@ -179,7 +180,7 @@ public static class XmlLexer
                         output.TextSpanList.Add(new TextEditorTextSpan(
                             attributeValueStartPosition,
                             streamReaderWrap.PositionIndex,
-                            (byte)XmlDecorationKind.AttributeValue,
+                            (byte)GenericDecorationKind.Xml_AttributeValue,
                             attributeValueStartByte));
                         context = XmlLexerContextKind.Expect_AttributeName;
                         break;
@@ -195,7 +196,7 @@ public static class XmlLexer
                         output.TextSpanList.Add(new TextEditorTextSpan(
                             delimiterStartPosition,
                             streamReaderWrap.PositionIndex,
-                            (byte)XmlDecorationKind.AttributeDelimiter,
+                            (byte)GenericDecorationKind.Xml_AttributeDelimiter,
                             delimiterStartByte));
                             
                         var attributeValueStartPosition = streamReaderWrap.PositionIndex;
@@ -216,12 +217,12 @@ public static class XmlLexer
                         output.TextSpanList.Add(new TextEditorTextSpan(
                             attributeValueStartPosition,
                             attributeValueEnd,
-                            (byte)XmlDecorationKind.AttributeValue,
+                            (byte)GenericDecorationKind.Xml_AttributeValue,
                             attributeValueStartByte));
                         output.TextSpanList.Add(new TextEditorTextSpan(
                             delimiterStartPosition,
                             streamReaderWrap.PositionIndex,
-                            (byte)XmlDecorationKind.AttributeDelimiter,
+                            (byte)GenericDecorationKind.Xml_AttributeDelimiter,
                             delimiterStartByte));
                         context = XmlLexerContextKind.Expect_AttributeName;
                         break;
@@ -236,7 +237,7 @@ public static class XmlLexer
                         output.TextSpanList.Add(new TextEditorTextSpan(
                             delimiterStartPosition,
                             streamReaderWrap.PositionIndex,
-                            (byte)XmlDecorationKind.AttributeDelimiter,
+                            (byte)GenericDecorationKind.Xml_AttributeDelimiter,
                             delimiterStartByte));
                         
                         var attributeValueStartPosition = streamReaderWrap.PositionIndex;
@@ -257,12 +258,12 @@ public static class XmlLexer
                         output.TextSpanList.Add(new TextEditorTextSpan(
                             attributeValueStartPosition,
                             attributeValueEnd,
-                            (byte)XmlDecorationKind.AttributeValue,
+                            (byte)GenericDecorationKind.Xml_AttributeValue,
                             attributeValueStartByte));
                         output.TextSpanList.Add(new TextEditorTextSpan(
                             delimiterStartPosition,
                             streamReaderWrap.PositionIndex,
-                            (byte)XmlDecorationKind.AttributeDelimiter,
+                            (byte)GenericDecorationKind.Xml_AttributeDelimiter,
                             delimiterStartByte));
                         context = XmlLexerContextKind.Expect_AttributeName;
                         break;
@@ -278,7 +279,7 @@ public static class XmlLexer
                             {
                                 output.TextSpanList[indexOfMostRecentTagOpen] = output.TextSpanList[indexOfMostRecentTagOpen] with
                                 {
-                                    DecorationByte = (byte)XmlDecorationKind.TagNameSelf,
+                                    DecorationByte = (byte)GenericDecorationKind.Xml_TagNameSelf,
                                 };
                                 indexOfMostRecentTagOpen = -1;
                             }
@@ -328,7 +329,7 @@ public static class XmlLexer
                         output.TextSpanList.Add(new TextEditorTextSpan(
                             attributeValueStartPosition,
                             streamReaderWrap.PositionIndex,
-                            (byte)XmlDecorationKind.AttributeOperator,
+                            (byte)GenericDecorationKind.Xml_AttributeOperator,
                             attributeValueStartByte));
                         break;
                     }
@@ -425,7 +426,7 @@ public static class XmlLexer
                         goto default;
                     }
                     
-                    var tagDecoration = (byte)XmlDecorationKind.TagNameOpen;
+                    var tagDecoration = (byte)GenericDecorationKind.Xml_TagNameOpen;
                     
                     if (context == XmlLexerContextKind.Expect_TagOrText)
                     {
@@ -433,7 +434,7 @@ public static class XmlLexer
                         
                         if (streamReaderWrap.CurrentCharacter == '/')
                         {
-                            tagDecoration = (byte)XmlDecorationKind.TagNameClose;
+                            tagDecoration = (byte)GenericDecorationKind.Xml_TagNameClose;
                             _ = streamReaderWrap.ReadCharacter();
                         }
                         else if (streamReaderWrap.CurrentCharacter == '!')
@@ -454,7 +455,7 @@ public static class XmlLexer
                             }
                             _ = streamReaderWrap.ReadCharacter();
                         }
-                        if (tagDecoration == (byte)XmlDecorationKind.TagNameOpen)
+                        if (tagDecoration == (byte)GenericDecorationKind.Xml_TagNameOpen)
                         {
                             indexOfMostRecentTagOpen = output.TextSpanList.Count;
                         }

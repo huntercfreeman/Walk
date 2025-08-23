@@ -1,5 +1,6 @@
 using System.Text;
 using Walk.TextEditor.RazorLib.Lexers.Models;
+using Walk.TextEditor.RazorLib.Decorations.Models;
 
 namespace Walk.CompilerServices.Xml;
 
@@ -35,9 +36,9 @@ public struct XmlOutputReader
         for (int indexTextSpan = 0; indexTextSpan < TextSpanList.Count; indexTextSpan++)
         {
             var textSpan = TextSpanList[indexTextSpan];
-            var decorationKind = (XmlDecorationKind)textSpan.DecorationByte;
+            var decorationKind = (GenericDecorationKind)textSpan.DecorationByte;
             
-            if (decorationKind == XmlDecorationKind.TagNameOpen || decorationKind == XmlDecorationKind.TagNameSelf)
+            if (decorationKind == GenericDecorationKind.Xml_TagNameOpen || decorationKind == GenericDecorationKind.Xml_TagNameSelf)
             {
                 sr.BaseStream.Seek(textSpan.ByteIndex, SeekOrigin.Begin);
                 sr.DiscardBufferedData();
@@ -56,7 +57,7 @@ public struct XmlOutputReader
             
                 while (indexTextSpan < TextSpanList.Count - 1)
                 {
-                    if ((XmlDecorationKind)TextSpanList[indexTextSpan + 1].DecorationByte == XmlDecorationKind.AttributeName)
+                    if ((GenericDecorationKind)TextSpanList[indexTextSpan + 1].DecorationByte == GenericDecorationKind.Xml_AttributeName)
                     {
                         var attributeNameTextSpan = TextSpanList[indexTextSpan + 1];
                         ++indexTextSpan;
@@ -73,17 +74,17 @@ public struct XmlOutputReader
                         
                         while (indexTextSpan < TextSpanList.Count - 1)
                         {
-                            var nextDecorationKind = (XmlDecorationKind)TextSpanList[indexTextSpan + 1].DecorationByte;
+                            var nextDecorationKind = (GenericDecorationKind)TextSpanList[indexTextSpan + 1].DecorationByte;
                             
-                            if (nextDecorationKind == XmlDecorationKind.AttributeOperator)
+                            if (nextDecorationKind == GenericDecorationKind.Xml_AttributeOperator)
                             {
                                 ++indexTextSpan;
                             }
-                            else if (nextDecorationKind == XmlDecorationKind.AttributeDelimiter)
+                            else if (nextDecorationKind == GenericDecorationKind.Xml_AttributeDelimiter)
                             {
                                 ++indexTextSpan;
                             }
-                            else if (nextDecorationKind == XmlDecorationKind.AttributeValue)
+                            else if (nextDecorationKind == GenericDecorationKind.Xml_AttributeValue)
                             {
                                 var attributeValueTextSpan = TextSpanList[indexTextSpan + 1];
                                 
@@ -125,7 +126,7 @@ public struct XmlOutputReader
                     }
                     else
                     {
-                        if ((XmlDecorationKind)TextSpanList[indexTextSpan + 1].DecorationByte == XmlDecorationKind.AttributeDelimiter)
+                        if ((GenericDecorationKind)TextSpanList[indexTextSpan + 1].DecorationByte == GenericDecorationKind.Xml_AttributeDelimiter)
                         {
                             ++indexTextSpan;
                         }
@@ -163,9 +164,9 @@ public struct XmlOutputReader
         for (int indexTextSpan = 0; indexTextSpan < TextSpanList.Count; indexTextSpan++)
         {
             var textSpan = TextSpanList[indexTextSpan];
-            var decorationKind = (XmlDecorationKind)textSpan.DecorationByte;
+            var decorationKind = (GenericDecorationKind)textSpan.DecorationByte;
             
-            if (decorationKind == XmlDecorationKind.TagNameOpen || decorationKind == XmlDecorationKind.TagNameSelf)
+            if (decorationKind == GenericDecorationKind.Xml_TagNameOpen || decorationKind == GenericDecorationKind.Xml_TagNameSelf)
             {
                 sr.BaseStream.Seek(textSpan.ByteIndex, SeekOrigin.Begin);
                 sr.DiscardBufferedData();
@@ -185,7 +186,7 @@ public struct XmlOutputReader
             
                 while (indexTextSpan < TextSpanList.Count - 1)
                 {
-                    if ((XmlDecorationKind)TextSpanList[indexTextSpan + 1].DecorationByte == XmlDecorationKind.AttributeName)
+                    if ((GenericDecorationKind)TextSpanList[indexTextSpan + 1].DecorationByte == GenericDecorationKind.Xml_AttributeName)
                     {
                         var attributeNameTextSpan = TextSpanList[indexTextSpan + 1];
                         ++indexTextSpan;
@@ -202,17 +203,17 @@ public struct XmlOutputReader
                         
                         while (indexTextSpan < TextSpanList.Count - 1)
                         {
-                            var nextDecorationKind = (XmlDecorationKind)TextSpanList[indexTextSpan + 1].DecorationByte;
+                            var nextDecorationKind = (GenericDecorationKind)TextSpanList[indexTextSpan + 1].DecorationByte;
                             
-                            if (nextDecorationKind == XmlDecorationKind.AttributeOperator)
+                            if (nextDecorationKind == GenericDecorationKind.Xml_AttributeOperator)
                             {
                                 ++indexTextSpan;
                             }
-                            else if (nextDecorationKind == XmlDecorationKind.AttributeDelimiter)
+                            else if (nextDecorationKind == GenericDecorationKind.Xml_AttributeDelimiter)
                             {
                                 ++indexTextSpan;
                             }
-                            else if (nextDecorationKind == XmlDecorationKind.AttributeValue)
+                            else if (nextDecorationKind == GenericDecorationKind.Xml_AttributeValue)
                             {
                                 var attributeValueTextSpan = TextSpanList[indexTextSpan + 1];
                                 
@@ -247,7 +248,7 @@ public struct XmlOutputReader
                     }
                     else
                     {
-                        if ((XmlDecorationKind)TextSpanList[indexTextSpan + 1].DecorationByte == XmlDecorationKind.AttributeDelimiter)
+                        if ((GenericDecorationKind)TextSpanList[indexTextSpan + 1].DecorationByte == GenericDecorationKind.Xml_AttributeDelimiter)
                         {
                             ++indexTextSpan;
                         }
@@ -307,9 +308,9 @@ public struct XmlOutputReader
         for (int indexTextSpan = 0; indexTextSpan < TextSpanList.Count; indexTextSpan++)
         {
             var textSpan = TextSpanList[indexTextSpan];
-            var decorationKind = (XmlDecorationKind)textSpan.DecorationByte;
+            var decorationKind = (GenericDecorationKind)textSpan.DecorationByte;
             
-            if (decorationKind == XmlDecorationKind.TagNameOpen || decorationKind == XmlDecorationKind.TagNameSelf)
+            if (decorationKind == GenericDecorationKind.Xml_TagNameOpen || decorationKind == GenericDecorationKind.Xml_TagNameSelf)
             {
                 sr.BaseStream.Seek(textSpan.ByteIndex, SeekOrigin.Begin);
                 sr.DiscardBufferedData();
@@ -328,7 +329,7 @@ public struct XmlOutputReader
             
                 while (indexTextSpan < TextSpanList.Count - 1)
                 {
-                    if ((XmlDecorationKind)TextSpanList[indexTextSpan + 1].DecorationByte == XmlDecorationKind.AttributeName)
+                    if ((GenericDecorationKind)TextSpanList[indexTextSpan + 1].DecorationByte == GenericDecorationKind.Xml_AttributeName)
                     {
                         var attributeNameTextSpan = TextSpanList[indexTextSpan + 1];
                         ++indexTextSpan;
@@ -345,17 +346,17 @@ public struct XmlOutputReader
                         
                         while (indexTextSpan < TextSpanList.Count - 1)
                         {
-                            var nextDecorationKind = (XmlDecorationKind)TextSpanList[indexTextSpan + 1].DecorationByte;
+                            var nextDecorationKind = (GenericDecorationKind)TextSpanList[indexTextSpan + 1].DecorationByte;
                             
-                            if (nextDecorationKind == XmlDecorationKind.AttributeOperator)
+                            if (nextDecorationKind == GenericDecorationKind.Xml_AttributeOperator)
                             {
                                 ++indexTextSpan;
                             }
-                            else if (nextDecorationKind == XmlDecorationKind.AttributeDelimiter)
+                            else if (nextDecorationKind == GenericDecorationKind.Xml_AttributeDelimiter)
                             {
                                 ++indexTextSpan;
                             }
-                            else if (nextDecorationKind == XmlDecorationKind.AttributeValue)
+                            else if (nextDecorationKind == GenericDecorationKind.Xml_AttributeValue)
                             {
                                 var attributeValueTextSpan = TextSpanList[indexTextSpan + 1];
                                 
@@ -385,7 +386,7 @@ public struct XmlOutputReader
                     }
                     else
                     {
-                        if ((XmlDecorationKind)TextSpanList[indexTextSpan + 1].DecorationByte == XmlDecorationKind.AttributeDelimiter)
+                        if ((GenericDecorationKind)TextSpanList[indexTextSpan + 1].DecorationByte == GenericDecorationKind.Xml_AttributeDelimiter)
                         {
                             ++indexTextSpan;
                         }
@@ -400,7 +401,7 @@ public struct XmlOutputReader
                 {
                     folderTupleList.Add((valueAttributeOne, childProjectRelativePathList));
                     
-                    if (decorationKind == XmlDecorationKind.TagNameOpen)
+                    if (decorationKind == GenericDecorationKind.Xml_TagNameOpen)
                     {
                         indexTextSpan = Until(
                             parentTagName,
@@ -434,9 +435,9 @@ public struct XmlOutputReader
         for (; indexTextSpan < TextSpanList.Count; indexTextSpan++)
         {
             var textSpan = TextSpanList[indexTextSpan];
-            var decorationKind = (XmlDecorationKind)textSpan.DecorationByte;
+            var decorationKind = (GenericDecorationKind)textSpan.DecorationByte;
             
-            if (decorationKind == XmlDecorationKind.TagNameOpen || decorationKind == XmlDecorationKind.TagNameSelf)
+            if (decorationKind == GenericDecorationKind.Xml_TagNameOpen || decorationKind == GenericDecorationKind.Xml_TagNameSelf)
             {
                 sr.BaseStream.Seek(textSpan.ByteIndex, SeekOrigin.Begin);
                 sr.DiscardBufferedData();
@@ -455,7 +456,7 @@ public struct XmlOutputReader
             
                 while (indexTextSpan < TextSpanList.Count - 1)
                 {
-                    if ((XmlDecorationKind)TextSpanList[indexTextSpan + 1].DecorationByte == XmlDecorationKind.AttributeName)
+                    if ((GenericDecorationKind)TextSpanList[indexTextSpan + 1].DecorationByte == GenericDecorationKind.Xml_AttributeName)
                     {
                         var attributeNameTextSpan = TextSpanList[indexTextSpan + 1];
                         ++indexTextSpan;
@@ -472,17 +473,17 @@ public struct XmlOutputReader
                         
                         while (indexTextSpan < TextSpanList.Count - 1)
                         {
-                            var nextDecorationKind = (XmlDecorationKind)TextSpanList[indexTextSpan + 1].DecorationByte;
+                            var nextDecorationKind = (GenericDecorationKind)TextSpanList[indexTextSpan + 1].DecorationByte;
                             
-                            if (nextDecorationKind == XmlDecorationKind.AttributeOperator)
+                            if (nextDecorationKind == GenericDecorationKind.Xml_AttributeOperator)
                             {
                                 ++indexTextSpan;
                             }
-                            else if (nextDecorationKind == XmlDecorationKind.AttributeDelimiter)
+                            else if (nextDecorationKind == GenericDecorationKind.Xml_AttributeDelimiter)
                             {
                                 ++indexTextSpan;
                             }
-                            else if (nextDecorationKind == XmlDecorationKind.AttributeValue)
+                            else if (nextDecorationKind == GenericDecorationKind.Xml_AttributeValue)
                             {
                                 var attributeValueTextSpan = TextSpanList[indexTextSpan + 1];
                                 
@@ -512,7 +513,7 @@ public struct XmlOutputReader
                     }
                     else
                     {
-                        if ((XmlDecorationKind)TextSpanList[indexTextSpan + 1].DecorationByte == XmlDecorationKind.AttributeDelimiter)
+                        if ((GenericDecorationKind)TextSpanList[indexTextSpan + 1].DecorationByte == GenericDecorationKind.Xml_AttributeDelimiter)
                         {
                             ++indexTextSpan;
                         }
@@ -526,7 +527,7 @@ public struct XmlOutputReader
                 if (valueAttributeOne is not null)
                     childProjectRelativePathList.Add(valueAttributeOne);
             }
-            else if (decorationKind == XmlDecorationKind.TagNameClose)
+            else if (decorationKind == GenericDecorationKind.Xml_TagNameClose)
             {
                 sr.BaseStream.Seek(textSpan.ByteIndex, SeekOrigin.Begin);
                 sr.DiscardBufferedData();
@@ -564,32 +565,32 @@ public struct XmlOutputReader
                 stringBuilder.Append(getTextBuffer[0]);
             }
         
-            var decorationKind = (XmlDecorationKind)textSpan.DecorationByte;
+            var decorationKind = (GenericDecorationKind)textSpan.DecorationByte;
             
             switch (decorationKind)
             {
-                case XmlDecorationKind.Text:
+                case GenericDecorationKind.Xml_Text:
                     Console.Write(decorationKind + "              ");
                     break;
-                case XmlDecorationKind.TagNameOpen:
+                case GenericDecorationKind.Xml_TagNameOpen:
                     Console.Write(decorationKind + "       ");
                     break;
-                case XmlDecorationKind.TagNameClose:
+                case GenericDecorationKind.Xml_TagNameClose:
                     Console.Write(decorationKind + "      ");
                     break;
-                case XmlDecorationKind.TagNameSelf:
+                case GenericDecorationKind.Xml_TagNameSelf:
                     Console.Write(decorationKind + "       ");
                     break;
-                case XmlDecorationKind.AttributeName:
+                case GenericDecorationKind.Xml_AttributeName:
                     Console.Write(decorationKind + "     ");
                     break;
-                case XmlDecorationKind.AttributeValue:
+                case GenericDecorationKind.Xml_AttributeValue:
                     Console.Write(decorationKind + "    ");
                     break;
-                case XmlDecorationKind.AttributeOperator:
+                case GenericDecorationKind.Xml_AttributeOperator:
                     Console.Write(decorationKind + " ");
                     break;
-                case XmlDecorationKind.AttributeDelimiter:
+                case GenericDecorationKind.Xml_AttributeDelimiter:
                     Console.Write(decorationKind);
                     break;
                 default:

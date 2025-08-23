@@ -32,7 +32,7 @@ public static class IdeFacts
         Terminal_PresentationKey,
         0,
         Terminal_CssClassString,
-        new TerminalDecorationMapper());
+        new GenericDecorationMapper());
     /* End TerminalPresentationFacts */
     
     /* Start TerminalWebsiteFacts */
