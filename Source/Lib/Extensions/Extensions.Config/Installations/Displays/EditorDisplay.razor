@@ -1,0 +1,32 @@
+@using Walk.TextEditor.RazorLib.TextEditors.Displays
+@using Walk.TextEditor.RazorLib.TextEditors.Displays.Internals
+
+<div class="di_section-body di_text-editor-group"
+     id="@HtmlId">
+	@{
+        var textEditorGroup = DotNetService.TextEditorService.Group_GetTextEditorGroupState().EditorTextEditorGroup;
+    }
+    
+    @if (textEditorGroup.ViewModelKeyList.Count == 0)
+    {
+        <text>No editors are open currently</text>
+    }
+    else
+    {
+		<div class="di_text-editor-group-tabs-list">
+			<TabListDisplay/>
+		</div>
+
+		<div class="di_text-editor-group-active-view-model">
+			<FindOverlayDisplay ComponentDataKey="_componentDataKey"/>
+	            
+			<TextEditorFileExtensionHeaderDisplay ComponentDataKey="_componentDataKey"
+			                                      TextEditorViewModelKey="textEditorGroup.ActiveViewModelKey"/>
+        	
+            <TextEditorViewModelSlimDisplay TextEditorViewModelKey="textEditorGroup.ActiveViewModelKey"
+                                            ViewModelDisplayOptions="_viewModelDisplayOptions"/>
+                       
+			<TextEditorDefaultFooterDisplay ComponentDataKey="_componentDataKey"/>
+        </div>
+    }
+</div>

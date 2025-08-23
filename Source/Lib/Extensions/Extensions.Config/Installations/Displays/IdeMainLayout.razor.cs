@@ -61,28 +61,10 @@ public partial class IdeMainLayout : LayoutComponentBase, IDisposable
     
     private bool _userInterfaceSawIsExecuting;
     
-    private static readonly List<HeaderButtonKind> TextEditorHeaderButtonKindsList =
-        Enum.GetValues(typeof(HeaderButtonKind))
-            .Cast<HeaderButtonKind>()
-            .ToList();
-
-    private ViewModelDisplayOptions _viewModelDisplayOptions = null!;
-
-    private TabListDisplay? _tabListDisplay;
-
-    private string? _htmlId = null;
-    private string HtmlId => _htmlId ??= $"di_te_group_{Walk.TextEditor.RazorLib.TextEditorService.EditorTextEditorGroupKey.Guid}";
-    
-    private Key<TextEditorViewModel> _previousActiveViewModelKey = Key<TextEditorViewModel>.Empty;
-    
-    private Key<TextEditorComponentData> _componentDataKey;
-    
     private const string _startButtonElementId = "di_startup-controls_id";
 
     private Key<DropdownRecord> _startButtonDropdownKey = Key<DropdownRecord>.NewKey();
 
-    private readonly List<ITab> _uiThread_ReUse_GetTabList = new();
-    
     private Key<IDynamicViewModel> _dynamicViewModelKeyPrevious;
 
     private string GetIsActiveCssClass(ITab localTabViewModel) => (localTabViewModel.TabGroup?.GetIsActive(localTabViewModel) ?? false)
@@ -138,16 +120,6 @@ public partial class IdeMainLayout : LayoutComponentBase, IDisposable
             PanelPositionCss = "di_ide_panel_bottom",
             HtmlIdTabs = "di_ide_panel_bottom_tabs"
         };
-
-        _viewModelDisplayOptions = new()
-        {
-            TabIndex = 0,
-            HeaderButtonKinds = TextEditorHeaderButtonKindsList,
-            HeaderComponentType = typeof(TextEditorFileExtensionHeaderDisplay),
-            TextEditorHtmlElementId = Guid.NewGuid(),
-        };
-    
-        _componentDataKey = new Key<TextEditorComponentData>(_viewModelDisplayOptions.TextEditorHtmlElementId);
         
         DotNetService.CommonService.CommonUiStateChanged += OnCommonUiStateChanged;
         DotNetService.TextEditorService.SecondaryChanged += TextEditorOptionsStateWrap_StateChanged;
@@ -271,27 +243,6 @@ public partial class IdeMainLayout : LayoutComponentBase, IDisposable
                 _shouldRecalculateCssStrings = true;
                 StateHasChanged();
             }).ConfigureAwait(false);
-        }
-        else if (secondaryChangedKind == SecondaryChangedKind.DirtyResourceUriStateChanged)
-        {
-            var localTabListDisplay = _tabListDisplay;
-            
-            if (localTabListDisplay is not null)
-            {
-                await localTabListDisplay.NotifyStateChangedAsync();
-            }
-        }
-        else if (secondaryChangedKind == SecondaryChangedKind.Group_TextEditorGroupStateChanged)
-        {
-            var textEditorGroup = DotNetService.TextEditorService.Group_GetTextEditorGroupState().EditorTextEditorGroup;
-                
-            if (_previousActiveViewModelKey != textEditorGroup.ActiveViewModelKey)
-            {
-                _previousActiveViewModelKey = textEditorGroup.ActiveViewModelKey;
-                DotNetService.TextEditorService.ViewModel_StopCursorBlinking();
-            }
-        
-            await InvokeAsync(StateHasChanged);
         }
     }
 
@@ -647,27 +598,6 @@ public partial class IdeMainLayout : LayoutComponentBase, IDisposable
                 true,
                 null));
     }
-    
-    /* Start EditorDisplay */
-    private List<ITab> UiThread_GetTabList(TextEditorGroup textEditorGroup)
-    {
-        var textEditorState = DotNetService.TextEditorService.TextEditorState;
-        _uiThread_ReUse_GetTabList.Clear();
-
-        foreach (var viewModelKey in textEditorGroup.ViewModelKeyList)
-        {
-            var viewModel = textEditorState.ViewModelGetOrDefault(viewModelKey);
-            
-            if (viewModel is not null)
-            {
-                viewModel.PersistentState.TabGroup = textEditorGroup;
-                _uiThread_ReUse_GetTabList.Add(viewModel.PersistentState);
-            }
-        }
-
-        return _uiThread_ReUse_GetTabList;
-    }
-    /* End EditorDisplay */
     
     public void Dispose()
     {

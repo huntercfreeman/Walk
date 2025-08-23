@@ -113,7 +113,7 @@ public partial class DotNetService
     {
         _nodeList.Clear();
 
-        var textEditorGroup = TextEditorService.Group_GetTextEditorGroupState().EditorTextEditorGroup;
+        var group = TextEditorService.Group_GetTextEditorGroupState().EditorTextEditorGroup;
 
         if (group is not null)
         {

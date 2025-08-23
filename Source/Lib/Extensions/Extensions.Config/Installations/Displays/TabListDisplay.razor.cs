@@ -6,26 +6,29 @@ using Walk.Common.RazorLib.Tabs.Models;
 using Walk.Common.RazorLib.Dimensions.Models;
 using Walk.Common.RazorLib.BackgroundTasks.Models;
 using Walk.Common.RazorLib.Keys.Models;
+using Walk.Common.RazorLib.Tabs.Displays;
+using Walk.TextEditor.RazorLib;
+using Walk.TextEditor.RazorLib.TextEditors.Models;
+using Walk.Extensions.DotNet;
 
-namespace Walk.Common.RazorLib.Tabs.Displays;
+namespace Walk.Extensions.Config.Installations.Displays;
 
-public partial class TabListDisplay : ComponentBase
+public partial class TabListDisplay : ComponentBase, IDisposable
 {
     [Inject]
-    private CommonService CommonService { get; set; } = null!;
-
-    /// <summary>
-    /// The list provided should not be modified after passing it as a parameter..
-    /// Make a shallow copy, and pass the shallow copy, if further modification of your list will be necessary.
-    /// </summary>
-    [Parameter, EditorRequired]
-    public List<ITab> TabList { get; set; } = null!;
+    private DotNetService DotNetService { get; set; } = null!;
     
     private TabCascadingValueBatch _tabCascadingValueBatch = new();
     
-    public async Task NotifyStateChangedAsync()
+    protected override void OnInitialized()
     {
-        await InvokeAsync(StateHasChanged);
+        DotNetService.TextEditorService.SecondaryChanged += TextEditorOptionsStateWrap_StateChanged;
+    }
+    
+    protected override bool ShouldRender()
+    {
+        Console.WriteLine("ShouldRender");
+        return true;
     }
 
     private Task HandleTabButtonOnContextMenu(TabContextMenuEventArgs tabContextMenuEventArgs)
@@ -44,7 +47,7 @@ public partial class TabListDisplay : ComponentBase
             },
             restoreFocusOnClose: null);
 
-        CommonService.Dropdown_ReduceRegisterAction(dropdownRecord);
+        DotNetService.CommonService.Dropdown_ReduceRegisterAction(dropdownRecord);
         return Task.CompletedTask;
     }
     
@@ -95,7 +98,7 @@ public partial class TabListDisplay : ComponentBase
         if (localHandleTabButtonOnContextMenu is null)
             return;
 
-        CommonService.Enqueue(new CommonWorkArgs
+        DotNetService.CommonService.Enqueue(new CommonWorkArgs
         {
             WorkKind = CommonWorkKind.Tab_ManuallyPropagateOnContextMenu,
             HandleTabButtonOnContextMenu = localHandleTabButtonOnContextMenu,
@@ -120,7 +123,7 @@ public partial class TabListDisplay : ComponentBase
             // This needs to run synchronously to guarantee `dragState.DragElementDimensions` is in a threadsafe state
             // (keep any awaits after it).
             // (only the "UI thread" touches `dragState.DragElementDimensions`).
-            var dragState = CommonService.GetDragState();
+            var dragState = DotNetService.CommonService.GetDragState();
 
             dragState.DragElementDimensions.DisableWidth();
 
@@ -146,7 +149,7 @@ public partial class TabListDisplay : ComponentBase
     
     public void SubscribeToDragEventForScrolling(IDrag draggable)
     {
-        CommonService.Drag_ShouldDisplayAndMouseEventArgsAndDragSetAction(true, null, draggable);
+        DotNetService.CommonService.Drag_ShouldDisplayAndMouseEventArgsAndDragSetAction(true, null, draggable);
     }
 
     /// <summary>
@@ -154,7 +157,7 @@ public partial class TabListDisplay : ComponentBase
     /// </summary>
     private string GetCssClass(ITabGroup localTabGroup, ITab localTabViewModel)
     {
-        var uiStringBuilder = CommonService.UiStringBuilder;
+        var uiStringBuilder = DotNetService.CommonService.UiStringBuilder;
         
         uiStringBuilder.Clear();
         uiStringBuilder.Append("di_dynamic-tab di_button di_unselectable ");
@@ -165,4 +168,21 @@ public partial class TabListDisplay : ComponentBase
         return uiStringBuilder.ToString();
     }
     #endregion
+    
+    private async void TextEditorOptionsStateWrap_StateChanged(SecondaryChangedKind secondaryChangedKind)
+    {
+        if (secondaryChangedKind == SecondaryChangedKind.DirtyResourceUriStateChanged)
+        {
+            await InvokeAsync(StateHasChanged);
+        }
+        else if (secondaryChangedKind == SecondaryChangedKind.Group_TextEditorGroupStateChanged)
+        {
+            await InvokeAsync(StateHasChanged);
+        }
+    }
+    
+    public void Dispose()
+    {
+        DotNetService.TextEditorService.SecondaryChanged -= TextEditorOptionsStateWrap_StateChanged;
+    }
 }
