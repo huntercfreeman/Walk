@@ -283,8 +283,7 @@ public partial class IdeMainLayout : LayoutComponentBase, IDisposable
         }
         else if (secondaryChangedKind == SecondaryChangedKind.Group_TextEditorGroupStateChanged)
         {
-            var textEditorGroup = DotNetService.TextEditorService.Group_GetTextEditorGroupState().GroupList.FirstOrDefault(
-                x => x.GroupKey == Walk.TextEditor.RazorLib.TextEditorService.EditorTextEditorGroupKey);
+            var textEditorGroup = DotNetService.TextEditorService.Group_GetTextEditorGroupState().EditorTextEditorGroup;
                 
             if (_previousActiveViewModelKey != textEditorGroup.ActiveViewModelKey)
             {
