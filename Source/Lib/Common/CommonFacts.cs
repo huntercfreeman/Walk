@@ -85,13 +85,6 @@ public static class CommonFacts
     public const string CSS = "css";
     public const string JAVA_SCRIPT = "js";
     public const string TYPE_SCRIPT = "ts";
-    public const string MARK_DOWN = "md";
-    public const string F_SHARP = "fs";
-    public const string PYTHON = "py";
-    public const string C = "c";
-    public const string H = "h";
-    public const string CPP = "cpp";
-    public const string HPP = "hpp";
     public const string TERMINAL = "terminal";
     public const string TXT = "txt";
     /* End ExtensionNoPeriodFacts */
