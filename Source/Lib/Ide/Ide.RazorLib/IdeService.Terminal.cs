@@ -81,17 +81,8 @@ public partial class IdeService
     
         _terminalState = _terminalState with
         {
-            TerminalMap = new Dictionary<Key<ITerminal>, ITerminal>
-            {
-                {
-                    executionTerminal.Key,
-                    executionTerminal
-                },
-                {
-                    generalTerminal.Key,
-                    generalTerminal
-                }
-            }
+            ExecutionTerminal = executionTerminal,
+            GeneralTerminal = generalTerminal
         };
     }
 

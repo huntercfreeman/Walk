@@ -30,11 +30,6 @@ public partial class TerminalGroupDisplay : ComponentBase, IDisposable
         IdeService.TerminalGroup_SetActiveTerminal(terminalKey);
     }
     
-    private void ClearTerminalOnClick(Key<ITerminal> terminalKey)
-    {
-        IdeService.GetTerminalState().TerminalMap[terminalKey]?.ClearFireAndForget();
-    }
-    
     private async void OnTerminalGroupStateChanged(IdeStateChangedKind ideStateChangedKind)
     {
     

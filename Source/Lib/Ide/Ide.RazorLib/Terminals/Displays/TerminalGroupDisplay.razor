@@ -8,9 +8,26 @@
         var terminalGroupDisplayState = IdeService.GetTerminalGroupState();
         var terminalState = IdeService.GetTerminalState();
 
-        _ = terminalState.TerminalMap.TryGetValue(
-                terminalGroupDisplayState.ActiveTerminalKey,
-                out var activeTerminal);
+        ITerminal? activeTerminal;
+
+        if (terminalGroupDisplayState.ActiveTerminalKey == terminalState.ExecutionTerminal.Key)
+        {
+            activeTerminal = terminalState.ExecutionTerminal;
+        }
+        else if (terminalGroupDisplayState.ActiveTerminalKey == terminalState.GeneralTerminal.Key)
+        {
+            activeTerminal = terminalState.GeneralTerminal;
+        }
+        else
+        {
+            activeTerminal = null;
+        }
+                
+		var appOptionsState = IdeService.CommonService.GetAppOptionsState();
+	
+		var iconDriver = new IconDriver(
+			appOptionsState.Options.IconSizeInPixels,
+			appOptionsState.Options.IconSizeInPixels);
     }
 
     <div class="di_section-body">
@@ -31,69 +48,43 @@
 
         <div class="di_resize-column"
              style="@IdeService.CommonService.Options_ResizeHandleCssWidth"
-             @onmousedown="() => SubscribeToDragEvent()">
+             @onmousedown="SubscribeToDragEvent">
         </div>
 
         <div class="di_ide_terminal-tabs"
              style="@terminalGroupDisplayState.TabsElementDimensions.GetStyleString(IdeService.CommonService.UiStringBuilder)">
-             
-            @*
-            Pause working on the integrated terminal for now.
-            =================================================
-            <button class="di_button"
-            		style="margin-bottom: 15px;"
-            		@onclick="AddIntegratedTerminalOnClick">
-            	Add Integrated Terminal
-            </button>
-            *@
             
-            @{
-            	var terminalList = terminalState.TerminalMap.Values
-            		.OrderByDescending(x => IdeFacts.WELL_KNOWN_KEYS.Contains(x.Key))
-            		.ToArray();
-            }
-             
-            @for (var i = 0; i < terminalList.Length; i++)
+            @* TODO: Consider usage of a template function. *@
+            @if (terminalState.ExecutionTerminal is not null)
             {
-                var index = i;
-                var terminal = terminalList[index];
-
+                var executionTerminal = terminalState.ExecutionTerminal;
                 string isActiveCssClass = string.Empty;
-                if ((activeTerminal?.Key ?? Key<ITerminal>.Empty) == terminal.Key)
+                if ((activeTerminal?.Key ?? Key<ITerminal>.Empty) == executionTerminal.Key)
                     isActiveCssClass = "di_active";
 
                 <button class="di_button @isActiveCssClass"
-                        @onclick="() => DispatchSetActiveTerminalAction(terminal.Key)">
+                        @onclick="() => DispatchSetActiveTerminalAction(executionTerminal.Key)">
 
-                    @terminal.DisplayName
+                    @executionTerminal.DisplayName
 
-                    @{ var isKillProcessDisabled = !terminal.HasExecutingProcess; }
+                    @{ var isKillProcessDisabled = !executionTerminal.HasExecutingProcess; }
 
                     <button class="di_button"
                             disabled=@isKillProcessDisabled
-                            @onclick="() => terminal.KillProcess()"
+                            @onclick="executionTerminal.KillProcess"
                             @onclick:stopPropagation="true">
                         Kill
                     </button>
                     
                     <button class="di_button"
                     	    title="Clear inactive history"
-                            @onclick="() => ClearTerminalOnClick(terminal.Key)"
+                            @onclick="executionTerminal.ClearFireAndForget"
                             @onclick:stopPropagation="true">
                         Clear
                     </button>
 
                     <div style="margin-left: 15px;">
-                    
-                    	@{
-                    		var appOptionsState = IdeService.CommonService.GetAppOptionsState();
-                    	
-                    		var iconDriver = new IconDriver(
-								appOptionsState.Options.IconSizeInPixels,
-								appOptionsState.Options.IconSizeInPixels);
-                    	}
-                    
-                        @if (terminal.HasExecutingProcess)
+                        @if (executionTerminal.HasExecutingProcess)
                         {
                             @IconLoadingFragment.Render(iconDriver)
                         }
@@ -104,14 +95,51 @@
                     </div>
                 </button>
 
-                if (i != terminalList.Length - 1)
-                {
-                    <text>
-                        &nbsp;
-                        &nbsp;
-                        &nbsp;
-                    </text>
-                }
+                <text>
+                    &nbsp;
+                    &nbsp;
+                    &nbsp;
+                </text>
+            }
+            @if (terminalState.GeneralTerminal is not null)
+            {
+                var generalTerminal = terminalState.GeneralTerminal;
+                string isActiveCssClass = string.Empty;
+                if ((activeTerminal?.Key ?? Key<ITerminal>.Empty) == generalTerminal.Key)
+                    isActiveCssClass = "di_active";
+    
+                <button class="di_button @isActiveCssClass"
+                        @onclick="() => DispatchSetActiveTerminalAction(generalTerminal.Key)">
+    
+                    @generalTerminal.DisplayName
+    
+                    @{ var isKillProcessDisabled = !generalTerminal.HasExecutingProcess; }
+    
+                    <button class="di_button"
+                            disabled=@isKillProcessDisabled
+                            @onclick="generalTerminal.KillProcess"
+                            @onclick:stopPropagation="true">
+                        Kill
+                    </button>
+                    
+                    <button class="di_button"
+                    	    title="Clear inactive history"
+                            @onclick="generalTerminal.ClearFireAndForget"
+                            @onclick:stopPropagation="true">
+                        Clear
+                    </button>
+    
+                    <div style="margin-left: 15px;">
+                        @if (generalTerminal.HasExecutingProcess)
+                        {
+                            @IconLoadingFragment.Render(iconDriver)
+                        }
+                        else
+                        {
+                            @IconBlankFragment.Render(iconDriver)
+                        }
+                    </div>
+                </button>
             }
         </div>
     </div>

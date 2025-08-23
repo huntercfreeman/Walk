@@ -111,14 +111,14 @@ public partial class TestExplorerDisplay : ComponentBase, IDisposable
     private void KillExecutionProcessOnClick()
     {
         var terminalState = DotNetService.IdeService.GetTerminalState();
-        var executionTerminal = terminalState.TerminalMap[IdeFacts.EXECUTION_KEY];
+        var executionTerminal = terminalState.ExecutionTerminal;
         executionTerminal.KillProcess();
     }
     
     private bool GetIsKillProcessDisabled()
     {
         var terminalState = DotNetService.IdeService.GetTerminalState();
-        var executionTerminal = terminalState.TerminalMap[IdeFacts.EXECUTION_KEY];
+        var executionTerminal = terminalState.ExecutionTerminal;
         return !executionTerminal.HasExecutingProcess;
     }
     

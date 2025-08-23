@@ -295,7 +295,7 @@ public partial class DotNetService
 
                 treeViewProjectTestModel.Item.TerminalCommandRequest = terminalCommandRequest;
 
-                return IdeService.GetTerminalState().TerminalMap[IdeFacts.EXECUTION_KEY]
+                return IdeService.GetTerminalState().ExecutionTerminal
                     .EnqueueCommandAsync(terminalCommandRequest);
             };
         }

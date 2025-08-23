@@ -195,7 +195,7 @@ public partial class DotNetService
         };
 
         treeViewStringFragment.Item.TerminalCommandRequest = terminalCommandRequest;
-        IdeService.GetTerminalState().TerminalMap[IdeFacts.EXECUTION_KEY].EnqueueCommand(terminalCommandRequest);
+        IdeService.GetTerminalState().ExecutionTerminal.EnqueueCommand(terminalCommandRequest);
     }
 
     #region DotNetSolutionIdeApi
@@ -281,14 +281,14 @@ public partial class DotNetService
             {
                 BeginWithFunc = parsedCommand =>
                 {
-                    IdeService.GetTerminalState().TerminalMap[IdeFacts.GENERAL_KEY].TerminalOutput.WriteOutput(
+                    IdeService.GetTerminalState().GeneralTerminal.TerminalOutput.WriteOutput(
                         parsedCommand,
                         // If newlines are added to this make sure to use '.ReplaceLineEndings("\n")' because the syntax highlighting and text editor are expecting this line ending.
                         new StandardOutputCommandEvent(slnFoundString));
                     return Task.CompletedTask;
                 }
             };
-            IdeService.GetTerminalState().TerminalMap[IdeFacts.GENERAL_KEY].EnqueueCommand(terminalCommandRequest);
+            IdeService.GetTerminalState().GeneralTerminal.EnqueueCommand(terminalCommandRequest);
 
             // Set 'executionTerminal' working directory
             terminalCommandRequest = new TerminalCommandRequest(
@@ -297,14 +297,14 @@ public partial class DotNetService
             {
                 BeginWithFunc = parsedCommand =>
                 {
-                    IdeService.GetTerminalState().TerminalMap[IdeFacts.EXECUTION_KEY].TerminalOutput.WriteOutput(
+                    IdeService.GetTerminalState().ExecutionTerminal.TerminalOutput.WriteOutput(
                         parsedCommand,
                         // If newlines are added to this make sure to use '.ReplaceLineEndings("\n")' because the syntax highlighting and text editor are expecting this line ending.
                         new StandardOutputCommandEvent(slnFoundString));
                     return Task.CompletedTask;
                 }
             };
-            IdeService.GetTerminalState().TerminalMap[IdeFacts.EXECUTION_KEY].EnqueueCommand(terminalCommandRequest);
+            IdeService.GetTerminalState().ExecutionTerminal.EnqueueCommand(terminalCommandRequest);
         }
 
         try
@@ -1038,7 +1038,7 @@ public partial class DotNetService
 
         startupControlModel.ExecutingTerminalCommandRequest = terminalCommandRequest;
 
-        IdeService.GetTerminalState().TerminalMap[IdeFacts.EXECUTION_KEY].EnqueueCommand(terminalCommandRequest);
+        IdeService.GetTerminalState().ExecutionTerminal.EnqueueCommand(terminalCommandRequest);
         return Task.CompletedTask;
     }
 
@@ -1046,7 +1046,7 @@ public partial class DotNetService
     {
         var startupControlModel = (StartupControlModel)interfaceStartupControlModel;
 
-        IdeService.GetTerminalState().TerminalMap[IdeFacts.EXECUTION_KEY].KillProcess();
+        IdeService.GetTerminalState().ExecutionTerminal.KillProcess();
         startupControlModel.ExecutingTerminalCommandRequest = null;
 
         IdeService.Ide_TriggerStartupControlStateChanged();
