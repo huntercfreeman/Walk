@@ -19,15 +19,6 @@
                         case NotificationsViewKind.Notifications:
                             @: @notificationState.DefaultList.Count
                             break;
-                        case NotificationsViewKind.Read:
-                            @: @notificationState.ReadList.Count
-                            break;
-                        case NotificationsViewKind.Deleted:
-                            @: @notificationState.DeletedList.Count
-                            break;
-                        case NotificationsViewKind.Archived:
-                            @: @notificationState.ArchivedList.Count
-                            break;
                     }<!--
                     -->)
                 </span>
@@ -45,18 +36,6 @@
                 case NotificationsViewKind.Notifications:
                     entriesToRenderList = notificationState.DefaultList;
                     clearOnClick = Clear;
-                    break;
-                case NotificationsViewKind.Read:
-                    entriesToRenderList = notificationState.ReadList;
-                    clearOnClick = ClearRead;
-                    break;
-                case NotificationsViewKind.Deleted:
-                    entriesToRenderList = notificationState.DeletedList;
-                    clearOnClick = ClearDeleted;
-                    break;
-                case NotificationsViewKind.Archived:
-                    entriesToRenderList = notificationState.ArchivedList;
-                    clearOnClick = ClearArchived;
                     break;
             	default:
             		entriesToRenderList = Array.Empty<INotification>();

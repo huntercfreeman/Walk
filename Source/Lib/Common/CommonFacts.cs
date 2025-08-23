@@ -269,103 +269,6 @@ public static class CommonFacts
         }
     }
 
-    public static char ConvertWhitespaceCodeToCharacter(string code)
-    {
-        switch (code)
-        {
-            case TAB_CODE:
-                return '\t';
-            case ENTER_CODE:
-                return '\n';
-            case SPACE_CODE:
-                return ' ';
-            default:
-                throw new WalkCommonException($"Unrecognized Whitespace code of: {code}");
-        }
-    }
-
-    /// <summary>
-    /// TODO: This method is not fully implemented.
-    /// </summary>
-    public static string ConvertCodeToKey(string code)
-    {
-        switch (code)
-        {
-            case "Digit1":
-                return "1";
-            case "Digit2":
-                return "2";
-            case "Digit3":
-                return "3";
-            case "Digit4":
-                return "4";
-            case "Digit5":
-                return "5";
-            case "Digit6":
-                return "6";
-            case "Digit7":
-                return "7";
-            case "Digit8":
-                return "8";
-            case "Digit9":
-                return "9";
-            case "KeyA":
-                return "a";
-            case "KeyB":
-                return "b";
-            case "KeyC":
-                return "c";
-            case "KeyD":
-                return "d";
-            case "KeyE":
-                return "e";
-            case "KeyF":
-                return "f";
-            case "KeyG":
-                return "g";
-            case "KeyH":
-                return "h";
-            case "KeyI":
-                return "i";
-            case "KeyJ":
-                return "j";
-            case "KeyK":
-                return "k";
-            case "KeyL":
-                return "l";
-            case "KeyM":
-                return "m";
-            case "KeyN":
-                return "n";
-            case "KeyO":
-                return "o";
-            case "KeyP":
-                return "p";
-            case "KeyQ":
-                return "q";
-            case "KeyR":
-                return "r";
-            case "KeyS":
-                return "s";
-            case "KeyT":
-                return "t";
-            case "KeyU":
-                return "u";
-            case "KeyV":
-                return "v";
-            case "KeyW":
-                return "w";
-            case "KeyX":
-                return "x";
-            case "KeyY":
-                return "y";
-            case "KeyZ":
-                return "z";
-            default:
-                return code;
-        }
-    }
-
     public static bool IsLineEndingCharacter(char character)
     {
         return character switch
@@ -470,27 +373,24 @@ public static class CommonFacts
 
     public static readonly IFileTemplate CSharpClass = new FileTemplate(
         "C# Class",
-        "di_ide_c-sharp-class",
         FileTemplateKind.CSharp,
-        filename => filename.EndsWith('.' + CommonFacts.C_SHARP_CLASS),
+        CommonFacts.C_SHARP_CLASS,
         _ => _emptyFileTemplateList,
         true,
         CSharpClassCreateFileFunc);
 
     public static readonly IFileTemplate RazorCodebehind = new FileTemplate(
         "Razor codebehind",
-        "di_ide_razor-codebehind-class",
         FileTemplateKind.Razor,
-        filename => filename.EndsWith('.' + CommonFacts.RAZOR_CODEBEHIND),
+        CommonFacts.RAZOR_CODEBEHIND,
         _ => _emptyFileTemplateList,
         true,
         RazorCodebehindCreateFileFunc);
 
     public static readonly IFileTemplate RazorMarkup = new FileTemplate(
         "Razor markup",
-        "di_ide_razor-markup-class",
         FileTemplateKind.Razor,
-        filename => filename.EndsWith('.' + CommonFacts.RAZOR_MARKUP),
+        CommonFacts.RAZOR_MARKUP,
         fileName => new List<IFileTemplate>
         {
             RazorCodebehind

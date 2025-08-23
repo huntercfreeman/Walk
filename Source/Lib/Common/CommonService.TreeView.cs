@@ -882,6 +882,7 @@ public partial class CommonService
             selectNodesBetweenCurrentAndNextActiveNode);
     }
     
+    // TODO: Clearing logic
     public Dictionary<int, string> IntToCssValueCache = new();
     
     /// <summary>This method should only be invoked by the "UI thread"</summary>

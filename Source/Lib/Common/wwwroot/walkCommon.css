@@ -637,6 +637,16 @@ button.di_dynamic-tab.di_drag.di_active {
     display: inline;
 }
 
+.di_progress-bar-fill-text{
+    position: absolute;
+    top: calc(0.2em + 1px);
+}
+
+.di_progress-bar-fill-slider {
+    background-color: var(--di_active-with-focus-background-color);
+    height: 100%;
+}
+
 :root {
     /* Sizes Common */
     --di_tabs-bar-height: 2.6rem;
