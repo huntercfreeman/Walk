@@ -2,7 +2,7 @@ using Walk.TextEditor.RazorLib.Lexers.Models;
 
 namespace Walk.Extensions.CompilerServices.Syntax;
 
-public struct SyntaxToken : ISyntax
+public struct SyntaxToken
 {
     public SyntaxToken(SyntaxKind syntaxKind, TextEditorTextSpan textSpan)
     {

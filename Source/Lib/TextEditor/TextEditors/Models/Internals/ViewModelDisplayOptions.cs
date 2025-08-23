@@ -79,13 +79,4 @@ public sealed class ViewModelDisplayOptions
     public bool IncludeGutterComponent { get; set; } = true;
 
     public bool IncludeContextMenuHelperComponent { get; set; } = true;
-
-    /// <summary>
-    /// The integrated terminal logic needs a keymap, separate to that of the 'global' keymap used by other text editors.
-    /// Therefore, this property is used to provide the <see cref="Keymaps.Models.Terminals.TextEditorKeymapTerminal"/>
-    /// to the integrated terminal.<br/><br/>
-    /// 
-    /// This property is not intended for use in any other scenario.
-    /// </summary>
-    public Keymap? KeymapOverride { get; set; }
 }

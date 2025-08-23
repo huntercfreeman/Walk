@@ -11,7 +11,7 @@ namespace Walk.Common.RazorLib.Keymaps.Models;
 ///     event.key == Escape
 ///     BUT 
 ///     event.code == CapsLock
-public struct KeymapArgs : ICommandArgs
+public struct KeymapArgs
 {
     public KeymapArgs()
     {

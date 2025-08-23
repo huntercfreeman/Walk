@@ -7,7 +7,7 @@ namespace Walk.Common.RazorLib.Commands.Models;
 /// <summary>
 /// Verify that 'TreeViewService is not null' to know this was constructed rather than default.
 /// </summary>
-public record struct TreeViewCommandArgs : ICommandArgs
+public record struct TreeViewCommandArgs
 {
     public TreeViewCommandArgs(
         CommonService commonService,
@@ -18,7 +18,7 @@ public record struct TreeViewCommandArgs : ICommandArgs
         MouseEventArgs? mouseEventArgs,
         KeyboardEventArgs? keyboardEventArgs)
     {
-        CommonService = CommonService;
+        CommonService = commonService;
         TreeViewContainer = treeViewContainer;
         NodeThatReceivedMouseEvent = nodeThatReceivedMouseEvent;
         RestoreFocusToTreeView = restoreFocusToTreeView;

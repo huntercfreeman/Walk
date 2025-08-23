@@ -7,10 +7,6 @@ public interface IFileTemplate
     /// Name displayed to a user
     /// </summary>
     public string DisplayName { get; }
-    /// <summary>
-    /// Internally used name
-    /// </summary>
-    public string CodeName { get; }
     public FileTemplateKind FileTemplateKind { get; }
     /// <summary>
     /// Func&lt;string filename, bool isApplicable&gt;

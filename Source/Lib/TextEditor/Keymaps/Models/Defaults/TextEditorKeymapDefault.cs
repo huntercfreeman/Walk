@@ -21,9 +21,7 @@ public class TextEditorKeymapDefault : ITextEditorKeymap
 
     public int GetLayer(bool hasSelection)
     {
-        return hasSelection
-            ? TextEditorFacts.KeymapDefault_HasSelectionLayer.Key
-            : TextEditorFacts.KeymapDefault_DefaultLayer.Key;
+        return 0;
     }
 
     public string GetCursorCssClassString()
