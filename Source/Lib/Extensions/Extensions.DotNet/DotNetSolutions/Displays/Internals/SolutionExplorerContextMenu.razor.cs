@@ -294,13 +294,13 @@ public partial class SolutionExplorerContextMenu : ComponentBase
                 }),
             DotNetService.AddProjectToProjectReference(
                 treeViewModel,
-                DotNetService.IdeService.GetTerminalState().TerminalMap[IdeFacts.GENERAL_KEY],
+                DotNetService.IdeService.GetTerminalState().GeneralTerminal,
                 DotNetService.IdeService,
                 () => Task.CompletedTask),
             DotNetService.MoveProjectToSolutionFolder(
                 treeViewSolution,
                 treeViewModel,
-                DotNetService.IdeService.GetTerminalState().TerminalMap[IdeFacts.GENERAL_KEY],
+                DotNetService.IdeService.GetTerminalState().GeneralTerminal,
                 DotNetService.IdeService.TextEditorService.CommonService,
                 () =>
                 {
@@ -328,7 +328,7 @@ public partial class SolutionExplorerContextMenu : ComponentBase
             DotNetService.RemoveCSharpProjectReferenceFromSolution(
                 treeViewSolution,
                 treeViewModel,
-                DotNetService.IdeService.GetTerminalState().TerminalMap[IdeFacts.GENERAL_KEY],
+                DotNetService.IdeService.GetTerminalState().GeneralTerminal,
                 DotNetService.IdeService.TextEditorService.CommonService,
                 () =>
                 {
@@ -349,7 +349,7 @@ public partial class SolutionExplorerContextMenu : ComponentBase
         {
             DotNetService.RemoveProjectToProjectReference(
                 treeViewCSharpProjectToProjectReference,
-                DotNetService.IdeService.GetTerminalState().TerminalMap[IdeFacts.GENERAL_KEY],
+                DotNetService.IdeService.GetTerminalState().GeneralTerminal,
                 DotNetService.IdeService.TextEditorService.CommonService,
                 () => Task.CompletedTask),
         };
@@ -370,7 +370,7 @@ public partial class SolutionExplorerContextMenu : ComponentBase
                 treeViewCSharpProjectNugetPackageReferences.Item.CSharpProjectAbsolutePath,
                 string.Empty,
                 treeViewCSharpProjectNugetPackageReference,
-                DotNetService.IdeService.GetTerminalState().TerminalMap[IdeFacts.GENERAL_KEY],
+                DotNetService.IdeService.GetTerminalState().GeneralTerminal,
                 DotNetService.IdeService.TextEditorService.CommonService,
                 () => Task.CompletedTask),
         };
@@ -531,7 +531,7 @@ public partial class SolutionExplorerContextMenu : ComponentBase
                     }
                 };
                     
-                DotNetService.IdeService.GetTerminalState().TerminalMap[IdeFacts.GENERAL_KEY].EnqueueCommand(terminalCommandRequest);
+                DotNetService.IdeService.GetTerminalState().GeneralTerminal.EnqueueCommand(terminalCommandRequest);
                 return Task.CompletedTask;
             },
             SelectionIsValidFunc = absolutePath =>

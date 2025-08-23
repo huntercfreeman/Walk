@@ -41,7 +41,7 @@ public partial class TestExplorerDetailsDisplay : ComponentBase, IDisposable
     protected override void OnInitialized()
     {
         var terminalState = IdeService.GetTerminalState();
-        _executionTerminal = terminalState.TerminalMap[IdeFacts.EXECUTION_KEY];
+        _executionTerminal = terminalState.ExecutionTerminal;
         _executionTerminal.TerminalOutput.OnWriteOutput += OnWriteOutput;
     }
 

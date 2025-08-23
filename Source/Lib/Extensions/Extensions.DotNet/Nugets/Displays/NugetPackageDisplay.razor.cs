@@ -98,7 +98,7 @@ public partial class NugetPackageDisplay : ComponentBase, IDisposable
             }
         };
             
-        DotNetService.IdeService.GetTerminalState().TerminalMap[IdeFacts.GENERAL_KEY].EnqueueCommand(terminalCommandRequest);
+        DotNetService.IdeService.GetTerminalState().GeneralTerminal.EnqueueCommand(terminalCommandRequest);
     }
     
     private async void OnNuGetPackageManagerStateChanged(DotNetStateChangedKind dotNetStateChangedKind)

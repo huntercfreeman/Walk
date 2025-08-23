@@ -97,7 +97,7 @@ public partial class CSharpProjectFormDisplay : ComponentBase, IDisposable
             await InvokeAsync(StateHasChanged);
 
             var formattedCommand = DotNetCliCommandFormatter.FormatDotnetNewList();
-            var generalTerminal = DotNetService.IdeService.GetTerminalState().TerminalMap[IdeFacts.GENERAL_KEY];
+            var generalTerminal = DotNetService.IdeService.GetTerminalState().GeneralTerminal;
                 
             var terminalCommandRequest = new TerminalCommandRequest(
                 formattedCommand.Value,
@@ -132,7 +132,7 @@ public partial class CSharpProjectFormDisplay : ComponentBase, IDisposable
             await InvokeAsync(StateHasChanged);
 
             var formattedCommand = DotNetCliCommandFormatter.FormatDotnetNewListDeprecated();
-            var generalTerminal = DotNetService.IdeService.GetTerminalState().TerminalMap[IdeFacts.GENERAL_KEY];
+            var generalTerminal = DotNetService.IdeService.GetTerminalState().GeneralTerminal;
 
             var terminalCommandRequest = new TerminalCommandRequest(
                 formattedCommand.Value,
@@ -147,7 +147,7 @@ public partial class CSharpProjectFormDisplay : ComponentBase, IDisposable
                 }
             };
                 
-            DotNetService.IdeService.GetTerminalState().TerminalMap[IdeFacts.GENERAL_KEY].EnqueueCommand(terminalCommandRequest);
+            DotNetService.IdeService.GetTerminalState().GeneralTerminal.EnqueueCommand(terminalCommandRequest);
         }
         finally
         {
@@ -184,7 +184,7 @@ public partial class CSharpProjectFormDisplay : ComponentBase, IDisposable
 
         if (DotNetService.IdeService.TextEditorService.CommonService.WalkHostingInformation.WalkHostingKind == WalkHostingKind.Photino)
         {
-            var generalTerminal = DotNetService.IdeService.GetTerminalState().TerminalMap[IdeFacts.GENERAL_KEY];
+            var generalTerminal = DotNetService.IdeService.GetTerminalState().GeneralTerminal;
 
             var terminalCommandRequest = new TerminalCommandRequest(
                 immutableView.FormattedNewCSharpProjectCommand.Value,

@@ -135,7 +135,7 @@ public partial class DotNetSolutionFormDisplay : ComponentBase, IDisposable
                 }
             };
                 
-            DotNetService.IdeService.GetTerminalState().TerminalMap[IdeFacts.GENERAL_KEY].EnqueueCommand(terminalCommandRequest);
+            DotNetService.IdeService.GetTerminalState().GeneralTerminal.EnqueueCommand(terminalCommandRequest);
         }
     }
 

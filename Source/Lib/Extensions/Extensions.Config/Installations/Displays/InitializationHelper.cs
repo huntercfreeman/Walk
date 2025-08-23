@@ -209,7 +209,7 @@ public static class InitializationHelper
             }
         };
 
-        DotNetService.IdeService.GetTerminalState().TerminalMap[IdeFacts.GENERAL_KEY].EnqueueCommand(terminalCommandRequest);
+        DotNetService.IdeService.GetTerminalState().GeneralTerminal.EnqueueCommand(terminalCommandRequest);
     }
 
     public static void CleanProjectOnClick(DotNetService DotNetService, string projectAbsolutePathString)
@@ -241,7 +241,7 @@ public static class InitializationHelper
             }
         };
 
-        DotNetService.IdeService.GetTerminalState().TerminalMap[IdeFacts.GENERAL_KEY].EnqueueCommand(terminalCommandRequest);
+        DotNetService.IdeService.GetTerminalState().GeneralTerminal.EnqueueCommand(terminalCommandRequest);
     }
 
     public static void BuildSolutionOnClick(DotNetService DotNetService, string solutionAbsolutePathString)
@@ -273,7 +273,7 @@ public static class InitializationHelper
             }
         };
 
-        DotNetService.IdeService.GetTerminalState().TerminalMap[IdeFacts.GENERAL_KEY].EnqueueCommand(terminalCommandRequest);
+        DotNetService.IdeService.GetTerminalState().GeneralTerminal.EnqueueCommand(terminalCommandRequest);
     }
 
     public static void CleanSolutionOnClick(DotNetService DotNetService, string solutionAbsolutePathString)
@@ -305,7 +305,7 @@ public static class InitializationHelper
             }
         };
 
-        DotNetService.IdeService.GetTerminalState().TerminalMap[IdeFacts.GENERAL_KEY].EnqueueCommand(terminalCommandRequest);
+        DotNetService.IdeService.GetTerminalState().GeneralTerminal.EnqueueCommand(terminalCommandRequest);
     }
 
     public static async Task SetSolution(DotNetService DotNetService, DotNetAppData dotNetAppData)
