@@ -1,4 +1,5 @@
 using Walk.TextEditor.RazorLib.Lexers.Models;
+using Walk.TextEditor.RazorLib.Decorations.Models;
 
 namespace Walk.CompilerServices.Json;
 
@@ -93,7 +94,7 @@ public static class JsonLexer
                     output.TextSpanList.Add(new TextEditorTextSpan(
                         textStartPosition,
                         streamReaderWrap.PositionIndex,
-                        (byte)JsonDecorationKind.Keyword,
+                        (byte)GenericDecorationKind.Json_Keyword,
                         textStartByte));
                     goto default;
                 case '0':
@@ -145,7 +146,7 @@ public static class JsonLexer
                         output.TextSpanList.Add(new TextEditorTextSpan(
                             stringStartPosition,
                             endPosition,
-                            (byte)JsonDecorationKind.PropertyKey,
+                            (byte)GenericDecorationKind.Json_PropertyKey,
                             stringStartByte));
                     }
                     else
@@ -153,7 +154,7 @@ public static class JsonLexer
                         output.TextSpanList.Add(new TextEditorTextSpan(
                             stringStartPosition,
                             endPosition,
-                            (byte)JsonDecorationKind.String,
+                            (byte)GenericDecorationKind.Json_String,
                             stringStartByte));
                     }
                     continue;
@@ -180,7 +181,7 @@ public static class JsonLexer
                         output.TextSpanList.Add(new TextEditorTextSpan(
                             commentStartPosition,
                             streamReaderWrap.PositionIndex,
-                            (byte)JsonDecorationKind.BlockComment,
+                            (byte)GenericDecorationKind.Json_BlockComment,
                             commentStartByte));
                         continue;
                     }
@@ -204,7 +205,7 @@ public static class JsonLexer
                         output.TextSpanList.Add(new TextEditorTextSpan(
                             commentStartPosition,
                             streamReaderWrap.PositionIndex,
-                            (byte)JsonDecorationKind.LineComment,
+                            (byte)GenericDecorationKind.Json_LineComment,
                             commentStartByte));
                         continue;
                     }

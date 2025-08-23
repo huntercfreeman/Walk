@@ -3,7 +3,7 @@ namespace Walk.Extensions.CompilerServices.Syntax;
 /// <summary>
 /// In order to share identical logic with C and CSharp code analysis I need to have them share the SyntaxKind enum. I don't like this because some enum members are used in one language but not the other.
 /// </summary>
-public enum SyntaxKind
+public enum SyntaxKind : byte
 {
     // Used to avoid nullable SyntaxToken(s).
     NotApplicable,

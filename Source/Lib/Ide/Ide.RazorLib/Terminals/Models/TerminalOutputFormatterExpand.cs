@@ -54,7 +54,7 @@ public class TerminalOutputFormatterExpand : ITerminalOutputFormatter
             var workingDirectoryTextSpan = new TextEditorTextSpan(
                 outputBuilder.Length,
                 outputBuilder.Length + workingDirectoryText.Length,
-                (byte)TerminalDecorationKind.Keyword);
+                (byte)GenericDecorationKind.Terminal_Keyword);
             outTextSpanList.Add(workingDirectoryTextSpan);
             
             outputBuilder
@@ -93,7 +93,7 @@ public class TerminalOutputFormatterExpand : ITerminalOutputFormatter
                 DateTime.UtcNow,
                 "terminal",
                 string.Empty,
-                new TerminalDecorationMapper(),
+                new GenericDecorationMapper(),
                 _textEditorService.GetCompilerService(CommonFacts.TERMINAL),
                 _textEditorService)
             {

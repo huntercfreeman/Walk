@@ -1,4 +1,5 @@
 using Walk.TextEditor.RazorLib.Lexers.Models;
+using Walk.TextEditor.RazorLib.Decorations.Models;
 
 namespace Walk.CompilerServices.Razor;
 
@@ -97,7 +98,7 @@ public static class RazorLexer
                             output.TextSpanList.Add(new TextEditorTextSpan(
                                 atCharStartPosition,
                                 streamReaderWrap.PositionIndex,
-                                (byte)RazorDecorationKind.AttributeNameInjectedLanguageFragment,
+                                (byte)GenericDecorationKind.Razor_AttributeNameInjectedLanguageFragment,
                                 atCharStartByte));
                         }
                         else
@@ -122,7 +123,7 @@ public static class RazorLexer
                             output.TextSpanList.Add(new TextEditorTextSpan(
                                 attributeNameStartPosition,
                                 streamReaderWrap.PositionIndex,
-                                (byte)RazorDecorationKind.AttributeName,
+                                (byte)GenericDecorationKind.Razor_AttributeName,
                                 attributeNameStartByte));
                         }
                         
@@ -140,7 +141,7 @@ public static class RazorLexer
                             output.TextSpanList.Add(new TextEditorTextSpan(
                                 atCharStartPosition,
                                 streamReaderWrap.PositionIndex,
-                                (byte)RazorDecorationKind.AttributeValueInjectedLanguageFragment,
+                                (byte)GenericDecorationKind.Razor_AttributeValueInjectedLanguageFragment,
                                 atCharStartByte));
                         }
                         else
@@ -164,7 +165,7 @@ public static class RazorLexer
                             output.TextSpanList.Add(new TextEditorTextSpan(
                                 attributeValueStartPosition,
                                 streamReaderWrap.PositionIndex,
-                                (byte)RazorDecorationKind.AttributeValue,
+                                (byte)GenericDecorationKind.Razor_AttributeValue,
                                 attributeValueStartByte));
                         }
                         
@@ -186,7 +187,7 @@ public static class RazorLexer
                                 output.TextSpanList.Add(new TextEditorTextSpan(
                                     textStartPosition,
                                     streamReaderWrap.PositionIndex,
-                                    (byte)RazorDecorationKind.Text,
+                                    (byte)GenericDecorationKind.Razor_Text,
                                     textStartByte));
                                 var atCharStartPosition = streamReaderWrap.PositionIndex;
                                 var atCharStartByte = streamReaderWrap.ByteIndex;
@@ -198,7 +199,7 @@ public static class RazorLexer
                                     output.TextSpanList.Add(new TextEditorTextSpan(
                                         atCharStartPosition,
                                         streamReaderWrap.PositionIndex,
-                                        (byte)RazorDecorationKind.InjectedLanguageFragment,
+                                        (byte)GenericDecorationKind.Razor_InjectedLanguageFragment,
                                         atCharStartByte));
                                         
                                     var commentStartPosition = streamReaderWrap.PositionIndex;
@@ -215,7 +216,7 @@ public static class RazorLexer
                                     output.TextSpanList.Add(new TextEditorTextSpan(
                                         commentStartPosition,
                                         streamReaderWrap.PositionIndex,
-                                        (byte)RazorDecorationKind.Comment,
+                                        (byte)GenericDecorationKind.Razor_Comment,
                                         commentStartByte));
                                     
                                     // The while loop has 2 break cases, thus !IsEof means "*@" was the break cause.
@@ -229,7 +230,7 @@ public static class RazorLexer
                                         output.TextSpanList.Add(new TextEditorTextSpan(
                                             starStartPosition,
                                             streamReaderWrap.PositionIndex,
-                                            (byte)RazorDecorationKind.InjectedLanguageFragment,
+                                            (byte)GenericDecorationKind.Razor_InjectedLanguageFragment,
                                             starStartByte));
                                     }
                                 }
@@ -238,7 +239,7 @@ public static class RazorLexer
                                     output.TextSpanList.Add(new TextEditorTextSpan(
                                         atCharStartPosition,
                                         streamReaderWrap.PositionIndex,
-                                        (byte)RazorDecorationKind.InjectedLanguageFragment,
+                                        (byte)GenericDecorationKind.Razor_InjectedLanguageFragment,
                                         atCharStartByte));
                                         
                                     LexCSharpCodeBlock(streamReaderWrap, output.TextSpanList);
@@ -248,7 +249,7 @@ public static class RazorLexer
                                     output.TextSpanList.Add(new TextEditorTextSpan(
                                         atCharStartPosition,
                                         streamReaderWrap.PositionIndex,
-                                        (byte)RazorDecorationKind.InjectedLanguageFragment,
+                                        (byte)GenericDecorationKind.Razor_InjectedLanguageFragment,
                                         atCharStartByte));
                                 
                                     var wordStartPosition = streamReaderWrap.PositionIndex;
@@ -260,7 +261,7 @@ public static class RazorLexer
                                         output.TextSpanList.Add(new TextEditorTextSpan(
                                             wordStartPosition,
                                             streamReaderWrap.PositionIndex,
-                                            (byte)RazorDecorationKind.InjectedLanguageFragment,
+                                            (byte)GenericDecorationKind.Razor_InjectedLanguageFragment,
                                             wordStartByte));
                                     }
                                 }
@@ -274,7 +275,7 @@ public static class RazorLexer
                         output.TextSpanList.Add(new TextEditorTextSpan(
                             textStartPosition,
                             streamReaderWrap.PositionIndex,
-                            (byte)RazorDecorationKind.Text,
+                            (byte)GenericDecorationKind.Razor_Text,
                             textStartByte));
                         context = RazorLexerContextKind.Expect_TagOrText;
                         break;
@@ -309,7 +310,7 @@ public static class RazorLexer
                         output.TextSpanList.Add(new TextEditorTextSpan(
                             attributeValueStartPosition,
                             streamReaderWrap.PositionIndex,
-                            (byte)RazorDecorationKind.AttributeValue,
+                            (byte)GenericDecorationKind.Razor_AttributeValue,
                             attributeValueStartByte));
                         context = RazorLexerContextKind.Expect_AttributeName;
                         break;
@@ -325,7 +326,7 @@ public static class RazorLexer
                         output.TextSpanList.Add(new TextEditorTextSpan(
                             delimiterStartPosition,
                             streamReaderWrap.PositionIndex,
-                            (byte)RazorDecorationKind.AttributeDelimiter,
+                            (byte)GenericDecorationKind.Razor_AttributeDelimiter,
                             delimiterStartByte));
                             
                         var attributeValueStartPosition = streamReaderWrap.PositionIndex;
@@ -350,7 +351,7 @@ public static class RazorLexer
                                     output.TextSpanList.Add(new TextEditorTextSpan(
                                         attributeValueStartPosition,
                                         streamReaderWrap.PositionIndex,
-                                        (byte)RazorDecorationKind.AttributeValueInterpolationStart,
+                                        (byte)GenericDecorationKind.Razor_AttributeValueInterpolationStart,
                                         attributeValueStartByte));
                                 }
                                 else
@@ -358,7 +359,7 @@ public static class RazorLexer
                                     output.TextSpanList.Add(new TextEditorTextSpan(
                                         attributeValueStartPosition,
                                         streamReaderWrap.PositionIndex,
-                                        (byte)RazorDecorationKind.AttributeValueInterpolationContinue,
+                                        (byte)GenericDecorationKind.Razor_AttributeValueInterpolationContinue,
                                         attributeValueStartByte));
                                 }
                                 
@@ -369,7 +370,7 @@ public static class RazorLexer
                                 output.TextSpanList.Add(new TextEditorTextSpan(
                                     interpolationStartPosition,
                                     streamReaderWrap.PositionIndex,
-                                    (byte)RazorDecorationKind.AttributeValueInjectedLanguageFragment,
+                                    (byte)GenericDecorationKind.Razor_AttributeValueInjectedLanguageFragment,
                                     interpolationStartByte));
                                 
                                 attributeValueStartPosition = streamReaderWrap.PositionIndex;
@@ -384,13 +385,13 @@ public static class RazorLexer
                             output.TextSpanList.Add(new TextEditorTextSpan(
                                 attributeValueStartPosition,
                                 attributeValueEnd,
-                                (byte)RazorDecorationKind.AttributeValueInterpolationContinue,
+                                (byte)GenericDecorationKind.Razor_AttributeValueInterpolationContinue,
                                 attributeValueStartByte));
                         
                             output.TextSpanList.Add(new TextEditorTextSpan(
                                 delimiterStartPosition,
                                 delimiterStartPosition,
-                                (byte)RazorDecorationKind.AttributeValueInterpolationEnd,
+                                (byte)GenericDecorationKind.Razor_AttributeValueInterpolationEnd,
                                 delimiterStartByte));
                         }
                         else
@@ -398,14 +399,14 @@ public static class RazorLexer
                             output.TextSpanList.Add(new TextEditorTextSpan(
                                 attributeValueStartPosition,
                                 attributeValueEnd,
-                                (byte)RazorDecorationKind.AttributeValue,
+                                (byte)GenericDecorationKind.Razor_AttributeValue,
                                 attributeValueStartByte));
                         }
                         
                         output.TextSpanList.Add(new TextEditorTextSpan(
                             delimiterStartPosition,
                             streamReaderWrap.PositionIndex,
-                            (byte)RazorDecorationKind.AttributeDelimiter,
+                            (byte)GenericDecorationKind.Razor_AttributeDelimiter,
                             delimiterStartByte));
                             
                         context = RazorLexerContextKind.Expect_AttributeName;
@@ -421,7 +422,7 @@ public static class RazorLexer
                         output.TextSpanList.Add(new TextEditorTextSpan(
                             delimiterStartPosition,
                             streamReaderWrap.PositionIndex,
-                            (byte)RazorDecorationKind.AttributeDelimiter,
+                            (byte)GenericDecorationKind.Razor_AttributeDelimiter,
                             delimiterStartByte));
                         
                         var attributeValueStartPosition = streamReaderWrap.PositionIndex;
@@ -446,7 +447,7 @@ public static class RazorLexer
                                     output.TextSpanList.Add(new TextEditorTextSpan(
                                         attributeValueStartPosition,
                                         streamReaderWrap.PositionIndex,
-                                        (byte)RazorDecorationKind.AttributeValueInterpolationStart,
+                                        (byte)GenericDecorationKind.Razor_AttributeValueInterpolationStart,
                                         attributeValueStartByte));
                                 }
                                 else
@@ -454,7 +455,7 @@ public static class RazorLexer
                                     output.TextSpanList.Add(new TextEditorTextSpan(
                                         attributeValueStartPosition,
                                         streamReaderWrap.PositionIndex,
-                                        (byte)RazorDecorationKind.AttributeValueInterpolationContinue,
+                                        (byte)GenericDecorationKind.Razor_AttributeValueInterpolationContinue,
                                         attributeValueStartByte));
                                 }
                                 
@@ -465,7 +466,7 @@ public static class RazorLexer
                                 output.TextSpanList.Add(new TextEditorTextSpan(
                                     interpolationStartPosition,
                                     streamReaderWrap.PositionIndex,
-                                    (byte)RazorDecorationKind.AttributeValueInjectedLanguageFragment,
+                                    (byte)GenericDecorationKind.Razor_AttributeValueInjectedLanguageFragment,
                                     interpolationStartByte));
                                 
                                 attributeValueStartPosition = streamReaderWrap.PositionIndex;
@@ -480,13 +481,13 @@ public static class RazorLexer
                             output.TextSpanList.Add(new TextEditorTextSpan(
                                 attributeValueStartPosition,
                                 attributeValueEnd,
-                                (byte)RazorDecorationKind.AttributeValueInterpolationContinue,
+                                (byte)GenericDecorationKind.Razor_AttributeValueInterpolationContinue,
                                 attributeValueStartByte));
                         
                             output.TextSpanList.Add(new TextEditorTextSpan(
                                 delimiterStartPosition,
                                 delimiterStartPosition,
-                                (byte)RazorDecorationKind.AttributeValueInterpolationEnd,
+                                (byte)GenericDecorationKind.Razor_AttributeValueInterpolationEnd,
                                 delimiterStartByte));
                         }
                         else
@@ -494,14 +495,14 @@ public static class RazorLexer
                             output.TextSpanList.Add(new TextEditorTextSpan(
                                 attributeValueStartPosition,
                                 attributeValueEnd,
-                                (byte)RazorDecorationKind.AttributeValue,
+                                (byte)GenericDecorationKind.Razor_AttributeValue,
                                 attributeValueStartByte));
                         }
                         
                         output.TextSpanList.Add(new TextEditorTextSpan(
                             delimiterStartPosition,
                             streamReaderWrap.PositionIndex,
-                            (byte)RazorDecorationKind.AttributeDelimiter,
+                            (byte)GenericDecorationKind.Razor_AttributeDelimiter,
                             delimiterStartByte));
                         
                         context = RazorLexerContextKind.Expect_AttributeName;
@@ -518,7 +519,7 @@ public static class RazorLexer
                             {
                                 output.TextSpanList[indexOfMostRecentTagOpen] = output.TextSpanList[indexOfMostRecentTagOpen] with
                                 {
-                                    DecorationByte = (byte)RazorDecorationKind.TagNameSelf,
+                                    DecorationByte = (byte)GenericDecorationKind.Razor_TagNameSelf,
                                 };
                                 indexOfMostRecentTagOpen = -1;
                             }
@@ -568,7 +569,7 @@ public static class RazorLexer
                         output.TextSpanList.Add(new TextEditorTextSpan(
                             attributeValueStartPosition,
                             streamReaderWrap.PositionIndex,
-                            (byte)RazorDecorationKind.AttributeOperator,
+                            (byte)GenericDecorationKind.Razor_AttributeOperator,
                             attributeValueStartByte));
                         break;
                     }
@@ -665,7 +666,7 @@ public static class RazorLexer
                         goto default;
                     }
                     
-                    var tagDecoration = (byte)RazorDecorationKind.TagNameOpen;
+                    var tagDecoration = (byte)GenericDecorationKind.Razor_TagNameOpen;
                     
                     if (context == RazorLexerContextKind.Expect_TagOrText)
                     {
@@ -673,7 +674,7 @@ public static class RazorLexer
                         
                         if (streamReaderWrap.CurrentCharacter == '/')
                         {
-                            tagDecoration = (byte)RazorDecorationKind.TagNameClose;
+                            tagDecoration = (byte)GenericDecorationKind.Razor_TagNameClose;
                             _ = streamReaderWrap.ReadCharacter();
                         }
                         else if (streamReaderWrap.CurrentCharacter == '!')
@@ -694,7 +695,7 @@ public static class RazorLexer
                             }
                             _ = streamReaderWrap.ReadCharacter();
                         }
-                        if (tagDecoration == (byte)RazorDecorationKind.TagNameOpen)
+                        if (tagDecoration == (byte)GenericDecorationKind.Razor_TagNameOpen)
                         {
                             indexOfMostRecentTagOpen = output.TextSpanList.Count;
                         }
@@ -869,7 +870,7 @@ public static class RazorLexer
                 textSpanList.Add(new TextEditorTextSpan(
                     wordStartPosition,
                     streamReaderWrap.PositionIndex,
-                    (byte)RazorDecorationKind.InjectedLanguageFragment,
+                    (byte)GenericDecorationKind.Razor_InjectedLanguageFragment,
                     wordStartByte));
                     
                 while (!streamReaderWrap.IsEof)
@@ -967,7 +968,7 @@ public static class RazorLexer
         textSpanList.Add(new TextEditorTextSpan(
             openBraceStartPosition,
             streamReaderWrap.PositionIndex,
-            (byte)RazorDecorationKind.InjectedLanguageFragment,
+            (byte)GenericDecorationKind.Razor_InjectedLanguageFragment,
             openBraceStartByte));
         
         var cSharpStartPosition = streamReaderWrap.PositionIndex;
@@ -1053,7 +1054,7 @@ public static class RazorLexer
         textSpanList.Add(new TextEditorTextSpan(
             cSharpStartPosition,
             streamReaderWrap.PositionIndex,
-            (byte)RazorDecorationKind.CSharpMarker,
+            (byte)GenericDecorationKind.Razor_CSharpMarker,
             cSharpStartByte));
         
         // The while loop has 2 break cases, thus !IsEof means "*@" was the break cause.
@@ -1066,7 +1067,7 @@ public static class RazorLexer
             textSpanList.Add(new TextEditorTextSpan(
                 closeBraceStartPosition,
                 streamReaderWrap.PositionIndex,
-                (byte)RazorDecorationKind.InjectedLanguageFragment,
+                (byte)GenericDecorationKind.Razor_InjectedLanguageFragment,
                 closeBraceStartByte));
         }
     }

@@ -1,4 +1,5 @@
 using Walk.TextEditor.RazorLib.Lexers.Models;
+using Walk.TextEditor.RazorLib.Decorations.Models;
 
 namespace Walk.CompilerServices.Css;
 
@@ -108,7 +109,7 @@ public static class CssLexer
                         output.TextSpanList.Add(new TextEditorTextSpan(
                             textStartPosition,
                             endPosition,
-                            (byte)CssDecorationKind.Function,
+                            (byte)GenericDecorationKind.Css_Function,
                             textStartByte));
                     }
                     else if (braceMatching == 0)
@@ -116,7 +117,7 @@ public static class CssLexer
                         output.TextSpanList.Add(new TextEditorTextSpan(
                             textStartPosition,
                             endPosition,
-                            (byte)CssDecorationKind.Identifier,
+                            (byte)GenericDecorationKind.Css_Identifier,
                             textStartByte));
                     }
                     else
@@ -126,7 +127,7 @@ public static class CssLexer
                             output.TextSpanList.Add(new TextEditorTextSpan(
                                 textStartPosition,
                                 endPosition,
-                                (byte)CssDecorationKind.PropertyName,
+                                (byte)GenericDecorationKind.Css_PropertyName,
                                 textStartByte));
                         }
                         else
@@ -134,7 +135,7 @@ public static class CssLexer
                             output.TextSpanList.Add(new TextEditorTextSpan(
                                 textStartPosition,
                                 endPosition,
-                                (byte)CssDecorationKind.PropertyValue,
+                                (byte)GenericDecorationKind.Css_PropertyValue,
                                 textStartByte));
                         }
                     }
@@ -176,7 +177,7 @@ public static class CssLexer
                         output.TextSpanList.Add(new TextEditorTextSpan(
                             commentStartPosition,
                             streamReaderWrap.PositionIndex,
-                            (byte)CssDecorationKind.Comment,
+                            (byte)GenericDecorationKind.Css_Comment,
                             commentStartByte));
                         continue;
                     }
@@ -285,7 +286,7 @@ public static class CssLexer
                             output.TextSpanList.Add(new TextEditorTextSpan(
                                 positionIndex,
                                 streamReaderWrap.PositionIndex,
-                                (byte)CssDecorationKind.None,
+                                (byte)GenericDecorationKind.None,
                                 byteIndex));
                             _ = streamReaderWrap.ReadCharacter();
                             break;
@@ -431,7 +432,7 @@ public static class CssLexer
                         output.TextSpanList.Add(new TextEditorTextSpan(
                             startPosition,
                             streamReaderWrap.PositionIndex,
-                            (byte)CssDecorationKind.PropertyValue,
+                            (byte)GenericDecorationKind.Css_PropertyValue,
                             startByte));
                         continue;
                     }
