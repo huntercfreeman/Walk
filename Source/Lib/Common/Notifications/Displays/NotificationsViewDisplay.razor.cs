@@ -31,21 +31,6 @@ public partial class NotificationsViewDisplay : ComponentBase, IDisposable
         CommonService.Notification_ReduceClearDefaultAction();
     }
 
-    private void ClearRead()
-    {
-        CommonService.Notification_ReduceClearReadAction();
-    }
-
-    private void ClearDeleted()
-    {
-        CommonService.Notification_ReduceClearDeletedAction();
-    }
-
-    private void ClearArchived()
-    {
-        CommonService.Notification_ReduceClearArchivedAction();
-    }
-    
     public async void OnCommonUiStateChanged(CommonUiEventKind commonUiEventKind)
     {
         if (commonUiEventKind == CommonUiEventKind.NotificationStateChanged)

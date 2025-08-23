@@ -117,10 +117,7 @@ public partial class NotificationDisplay : ComponentBase, IDisposable
 
     private async Task HandleShouldNoLongerRender(bool wasCausedByUiEvent)
     {
-        if (Notification.DeleteNotificationAfterOverlayIsDismissed)
-            DeleteNotification();
-        else
-            MarkNotificationAsRead();
+        CommonService.Notification_ReduceDisposeAction(Notification.DynamicViewModelKey);
             
         if (wasCausedByUiEvent)
         {
@@ -129,16 +126,6 @@ public partial class NotificationDisplay : ComponentBase, IDisposable
                      ?? IDynamicViewModel.DefaultSetFocusOnCloseElementId)
                 .ConfigureAwait(false);
         }
-    }
-
-    private void DeleteNotification()
-    {
-        CommonService.Notification_ReduceMakeDeletedAction(Notification.DynamicViewModelKey);
-    }
-
-    private void MarkNotificationAsRead()
-    {
-        CommonService.Notification_ReduceMakeReadAction(Notification.DynamicViewModelKey);
     }
 
     private Task ChangeNotificationToDialog()
