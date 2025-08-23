@@ -4,10 +4,9 @@ public class TreeViewCommand : CommandWithType<TreeViewCommandArgs>
 {
     public TreeViewCommand(
             string displayName,
-            string internalIdentifier,
             bool shouldBubble,
             Func<ICommandArgs, ValueTask> commandFunc)
-        : base(displayName, internalIdentifier, shouldBubble, commandFunc)
+        : base(displayName, shouldBubble, commandFunc)
     {
     }
 }
