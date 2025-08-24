@@ -512,12 +512,12 @@ public partial class SolutionExplorerContextMenu : ComponentBase
                 if (absolutePath.Value is null)
                     return Task.CompletedTask;
 
-                var localFormattedAddExistingProjectToSolutionCommand = DotNetCliCommandFormatter.FormatAddExistingProjectToSolution(
+                var localFormattedAddExistingProjectToSolutionCommandValue = DotNetCliCommandFormatter.FormatAddExistingProjectToSolution(
                     dotNetSolutionModel.AbsolutePath.Value,
                     absolutePath.Value);
 
                 var terminalCommandRequest = new TerminalCommandRequest(
-                    localFormattedAddExistingProjectToSolutionCommand.Value,
+                    localFormattedAddExistingProjectToSolutionCommandValue,
                     null)
                 {
                     ContinueWithFunc = parsedCommand =>

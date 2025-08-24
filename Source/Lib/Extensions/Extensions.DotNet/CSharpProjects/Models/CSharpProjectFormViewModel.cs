@@ -51,12 +51,12 @@ public class CSharpProjectFormViewModel
         ? "{enter parent directory name}"
         : ParentDirectoryNameValue;
 
-    public FormattedCommand FormattedNewCSharpProjectCommand => DotNetCliCommandFormatter.FormatDotnetNewCSharpProject(
+    public string FormattedNewCSharpProjectCommandValue => DotNetCliCommandFormatter.FormatDotnetNewCSharpProject(
         ProjectTemplateShortNameValue,
         CSharpProjectNameValue,
         OptionalParametersValue);
 
-    public FormattedCommand FormattedAddExistingProjectToSolutionCommand => DotNetCliCommandFormatter.FormatAddExistingProjectToSolution(
+    public string FormattedAddExistingProjectToSolutionCommandValue => DotNetCliCommandFormatter.FormatAddExistingProjectToSolution(
         DotNetSolutionModel?.NamespaceString is null
             ? string.Empty
             : DotNetSolutionModel?.AbsolutePath.Value,
@@ -89,8 +89,8 @@ public class CSharpProjectFormViewModel
             CSharpProjectNameDisplay,
             OptionalParametersDisplay,
             ParentDirectoryNameDisplay,
-            FormattedNewCSharpProjectCommand,
-            FormattedAddExistingProjectToSolutionCommand,
+            FormattedNewCSharpProjectCommandValue,
+            FormattedAddExistingProjectToSolutionCommandValue,
             NewCSharpProjectTerminalCommandRequestKey,
             AddCSharpProjectToSolutionTerminalCommandRequestKey,
             LoadProjectTemplatesTerminalCommandRequestKey,

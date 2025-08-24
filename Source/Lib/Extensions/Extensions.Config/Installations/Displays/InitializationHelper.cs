@@ -177,7 +177,7 @@ public static class InitializationHelper
 
     public static void BuildProjectOnClick(DotNetService DotNetService, string projectAbsolutePathString)
     {
-        var formattedCommand = DotNetCliCommandFormatter.FormatDotnetBuildProject(projectAbsolutePathString);
+        var formattedCommandValue = DotNetCliCommandFormatter.FormatDotnetBuildProject(projectAbsolutePathString);
         var solutionAbsolutePath = DotNetService.CommonService.EnvironmentProvider.AbsolutePathFactory(
             projectAbsolutePathString,
             false,
@@ -190,7 +190,7 @@ public static class InitializationHelper
             return;
 
         var terminalCommandRequest = new TerminalCommandRequest(
-            formattedCommand.Value,
+            formattedCommandValue,
             localParentDirectory)
         {
             BeginWithFunc = parsedCommand =>
@@ -214,7 +214,7 @@ public static class InitializationHelper
 
     public static void CleanProjectOnClick(DotNetService DotNetService, string projectAbsolutePathString)
     {
-        var formattedCommand = DotNetCliCommandFormatter.FormatDotnetCleanProject(projectAbsolutePathString);
+        var formattedCommandValue = DotNetCliCommandFormatter.FormatDotnetCleanProject(projectAbsolutePathString);
         var solutionAbsolutePath = DotNetService.CommonService.EnvironmentProvider.AbsolutePathFactory(projectAbsolutePathString, false, tokenBuilder: new StringBuilder(), formattedBuilder: new StringBuilder(), AbsolutePathNameKind.NameWithExtension);
 
         var localParentDirectory = solutionAbsolutePath.CreateSubstringParentDirectory();
@@ -222,7 +222,7 @@ public static class InitializationHelper
             return;
 
         var terminalCommandRequest = new TerminalCommandRequest(
-            formattedCommand.Value,
+            formattedCommandValue,
             localParentDirectory)
         {
             BeginWithFunc = parsedCommand =>
@@ -246,7 +246,7 @@ public static class InitializationHelper
 
     public static void BuildSolutionOnClick(DotNetService DotNetService, string solutionAbsolutePathString)
     {
-        var formattedCommand = DotNetCliCommandFormatter.FormatDotnetBuildSolution(solutionAbsolutePathString);
+        var formattedCommandValue = DotNetCliCommandFormatter.FormatDotnetBuildSolution(solutionAbsolutePathString);
         var solutionAbsolutePath = DotNetService.CommonService.EnvironmentProvider.AbsolutePathFactory(solutionAbsolutePathString, false, tokenBuilder: new StringBuilder(), formattedBuilder: new StringBuilder(), AbsolutePathNameKind.NameWithExtension);
 
         var localParentDirectory = solutionAbsolutePath.CreateSubstringParentDirectory();
@@ -254,7 +254,7 @@ public static class InitializationHelper
             return;
 
         var terminalCommandRequest = new TerminalCommandRequest(
-            formattedCommand.Value,
+            formattedCommandValue,
             localParentDirectory)
         {
             BeginWithFunc = parsedCommand =>
@@ -278,7 +278,7 @@ public static class InitializationHelper
 
     public static void CleanSolutionOnClick(DotNetService DotNetService, string solutionAbsolutePathString)
     {
-        var formattedCommand = DotNetCliCommandFormatter.FormatDotnetCleanSolution(solutionAbsolutePathString);
+        var formattedCommandValue = DotNetCliCommandFormatter.FormatDotnetCleanSolution(solutionAbsolutePathString);
         var solutionAbsolutePath = DotNetService.CommonService.EnvironmentProvider.AbsolutePathFactory(solutionAbsolutePathString, false, tokenBuilder: new StringBuilder(), formattedBuilder: new StringBuilder(), AbsolutePathNameKind.NameWithExtension);
 
         var localParentDirectory = solutionAbsolutePath.CreateSubstringParentDirectory();
@@ -286,7 +286,7 @@ public static class InitializationHelper
             return;
 
         var terminalCommandRequest = new TerminalCommandRequest(
-            formattedCommand.Value,
+            formattedCommandValue,
             localParentDirectory)
         {
             BeginWithFunc = parsedCommand =>

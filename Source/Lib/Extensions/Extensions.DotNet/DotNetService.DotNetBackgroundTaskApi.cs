@@ -118,7 +118,7 @@ public partial class DotNetService
         string fullyQualifiedName,
         string? directoryNameForTestDiscovery)
     {
-        var dotNetTestByFullyQualifiedNameFormattedCommand = DotNetCliCommandFormatter
+        var dotNetTestByFullyQualifiedNameFormattedCommandValue = DotNetCliCommandFormatter
             .FormatDotNetTestByFullyQualifiedName(fullyQualifiedName);
 
         if (string.IsNullOrWhiteSpace(directoryNameForTestDiscovery) ||
@@ -128,7 +128,7 @@ public partial class DotNetService
         }
 
         var terminalCommandRequest = new TerminalCommandRequest(
-            dotNetTestByFullyQualifiedNameFormattedCommand.Value,
+            dotNetTestByFullyQualifiedNameFormattedCommandValue,
             directoryNameForTestDiscovery,
             treeViewStringFragment.Item.DotNetTestByFullyQualifiedNameFormattedTerminalCommandRequestKey)
         {
@@ -1007,11 +1007,11 @@ public partial class DotNetService
             return Task.CompletedTask;
         }
 
-        var formattedCommand = DotNetCliCommandFormatter.FormatStartProjectWithoutDebugging(
+        var formattedCommandValue = DotNetCliCommandFormatter.FormatStartProjectWithoutDebugging(
             project.AbsolutePath);
 
         var terminalCommandRequest = new TerminalCommandRequest(
-            formattedCommand.Value,
+            formattedCommandValue,
             ancestorDirectory,
             _newDotNetSolutionTerminalCommandRequestKey)
         {

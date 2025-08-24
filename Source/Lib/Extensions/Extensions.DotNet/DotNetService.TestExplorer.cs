@@ -184,7 +184,7 @@ public partial class DotNetService
                 node => IdeService.TextEditorService.CommonService.TreeView_ReRenderNodeAction(TestExplorerState.TreeViewTestExplorerKey, node)))
             .ToList();
 
-        var localFormattedCommand = DotNetCliCommandFormatter.FormatDotNetTestListTests();
+        var localFormattedCommandValue = DotNetCliCommandFormatter.FormatDotNetTestListTests();
 
         var localTreeViewProjectTestModelList = localProjectTestModelList.Select(x =>
                 (TreeViewNoType)new TreeViewProjectTestModel(
@@ -222,7 +222,7 @@ public partial class DotNetService
             treeViewProjectTestModel.Item.EnqueueDiscoverTestsFunc = callback =>
             {
                 var terminalCommandRequest = new TerminalCommandRequest(
-                    localFormattedCommand.Value,
+                    localFormattedCommandValue,
                     treeViewProjectTestModel.Item.DirectoryNameForTestDiscovery,
                     treeViewProjectTestModel.Item.DotNetTestListTestsTerminalCommandRequestKey)
                 {
