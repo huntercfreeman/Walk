@@ -10,6 +10,4 @@ public struct IconDriver
 
     public double WidthInPixels { get; }
     public double HeightInPixels { get; }
-
-    public override string ToString() => $"({WidthInPixels}, {HeightInPixels})";
 }
