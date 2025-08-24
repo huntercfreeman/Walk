@@ -2,7 +2,6 @@ using Walk.Common.RazorLib;
 using Walk.Common.RazorLib.FileSystems.Models;
 using Walk.Common.RazorLib.Keys.Models;
 using Walk.CompilerServices.DotNetSolution.Models;
-using Walk.Ide.RazorLib.CommandLines.Models;
 using Walk.Ide.RazorLib.Terminals.Models;
 using Walk.Extensions.DotNet.CommandLines.Models;
 

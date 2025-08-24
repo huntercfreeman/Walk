@@ -1,6 +1,5 @@
 using System.Text;
 using Walk.Common.RazorLib.FileSystems.Models;
-using Walk.Ide.RazorLib.CommandLines.Models;
 
 namespace Walk.Extensions.DotNet.CommandLines.Models;
 
