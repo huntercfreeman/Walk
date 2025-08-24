@@ -18,7 +18,7 @@ public partial class DropdownDisplay : ComponentBase, IDisposable
     private readonly object _hasPendingEventLock = new();
 
     private Guid _htmlElementIdSalt = Guid.NewGuid();
-    private string _htmlElementId => $"di_dropdown_{_htmlElementIdSalt}";
+    private string _htmlElementId;
     private MeasuredHtmlElementDimensions _htmlElementDimensions;
     private MeasuredHtmlElementDimensions _globalHtmlElementDimensions;
     private bool _isOffScreenHorizontally;
@@ -36,6 +36,8 @@ public partial class DropdownDisplay : ComponentBase, IDisposable
 
     protected override void OnInitialized()
     {
+        _htmlElementId = $"di_dropdown_{_htmlElementIdSalt}";
+    
         // TODO: Does this line work in relating to the <see cref="Dropdown"/> parameter...
         //       ...having been changed?
         //       |
@@ -133,8 +135,13 @@ public partial class DropdownDisplay : ComponentBase, IDisposable
         //if (Dropdown.Height is not null)
         //    styleBuilder.Append($"height: {Dropdown.Height.Value.ToCssValue()}px; ");
 
-        styleBuilder.Append($"left: {Dropdown.Left.ToCssValue()}px; ");
-        styleBuilder.Append($"top: {Dropdown.Top.ToCssValue()}px; ");
+        styleBuilder.Append("left: ");
+        styleBuilder.Append(Dropdown.Left.ToCssValue());
+        styleBuilder.Append("px; ");
+        
+        styleBuilder.Append($"top: ");
+        styleBuilder.Append(Dropdown.Top.ToCssValue());
+        styleBuilder.Append("px; ");
 
         return styleBuilder.ToString();
     }
