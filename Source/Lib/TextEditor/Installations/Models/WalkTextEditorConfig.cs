@@ -21,10 +21,6 @@ public record WalkTextEditorConfig
     /// </summary>
     public int InitialThemeKey { get; init; } = CommonFacts.VisualStudioDarkThemeClone.Key;
     /// <summary>
-    /// When a user wants to customize the text editor, this settings dialog will be rendered.
-    /// </summary>
-    public SettingsDialogConfig SettingsDialogConfig { get; init; } = new();
-    /// <summary>
     /// When a user hits the keymap { Control + , } then a dialog will be rendered where they can
     /// search for text through "all files". Where "all files" relates to the implementation details
     /// of the given find all dialog.

@@ -33,22 +33,6 @@ public partial class TextEditorService
         SecondaryChanged?.Invoke(SecondaryChangedKind.TextEditorWrapperCssStateChanged);
     }
 
-    public void Options_ShowSettingsDialog(bool? isResizableOverride = null, string? cssClassString = null)
-    {
-        // TODO: determine the actively focused element at time of invocation,
-        //       then restore focus to that element when this dialog is closed.
-        var settingsDialog = new DialogViewModel(
-            Key<IDynamicViewModel>.NewKey(),
-            "Text Editor Settings",
-            TextEditorConfig.SettingsDialogConfig.ComponentRendererType,
-            null,
-            cssClassString,
-            isResizableOverride ?? TextEditorConfig.SettingsDialogConfig.ComponentIsResizable,
-            null);
-
-        CommonService.Dialog_ReduceRegisterAction(settingsDialog);
-    }
-
     public void Options_ShowFindAllDialog(bool? isResizableOverride = null, string? cssClassString = null)
     {
         // TODO: determine the actively focused element at time of invocation,
