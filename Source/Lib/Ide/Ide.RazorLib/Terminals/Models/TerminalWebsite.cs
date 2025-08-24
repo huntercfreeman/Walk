@@ -1,8 +1,11 @@
+using System.Text;
 using CliWrap.EventStream;
 using Walk.Common.RazorLib;
 using Walk.Common.RazorLib.BackgroundTasks.Models;
 using Walk.Common.RazorLib.Keys.Models;
 using Walk.Common.RazorLib.Notifications.Models;
+using Walk.TextEditor.RazorLib.CompilerServices;
+using Walk.TextEditor.RazorLib.Lexers.Models;
 using Walk.Ide.RazorLib.Exceptions;
 
 namespace Walk.Ide.RazorLib.Terminals.Models;
@@ -16,12 +19,10 @@ public class TerminalWebsite : ITerminal, IBackgroundTaskGroup
 
     public TerminalWebsite(
         string displayName,
-        Func<TerminalWebsite, ITerminalInteractive> terminalInteractiveFactory,
         Func<TerminalWebsite, ITerminalOutput> terminalOutputFactory,
         CommonService commonService)
     {
         DisplayName = displayName;
-        TerminalInteractive = terminalInteractiveFactory.Invoke(this);
         TerminalOutput = terminalOutputFactory.Invoke(this);
         
         _commonService = commonService;
@@ -35,7 +36,6 @@ public class TerminalWebsite : ITerminal, IBackgroundTaskGroup
     private readonly object _workLock = new();
 
     public string DisplayName { get; }
-    public ITerminalInteractive TerminalInteractive { get; }
     public ITerminalOutput TerminalOutput { get; }
 
     private CancellationTokenSource _commandCancellationTokenSource = new();
@@ -100,7 +100,7 @@ public class TerminalWebsite : ITerminal, IBackgroundTaskGroup
     {
         TerminalOutput.ClearHistoryWhenExistingOutputTooLong();
     
-        var parsedCommand = await TerminalInteractive.TryHandleCommand(terminalCommandRequest);
+        var parsedCommand = await TryHandleCommand(terminalCommandRequest);
         ActiveTerminalCommandParsed = parsedCommand;
 
         if (parsedCommand is null)
@@ -278,9 +278,137 @@ public class TerminalWebsite : ITerminal, IBackgroundTaskGroup
     public void Dispose()
     {
         TerminalOutput.Dispose();
-        // Input and output are dependent on 'TerminalInteractive'.
-        // Therefore, dispose it last.
-        TerminalInteractive.Dispose();
     }
+    
+    /* Start TerminalInteractive */
+    public const string RESERVED_TARGET_FILENAME_PREFIX = "Walk_";
+
+    private readonly object _syncRoot = new();
+    private readonly List<TerminalCommandRequest> _terminalCommandRequestHistory = new();
+
+    private string? _previousWorkingDirectory;
+    private string? _workingDirectory;
+    
+    public string? WorkingDirectory => _workingDirectory;
+
+    public event Action? WorkingDirectoryChanged;
+    
+    public async Task<TerminalCommandParsed?> TryHandleCommand(TerminalCommandRequest terminalCommandRequest)
+    {
+        // Store in history
+        lock (_syncRoot)
+        {
+            if (_terminalCommandRequestHistory.Count > 10)
+                _terminalCommandRequestHistory.Clear();
+                
+            _terminalCommandRequestHistory.Insert(0, terminalCommandRequest);
+        }
+    
+        var parsedCommand = Parse(terminalCommandRequest);
+        
+        // To set the working directory, is not mutually exclusive
+        // to the "cd" command. Do not combine these.
+        if (terminalCommandRequest.WorkingDirectory is not null &&
+            terminalCommandRequest.WorkingDirectory != WorkingDirectory)
+        {
+            SetWorkingDirectory(terminalCommandRequest.WorkingDirectory);
+        }
+        
+        if (parsedCommand.TargetFileName.StartsWith(RESERVED_TARGET_FILENAME_PREFIX))
+        {
+            TerminalOutput.WriteOutput(
+                parsedCommand,
+                new StartedCommandEvent(-1));
+        
+            await parsedCommand.SourceTerminalCommandRequest.BeginWithFunc.Invoke(parsedCommand);
+            return null;
+        }
+        
+        switch (parsedCommand.TargetFileName)
+        {
+            case "cd":
+                TerminalOutput.WriteOutput(
+                    parsedCommand,
+                    new StartedCommandEvent(-1));
+            
+                SetWorkingDirectory(parsedCommand.Arguments);
+                
+                TerminalOutput.WriteOutput(
+                    parsedCommand,
+                    new StandardOutputCommandEvent($"WorkingDirectory set to: '{parsedCommand.Arguments}'\n"));
+                return null;
+            case "clear":
+                TerminalOutput.ClearOutput();
+                return null;
+            default:
+                return parsedCommand;
+        }
+    }
+    
+    public void SetWorkingDirectory(string workingDirectory)
+    {
+        _previousWorkingDirectory = _workingDirectory;
+        _workingDirectory = workingDirectory;
+
+        if (_previousWorkingDirectory != _workingDirectory)
+            WorkingDirectoryChanged?.Invoke();
+    }
+    
+    public List<TerminalCommandRequest> GetTerminalCommandRequestHistory()
+    {
+        lock (_syncRoot)
+        {
+            return _terminalCommandRequestHistory;
+        }
+    }
+    
+    public TerminalCommandParsed Parse(TerminalCommandRequest terminalCommandRequest)
+    {
+        try
+        {
+            var stringWalker = new StringWalker(ResourceUri.Empty, terminalCommandRequest.CommandText);
+            
+            // Get target file name
+            string targetFileName;
+            {
+                var targetFileNameBuilder = new StringBuilder();
+                var startPositionIndex = stringWalker.PositionIndex;
+        
+                while (!stringWalker.IsEof)
+                {
+                    if (stringWalker.CurrentCharacter == ' ' ||
+                        stringWalker.CurrentCharacter == '\t' ||
+                        stringWalker.CurrentCharacter == '\r' ||
+                        stringWalker.CurrentCharacter == '\n')
+                    {
+                        break;
+                    }
+                    else
+                    {
+                        targetFileNameBuilder.Append(stringWalker.CurrentCharacter);
+                    }
+                
+                    _ = stringWalker.ReadCharacter();
+                }
+                
+                targetFileName = targetFileNameBuilder.ToString();
+            }
+            
+            // Get arguments
+            stringWalker.SkipWhitespace();
+            var arguments = stringWalker.RemainingText;
+        
+            return new TerminalCommandParsed(
+                targetFileName,
+                arguments,
+                terminalCommandRequest);
+        }
+        catch (Exception e)
+        {
+            Console.WriteLine(e.ToString());
+            throw;
+        }
+    }
+    /* End TerminalInteractive */
 }
 

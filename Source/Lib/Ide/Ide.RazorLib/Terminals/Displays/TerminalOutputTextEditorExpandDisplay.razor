@@ -11,7 +11,7 @@
 	var localFormatter = localTerminal.TerminalOutput.OutputFormatterList.FirstOrDefault(
 		x => x.Name == nameof(TerminalOutputFormatterExpand));
 	
-	var workingDirectory = localTerminal.TerminalInteractive.WorkingDirectory
+	var workingDirectory = localTerminal.WorkingDirectory
 		?? "null";
 	
 	var paddingForWorkingDirectoryText = 2;

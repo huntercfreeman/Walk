@@ -70,13 +70,13 @@ public partial class TerminalOutputTextEditorExpandDisplay : ComponentBase, IDis
         {
             if (_previousTerminal is not null)
             {
-                _previousTerminal.TerminalInteractive.WorkingDirectoryChanged -= OnWorkingDirectoryChanged;
+                _previousTerminal.WorkingDirectoryChanged -= OnWorkingDirectoryChanged;
                 _previousTerminal.TerminalOutput.OnWriteOutput -= OnWriteOutput;
             }
             
             if (nextTerminal is not null)
             {
-                nextTerminal.TerminalInteractive.WorkingDirectoryChanged += OnWorkingDirectoryChanged;
+                nextTerminal.WorkingDirectoryChanged += OnWorkingDirectoryChanged;
                 nextTerminal.TerminalOutput.OnWriteOutput += OnWriteOutput;
             }
             
@@ -121,7 +121,7 @@ public partial class TerminalOutputTextEditorExpandDisplay : ComponentBase, IDis
         {
             if (_terminalCommandRequestHistory is null)
             {
-                _terminalCommandRequestHistory = Terminal.TerminalInteractive.GetTerminalCommandRequestHistory();
+                _terminalCommandRequestHistory = Terminal.GetTerminalCommandRequestHistory();
                 _indexHistory = 0;
                 
                 var commandAtIndex = GetTerminalCommandRequestAtIndexHistory(
@@ -290,7 +290,7 @@ public partial class TerminalOutputTextEditorExpandDisplay : ComponentBase, IDis
     {
         var localPreviousTerminal = _previousTerminal;
     
-        localPreviousTerminal.TerminalInteractive.WorkingDirectoryChanged -= OnWorkingDirectoryChanged;
+        localPreviousTerminal.WorkingDirectoryChanged -= OnWorkingDirectoryChanged;
         localPreviousTerminal.TerminalOutput.OnWriteOutput -= OnWriteOutput;
     }
 }

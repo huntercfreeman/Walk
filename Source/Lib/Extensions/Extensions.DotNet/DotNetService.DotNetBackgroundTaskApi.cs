@@ -272,7 +272,7 @@ public partial class DotNetService
             TerminalCommandRequest terminalCommandRequest;
 
             var slnFoundString = $"sln found: {solutionAbsolutePath.Value}";
-            var prefix = TerminalInteractive.RESERVED_TARGET_FILENAME_PREFIX + nameof(DotNetService);
+            var prefix = Terminal.RESERVED_TARGET_FILENAME_PREFIX + nameof(DotNetService);
 
             // Set 'generalTerminal' working directory
             terminalCommandRequest = new TerminalCommandRequest(
