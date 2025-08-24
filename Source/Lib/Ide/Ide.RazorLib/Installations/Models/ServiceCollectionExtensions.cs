@@ -14,6 +14,8 @@ public static class ServiceCollectionExtensions
         this IServiceCollection services,
         WalkHostingInformation hostingInformation)
     {
+        services.AddWalkTextEditor(hostingInformation);
+    
         if (hostingInformation.WalkHostingKind == WalkHostingKind.Photino)
             services.AddScoped<IAppDataService, NativeAppDataService>();
         else
