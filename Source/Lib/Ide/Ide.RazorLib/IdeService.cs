@@ -27,11 +27,9 @@ public partial class IdeService : IBackgroundTaskGroup
     private readonly IServiceProvider _serviceProvider;
 
     public IdeService(
-        WalkIdeConfig ideConfig,
         TextEditorService textEditorService,
         IServiceProvider serviceProvider)
     {
-        IdeConfig = ideConfig;
         TextEditorService = textEditorService;
         _serviceProvider = serviceProvider;
         
@@ -40,7 +38,6 @@ public partial class IdeService : IBackgroundTaskGroup
     
     public Key<IBackgroundTaskGroup> BackgroundTaskKey { get; } = Key<IBackgroundTaskGroup>.NewKey();
     
-    public WalkIdeConfig IdeConfig { get; }
     public TextEditorService TextEditorService { get; }
     public CommonService CommonService => TextEditorService.CommonService;
 
