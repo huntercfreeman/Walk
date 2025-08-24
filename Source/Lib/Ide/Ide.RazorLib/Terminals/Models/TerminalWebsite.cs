@@ -17,13 +17,11 @@ public class TerminalWebsite : ITerminal, IBackgroundTaskGroup
     public TerminalWebsite(
         string displayName,
         Func<TerminalWebsite, ITerminalInteractive> terminalInteractiveFactory,
-        Func<TerminalWebsite, ITerminalInput> terminalInputFactory,
         Func<TerminalWebsite, ITerminalOutput> terminalOutputFactory,
         CommonService commonService)
     {
         DisplayName = displayName;
         TerminalInteractive = terminalInteractiveFactory.Invoke(this);
-        TerminalInput = terminalInputFactory.Invoke(this);
         TerminalOutput = terminalOutputFactory.Invoke(this);
         
         _commonService = commonService;
@@ -38,7 +36,6 @@ public class TerminalWebsite : ITerminal, IBackgroundTaskGroup
 
     public string DisplayName { get; }
     public ITerminalInteractive TerminalInteractive { get; }
-    public ITerminalInput TerminalInput { get; }
     public ITerminalOutput TerminalOutput { get; }
 
     private CancellationTokenSource _commandCancellationTokenSource = new();
@@ -280,7 +277,6 @@ public class TerminalWebsite : ITerminal, IBackgroundTaskGroup
 
     public void Dispose()
     {
-        TerminalInput.Dispose();
         TerminalOutput.Dispose();
         // Input and output are dependent on 'TerminalInteractive'.
         // Therefore, dispose it last.

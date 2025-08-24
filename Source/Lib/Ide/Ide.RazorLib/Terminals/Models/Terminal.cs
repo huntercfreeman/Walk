@@ -22,13 +22,11 @@ public class Terminal : ITerminal, IBackgroundTaskGroup
     public Terminal(
         string displayName,
         Func<Terminal, ITerminalInteractive> terminalInteractiveFactory,
-        Func<Terminal, ITerminalInput> terminalInputFactory,
         Func<Terminal, ITerminalOutput> terminalOutputFactory,
         IdeService ideService)
     {
         DisplayName = displayName;
         TerminalInteractive = terminalInteractiveFactory.Invoke(this);
-        TerminalInput = terminalInputFactory.Invoke(this);
         TerminalOutput = terminalOutputFactory.Invoke(this);
         
         _ideService = ideService;
@@ -53,7 +51,6 @@ public class Terminal : ITerminal, IBackgroundTaskGroup
 
     public string DisplayName { get; }
     public ITerminalInteractive TerminalInteractive { get; }
-    public ITerminalInput TerminalInput { get; }
     public ITerminalOutput TerminalOutput { get; }
 
     private CancellationTokenSource _commandCancellationTokenSource = new();
@@ -245,7 +242,6 @@ public class Terminal : ITerminal, IBackgroundTaskGroup
 
     public void Dispose()
     {
-        TerminalInput.Dispose();
         TerminalOutput.Dispose();
         // Input and output are dependent on 'TerminalInteractive'.
         // Therefore, dispose it last.
