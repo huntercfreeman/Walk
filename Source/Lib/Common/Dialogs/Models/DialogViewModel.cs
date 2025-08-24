@@ -27,7 +27,7 @@ public record DialogViewModel : IDialog
     }
 
     public Key<IDynamicViewModel> DynamicViewModelKey { get; }
-    public ElementDimensions DialogElementDimensions { get; set; } = DialogHelper.ConstructDefaultElementDimensions();
+    public ElementDimensions DialogElementDimensions { get; set; } = CommonFacts.ConstructDefaultElementDimensions();
     public Type ComponentType { get; }
     public Dictionary<string, object?>? ComponentParameterMap { get; init; }
     public string Title { get; set; }

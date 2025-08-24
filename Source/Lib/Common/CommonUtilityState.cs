@@ -275,7 +275,7 @@ public record struct DragState(
     IDrag? Drag,
     ElementDimensions DragElementDimensions)
 {
-    public DragState() : this (false, null, null, DialogHelper.ConstructDefaultElementDimensions())
+    public DragState() : this (false, null, null, CommonFacts.ConstructDefaultElementDimensions())
     {
         
     }
