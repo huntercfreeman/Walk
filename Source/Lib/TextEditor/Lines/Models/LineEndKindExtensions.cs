@@ -66,16 +66,4 @@ public static class LineEndKindExtensions
             _ => throw new WalkTextEditorException($"Unexpected {nameof(LineEndKind)} of: {rowEndingKind}"),
         };
     }
-
-    public static List<LineEndKind> GetLineEndKindsUserAllowedToUse(this LineEndKind rowEndingKind)
-    {
-        return _rowEndingsUserAllowedToUse;
-    }
-
-    private static readonly List<LineEndKind> _rowEndingsUserAllowedToUse = new()
-    {
-        LineEndKind.CarriageReturn,
-        LineEndKind.LineFeed,
-        LineEndKind.CarriageReturnLineFeed,
-    };
 }
