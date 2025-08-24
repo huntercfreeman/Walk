@@ -243,7 +243,6 @@ public partial class TestExplorerContextMenu : ComponentBase
         };
 
         var fabricateCommandArgs = new TreeViewCommandArgs(
-            commandArgs.CommonService,
             fabricateTreeViewContainer,
             commandArgs.NodeThatReceivedMouseEvent,
             commandArgs.RestoreFocusToTreeView,
@@ -274,7 +273,6 @@ public partial class TestExplorerContextMenu : ComponentBase
             if (node is TreeViewStringFragment treeViewStringFragment)
             {
                 var innerTreeViewCommandArgs = new TreeViewCommandArgs(
-                    commandArgs.CommonService,
                     commandArgs.TreeViewContainer,
                     node,
                     commandArgs.RestoreFocusToTreeView,
