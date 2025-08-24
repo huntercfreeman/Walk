@@ -61,9 +61,6 @@ public partial class IdeService : IBackgroundTaskGroup
 
         switch (workArgs.WorkKind)
         {
-            case IdeWorkKind.FileContentsWereModifiedOnDisk:
-                return Editor_Do_FileContentsWereModifiedOnDisk(
-                    workArgs.StringValue, workArgs.TextEditorModel, workArgs.FileLastWriteTime, workArgs.NotificationInformativeKey);
             case IdeWorkKind.SaveFile:
                 return Do_SaveFile(workArgs.AbsolutePath, workArgs.StringValue, workArgs.OnAfterSaveCompletedWrittenDateTimeFunc, workArgs.CancellationToken);
             case IdeWorkKind.SetFolderExplorerState:
@@ -168,62 +165,6 @@ public partial class IdeService : IBackgroundTaskGroup
             compilerService.FastParseAsync(editContext, fastParseArgs.ResourceUri, _fileSystemProvider));
         
         TextEditorService.WorkerArbitrary.EnqueueUniqueTextEditorWork(uniqueTextEditorWork);*/
-    }
-    
-    public async Task Editor_RegisterModelFunc(RegisterModelArgs registerModelArgs)
-    {
-        var model = TextEditorService.Model_GetOrDefault(registerModelArgs.ResourceUri);
-        
-        if (model is not null)
-        {
-            await Editor_CheckIfContentsWereModifiedAsync(
-                    registerModelArgs.ResourceUri.Value,
-                    model)
-                .ConfigureAwait(false);
-            return;
-        }
-            
-        var resourceUri = registerModelArgs.ResourceUri;
-
-        var fileLastWriteTime = await CommonService.FileSystemProvider.File
-            .GetLastWriteTimeAsync(resourceUri.Value)
-            .ConfigureAwait(false);
-
-        var content = await CommonService.FileSystemProvider.File
-            .ReadAllTextAsync(resourceUri.Value)
-            .ConfigureAwait(false);
-
-        var absolutePath = new AbsolutePath(resourceUri.Value, false, CommonService.EnvironmentProvider, tokenBuilder: new StringBuilder(), formattedBuilder: new StringBuilder(), AbsolutePathNameKind.ExtensionNoPeriod);
-        var decorationMapper = TextEditorService.GetDecorationMapper(absolutePath.Name);
-        var compilerService = TextEditorService.GetCompilerService(absolutePath.Name);
-
-        model = new TextEditorModel(
-            resourceUri,
-            fileLastWriteTime,
-            absolutePath.Name,
-            content,
-            decorationMapper,
-            compilerService,
-            TextEditorService);
-            
-        var modelModifier = new TextEditorModel(model);
-        modelModifier.PerformRegisterPresentationModelAction(TextEditorFacts.CompilerServiceDiagnosticPresentation_EmptyPresentationModel);
-        modelModifier.PerformRegisterPresentationModelAction(TextEditorFacts.FindOverlayPresentation_EmptyPresentationModel);
-        
-        model = modelModifier;
-
-        TextEditorService.Model_RegisterCustom(registerModelArgs.EditContext, model);
-        
-        model.PersistentState.CompilerService.RegisterResource(
-            model.PersistentState.ResourceUri,
-            shouldTriggerResourceWasModified: false);
-        
-        modelModifier = registerModelArgs.EditContext.GetModelModifier(resourceUri);
-
-        if (modelModifier is null)
-            return;
-
-        await compilerService.ParseAsync(registerModelArgs.EditContext, modelModifier, shouldApplySyntaxHighlighting: false);
     }
 
     public async Task<Key<TextEditorViewModel>> Editor_TryRegisterViewModelFunc(TryRegisterViewModelArgs registerViewModelArgs)
@@ -360,91 +301,6 @@ public partial class IdeService : IBackgroundTaskGroup
         }
 
         return true;
-    }
-
-    private async Task Editor_CheckIfContentsWereModifiedAsync(
-        string inputFileAbsolutePathString,
-        TextEditorModel textEditorModel)
-    {
-        var fileLastWriteTime = await CommonService.FileSystemProvider.File
-            .GetLastWriteTimeAsync(inputFileAbsolutePathString)
-            .ConfigureAwait(false);
-
-        if (fileLastWriteTime > textEditorModel.ResourceLastWriteTime)
-        {
-            var notificationInformativeKey = Key<IDynamicViewModel>.NewKey();
-
-            var notificationInformative = new NotificationViewModel(
-                notificationInformativeKey,
-                "File contents were modified on disk",
-                typeof(Walk.Ide.RazorLib.FormsGenerics.Displays.BooleanPromptOrCancelDisplay),
-                new Dictionary<string, object?>
-                {
-                        {
-                            nameof(Walk.Ide.RazorLib.FormsGenerics.Displays.BooleanPromptOrCancelDisplay.Message),
-                            "File contents were modified on disk"
-                        },
-                        {
-                            nameof(Walk.Ide.RazorLib.FormsGenerics.Displays.BooleanPromptOrCancelDisplay.AcceptOptionTextOverride),
-                            "Reload"
-                        },
-                        {
-                            nameof(Walk.Ide.RazorLib.FormsGenerics.Displays.BooleanPromptOrCancelDisplay.OnAfterAcceptFunc),
-                            new Func<Task>(() =>
-                            {
-                                Enqueue(new IdeWorkArgs
-                                {
-                                    WorkKind = IdeWorkKind.FileContentsWereModifiedOnDisk,
-                                    StringValue = inputFileAbsolutePathString,
-                                    TextEditorModel = textEditorModel,
-                                    FileLastWriteTime = fileLastWriteTime,
-                                    NotificationInformativeKey = notificationInformativeKey,
-                                });
-
-                                return Task.CompletedTask;
-                            })
-                        },
-                        {
-                            nameof(Walk.Ide.RazorLib.FormsGenerics.Displays.BooleanPromptOrCancelDisplay.OnAfterDeclineFunc),
-                            new Func<Task>(() =>
-                            {
-                                CommonService.Notification_ReduceDisposeAction(notificationInformativeKey);
-                                return Task.CompletedTask;
-                            })
-                        },
-                },
-                TimeSpan.FromSeconds(20),
-                true,
-                null);
-
-            CommonService.Notification_ReduceRegisterAction(notificationInformative);
-        }
-    }
-
-    private async ValueTask Editor_Do_FileContentsWereModifiedOnDisk(string inputFileAbsolutePathString, TextEditorModel textEditorModel, DateTime fileLastWriteTime, Key<IDynamicViewModel> notificationInformativeKey)
-    {
-        CommonService.Notification_ReduceDisposeAction(notificationInformativeKey);
-
-        var content = await CommonService.FileSystemProvider.File
-            .ReadAllTextAsync(inputFileAbsolutePathString)
-            .ConfigureAwait(false);
-
-        TextEditorService.WorkerArbitrary.PostUnique(editContext =>
-        {
-            var modelModifier = editContext.GetModelModifier(textEditorModel.PersistentState.ResourceUri);
-            if (modelModifier is null)
-                return ValueTask.CompletedTask;
-
-            TextEditorService.Model_Reload(
-                editContext,
-                modelModifier,
-                content,
-                fileLastWriteTime);
-
-            if (modelModifier.PersistentState.CompilerService is not null)    
-                modelModifier.PersistentState.CompilerService.ResourceWasModified(modelModifier.PersistentState.ResourceUri, Array.Empty<TextEditorTextSpan>());
-            return ValueTask.CompletedTask;
-        });
     }
     
     private async ValueTask Do_SaveFile(

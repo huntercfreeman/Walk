@@ -2,8 +2,11 @@ using Microsoft.JSInterop;
 using System.Text;
 using Walk.Common.RazorLib;
 using Walk.Common.RazorLib.JsRuntimes.Models;
+using Walk.Common.RazorLib.Dynamics.Models;
+using Walk.Common.RazorLib.FileSystems.Models;
 using Walk.Common.RazorLib.Keys.Models;
 using Walk.Common.RazorLib.Reactives.Models;
+using Walk.Common.RazorLib.Notifications.Models;
 using Walk.TextEditor.RazorLib.BackgroundTasks.Models;
 using Walk.TextEditor.RazorLib.Groups.Models;
 using Walk.TextEditor.RazorLib.Installations.Models;
@@ -2519,10 +2522,7 @@ public sealed partial class TextEditorService
         Key<TextEditorViewModel> preferredViewModelKey)
     {
         // RegisterModelFunc
-        if (TextEditorConfig.RegisterModelFunc is null)
-            return Key<TextEditorViewModel>.Empty;
-        await TextEditorConfig.RegisterModelFunc
-            .Invoke(new RegisterModelArgs(editContext, resourceUri, CommonService, IdeBackgroundTaskApi))
+        await RegisterModel_Configured(new RegisterModelArgs(editContext, resourceUri, CommonService, IdeBackgroundTaskApi))
             .ConfigureAwait(false);
     
         // TryRegisterViewModelFunc
@@ -2683,5 +2683,155 @@ public sealed partial class TextEditorService
         }
 
         TextEditorStateChanged?.Invoke();
+    }
+    
+    public async Task RegisterModel_Configured(RegisterModelArgs registerModelArgs)
+    {
+        var standardizedAbsolutePathString = registerModelArgs.CommonService.TextEditor_AbsolutePathStandardize(
+            registerModelArgs.ResourceUri.Value);
+            
+        var standardizedResourceUri = new ResourceUri((string)standardizedAbsolutePathString);
+    
+        registerModelArgs = new RegisterModelArgs(
+            registerModelArgs.EditContext,
+            standardizedResourceUri,
+            registerModelArgs.CommonService,
+            registerModelArgs.IdeBackgroundTaskApi)
+        {
+            ShouldBlockUntilBackgroundTaskIsCompleted = registerModelArgs.ShouldBlockUntilBackgroundTaskIsCompleted
+        };
+
+        var model = Model_GetOrDefault(registerModelArgs.ResourceUri);
+        
+        if (model is not null)
+        {
+            await Editor_CheckIfContentsWereModifiedAsync(
+                    registerModelArgs.ResourceUri.Value,
+                    model)
+                .ConfigureAwait(false);
+            return;
+        }
+            
+        var resourceUri = registerModelArgs.ResourceUri;
+
+        var fileLastWriteTime = await CommonService.FileSystemProvider.File
+            .GetLastWriteTimeAsync(resourceUri.Value)
+            .ConfigureAwait(false);
+
+        var content = await CommonService.FileSystemProvider.File
+            .ReadAllTextAsync(resourceUri.Value)
+            .ConfigureAwait(false);
+
+        var absolutePath = new AbsolutePath(resourceUri.Value, false, CommonService.EnvironmentProvider, tokenBuilder: new StringBuilder(), formattedBuilder: new StringBuilder(), AbsolutePathNameKind.ExtensionNoPeriod);
+        var decorationMapper = GetDecorationMapper(absolutePath.Name);
+        var compilerService = GetCompilerService(absolutePath.Name);
+
+        model = new TextEditorModel(
+            resourceUri,
+            fileLastWriteTime,
+            absolutePath.Name,
+            content,
+            decorationMapper,
+            compilerService,
+            this);
+            
+        var modelModifier = new TextEditorModel(model);
+        modelModifier.PerformRegisterPresentationModelAction(TextEditorFacts.CompilerServiceDiagnosticPresentation_EmptyPresentationModel);
+        modelModifier.PerformRegisterPresentationModelAction(TextEditorFacts.FindOverlayPresentation_EmptyPresentationModel);
+        
+        model = modelModifier;
+
+        Model_RegisterCustom(registerModelArgs.EditContext, model);
+        
+        model.PersistentState.CompilerService.RegisterResource(
+            model.PersistentState.ResourceUri,
+            shouldTriggerResourceWasModified: false);
+        
+        modelModifier = registerModelArgs.EditContext.GetModelModifier(resourceUri);
+
+        if (modelModifier is null)
+            return;
+
+        await compilerService.ParseAsync(registerModelArgs.EditContext, modelModifier, shouldApplySyntaxHighlighting: false);
+    }
+    
+    private async Task Editor_CheckIfContentsWereModifiedAsync(
+        string inputFileAbsolutePathString,
+        TextEditorModel textEditorModel)
+    {
+        var fileLastWriteTime = await CommonService.FileSystemProvider.File
+            .GetLastWriteTimeAsync(inputFileAbsolutePathString)
+            .ConfigureAwait(false);
+
+        if (fileLastWriteTime > textEditorModel.ResourceLastWriteTime)
+        {
+            var notificationInformativeKey = Key<IDynamicViewModel>.NewKey();
+
+            var notificationInformative = new NotificationViewModel(
+                notificationInformativeKey,
+                "File contents were modified on disk",
+                typeof(Walk.Common.RazorLib.FormsGenerics.Displays.BooleanPromptOrCancelDisplay),
+                new Dictionary<string, object?>
+                {
+                        {
+                            nameof(Walk.Common.RazorLib.FormsGenerics.Displays.BooleanPromptOrCancelDisplay.Message),
+                            "File contents were modified on disk"
+                        },
+                        {
+                            nameof(Walk.Common.RazorLib.FormsGenerics.Displays.BooleanPromptOrCancelDisplay.AcceptOptionTextOverride),
+                            "Reload"
+                        },
+                        {
+                            nameof(Walk.Common.RazorLib.FormsGenerics.Displays.BooleanPromptOrCancelDisplay.OnAfterAcceptFunc),
+                            new Func<Task>(() =>
+                            {
+                                return Editor_Do_FileContentsWereModifiedOnDisk(
+                                    inputFileAbsolutePathString,
+                                    textEditorModel,
+                                    fileLastWriteTime,
+                                    notificationInformativeKey);
+                            })
+                        },
+                        {
+                            nameof(Walk.Common.RazorLib.FormsGenerics.Displays.BooleanPromptOrCancelDisplay.OnAfterDeclineFunc),
+                            new Func<Task>(() =>
+                            {
+                                CommonService.Notification_ReduceDisposeAction(notificationInformativeKey);
+                                return Task.CompletedTask;
+                            })
+                        },
+                },
+                TimeSpan.FromSeconds(20),
+                true,
+                null);
+
+            CommonService.Notification_ReduceRegisterAction(notificationInformative);
+        }
+    }
+    
+    private async Task Editor_Do_FileContentsWereModifiedOnDisk(string inputFileAbsolutePathString, TextEditorModel textEditorModel, DateTime fileLastWriteTime, Key<IDynamicViewModel> notificationInformativeKey)
+    {
+        CommonService.Notification_ReduceDisposeAction(notificationInformativeKey);
+
+        var content = await CommonService.FileSystemProvider.File
+            .ReadAllTextAsync(inputFileAbsolutePathString)
+            .ConfigureAwait(false);
+
+        WorkerArbitrary.PostUnique(editContext =>
+        {
+            var modelModifier = editContext.GetModelModifier(textEditorModel.PersistentState.ResourceUri);
+            if (modelModifier is null)
+                return ValueTask.CompletedTask;
+
+            Model_Reload(
+                editContext,
+                modelModifier,
+                content,
+                fileLastWriteTime);
+
+            if (modelModifier.PersistentState.CompilerService is not null)    
+                modelModifier.PersistentState.CompilerService.ResourceWasModified(modelModifier.PersistentState.ResourceUri, Array.Empty<TextEditorTextSpan>());
+            return ValueTask.CompletedTask;
+        });
     }
 }

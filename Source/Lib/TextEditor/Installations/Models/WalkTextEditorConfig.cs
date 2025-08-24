@@ -34,16 +34,6 @@ public record WalkTextEditorConfig
     /// The go-to definition implementation makes use of <see cref="RegisterModelFunc"/>.<br/>
     /// 
     /// In the case that a symbol's definition exists within a resource that does not have
-    /// an already existing <see cref="TextEditorModel"/>, then this is invoked to create that
-    /// instance, so that go-to definition can then be performed.<br/>
-    /// 
-    /// The Func takes in the resource uri that needs a model.
-    /// </summary>
-    public Func<RegisterModelArgs, Task>? RegisterModelFunc { get; set; }
-    /// <summary>
-    /// The go-to definition implementation makes use of <see cref="RegisterModelFunc"/>.<br/>
-    /// 
-    /// In the case that a symbol's definition exists within a resource that does not have
     /// an already existing <see cref="TextEditorViewModel"/>, then this is invoked to create that
     /// instance, so that go-to definition can then be performed.<br/>
     /// 

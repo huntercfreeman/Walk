@@ -25,24 +25,6 @@ public static class ServiceCollectionExtensions
             services.AddWalkTextEditor(hostingInformation, (Func<WalkTextEditorConfig, WalkTextEditorConfig>?)(inTextEditorOptions => (inTextEditorOptions with
             {
                 InitialThemeKey = CommonFacts.VisualStudioDarkThemeClone.Key,
-                RegisterModelFunc = async (registerModelArgs) =>
-                {
-                    var standardizedAbsolutePathString = registerModelArgs.CommonService.TextEditor_AbsolutePathStandardize(
-                        registerModelArgs.ResourceUri.Value);
-                        
-                    var standardizedResourceUri = new ResourceUri((string)standardizedAbsolutePathString);
-                
-                    registerModelArgs = new RegisterModelArgs(
-                        registerModelArgs.EditContext,
-                        standardizedResourceUri,
-                        registerModelArgs.CommonService,
-                        registerModelArgs.IdeBackgroundTaskApi)
-                    {
-                        ShouldBlockUntilBackgroundTaskIsCompleted = registerModelArgs.ShouldBlockUntilBackgroundTaskIsCompleted
-                    };
-
-                    await ((IdeService)registerModelArgs.IdeBackgroundTaskApi).Editor_RegisterModelFunc(registerModelArgs);
-                },
                 TryRegisterViewModelFunc = async (tryRegisterViewModelArgs) =>
                 {
                     var standardizedAbsolutePathString = tryRegisterViewModelArgs.CommonService.TextEditor_AbsolutePathStandardize(

@@ -242,10 +242,7 @@ public partial class IdeService
             var filePath = treeViewCodeSearchTextSpan.AbsolutePath.Value;
             var resourceUri = new ResourceUri(treeViewCodeSearchTextSpan.AbsolutePath.Value);
 
-            if (TextEditorService.TextEditorConfig.RegisterModelFunc is null)
-                return;
-
-            await TextEditorService.TextEditorConfig.RegisterModelFunc.Invoke(
+            await TextEditorService.RegisterModel_Configured(
                     new RegisterModelArgs(editContext, resourceUri, CommonService, this))
                 .ConfigureAwait(false);
 
