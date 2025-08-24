@@ -2456,12 +2456,7 @@ public sealed partial class TextEditorService
         Key<TextEditorViewModel> preferredViewModelKey)
     {
         // Standardize Resource Uri
-        if (TextEditorConfig.AbsolutePathStandardizeFunc is null)
-            return;
-            
-        var standardizedFilePathString = await TextEditorConfig.AbsolutePathStandardizeFunc
-            .Invoke(absolutePath, CommonService)
-            .ConfigureAwait(false);
+        var standardizedFilePathString = CommonService.TextEditor_AbsolutePathStandardize(absolutePath);
             
         var resourceUri = new ResourceUri(standardizedFilePathString);
 

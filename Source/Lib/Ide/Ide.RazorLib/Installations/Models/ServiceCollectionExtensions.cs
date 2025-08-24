@@ -25,31 +25,10 @@ public static class ServiceCollectionExtensions
             services.AddWalkTextEditor(hostingInformation, (Func<WalkTextEditorConfig, WalkTextEditorConfig>?)(inTextEditorOptions => (inTextEditorOptions with
             {
                 InitialThemeKey = CommonFacts.VisualStudioDarkThemeClone.Key,
-                AbsolutePathStandardizeFunc = ServiceCollectionExtensions.AbsolutePathStandardizeFunc,
-                FastParseFunc = async (fastParseArgs) =>
-                {    
-                    var standardizedAbsolutePathString = await AbsolutePathStandardizeFunc(
-                        fastParseArgs.ResourceUri.Value,
-                        fastParseArgs.CommonService);
-                        
-                    var standardizedResourceUri = new ResourceUri((string)standardizedAbsolutePathString);
-                
-                    fastParseArgs = new FastParseArgs(
-                        standardizedResourceUri,
-                        fastParseArgs.ExtensionNoPeriod,
-                        fastParseArgs.CommonService,
-                        fastParseArgs.IdeBackgroundTaskApi)
-                    {
-                        ShouldBlockUntilBackgroundTaskIsCompleted = fastParseArgs.ShouldBlockUntilBackgroundTaskIsCompleted
-                    };
-
-                    await ((IdeService)fastParseArgs.IdeBackgroundTaskApi).Editor_FastParseFunc(fastParseArgs);
-                },
                 RegisterModelFunc = async (registerModelArgs) =>
                 {
-                    var standardizedAbsolutePathString = await AbsolutePathStandardizeFunc(
-                        registerModelArgs.ResourceUri.Value,
-                        registerModelArgs.CommonService);
+                    var standardizedAbsolutePathString = registerModelArgs.CommonService.TextEditor_AbsolutePathStandardize(
+                        registerModelArgs.ResourceUri.Value);
                         
                     var standardizedResourceUri = new ResourceUri((string)standardizedAbsolutePathString);
                 
@@ -66,9 +45,8 @@ public static class ServiceCollectionExtensions
                 },
                 TryRegisterViewModelFunc = async (tryRegisterViewModelArgs) =>
                 {
-                    var standardizedAbsolutePathString = await AbsolutePathStandardizeFunc(
-                        tryRegisterViewModelArgs.ResourceUri.Value,
-                        tryRegisterViewModelArgs.CommonService);
+                    var standardizedAbsolutePathString = tryRegisterViewModelArgs.CommonService.TextEditor_AbsolutePathStandardize(
+                        tryRegisterViewModelArgs.ResourceUri.Value);
                         
                     var standardizedResourceUri = new ResourceUri((string)standardizedAbsolutePathString);
                     
@@ -105,18 +83,5 @@ public static class ServiceCollectionExtensions
             });
 
         return services;
-    }
-    
-    public static Task<string> AbsolutePathStandardizeFunc(string absolutePathString, CommonService commonService)
-    {
-        if (absolutePathString.StartsWith(commonService.EnvironmentProvider.DriveExecutingFromNoDirectorySeparator))
-        {
-            var removeDriveFromResourceUriValue = absolutePathString[
-                commonService.EnvironmentProvider.DriveExecutingFromNoDirectorySeparator.Length..];
-
-            return Task.FromResult(removeDriveFromResourceUriValue);
-        }
-
-        return Task.FromResult(absolutePathString);
     }
 }

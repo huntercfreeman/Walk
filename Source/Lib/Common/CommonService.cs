@@ -160,4 +160,17 @@ public partial class CommonService : IBackgroundTaskGroup
         Indefinite_queue.TryDequeue(out var backgroundTask);
         return backgroundTask;
     }
+    
+    public string TextEditor_AbsolutePathStandardize(string absolutePathString)
+    {
+        if (absolutePathString.StartsWith(EnvironmentProvider.DriveExecutingFromNoDirectorySeparator))
+        {
+            var removeDriveFromResourceUriValue = absolutePathString[
+                EnvironmentProvider.DriveExecutingFromNoDirectorySeparator.Length..];
+
+            return removeDriveFromResourceUriValue;
+        }
+
+        return absolutePathString;
+    }
 }

@@ -31,19 +31,6 @@ public record WalkTextEditorConfig
     /// </summary>
     public FindAllDialogConfig FindAllDialogConfig { get; init; } = new();
     /// <summary>
-    /// Func is given as an argument a string and IServiceProvider, the string will be
-    /// made into a <see cref="Walk.TextEditor.RazorLib.Lexers.Models.ResourceUri"/>.
-    ///
-    /// Returns the standardized format for the absolute path.
-    ///
-    /// Example: "C:\a.txt" and "\a.txt" are two distinct resource uri's.
-    ///          With this Func, if one desires, they can alter
-    ///          "C:\a.txt" to remove the 'C:' from its string,
-    ///          or add 'C:' to the "\a.txt" or etc...
-    ///          to make these resource uris match one another.
-    /// </summary>
-    public Func<string, CommonService, Task<string>>? AbsolutePathStandardizeFunc { get; set; }
-    /// <summary>
     /// The go-to definition implementation makes use of <see cref="RegisterModelFunc"/>.<br/>
     /// 
     /// In the case that a symbol's definition exists within a resource that does not have
@@ -53,7 +40,6 @@ public record WalkTextEditorConfig
     /// The Func takes in the resource uri that needs a model.
     /// </summary>
     public Func<RegisterModelArgs, Task>? RegisterModelFunc { get; set; }
-    public Func<FastParseArgs, Task>? FastParseFunc { get; set; }
     /// <summary>
     /// The go-to definition implementation makes use of <see cref="RegisterModelFunc"/>.<br/>
     /// 
