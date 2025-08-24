@@ -2520,7 +2520,7 @@ public sealed partial class TextEditorService
         Key<TextEditorViewModel> preferredViewModelKey)
     {
         // RegisterModelFunc
-        await RegisterModel_Configured(new RegisterModelArgs(editContext, resourceUri, CommonService, IdeBackgroundTaskApi))
+        await RegisterModel_Configured(editContext, resourceUri)
             .ConfigureAwait(false);
     
         // TryRegisterViewModelFunc
@@ -2677,34 +2677,19 @@ public sealed partial class TextEditorService
         TextEditorStateChanged?.Invoke();
     }
     
-    public async Task RegisterModel_Configured(RegisterModelArgs registerModelArgs)
+    public async Task RegisterModel_Configured(TextEditorEditContext editContext, ResourceUri resourceUri)
     {
-        var standardizedAbsolutePathString = registerModelArgs.CommonService.TextEditor_AbsolutePathStandardize(
-            registerModelArgs.ResourceUri.Value);
-            
-        var standardizedResourceUri = new ResourceUri((string)standardizedAbsolutePathString);
+        // Overwrite the parameter so the string absolute path is ensured to be "standardized".
+        resourceUri = new ResourceUri(CommonService.TextEditor_AbsolutePathStandardize(resourceUri.Value));
     
-        registerModelArgs = new RegisterModelArgs(
-            registerModelArgs.EditContext,
-            standardizedResourceUri,
-            registerModelArgs.CommonService,
-            registerModelArgs.IdeBackgroundTaskApi)
-        {
-            ShouldBlockUntilBackgroundTaskIsCompleted = registerModelArgs.ShouldBlockUntilBackgroundTaskIsCompleted
-        };
-
-        var model = Model_GetOrDefault(registerModelArgs.ResourceUri);
+        var model = Model_GetOrDefault(resourceUri);
         
         if (model is not null)
         {
-            await Editor_CheckIfContentsWereModifiedAsync(
-                    registerModelArgs.ResourceUri.Value,
-                    model)
+            await Editor_CheckIfContentsWereModifiedAsync(resourceUri.Value, model)
                 .ConfigureAwait(false);
             return;
         }
-            
-        var resourceUri = registerModelArgs.ResourceUri;
 
         var fileLastWriteTime = await CommonService.FileSystemProvider.File
             .GetLastWriteTimeAsync(resourceUri.Value)
@@ -2733,18 +2718,18 @@ public sealed partial class TextEditorService
         
         model = modelModifier;
 
-        Model_RegisterCustom(registerModelArgs.EditContext, model);
+        Model_RegisterCustom(editContext, model);
         
         model.PersistentState.CompilerService.RegisterResource(
             model.PersistentState.ResourceUri,
             shouldTriggerResourceWasModified: false);
         
-        modelModifier = registerModelArgs.EditContext.GetModelModifier(resourceUri);
+        modelModifier = editContext.GetModelModifier(resourceUri);
 
         if (modelModifier is null)
             return;
 
-        await compilerService.ParseAsync(registerModelArgs.EditContext, modelModifier, shouldApplySyntaxHighlighting: false);
+        await compilerService.ParseAsync(editContext, modelModifier, shouldApplySyntaxHighlighting: false);
     }
     
     private async Task Editor_CheckIfContentsWereModifiedAsync(
