@@ -39,12 +39,6 @@ public partial class SolutionExplorerContextMenu : ComponentBase
 
     public static readonly Key<DropdownRecord> ContextMenuEventDropdownKey = Key<DropdownRecord>.NewKey();
 
-    /// <summary>
-    /// The program is currently running using Photino locally on the user's computer
-    /// therefore this static solution works without leaking any information.
-    /// </summary>
-    public static TreeViewNoType? ParentOfCutFile;
-
     private (TreeViewCommandArgs treeViewCommandArgs, MenuRecord menuRecord) _previousGetMenuRecordInvocation;
 
     private MenuRecord GetMenuRecord(TreeViewCommandArgs commandArgs)
@@ -284,11 +278,11 @@ public partial class SolutionExplorerContextMenu : ComponentBase
                 parentDirectoryAbsolutePath,
                 async () =>
                 {
-                    var localParentOfCutFile = ParentOfCutFile;
-                    ParentOfCutFile = null;
+                    var localParentOfCutFile = DotNetService.CommonService.ParentOfCutFile;
+                    DotNetService.CommonService.ParentOfCutFile = null;
 
-                    if (localParentOfCutFile is not null)
-                        await ReloadTreeViewModel(localParentOfCutFile).ConfigureAwait(false);
+                    if (localParentOfCutFile is TreeViewNamespacePath parentTreeViewNamespacePath)
+                        await ReloadTreeViewModel(parentTreeViewNamespacePath).ConfigureAwait(false);
 
                     await ReloadTreeViewModel(treeViewModel).ConfigureAwait(false);
                 }),
@@ -394,11 +388,11 @@ public partial class SolutionExplorerContextMenu : ComponentBase
                 treeViewModel.Item,
                 async () =>
                 {
-                    var localParentOfCutFile = ParentOfCutFile;
-                    ParentOfCutFile = null;
+                    var localParentOfCutFile = DotNetService.CommonService.ParentOfCutFile;
+                    DotNetService.CommonService.ParentOfCutFile = null;
 
-                    if (localParentOfCutFile is not null)
-                        await ReloadTreeViewModel(localParentOfCutFile).ConfigureAwait(false);
+                    if (localParentOfCutFile is TreeViewNamespacePath parentTreeViewNamespacePath)
+                        await ReloadTreeViewModel(parentTreeViewNamespacePath).ConfigureAwait(false);
 
                     await ReloadTreeViewModel(treeViewModel).ConfigureAwait(false);
                 }),
@@ -456,7 +450,7 @@ public partial class SolutionExplorerContextMenu : ComponentBase
             DotNetService.IdeService.CutFile(
                 treeViewModel.Item,
                 (Func<Task>)(() => {
-                    ParentOfCutFile = parentTreeViewModel;
+                    DotNetService.CommonService.ParentOfCutFile = parentTreeViewModel;
                     CommonFacts.DispatchInformative("Cut Action", $"Cut: {treeViewModel.Item.Name}", DotNetService.IdeService.TextEditorService.CommonService, TimeSpan.FromSeconds(7));
                     return Task.CompletedTask;
                 })),

@@ -123,11 +123,11 @@ public class SolutionExplorerTreeViewKeyboardEventHandler : TreeViewKeyboardEven
                 treeViewNamespacePath.Item,
                 async () =>
                 {
-                    var localParentOfCutFile = SolutionExplorerContextMenu.ParentOfCutFile;
-                    SolutionExplorerContextMenu.ParentOfCutFile = null;
+                    var localParentOfCutFile = _ideService.CommonService.ParentOfCutFile;
+                    _ideService.CommonService.ParentOfCutFile = null;
 
-                    if (localParentOfCutFile is not null)
-                        await ReloadTreeViewModel(localParentOfCutFile).ConfigureAwait(false);
+                    if (localParentOfCutFile is TreeViewNamespacePath parentTreeViewNamespacePath)
+                        await ReloadTreeViewModel(parentTreeViewNamespacePath).ConfigureAwait(false);
 
                     await ReloadTreeViewModel(treeViewNamespacePath).ConfigureAwait(false);
                 });
@@ -149,8 +149,8 @@ public class SolutionExplorerTreeViewKeyboardEventHandler : TreeViewKeyboardEven
                 parentDirectoryAbsolutePath,
                 async () =>
                 {
-                    var localParentOfCutFile = SolutionExplorerContextMenu.ParentOfCutFile;
-                    SolutionExplorerContextMenu.ParentOfCutFile = null;
+                    var localParentOfCutFile = _ideService.CommonService.ParentOfCutFile;
+                    _ideService.CommonService.ParentOfCutFile = null;
 
                     if (localParentOfCutFile is not null)
                         await ReloadTreeViewModel(localParentOfCutFile).ConfigureAwait(false);
@@ -179,7 +179,7 @@ public class SolutionExplorerTreeViewKeyboardEventHandler : TreeViewKeyboardEven
             () =>
             {
                 CommonFacts.DispatchInformative("Cut Action", $"Cut: {treeViewNamespacePath.Item.Name}", _ideService.TextEditorService.CommonService, TimeSpan.FromSeconds(7));
-                SolutionExplorerContextMenu.ParentOfCutFile = parent;
+                _ideService.CommonService.ParentOfCutFile = parent;
                 return Task.CompletedTask;
             });
 

@@ -14,12 +14,6 @@ public partial class TabContextMenu : ComponentBase
 
     public static readonly Key<DropdownRecord> ContextMenuEventDropdownKey = Key<DropdownRecord>.NewKey();
 
-    /// <summary>
-    /// The program is currently running using Photino locally on the user's computer
-    /// therefore this static solution works without leaking any information.
-    /// </summary>
-    public static TreeViewNoType? ParentOfCutFile;
-
     private (TabContextMenuEventArgs tabContextMenuEventArgs, MenuRecord menuRecord) _previousGetMenuRecordInvocation;
 
     private MenuRecord GetMenuRecord(TabContextMenuEventArgs tabContextMenuEventArgs)

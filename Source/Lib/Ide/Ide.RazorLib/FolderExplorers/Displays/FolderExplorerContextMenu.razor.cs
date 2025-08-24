@@ -21,12 +21,6 @@ public partial class FolderExplorerContextMenu : ComponentBase
 
     public static readonly Key<DropdownRecord> ContextMenuEventDropdownKey = Key<DropdownRecord>.NewKey();
 
-    /// <summary>
-    /// The program is currently running using Photino locally on the user's computer
-    /// therefore this static solution works without leaking any information.
-    /// </summary>
-    public static TreeViewNoType? ParentOfCutFile;
-
     private (TreeViewCommandArgs treeViewCommandArgs, MenuRecord menuRecord) _previousGetMenuRecordInvocation;
 
     private MenuRecord GetMenuRecord(TreeViewCommandArgs treeViewCommandArgs)
@@ -89,11 +83,11 @@ public partial class FolderExplorerContextMenu : ComponentBase
                 treeViewModel.Item,
                 async () => 
                 {
-                    var localParentOfCutFile = ParentOfCutFile;
-                    ParentOfCutFile = null;
+                    var localParentOfCutFile = IdeService.CommonService.ParentOfCutFile;
+                    IdeService.CommonService.ParentOfCutFile = null;
 
-                    if (localParentOfCutFile is not null)
-                        await ReloadTreeViewModel(localParentOfCutFile).ConfigureAwait(false);
+                    if (localParentOfCutFile is TreeViewAbsolutePath parentTreeViewAbsolutePath)
+                        await ReloadTreeViewModel(parentTreeViewAbsolutePath).ConfigureAwait(false);
 
                     await ReloadTreeViewModel(treeViewModel).ConfigureAwait(false);
                 }),
@@ -116,7 +110,7 @@ public partial class FolderExplorerContextMenu : ComponentBase
                 treeViewModel.Item,
                 (Func<Task>)(() => {
                     CommonFacts.DispatchInformative("Cut Action", $"Cut: {treeViewModel.Item.Name}", IdeService.CommonService, TimeSpan.FromSeconds(7));
-                    ParentOfCutFile = parentTreeViewModel;
+                    IdeService.CommonService.ParentOfCutFile = parentTreeViewModel;
                     return Task.CompletedTask;
                 })),
             IdeService.DeleteFile(

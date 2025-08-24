@@ -18,12 +18,6 @@ public partial class InputFileContextMenu : ComponentBase
 
     public static readonly Key<DropdownRecord> ContextMenuKey = Key<DropdownRecord>.NewKey();
 
-    /// <summary>
-    /// The program is currently running using Photino locally on the user's computer
-    /// therefore this static solution works without leaking any information.
-    /// </summary>
-    public static TreeViewNoType? ParentOfCutFile;
-
     private (TreeViewCommandArgs treeViewCommandArgs, MenuRecord menuRecord) _previousGetMenuRecordInvocation;
 
     private MenuRecord GetMenuRecord(TreeViewCommandArgs commandArgs)
@@ -66,8 +60,7 @@ public partial class InputFileContextMenu : ComponentBase
 
         // Default case
         {
-            if (menuRecordsList.Count == 0)
-                menuRecordsList = MenuRecord.NoMenuOptionsExistList.ToList();
+            if (menuRecordsList.Count == 0)                menuRecordsList = MenuRecord.NoMenuOptionsExistList.ToList();
 
             var menuRecord = new MenuRecord(menuRecordsList);
             _previousGetMenuRecordInvocation = (commandArgs, menuRecord);

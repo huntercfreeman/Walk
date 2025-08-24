@@ -3,6 +3,7 @@ using Walk.Common.RazorLib.BackgroundTasks.Models;
 using Walk.Common.RazorLib.FileSystems.Models;
 using Walk.Common.RazorLib.Installations.Models;
 using Walk.Common.RazorLib.JsRuntimes.Models;
+using Walk.Common.RazorLib.TreeViews.Models;
 using System.Collections.Concurrent;
 
 namespace Walk.Common.RazorLib;
@@ -173,4 +174,6 @@ public partial class CommonService : IBackgroundTaskGroup
 
         return absolutePathString;
     }
+    
+    public TreeViewNoType? ParentOfCutFile { get; set; }
 }
