@@ -245,14 +245,12 @@ public partial class IdeService
             await TextEditorService.RegisterModel_Configured(editContext, resourceUri)
                 .ConfigureAwait(false);
 
-            var viewModelKey = await TextEditorService.TryRegisterViewModel_Configured(new TryRegisterViewModelArgs(
+            var viewModelKey = await TextEditorService.TryRegisterViewModel_Configured(
                     editContext,
                     outPreviewViewModelKey,
                     resourceUri,
                     new Category(nameof(IdeService)),
-                    false,
-                    CommonService,
-                    this))
+                    false)
                 .ConfigureAwait(false);
 
             if (viewModelKey != Key<TextEditorViewModel>.Empty)

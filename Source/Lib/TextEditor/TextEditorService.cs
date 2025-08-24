@@ -2524,7 +2524,7 @@ public sealed partial class TextEditorService
             .ConfigureAwait(false);
     
         // TryRegisterViewModelFunc
-        var actualViewModelKey = await TryRegisterViewModel_Configured(new TryRegisterViewModelArgs(editContext, preferredViewModelKey, resourceUri, category, shouldSetFocusToEditor, CommonService, IdeBackgroundTaskApi))
+        var actualViewModelKey = await TryRegisterViewModel_Configured(editContext, preferredViewModelKey, resourceUri, category, shouldSetFocusToEditor)
             .ConfigureAwait(false);
     
         // TryShowViewModelFunc
@@ -2811,46 +2811,34 @@ public sealed partial class TextEditorService
         });
     }
     
-    public Task<Key<TextEditorViewModel>> TryRegisterViewModel_Configured(TryRegisterViewModelArgs tryRegisterViewModelArgs)
+    public async Task<Key<TextEditorViewModel>> TryRegisterViewModel_Configured(
+        TextEditorEditContext editContext,
+        Key<TextEditorViewModel> preferredViewModelKey,
+        ResourceUri resourceUri,
+        Category category,
+        bool shouldSetFocusToEditor)
     {
-        var standardizedAbsolutePathString = tryRegisterViewModelArgs.CommonService.TextEditor_AbsolutePathStandardize(
-            tryRegisterViewModelArgs.ResourceUri.Value);
-            
-        var standardizedResourceUri = new ResourceUri((string)standardizedAbsolutePathString);
+        resourceUri = new ResourceUri(CommonService.TextEditor_AbsolutePathStandardize(resourceUri.Value));
         
-        tryRegisterViewModelArgs = new TryRegisterViewModelArgs(
-            tryRegisterViewModelArgs.EditContext,
-            tryRegisterViewModelArgs.ViewModelKey,
-            standardizedResourceUri,
-            tryRegisterViewModelArgs.Category,
-            tryRegisterViewModelArgs.ShouldSetFocusToEditor,
-            tryRegisterViewModelArgs.CommonService,
-            tryRegisterViewModelArgs.IdeBackgroundTaskApi);
-
-        return Editor_TryRegisterViewModelFunc(tryRegisterViewModelArgs);
-    }
-    
-    public async Task<Key<TextEditorViewModel>> Editor_TryRegisterViewModelFunc(TryRegisterViewModelArgs registerViewModelArgs)
-    {
         var viewModelKey = Key<TextEditorViewModel>.NewKey();
         
-        var model = Model_GetOrDefault(registerViewModelArgs.ResourceUri);
+        var model = Model_GetOrDefault(resourceUri);
 
         if (model is null)
         {
-            CommonFacts.DispatchError(nameof(Editor_TryRegisterViewModelFunc), $"model is null: {registerViewModelArgs.ResourceUri.Value}", CommonService, TimeSpan.FromSeconds(4));
+            CommonFacts.DispatchError(nameof(TryRegisterViewModel_Configured), $"model is null: {resourceUri.Value}", CommonService, TimeSpan.FromSeconds(4));
             return Key<TextEditorViewModel>.Empty;
         }
 
-        var viewModel = Model_GetViewModelsOrEmpty(registerViewModelArgs.ResourceUri)
-            .FirstOrDefault(x => x.PersistentState.Category == registerViewModelArgs.Category);
+        var viewModel = Model_GetViewModelsOrEmpty(resourceUri)
+            .FirstOrDefault(x => x.PersistentState.Category == category);
 
         if (viewModel is not null)
             return viewModel.PersistentState.ViewModelKey;
 
         viewModel = new TextEditorViewModel(
             viewModelKey,
-            registerViewModelArgs.ResourceUri,
+            resourceUri,
             this,
             TextEditorVirtualizationResult.ConstructEmpty(),
             new TextEditorDimensions(0, 0, 0, 0),
@@ -2859,7 +2847,7 @@ public sealed partial class TextEditorService
             scrollWidth: 0,
             scrollHeight: 0,
             marginScrollHeight: 0,
-            registerViewModelArgs.Category);
+            category);
 
         var firstPresentationLayerKeys = new List<Key<TextEditorPresentationModel>>
         {
@@ -2868,7 +2856,7 @@ public sealed partial class TextEditorService
         };
 
         var absolutePath = CommonService.EnvironmentProvider.AbsolutePathFactory(
-            registerViewModelArgs.ResourceUri.Value,
+            resourceUri.Value,
             false,
             tokenBuilder: new StringBuilder(),
             formattedBuilder: new StringBuilder(),
@@ -2878,7 +2866,7 @@ public sealed partial class TextEditorService
         viewModel.PersistentState.GetTabDisplayNameFunc = _ => absolutePath.Name;
         viewModel.PersistentState.FirstPresentationLayerKeysList = firstPresentationLayerKeys;
         
-        ViewModel_Register(registerViewModelArgs.EditContext, viewModel);
+        ViewModel_Register(editContext, viewModel);
         return viewModelKey;
     }
     
