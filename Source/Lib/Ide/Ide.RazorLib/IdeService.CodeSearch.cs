@@ -256,8 +256,7 @@ public partial class IdeService
                     this))
                 .ConfigureAwait(false);
 
-            if (viewModelKey != Key<TextEditorViewModel>.Empty &&
-                TextEditorService.TextEditorConfig.TryShowViewModelFunc is not null)
+            if (viewModelKey != Key<TextEditorViewModel>.Empty)
             {
                 CodeSearch_With(inState => inState with
                 {

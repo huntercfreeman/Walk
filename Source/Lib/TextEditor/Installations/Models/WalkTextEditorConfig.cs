@@ -31,16 +31,6 @@ public record WalkTextEditorConfig
     /// </summary>
     public FindAllDialogConfig FindAllDialogConfig { get; init; } = new();
     /// <summary>
-    /// The go-to definition implementation makes use of <see cref="TryShowViewModelFunc"/>.<br/>
-    /// 
-    /// In the case that a symbol's definition exists within a resource that does not have
-    /// an already existing ViewModel, then this is invoked to create that instance, so that
-    /// go-to definition can then be performed.<br/>
-    /// 
-    /// The Func takes in the resource uri that needs a ViewModel.
-    /// </summary>
-    public Func<TryShowViewModelArgs, Task<bool>>? TryShowViewModelFunc { get; set; }
-    /// <summary>
     /// Default value is <see cref="true"/>.<br/>
     /// 
     /// If one wishes to configure Walk.Common themselves, then set this to false, and invoke

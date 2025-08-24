@@ -24,11 +24,7 @@ public static class ServiceCollectionExtensions
         {
             services.AddWalkTextEditor(hostingInformation, (Func<WalkTextEditorConfig, WalkTextEditorConfig>?)(inTextEditorOptions => (inTextEditorOptions with
             {
-                InitialThemeKey = CommonFacts.VisualStudioDarkThemeClone.Key,
-                TryShowViewModelFunc = (tryShowViewModelArgs) =>
-                {
-                    return ((IdeService)tryShowViewModelArgs.IdeBackgroundTaskApi).Editor_TryShowViewModelFunc(tryShowViewModelArgs);
-                },
+                InitialThemeKey = CommonFacts.VisualStudioDarkThemeClone.Key
             })));
         }
         

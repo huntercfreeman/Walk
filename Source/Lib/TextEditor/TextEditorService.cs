@@ -2531,10 +2531,7 @@ public sealed partial class TextEditorService
             .ConfigureAwait(false);
     
         // TryShowViewModelFunc
-        if (actualViewModelKey == Key<TextEditorViewModel>.Empty || TextEditorConfig.TryShowViewModelFunc is null)
-            return Key<TextEditorViewModel>.Empty;
-        await TextEditorConfig.TryShowViewModelFunc
-            .Invoke(new TryShowViewModelArgs(actualViewModelKey, Key<TextEditorGroup>.Empty, shouldSetFocusToEditor, CommonService, IdeBackgroundTaskApi))
+        await TryShowViewModel_Configured(new TryShowViewModelArgs(actualViewModelKey, Key<TextEditorGroup>.Empty, shouldSetFocusToEditor, CommonService, IdeBackgroundTaskApi))
             .ConfigureAwait(false);
         
         return actualViewModelKey;
@@ -2942,5 +2939,48 @@ public sealed partial class TextEditorService
                     fileLastWriteTime.Value);
             }
         });
+    }
+    
+    public async Task<bool> TryShowViewModel_Configured(TryShowViewModelArgs tryShowViewModelArgs)
+    {
+        var viewModel = ViewModel_GetOrDefault(tryShowViewModelArgs.ViewModelKey);
+        if (viewModel is null)
+            return false;
+
+        if (viewModel.PersistentState.Category == new Category("main") &&
+            tryShowViewModelArgs.GroupKey == Key<TextEditorGroup>.Empty)
+        {
+            tryShowViewModelArgs = new TryShowViewModelArgs(
+                tryShowViewModelArgs.ViewModelKey,
+                TextEditorService.EditorTextEditorGroupKey,
+                tryShowViewModelArgs.ShouldSetFocusToEditor,
+                tryShowViewModelArgs.CommonService,
+                tryShowViewModelArgs.IdeBackgroundTaskApi);
+        }
+
+        if (tryShowViewModelArgs.ViewModelKey == Key<TextEditorViewModel>.Empty ||
+            tryShowViewModelArgs.GroupKey == Key<TextEditorGroup>.Empty)
+        {
+            return false;
+        }
+
+        Group_AddViewModel(
+            tryShowViewModelArgs.GroupKey,
+            tryShowViewModelArgs.ViewModelKey);
+
+        Group_SetActiveViewModel(
+            tryShowViewModelArgs.GroupKey,
+            tryShowViewModelArgs.ViewModelKey);
+            
+        if (tryShowViewModelArgs.ShouldSetFocusToEditor)
+        {
+            WorkerArbitrary.PostUnique(editContext =>
+            {
+                var viewModelModifier = editContext.GetViewModelModifier(tryShowViewModelArgs.ViewModelKey);
+                return viewModel.FocusAsync();
+            });
+        }
+
+        return true;
     }
 }

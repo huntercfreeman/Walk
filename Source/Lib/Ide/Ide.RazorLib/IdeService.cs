@@ -165,50 +165,6 @@ public partial class IdeService : IBackgroundTaskGroup
         TextEditorService.WorkerArbitrary.EnqueueUniqueTextEditorWork(uniqueTextEditorWork);*/
     }
 
-    public async Task<bool> Editor_TryShowViewModelFunc(TryShowViewModelArgs showViewModelArgs)
-    {
-        var viewModel = TextEditorService.ViewModel_GetOrDefault(showViewModelArgs.ViewModelKey);
-
-        if (viewModel is null)
-            return false;
-
-        if (viewModel.PersistentState.Category == new Category("main") &&
-            showViewModelArgs.GroupKey == Key<TextEditorGroup>.Empty)
-        {
-            showViewModelArgs = new TryShowViewModelArgs(
-                showViewModelArgs.ViewModelKey,
-                TextEditorService.EditorTextEditorGroupKey,
-                showViewModelArgs.ShouldSetFocusToEditor,
-                showViewModelArgs.CommonService,
-                showViewModelArgs.IdeBackgroundTaskApi);
-        }
-
-        if (showViewModelArgs.ViewModelKey == Key<TextEditorViewModel>.Empty ||
-            showViewModelArgs.GroupKey == Key<TextEditorGroup>.Empty)
-        {
-            return false;
-        }
-
-        TextEditorService.Group_AddViewModel(
-            showViewModelArgs.GroupKey,
-            showViewModelArgs.ViewModelKey);
-
-        TextEditorService.Group_SetActiveViewModel(
-            showViewModelArgs.GroupKey,
-            showViewModelArgs.ViewModelKey);
-            
-        if (showViewModelArgs.ShouldSetFocusToEditor)
-        {
-            TextEditorService.WorkerArbitrary.PostUnique(editContext =>
-            {
-                var viewModelModifier = editContext.GetViewModelModifier(showViewModelArgs.ViewModelKey);
-                return viewModel.FocusAsync();
-            });
-        }
-
-        return true;
-    }
-    
     private ValueTask Do_SetFolderExplorerState(AbsolutePath folderAbsolutePath)
     {
         FolderExplorer_With(
