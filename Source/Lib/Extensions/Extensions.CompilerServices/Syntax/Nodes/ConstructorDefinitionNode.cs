@@ -9,12 +9,10 @@ public sealed class ConstructorDefinitionNode : ICodeBlockOwner, IFunctionDefini
     public ConstructorDefinitionNode(
         TypeReference returnTypeReference,
         SyntaxToken functionIdentifier,
-        
         SyntaxToken openAngleBracketToken,
         int indexGenericParameterEntryList,
         int countGenericParameterEntryList,
         SyntaxToken closeAngleBracketToken,
-        
         SyntaxToken openParenthesisToken,
         int indexFunctionArgumentEntryList,
         int countFunctionArgumentEntryList,
@@ -22,10 +20,6 @@ public sealed class ConstructorDefinitionNode : ICodeBlockOwner, IFunctionDefini
         CodeBlock codeBlock,
         ResourceUri resourceUri)
     {
-        #if DEBUG
-        Walk.Common.RazorLib.Installations.Models.WalkDebugSomething.ConstructorDefinitionNode++;
-        #endif
-    
         ReturnTypeReference = returnTypeReference;
         FunctionIdentifier = functionIdentifier;
         
@@ -77,11 +71,4 @@ public sealed class ConstructorDefinitionNode : ICodeBlockOwner, IFunctionDefini
         return ReturnTypeReference;
     }
     #endregion
-
-    #if DEBUG    
-    ~ConstructorDefinitionNode()
-    {
-        Walk.Common.RazorLib.Installations.Models.WalkDebugSomething.ConstructorDefinitionNode--;
-    }
-    #endif
 }

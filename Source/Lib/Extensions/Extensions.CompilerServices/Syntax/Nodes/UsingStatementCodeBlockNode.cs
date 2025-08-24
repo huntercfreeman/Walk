@@ -9,10 +9,6 @@ public sealed class UsingStatementCodeBlockNode : ICodeBlockOwner
         SyntaxToken keywordToken,
         CodeBlock codeBlock)
     {
-        #if DEBUG
-        Walk.Common.RazorLib.Installations.Models.WalkDebugSomething.UsingStatementCodeBlockNode++;
-        #endif
-    
         KeywordToken = keywordToken;
     }
 
@@ -38,12 +34,5 @@ public sealed class UsingStatementCodeBlockNode : ICodeBlockOwner
         return TypeFacts.Empty.ToTypeReference();
     }
     #endregion
-
-    #if DEBUG    
-    ~UsingStatementCodeBlockNode()
-    {
-        Walk.Common.RazorLib.Installations.Models.WalkDebugSomething.UsingStatementCodeBlockNode--;
-    }
-    #endif
 }
 

@@ -17,10 +17,6 @@ public sealed class TypeClauseNode : IGenericParameterNode
         SyntaxToken closeAngleBracketToken,
         bool isKeywordType)
     {
-        #if DEBUG
-        Walk.Common.RazorLib.Installations.Models.WalkDebugSomething.TypeClauseNode++;
-        #endif
-    
         IsKeywordType = isKeywordType;
         TypeIdentifierToken = typeIdentifier;
         
@@ -44,10 +40,6 @@ public sealed class TypeClauseNode : IGenericParameterNode
     /// </summary>
     public TypeClauseNode(TypeReference typeReference)
     {
-        #if DEBUG
-        Walk.Common.RazorLib.Installations.Models.WalkDebugSomething.TypeClauseNode++;
-        #endif
-    
         IsKeywordType = typeReference.IsKeywordType;
         TypeIdentifierToken = typeReference.TypeIdentifierToken;
         
@@ -106,11 +98,4 @@ public sealed class TypeClauseNode : IGenericParameterNode
     public SyntaxKind SyntaxKind => SyntaxKind.TypeClauseNode;
     
     public bool IsParsingGenericParameters { get; set; }
-
-    #if DEBUG    
-    ~TypeClauseNode()
-    {
-        Walk.Common.RazorLib.Installations.Models.WalkDebugSomething.TypeClauseNode--;
-    }
-    #endif
 }

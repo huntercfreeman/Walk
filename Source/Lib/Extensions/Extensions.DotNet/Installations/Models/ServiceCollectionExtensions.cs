@@ -10,8 +10,7 @@ public static class ServiceCollectionExtensions
 {
     public static IServiceCollection AddWalkExtensionsDotNetServices(
         this IServiceCollection services,
-        WalkHostingInformation hostingInformation,
-        Func<WalkIdeConfig, WalkIdeConfig>? configure = null)
+        WalkHostingInformation hostingInformation)
     {
         return services
             .AddScoped<DotNetService>(sp =>

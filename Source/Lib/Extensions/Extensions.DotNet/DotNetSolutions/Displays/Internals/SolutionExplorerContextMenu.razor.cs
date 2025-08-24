@@ -450,14 +450,14 @@ public partial class SolutionExplorerContextMenu : ComponentBase
             DotNetService.IdeService.CopyFile(
                 treeViewModel.Item,
                 (Func<Task>)(() => {
-                    NotificationHelper.DispatchInformative("Copy Action", $"Copied: {treeViewModel.Item.Name}", DotNetService.IdeService.TextEditorService.CommonService, TimeSpan.FromSeconds(7));
+                    CommonFacts.DispatchInformative("Copy Action", $"Copied: {treeViewModel.Item.Name}", DotNetService.IdeService.TextEditorService.CommonService, TimeSpan.FromSeconds(7));
                     return Task.CompletedTask;
                 })),
             DotNetService.IdeService.CutFile(
                 treeViewModel.Item,
                 (Func<Task>)(() => {
                     ParentOfCutFile = parentTreeViewModel;
-                    NotificationHelper.DispatchInformative("Cut Action", $"Cut: {treeViewModel.Item.Name}", DotNetService.IdeService.TextEditorService.CommonService, TimeSpan.FromSeconds(7));
+                    CommonFacts.DispatchInformative("Cut Action", $"Cut: {treeViewModel.Item.Name}", DotNetService.IdeService.TextEditorService.CommonService, TimeSpan.FromSeconds(7));
                     return Task.CompletedTask;
                 })),
             DotNetService.IdeService.DeleteFile(

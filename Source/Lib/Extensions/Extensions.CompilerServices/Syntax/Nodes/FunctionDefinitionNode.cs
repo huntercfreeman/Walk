@@ -24,10 +24,6 @@ public sealed class FunctionDefinitionNode : ICodeBlockOwner, IFunctionDefinitio
         CodeBlock codeBlock,
         ResourceUri resourceUri)
     {
-        #if DEBUG
-        Walk.Common.RazorLib.Installations.Models.WalkDebugSomething.FunctionDefinitionNode++;
-        #endif
-    
         AccessModifierKind = accessModifierKind;
         ReturnTypeReference = returnTypeReference;
         FunctionIdentifierToken = functionIdentifierToken;
@@ -84,11 +80,4 @@ public sealed class FunctionDefinitionNode : ICodeBlockOwner, IFunctionDefinitio
         return ReturnTypeReference;
     }
     #endregion
-
-    #if DEBUG    
-    ~FunctionDefinitionNode()
-    {
-        Walk.Common.RazorLib.Installations.Models.WalkDebugSomething.FunctionDefinitionNode--;
-    }
-    #endif
 }

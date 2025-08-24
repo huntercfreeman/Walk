@@ -5,13 +5,6 @@ namespace Walk.Extensions.CompilerServices.Syntax.Nodes;
 
 public sealed class GetterOrSetterNode : ICodeBlockOwner
 {
-    public GetterOrSetterNode()
-    {
-        #if DEBUG
-        Walk.Common.RazorLib.Installations.Models.WalkDebugSomething.GetterOrSetterNode++;
-        #endif
-    }
-
     // ICodeBlockOwner properties.
     public ScopeDirectionKind ScopeDirectionKind => ScopeDirectionKind.Down;
     public int Scope_StartInclusiveIndex { get; set; } = -1;
@@ -32,12 +25,5 @@ public sealed class GetterOrSetterNode : ICodeBlockOwner
         return TypeFacts.Empty.ToTypeReference();
     }
     #endregion
-
-    #if DEBUG    
-    ~GetterOrSetterNode()
-    {
-        Walk.Common.RazorLib.Installations.Models.WalkDebugSomething.GetterOrSetterNode--;
-    }
-    #endif
 }
 

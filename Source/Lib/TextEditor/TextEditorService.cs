@@ -23,7 +23,6 @@ public sealed partial class TextEditorService
     private readonly IJSRuntime _jsRuntime;
 
     public TextEditorService(
-        WalkTextEditorConfig textEditorConfig,
         IJSRuntime jsRuntime,
         CommonService commonService)
     {
@@ -56,7 +55,6 @@ public sealed partial class TextEditorService
                 return Task.CompletedTask;
             });
         
-        TextEditorConfig = textEditorConfig;
         _jsRuntime = jsRuntime;
         JsRuntimeTextEditorApi = _jsRuntime.GetWalkTextEditorApi();
         
@@ -67,7 +65,6 @@ public sealed partial class TextEditorService
 
     public WalkTextEditorJavaScriptInteropApi JsRuntimeTextEditorApi { get; }
     public WalkCommonJavaScriptInteropApi JsRuntimeCommonApi => CommonService.JsRuntimeCommonApi;
-    public WalkTextEditorConfig TextEditorConfig { get; }
 
 #if DEBUG
     public string StorageKey => "di_te_text-editor-options-debug";
@@ -2523,15 +2520,15 @@ public sealed partial class TextEditorService
         Key<TextEditorViewModel> preferredViewModelKey)
     {
         // RegisterModelFunc
-        await RegisterModel_Configured(new RegisterModelArgs(editContext, resourceUri, CommonService, IdeBackgroundTaskApi))
+        await RegisterModel_Configured(editContext, resourceUri)
             .ConfigureAwait(false);
     
         // TryRegisterViewModelFunc
-        var actualViewModelKey = await TryRegisterViewModel_Configured(new TryRegisterViewModelArgs(editContext, preferredViewModelKey, resourceUri, category, shouldSetFocusToEditor, CommonService, IdeBackgroundTaskApi))
+        var actualViewModelKey = await TryRegisterViewModel_Configured(editContext, preferredViewModelKey, resourceUri, category, shouldSetFocusToEditor)
             .ConfigureAwait(false);
     
         // TryShowViewModelFunc
-        await TryShowViewModel_Configured(new TryShowViewModelArgs(actualViewModelKey, Key<TextEditorGroup>.Empty, shouldSetFocusToEditor, CommonService, IdeBackgroundTaskApi))
+        await TryShowViewModel_Configured(actualViewModelKey, Key<TextEditorGroup>.Empty, shouldSetFocusToEditor)
             .ConfigureAwait(false);
         
         return actualViewModelKey;
@@ -2680,34 +2677,19 @@ public sealed partial class TextEditorService
         TextEditorStateChanged?.Invoke();
     }
     
-    public async Task RegisterModel_Configured(RegisterModelArgs registerModelArgs)
+    public async Task RegisterModel_Configured(TextEditorEditContext editContext, ResourceUri resourceUri)
     {
-        var standardizedAbsolutePathString = registerModelArgs.CommonService.TextEditor_AbsolutePathStandardize(
-            registerModelArgs.ResourceUri.Value);
-            
-        var standardizedResourceUri = new ResourceUri((string)standardizedAbsolutePathString);
+        // Overwrite the parameter so the string absolute path is ensured to be "standardized".
+        resourceUri = new ResourceUri(CommonService.TextEditor_AbsolutePathStandardize(resourceUri.Value));
     
-        registerModelArgs = new RegisterModelArgs(
-            registerModelArgs.EditContext,
-            standardizedResourceUri,
-            registerModelArgs.CommonService,
-            registerModelArgs.IdeBackgroundTaskApi)
-        {
-            ShouldBlockUntilBackgroundTaskIsCompleted = registerModelArgs.ShouldBlockUntilBackgroundTaskIsCompleted
-        };
-
-        var model = Model_GetOrDefault(registerModelArgs.ResourceUri);
+        var model = Model_GetOrDefault(resourceUri);
         
         if (model is not null)
         {
-            await Editor_CheckIfContentsWereModifiedAsync(
-                    registerModelArgs.ResourceUri.Value,
-                    model)
+            await Editor_CheckIfContentsWereModifiedAsync(resourceUri.Value, model)
                 .ConfigureAwait(false);
             return;
         }
-            
-        var resourceUri = registerModelArgs.ResourceUri;
 
         var fileLastWriteTime = await CommonService.FileSystemProvider.File
             .GetLastWriteTimeAsync(resourceUri.Value)
@@ -2736,18 +2718,18 @@ public sealed partial class TextEditorService
         
         model = modelModifier;
 
-        Model_RegisterCustom(registerModelArgs.EditContext, model);
+        Model_RegisterCustom(editContext, model);
         
         model.PersistentState.CompilerService.RegisterResource(
             model.PersistentState.ResourceUri,
             shouldTriggerResourceWasModified: false);
         
-        modelModifier = registerModelArgs.EditContext.GetModelModifier(resourceUri);
+        modelModifier = editContext.GetModelModifier(resourceUri);
 
         if (modelModifier is null)
             return;
 
-        await compilerService.ParseAsync(registerModelArgs.EditContext, modelModifier, shouldApplySyntaxHighlighting: false);
+        await compilerService.ParseAsync(editContext, modelModifier, shouldApplySyntaxHighlighting: false);
     }
     
     private async Task Editor_CheckIfContentsWereModifiedAsync(
@@ -2829,46 +2811,34 @@ public sealed partial class TextEditorService
         });
     }
     
-    public Task<Key<TextEditorViewModel>> TryRegisterViewModel_Configured(TryRegisterViewModelArgs tryRegisterViewModelArgs)
+    public async Task<Key<TextEditorViewModel>> TryRegisterViewModel_Configured(
+        TextEditorEditContext editContext,
+        Key<TextEditorViewModel> preferredViewModelKey,
+        ResourceUri resourceUri,
+        Category category,
+        bool shouldSetFocusToEditor)
     {
-        var standardizedAbsolutePathString = tryRegisterViewModelArgs.CommonService.TextEditor_AbsolutePathStandardize(
-            tryRegisterViewModelArgs.ResourceUri.Value);
-            
-        var standardizedResourceUri = new ResourceUri((string)standardizedAbsolutePathString);
+        resourceUri = new ResourceUri(CommonService.TextEditor_AbsolutePathStandardize(resourceUri.Value));
         
-        tryRegisterViewModelArgs = new TryRegisterViewModelArgs(
-            tryRegisterViewModelArgs.EditContext,
-            tryRegisterViewModelArgs.ViewModelKey,
-            standardizedResourceUri,
-            tryRegisterViewModelArgs.Category,
-            tryRegisterViewModelArgs.ShouldSetFocusToEditor,
-            tryRegisterViewModelArgs.CommonService,
-            tryRegisterViewModelArgs.IdeBackgroundTaskApi);
-
-        return Editor_TryRegisterViewModelFunc(tryRegisterViewModelArgs);
-    }
-    
-    public async Task<Key<TextEditorViewModel>> Editor_TryRegisterViewModelFunc(TryRegisterViewModelArgs registerViewModelArgs)
-    {
         var viewModelKey = Key<TextEditorViewModel>.NewKey();
         
-        var model = Model_GetOrDefault(registerViewModelArgs.ResourceUri);
+        var model = Model_GetOrDefault(resourceUri);
 
         if (model is null)
         {
-            NotificationHelper.DispatchDebugMessage(nameof(Editor_TryRegisterViewModelFunc), () => "model is null: " + registerViewModelArgs.ResourceUri.Value, CommonService, TimeSpan.FromSeconds(4));
+            CommonFacts.DispatchError(nameof(TryRegisterViewModel_Configured), $"model is null: {resourceUri.Value}", CommonService, TimeSpan.FromSeconds(4));
             return Key<TextEditorViewModel>.Empty;
         }
 
-        var viewModel = Model_GetViewModelsOrEmpty(registerViewModelArgs.ResourceUri)
-            .FirstOrDefault(x => x.PersistentState.Category == registerViewModelArgs.Category);
+        var viewModel = Model_GetViewModelsOrEmpty(resourceUri)
+            .FirstOrDefault(x => x.PersistentState.Category == category);
 
         if (viewModel is not null)
             return viewModel.PersistentState.ViewModelKey;
 
         viewModel = new TextEditorViewModel(
             viewModelKey,
-            registerViewModelArgs.ResourceUri,
+            resourceUri,
             this,
             TextEditorVirtualizationResult.ConstructEmpty(),
             new TextEditorDimensions(0, 0, 0, 0),
@@ -2877,7 +2847,7 @@ public sealed partial class TextEditorService
             scrollWidth: 0,
             scrollHeight: 0,
             marginScrollHeight: 0,
-            registerViewModelArgs.Category);
+            category);
 
         var firstPresentationLayerKeys = new List<Key<TextEditorPresentationModel>>
         {
@@ -2886,7 +2856,7 @@ public sealed partial class TextEditorService
         };
 
         var absolutePath = CommonService.EnvironmentProvider.AbsolutePathFactory(
-            registerViewModelArgs.ResourceUri.Value,
+            resourceUri.Value,
             false,
             tokenBuilder: new StringBuilder(),
             formattedBuilder: new StringBuilder(),
@@ -2896,7 +2866,7 @@ public sealed partial class TextEditorService
         viewModel.PersistentState.GetTabDisplayNameFunc = _ => absolutePath.Name;
         viewModel.PersistentState.FirstPresentationLayerKeysList = firstPresentationLayerKeys;
         
-        ViewModel_Register(registerViewModelArgs.EditContext, viewModel);
+        ViewModel_Register(editContext, viewModel);
         return viewModelKey;
     }
     
@@ -2922,7 +2892,7 @@ public sealed partial class TextEditorService
             else
             {
                 // TODO: Save As to make new file
-                NotificationHelper.DispatchInformative("Save Action", "File not found. TODO: Save As", CommonService, TimeSpan.FromSeconds(7));
+                CommonFacts.DispatchInformative("Save Action", "File not found. TODO: Save As", CommonService, TimeSpan.FromSeconds(7));
             }
     
             DateTime? fileLastWriteTime = null;
@@ -2941,42 +2911,40 @@ public sealed partial class TextEditorService
         });
     }
     
-    public async Task<bool> TryShowViewModel_Configured(TryShowViewModelArgs tryShowViewModelArgs)
+    public async Task<bool> TryShowViewModel_Configured(
+        Key<TextEditorViewModel> viewModelKey,
+        Key<TextEditorGroup> groupKey,
+        bool shouldSetFocusToEditor)
     {
-        var viewModel = ViewModel_GetOrDefault(tryShowViewModelArgs.ViewModelKey);
+        var viewModel = ViewModel_GetOrDefault(viewModelKey);
         if (viewModel is null)
             return false;
 
         if (viewModel.PersistentState.Category == new Category("main") &&
-            tryShowViewModelArgs.GroupKey == Key<TextEditorGroup>.Empty)
+            groupKey == Key<TextEditorGroup>.Empty)
         {
-            tryShowViewModelArgs = new TryShowViewModelArgs(
-                tryShowViewModelArgs.ViewModelKey,
-                TextEditorService.EditorTextEditorGroupKey,
-                tryShowViewModelArgs.ShouldSetFocusToEditor,
-                tryShowViewModelArgs.CommonService,
-                tryShowViewModelArgs.IdeBackgroundTaskApi);
+            groupKey = TextEditorService.EditorTextEditorGroupKey;
         }
 
-        if (tryShowViewModelArgs.ViewModelKey == Key<TextEditorViewModel>.Empty ||
-            tryShowViewModelArgs.GroupKey == Key<TextEditorGroup>.Empty)
+        if (viewModelKey == Key<TextEditorViewModel>.Empty ||
+            groupKey == Key<TextEditorGroup>.Empty)
         {
             return false;
         }
 
         Group_AddViewModel(
-            tryShowViewModelArgs.GroupKey,
-            tryShowViewModelArgs.ViewModelKey);
+            groupKey,
+            viewModelKey);
 
         Group_SetActiveViewModel(
-            tryShowViewModelArgs.GroupKey,
-            tryShowViewModelArgs.ViewModelKey);
+            groupKey,
+            viewModelKey);
             
-        if (tryShowViewModelArgs.ShouldSetFocusToEditor)
+        if (shouldSetFocusToEditor)
         {
             WorkerArbitrary.PostUnique(editContext =>
             {
-                var viewModelModifier = editContext.GetViewModelModifier(tryShowViewModelArgs.ViewModelKey);
+                var viewModelModifier = editContext.GetViewModelModifier(viewModelKey);
                 return viewModel.FocusAsync();
             });
         }

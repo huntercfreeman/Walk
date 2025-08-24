@@ -6,10 +6,6 @@ public sealed class PreprocessorLibraryReferenceStatementNode : ISyntaxNode
         SyntaxToken includeDirectiveSyntaxToken,
         SyntaxToken libraryReferenceSyntaxToken)
     {
-        #if DEBUG
-        Walk.Common.RazorLib.Installations.Models.WalkDebugSomething.PreprocessorLibraryReferenceStatementNode++;
-        #endif
-    
         IncludeDirectiveSyntaxToken = includeDirectiveSyntaxToken;
         LibraryReferenceSyntaxToken = libraryReferenceSyntaxToken;
     }
@@ -20,11 +16,4 @@ public sealed class PreprocessorLibraryReferenceStatementNode : ISyntaxNode
     public int Unsafe_ParentIndexKey { get; set; }
     public bool IsFabricated { get; init; }
     public SyntaxKind SyntaxKind => SyntaxKind.PreprocessorLibraryReferenceStatementNode;
-
-#if DEBUG
-    ~PreprocessorLibraryReferenceStatementNode()
-    {
-        Walk.Common.RazorLib.Installations.Models.WalkDebugSomething.PreprocessorLibraryReferenceStatementNode--;
-    }
-    #endif
 }

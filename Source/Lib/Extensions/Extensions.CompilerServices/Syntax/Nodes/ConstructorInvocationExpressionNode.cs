@@ -17,10 +17,6 @@ public sealed class ConstructorInvocationExpressionNode : IInvocationNode
         int countFunctionParameterEntryList,
         SyntaxToken closeParenthesisToken)
     {
-        #if DEBUG
-        Walk.Common.RazorLib.Installations.Models.WalkDebugSomething.ConstructorInvocationExpressionNode++;
-        #endif
-    
         NewKeywordToken = newKeywordToken;
         ResultTypeReference = typeReference;
         
@@ -55,11 +51,4 @@ public sealed class ConstructorInvocationExpressionNode : IInvocationNode
     public SyntaxKind SyntaxKind => SyntaxKind.ConstructorInvocationExpressionNode;
     
     public bool IsParsingFunctionParameters { get; set; }
-
-    #if DEBUG
-    ~ConstructorInvocationExpressionNode()
-    {
-        Walk.Common.RazorLib.Installations.Models.WalkDebugSomething.ConstructorInvocationExpressionNode--;
-    }
-    #endif
 }

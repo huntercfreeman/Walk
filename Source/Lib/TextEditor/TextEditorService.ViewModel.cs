@@ -1224,10 +1224,6 @@ public partial class TextEditorService
         }
 
         componentData.Virtualization = viewModel.Virtualization;
-
-#if DEBUG
-        WalkDebugSomething.SetTextEditorViewModelApi(Stopwatch.GetElapsedTime(startTime));
-#endif
     }
 
     private static int ViewModel_CountDigits(int argumentNumber)

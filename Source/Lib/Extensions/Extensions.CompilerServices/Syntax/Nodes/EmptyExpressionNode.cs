@@ -28,10 +28,6 @@ public sealed class EmptyExpressionNode : IExpressionNode
 
     public EmptyExpressionNode(TypeReference typeReference)
     {
-        #if DEBUG
-        Walk.Common.RazorLib.Installations.Models.WalkDebugSomething.EmptyExpressionNode++;
-        #endif
-    
         ResultTypeReference = typeReference;
     }
 
@@ -41,11 +37,4 @@ public sealed class EmptyExpressionNode : IExpressionNode
     public int Unsafe_ParentIndexKey { get; set; }
     public bool IsFabricated { get; init; }
     public SyntaxKind SyntaxKind => SyntaxKind.EmptyExpressionNode;
-
-#if DEBUG
-    ~EmptyExpressionNode()
-    {
-        Walk.Common.RazorLib.Installations.Models.WalkDebugSomething.EmptyExpressionNode--;
-    }
-    #endif
 }

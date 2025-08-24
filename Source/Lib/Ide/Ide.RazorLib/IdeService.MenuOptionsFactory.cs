@@ -455,7 +455,7 @@ public partial class IdeService
         }
         catch (Exception e)
         {
-            NotificationHelper.DispatchError("Rename Action", e.Message, commonService, TimeSpan.FromSeconds(14));
+            CommonFacts.DispatchError("Rename Action", e.Message, commonService, TimeSpan.FromSeconds(14));
             onAfterCompletion.Invoke();
             return default;
         }

@@ -8,10 +8,6 @@ public sealed class AmbiguousParenthesizedExpressionNode : IExpressionNode
         SyntaxToken openParenthesisToken,
         bool isParserContextKindForceStatementExpression)
     {
-        #if DEBUG
-        Walk.Common.RazorLib.Installations.Models.WalkDebugSomething.AmbiguousParenthesizedExpressionNode++;
-        #endif
-    
         OpenParenthesisToken = openParenthesisToken;
         IsParserContextKindForceStatementExpression = isParserContextKindForceStatementExpression;
     }
@@ -141,12 +137,5 @@ public sealed class AmbiguousParenthesizedExpressionNode : IExpressionNode
     public int Unsafe_ParentIndexKey { get; set; }
     public bool IsFabricated { get; init; }
     public SyntaxKind SyntaxKind => SyntaxKind.AmbiguousParenthesizedExpressionNode;
-
-#if DEBUG
-    ~AmbiguousParenthesizedExpressionNode()
-    {
-        Walk.Common.RazorLib.Installations.Models.WalkDebugSomething.AmbiguousParenthesizedExpressionNode--;
-    }
-    #endif
 }
 

@@ -242,18 +242,15 @@ public partial class IdeService
             var filePath = treeViewCodeSearchTextSpan.AbsolutePath.Value;
             var resourceUri = new ResourceUri(treeViewCodeSearchTextSpan.AbsolutePath.Value);
 
-            await TextEditorService.RegisterModel_Configured(
-                    new RegisterModelArgs(editContext, resourceUri, CommonService, this))
+            await TextEditorService.RegisterModel_Configured(editContext, resourceUri)
                 .ConfigureAwait(false);
 
-            var viewModelKey = await TextEditorService.TryRegisterViewModel_Configured(new TryRegisterViewModelArgs(
+            var viewModelKey = await TextEditorService.TryRegisterViewModel_Configured(
                     editContext,
                     outPreviewViewModelKey,
                     resourceUri,
                     new Category(nameof(IdeService)),
-                    false,
-                    CommonService,
-                    this))
+                    false)
                 .ConfigureAwait(false);
 
             if (viewModelKey != Key<TextEditorViewModel>.Empty)

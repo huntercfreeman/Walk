@@ -22,10 +22,6 @@ public sealed class InterpolatedStringNode : IExpressionNode
         IExpressionNode? toBeExpressionPrimary,
         TypeReference resultTypeReference)
     {
-        #if DEBUG
-        Walk.Common.RazorLib.Installations.Models.WalkDebugSomething.InterpolatedStringNode++;
-        #endif
-    
         StringInterpolatedStartToken = stringInterpolatedStartToken;
         StringInterpolatedEndToken = stringInterpolatedEndToken;
         ToBeExpressionPrimary = toBeExpressionPrimary;
@@ -45,11 +41,4 @@ public sealed class InterpolatedStringNode : IExpressionNode
     public int Unsafe_ParentIndexKey { get; set; }
     public bool IsFabricated { get; init; }
     public SyntaxKind SyntaxKind => SyntaxKind.InterpolatedStringNode;
-
-#if DEBUG
-    ~InterpolatedStringNode()
-    {
-        Walk.Common.RazorLib.Installations.Models.WalkDebugSomething.InterpolatedStringNode--;
-    }
-    #endif
 }

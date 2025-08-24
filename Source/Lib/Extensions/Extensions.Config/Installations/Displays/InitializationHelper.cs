@@ -110,7 +110,7 @@ public static class InitializationHelper
                 if (activeStartupControl?.StartupProjectAbsolutePath is not null)
                     BuildProjectOnClick(DotNetService, activeStartupControl.StartupProjectAbsolutePath.Value);
                 else
-                    NotificationHelper.DispatchError(nameof(BuildProjectOnClick), "activeStartupControl?.StartupProjectAbsolutePath was null", DotNetService.CommonService, TimeSpan.FromSeconds(6));
+                    CommonFacts.DispatchError(nameof(BuildProjectOnClick), "activeStartupControl?.StartupProjectAbsolutePath was null", DotNetService.CommonService, TimeSpan.FromSeconds(6));
                 return Task.CompletedTask;
             }));
 
@@ -127,7 +127,7 @@ public static class InitializationHelper
                 if (activeStartupControl?.StartupProjectAbsolutePath is not null)
                     CleanProjectOnClick(DotNetService, activeStartupControl.StartupProjectAbsolutePath.Value);
                 else
-                    NotificationHelper.DispatchError(nameof(CleanProjectOnClick), "activeStartupControl?.StartupProjectAbsolutePath was null", DotNetService.CommonService, TimeSpan.FromSeconds(6));
+                    CommonFacts.DispatchError(nameof(CleanProjectOnClick), "activeStartupControl?.StartupProjectAbsolutePath was null", DotNetService.CommonService, TimeSpan.FromSeconds(6));
                 return Task.CompletedTask;
             }));
 
@@ -143,7 +143,7 @@ public static class InitializationHelper
                 if (dotNetSolutionModel?.AbsolutePath is not null)
                     BuildSolutionOnClick(DotNetService, dotNetSolutionModel.AbsolutePath.Value);
                 else
-                    NotificationHelper.DispatchError(nameof(BuildSolutionOnClick), "dotNetSolutionModel?.AbsolutePath was null", DotNetService.CommonService, TimeSpan.FromSeconds(6));
+                    CommonFacts.DispatchError(nameof(BuildSolutionOnClick), "dotNetSolutionModel?.AbsolutePath was null", DotNetService.CommonService, TimeSpan.FromSeconds(6));
                 return Task.CompletedTask;
             }));
 
@@ -159,7 +159,7 @@ public static class InitializationHelper
                 if (dotNetSolutionModel?.AbsolutePath is not null)
                     CleanSolutionOnClick(DotNetService, dotNetSolutionModel.AbsolutePath.Value);
                 else
-                    NotificationHelper.DispatchError(nameof(CleanSolutionOnClick), "dotNetSolutionModel?.AbsolutePath was null", DotNetService.CommonService, TimeSpan.FromSeconds(6));
+                    CommonFacts.DispatchError(nameof(CleanSolutionOnClick), "dotNetSolutionModel?.AbsolutePath was null", DotNetService.CommonService, TimeSpan.FromSeconds(6));
                 return Task.CompletedTask;
             }));
 

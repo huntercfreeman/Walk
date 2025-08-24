@@ -21,13 +21,6 @@ namespace Walk.Extensions.CompilerServices.Syntax.Nodes;
 /// </summary>
 public sealed class GlobalCodeBlockNode : ICodeBlockOwner
 {
-    public GlobalCodeBlockNode()
-    {
-        #if DEBUG
-        Walk.Common.RazorLib.Installations.Models.WalkDebugSomething.GlobalCodeBlockNode++;
-        #endif
-    }
-
     // ICodeBlockOwner properties.
     public ScopeDirectionKind ScopeDirectionKind => ScopeDirectionKind.Both;
     /// <summary>
@@ -58,11 +51,4 @@ public sealed class GlobalCodeBlockNode : ICodeBlockOwner
         return TypeFacts.Empty.ToTypeReference();
     }
     #endregion
-
-    #if DEBUG    
-    ~GlobalCodeBlockNode()
-    {
-        Walk.Common.RazorLib.Installations.Models.WalkDebugSomething.GlobalCodeBlockNode--;
-    }
-    #endif
 }

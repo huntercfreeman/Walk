@@ -27,11 +27,9 @@ public partial class IdeService : IBackgroundTaskGroup
     private readonly IServiceProvider _serviceProvider;
 
     public IdeService(
-        WalkIdeConfig ideConfig,
         TextEditorService textEditorService,
         IServiceProvider serviceProvider)
     {
-        IdeConfig = ideConfig;
         TextEditorService = textEditorService;
         _serviceProvider = serviceProvider;
         
@@ -40,7 +38,6 @@ public partial class IdeService : IBackgroundTaskGroup
     
     public Key<IBackgroundTaskGroup> BackgroundTaskKey { get; } = Key<IBackgroundTaskGroup>.NewKey();
     
-    public WalkIdeConfig IdeConfig { get; }
     public TextEditorService TextEditorService { get; }
     public CommonService CommonService => TextEditorService.CommonService;
 
@@ -147,22 +144,6 @@ public partial class IdeService : IBackgroundTaskGroup
                 new InputFilePattern("File", absolutePath => !absolutePath.IsDirectory)
             }
         });
-    }
-
-    public async Task Editor_FastParseFunc(FastParseArgs fastParseArgs)
-    {
-        /*var resourceUri = fastParseArgs.ResourceUri;
-
-        var compilerService = _compilerServiceRegistry.GetCompilerService(fastParseArgs.ExtensionNoPeriod);
-
-        compilerService.RegisterResource(
-            fastParseArgs.ResourceUri,
-            shouldTriggerResourceWasModified: false);
-            
-        var uniqueTextEditorWork = new UniqueTextEditorWork(TextEditorService, editContext =>
-            compilerService.FastParseAsync(editContext, fastParseArgs.ResourceUri, _fileSystemProvider));
-        
-        TextEditorService.WorkerArbitrary.EnqueueUniqueTextEditorWork(uniqueTextEditorWork);*/
     }
 
     private ValueTask Do_SetFolderExplorerState(AbsolutePath folderAbsolutePath)

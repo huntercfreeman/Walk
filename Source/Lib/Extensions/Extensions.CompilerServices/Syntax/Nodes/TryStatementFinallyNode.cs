@@ -9,10 +9,6 @@ public sealed class TryStatementFinallyNode : ICodeBlockOwner
         SyntaxToken keywordToken,
         CodeBlock codeBlock)
     {
-        #if DEBUG
-        Walk.Common.RazorLib.Installations.Models.WalkDebugSomething.TryStatementFinallyNode++;
-        #endif
-
         KeywordToken = keywordToken;
     }
 
@@ -38,11 +34,4 @@ public sealed class TryStatementFinallyNode : ICodeBlockOwner
         return TypeFacts.Empty.ToTypeReference();
     }
     #endregion
-
-    #if DEBUG    
-    ~TryStatementFinallyNode()
-    {
-        Walk.Common.RazorLib.Installations.Models.WalkDebugSomething.TryStatementFinallyNode--;
-    }
-    #endif
 }

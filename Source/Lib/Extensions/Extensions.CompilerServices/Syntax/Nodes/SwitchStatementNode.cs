@@ -12,10 +12,6 @@ public sealed class SwitchStatementNode : ICodeBlockOwner
         SyntaxToken closeParenthesisToken,
         CodeBlock codeBlock)
     {
-        #if DEBUG
-        Walk.Common.RazorLib.Installations.Models.WalkDebugSomething.SwitchStatementNode++;
-        #endif
-    
         KeywordToken = keywordToken;
         OpenParenthesisToken = openParenthesisToken;
         ExpressionNode = expressionNode;
@@ -47,11 +43,4 @@ public sealed class SwitchStatementNode : ICodeBlockOwner
         return TypeFacts.Empty.ToTypeReference();
     }
     #endregion
-
-    #if DEBUG    
-    ~SwitchStatementNode()
-    {
-        Walk.Common.RazorLib.Installations.Models.WalkDebugSomething.SwitchStatementNode--;
-    }
-    #endif
 }

@@ -9,10 +9,6 @@ public sealed class TryStatementTryNode : ICodeBlockOwner
         SyntaxToken keywordToken,
         CodeBlock codeBlock)
     {
-        #if DEBUG
-        Walk.Common.RazorLib.Installations.Models.WalkDebugSomething.TryStatementTryNode++;
-        #endif
-
         KeywordToken = keywordToken;
     }
 
@@ -38,11 +34,4 @@ public sealed class TryStatementTryNode : ICodeBlockOwner
         return TypeFacts.Empty.ToTypeReference();
     }
     #endregion
-
-    #if DEBUG    
-    ~TryStatementTryNode()
-    {
-        Walk.Common.RazorLib.Installations.Models.WalkDebugSomething.TryStatementTryNode--;
-    }
-    #endif
 }

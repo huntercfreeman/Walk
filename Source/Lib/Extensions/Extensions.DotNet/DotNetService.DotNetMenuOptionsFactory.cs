@@ -210,7 +210,7 @@ public partial class DotNetService
                 {
                     ContinueWithFunc = parsedCommand =>
                     {
-                        NotificationHelper.DispatchInformative("Add Project Reference", $"Modified {projectReceivingReference.Item.Name} to have a reference to {referencedProject.Name}", ideService.CommonService, TimeSpan.FromSeconds(7));
+                        CommonFacts.DispatchInformative("Add Project Reference", $"Modified {projectReceivingReference.Item.Name} to have a reference to {referencedProject.Name}", ideService.CommonService, TimeSpan.FromSeconds(7));
                         return onAfterCompletion.Invoke();
                     }
                 };
@@ -266,7 +266,7 @@ public partial class DotNetService
         {
             ContinueWithFunc = parsedCommand =>
             {
-                NotificationHelper.DispatchInformative("Remove Project Reference", $"Modified {treeViewCSharpProjectToProjectReference.Item.ModifyProjectAbsolutePath.Name} to have a reference to {treeViewCSharpProjectToProjectReference.Item.ReferenceProjectAbsolutePath.Name}", commonService, TimeSpan.FromSeconds(7));
+                CommonFacts.DispatchInformative("Remove Project Reference", $"Modified {treeViewCSharpProjectToProjectReference.Item.ModifyProjectAbsolutePath.Name} to have a reference to {treeViewCSharpProjectToProjectReference.Item.ReferenceProjectAbsolutePath.Name}", commonService, TimeSpan.FromSeconds(7));
                 return onAfterCompletion.Invoke();
             }
         };
@@ -313,7 +313,7 @@ public partial class DotNetService
         {
             ContinueWithFunc = parsedCommand =>
             {
-                NotificationHelper.DispatchInformative("Move Project To Solution Folder", $"Moved {treeViewProjectToMove.Item.Name} to the Solution Folder path: {solutionFolderPath}", commonService, TimeSpan.FromSeconds(7));
+                CommonFacts.DispatchInformative("Move Project To Solution Folder", $"Moved {treeViewProjectToMove.Item.Name} to the Solution Folder path: {solutionFolderPath}", commonService, TimeSpan.FromSeconds(7));
                 return onAfterCompletion.Invoke();
             }
         };
@@ -369,7 +369,7 @@ public partial class DotNetService
         {
             ContinueWithFunc = parsedCommand =>
             {
-                NotificationHelper.DispatchInformative("Remove Project Reference", $"Modified {modifyProjectAbsolutePath.Name} to NOT have a reference to {treeViewCSharpProjectNugetPackageReference.Item.LightWeightNugetPackageRecord.Id}", commonService, TimeSpan.FromSeconds(7));
+                CommonFacts.DispatchInformative("Remove Project Reference", $"Modified {modifyProjectAbsolutePath.Name} to NOT have a reference to {treeViewCSharpProjectNugetPackageReference.Item.LightWeightNugetPackageRecord.Id}", commonService, TimeSpan.FromSeconds(7));
                 return onAfterCompletion.Invoke();
             }
         };

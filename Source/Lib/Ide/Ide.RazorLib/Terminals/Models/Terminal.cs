@@ -177,7 +177,7 @@ public class Terminal : ITerminal, IBackgroundTaskGroup
                     " threw an exception" +
                     "\n"));
         
-            NotificationHelper.DispatchError("Terminal Exception", e.ToString(), _ideService.CommonService, TimeSpan.FromSeconds(14));
+            CommonFacts.DispatchError("Terminal Exception", e.ToString(), _ideService.CommonService, TimeSpan.FromSeconds(14));
         }
         finally
         {

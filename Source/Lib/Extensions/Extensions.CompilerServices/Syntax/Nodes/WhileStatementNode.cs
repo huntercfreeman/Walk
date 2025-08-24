@@ -11,10 +11,6 @@ public sealed class WhileStatementNode : ICodeBlockOwner
         SyntaxToken closeParenthesisToken,
         CodeBlock codeBlock)
     {
-        #if DEBUG
-        Walk.Common.RazorLib.Installations.Models.WalkDebugSomething.WhileStatementNode++;
-        #endif
-    
         KeywordToken = keywordToken;
         OpenParenthesisToken = openParenthesisToken;
         CloseParenthesisToken = closeParenthesisToken;
@@ -44,11 +40,4 @@ public sealed class WhileStatementNode : ICodeBlockOwner
         return TypeFacts.NotApplicable.ToTypeReference();
     }
     #endregion
-
-    #if DEBUG    
-    ~WhileStatementNode()
-    {
-        Walk.Common.RazorLib.Installations.Models.WalkDebugSomething.WhileStatementNode--;
-    }
-    #endif
 }

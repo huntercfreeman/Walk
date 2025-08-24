@@ -18,7 +18,6 @@ public sealed class TypeDefinitionNode : ICodeBlockOwner, IFunctionDefinitionNod
         int indexGenericParameterEntryList,
         int countGenericParameterEntryList,
         SyntaxToken closeAngleBracketToken,
-        
         SyntaxToken openParenthesisToken,
         int indexFunctionArgumentEntryList,
         int countFunctionArgumentEntryList,
@@ -27,10 +26,6 @@ public sealed class TypeDefinitionNode : ICodeBlockOwner, IFunctionDefinitionNod
         string namespaceName,
         ResourceUri resourceUri)
     {
-        #if DEBUG
-        Walk.Common.RazorLib.Installations.Models.WalkDebugSomething.TypeDefinitionNode++;
-        #endif
-    
         AccessModifierKind = accessModifierKind;
         HasPartialModifier = hasPartialModifier;
         StorageModifierKind = storageModifierKind;
@@ -72,7 +67,6 @@ public sealed class TypeDefinitionNode : ICodeBlockOwner, IFunctionDefinitionNod
     public int CountGenericParameterEntryList { get; set; }
     
     public SyntaxToken CloseAngleBracketToken { get; set; }
-    
     
     public SyntaxToken OpenParenthesisToken { get; set; }
     public int IndexFunctionArgumentEntryList { get; set; }
@@ -162,11 +156,4 @@ public sealed class TypeDefinitionNode : ICodeBlockOwner, IFunctionDefinitionNod
     {
         return new TypeReference(this);
     }
-
-    #if DEBUG    
-    ~TypeDefinitionNode()
-    {
-        Walk.Common.RazorLib.Installations.Models.WalkDebugSomething.TypeDefinitionNode--;
-    }
-    #endif
 }

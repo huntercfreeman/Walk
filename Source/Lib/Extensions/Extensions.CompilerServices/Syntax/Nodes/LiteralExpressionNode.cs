@@ -6,10 +6,6 @@ public sealed class LiteralExpressionNode : IExpressionNode
 {
     public LiteralExpressionNode(SyntaxToken literalSyntaxToken, TypeReference typeReference)
     {
-        #if DEBUG
-        Walk.Common.RazorLib.Installations.Models.WalkDebugSomething.LiteralExpressionNode++;
-        #endif
-    
         LiteralSyntaxToken = literalSyntaxToken;
         ResultTypeReference = typeReference;
     }
@@ -20,11 +16,4 @@ public sealed class LiteralExpressionNode : IExpressionNode
     public int Unsafe_ParentIndexKey { get; set; }
     public bool IsFabricated { get; init; }
     public SyntaxKind SyntaxKind => SyntaxKind.LiteralExpressionNode;
-
-#if DEBUG
-    ~LiteralExpressionNode()
-    {
-        Walk.Common.RazorLib.Installations.Models.WalkDebugSomething.LiteralExpressionNode--;
-    }
-    #endif
 }

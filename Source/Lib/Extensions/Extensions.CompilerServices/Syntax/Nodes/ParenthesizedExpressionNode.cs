@@ -9,10 +9,6 @@ public sealed class ParenthesizedExpressionNode : IExpressionNode
         IExpressionNode innerExpression,
         SyntaxToken closeParenthesisToken)
     {
-        #if DEBUG
-        Walk.Common.RazorLib.Installations.Models.WalkDebugSomething.ParenthesizedExpressionNode++;
-        #endif
-    
         OpenParenthesisToken = openParenthesisToken;
         InnerExpression = innerExpression;
         CloseParenthesisToken = closeParenthesisToken;
@@ -31,11 +27,4 @@ public sealed class ParenthesizedExpressionNode : IExpressionNode
     public int Unsafe_ParentIndexKey { get; set; }
     public bool IsFabricated { get; init; }
     public SyntaxKind SyntaxKind => SyntaxKind.ParenthesizedExpressionNode;
-
-#if DEBUG
-    ~ParenthesizedExpressionNode()
-    {
-        Walk.Common.RazorLib.Installations.Models.WalkDebugSomething.ParenthesizedExpressionNode--;
-    }
-    #endif
 }

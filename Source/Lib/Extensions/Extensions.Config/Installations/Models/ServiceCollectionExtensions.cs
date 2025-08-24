@@ -9,10 +9,9 @@ public static class ServiceCollectionExtensions
 {
     public static IServiceCollection AddWalkConfigServices(
         this IServiceCollection services,
-        WalkHostingInformation hostingInformation,
-        Func<WalkIdeConfig, WalkIdeConfig>? configure = null)
+        WalkHostingInformation hostingInformation)
     {
         return services
-            .AddWalkExtensionsDotNetServices(hostingInformation, configure);
+            .AddWalkExtensionsDotNetServices(hostingInformation);
     }
 }
