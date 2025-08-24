@@ -539,7 +539,7 @@ public class TextEditorVirtualizationResult
         if (ViewModel.PersistentState.ScrollHeight == 0)
             return;
     
-        var scrollbarHeightInPixels = ViewModel.PersistentState.TextEditorDimensions.Height - ScrollbarFacts.SCROLLBAR_SIZE_IN_PIXELS;
+        var scrollbarHeightInPixels = ViewModel.PersistentState.TextEditorDimensions.Height - TextEditorFacts.SCROLLBAR_SIZE_IN_PIXELS;
 
         // Proportional Top
         var sliderProportionalTopInPixels = ViewModel.PersistentState.ScrollTop *
@@ -1075,7 +1075,7 @@ public class TextEditorVirtualizationResult
     public void HORIZONTAL_GetScrollbarHorizontalStyleCss()
     {
         var scrollbarWidthInPixels = ViewModel.PersistentState.TextEditorDimensions.Width -
-                                     ScrollbarFacts.SCROLLBAR_SIZE_IN_PIXELS -
+                                     TextEditorFacts.SCROLLBAR_SIZE_IN_PIXELS -
                                      ViewModel.PersistentState.GutterWidth;
         
         ComponentData.TextEditorViewModelSlimDisplay.TextEditorService.__StringBuilder.Clear();
@@ -1093,7 +1093,7 @@ public class TextEditorVirtualizationResult
             return;
     
         var scrollbarWidthInPixels = ViewModel.PersistentState.TextEditorDimensions.Width -
-                                     ScrollbarFacts.SCROLLBAR_SIZE_IN_PIXELS -
+                                     TextEditorFacts.SCROLLBAR_SIZE_IN_PIXELS -
                                      ViewModel.PersistentState.GutterWidth;
         
         // Proportional Left

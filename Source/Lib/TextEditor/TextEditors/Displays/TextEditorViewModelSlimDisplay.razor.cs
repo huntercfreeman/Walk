@@ -222,7 +222,7 @@ public sealed partial class TextEditorViewModelSlimDisplay : ComponentBase, IDis
         var paddingRightInPixelsInvariantCulture = TextEditorModel.GUTTER_PADDING_RIGHT_IN_PIXELS.ToCssValue();
         _componentData.Gutter_PaddingCssStyle = $"padding-left: {paddingLeftInPixelsInvariantCulture}px; padding-right: {paddingRightInPixelsInvariantCulture}px;";
         
-        _componentData.ScrollbarSizeCssValue = ScrollbarFacts.SCROLLBAR_SIZE_IN_PIXELS.ToCssValue();
+        _componentData.ScrollbarSizeCssValue = TextEditorFacts.SCROLLBAR_SIZE_IN_PIXELS.ToCssValue();
         
         _componentData.CursorCssClassBlinkAnimationOn = $"di_te_text-editor-cursor di_te_blink {TextCursorKindFacts.BeamCssClassString}";
         _componentData.CursorCssClassBlinkAnimationOff = $"di_te_text-editor-cursor {TextCursorKindFacts.BeamCssClassString}";
@@ -770,7 +770,7 @@ public sealed partial class TextEditorViewModelSlimDisplay : ComponentBase, IDis
             {
                 var diffX = onDragMouseEventArgs.ClientX - localMouseDownEventArgsStruct.X;
     
-                var scrollbarWidthInPixels = textEditorDimensions.Width - ScrollbarFacts.SCROLLBAR_SIZE_IN_PIXELS;
+                var scrollbarWidthInPixels = textEditorDimensions.Width - TextEditorFacts.SCROLLBAR_SIZE_IN_PIXELS;
     
                 scrollLeft = HORIZONTAL_scrollLeftOnMouseDown +
                     diffX *
@@ -828,7 +828,7 @@ public sealed partial class TextEditorViewModelSlimDisplay : ComponentBase, IDis
             {
                 var diffY = onDragMouseEventArgs.ClientY - localMouseDownEventArgsStruct.Y;
     
-                var scrollbarHeightInPixels = textEditorDimensions.Height - ScrollbarFacts.SCROLLBAR_SIZE_IN_PIXELS;
+                var scrollbarHeightInPixels = textEditorDimensions.Height - TextEditorFacts.SCROLLBAR_SIZE_IN_PIXELS;
     
                 scrollTop = VERTICAL_scrollTopOnMouseDown +
                     diffY *
