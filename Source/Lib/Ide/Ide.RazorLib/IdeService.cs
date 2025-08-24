@@ -61,8 +61,6 @@ public partial class IdeService : IBackgroundTaskGroup
 
         switch (workArgs.WorkKind)
         {
-            case IdeWorkKind.SaveFile:
-                return Do_SaveFile(workArgs.AbsolutePath, workArgs.StringValue, workArgs.OnAfterSaveCompletedWrittenDateTimeFunc, workArgs.CancellationToken);
             case IdeWorkKind.SetFolderExplorerState:
                 return Do_SetFolderExplorerState(workArgs.AbsolutePath);
             case IdeWorkKind.SetFolderExplorerTreeView:
@@ -167,98 +165,6 @@ public partial class IdeService : IBackgroundTaskGroup
         TextEditorService.WorkerArbitrary.EnqueueUniqueTextEditorWork(uniqueTextEditorWork);*/
     }
 
-    public async Task<Key<TextEditorViewModel>> Editor_TryRegisterViewModelFunc(TryRegisterViewModelArgs registerViewModelArgs)
-    {
-        var viewModelKey = Key<TextEditorViewModel>.NewKey();
-        
-        var model = TextEditorService.Model_GetOrDefault(registerViewModelArgs.ResourceUri);
-
-        if (model is null)
-        {
-            NotificationHelper.DispatchDebugMessage(nameof(Editor_TryRegisterViewModelFunc), () => "model is null: " + registerViewModelArgs.ResourceUri.Value, CommonService, TimeSpan.FromSeconds(4));
-            return Key<TextEditorViewModel>.Empty;
-        }
-
-        var viewModel = TextEditorService.Model_GetViewModelsOrEmpty(registerViewModelArgs.ResourceUri)
-            .FirstOrDefault(x => x.PersistentState.Category == registerViewModelArgs.Category);
-
-        if (viewModel is not null)
-            return viewModel.PersistentState.ViewModelKey;
-
-        viewModel = new TextEditorViewModel(
-            viewModelKey,
-            registerViewModelArgs.ResourceUri,
-            TextEditorService,
-            TextEditorVirtualizationResult.ConstructEmpty(),
-            new TextEditorDimensions(0, 0, 0, 0),
-            scrollLeft: 0,
-            scrollTop: 0,
-            scrollWidth: 0,
-            scrollHeight: 0,
-            marginScrollHeight: 0,
-            registerViewModelArgs.Category);
-
-        var firstPresentationLayerKeys = new List<Key<TextEditorPresentationModel>>
-        {
-            TextEditorFacts.CompilerServiceDiagnosticPresentation_PresentationKey,
-            TextEditorFacts.FindOverlayPresentation_PresentationKey,
-        };
-
-        var absolutePath = CommonService.EnvironmentProvider.AbsolutePathFactory(
-            registerViewModelArgs.ResourceUri.Value,
-            false,
-            tokenBuilder: new StringBuilder(),
-            formattedBuilder: new StringBuilder(),
-            AbsolutePathNameKind.NameWithExtension);
-
-        viewModel.PersistentState.OnSaveRequested = Editor_HandleOnSaveRequested;
-        viewModel.PersistentState.GetTabDisplayNameFunc = _ => absolutePath.Name;
-        viewModel.PersistentState.FirstPresentationLayerKeysList = firstPresentationLayerKeys;
-        
-        TextEditorService.ViewModel_Register(registerViewModelArgs.EditContext, viewModel);
-        return viewModelKey;
-    }
-    
-    private void Editor_HandleOnSaveRequested(TextEditorModel innerTextEditor)
-    {
-        var innerContent = innerTextEditor.GetAllText_WithOriginalLineEndings();
-        
-        var absolutePath = CommonService.EnvironmentProvider.AbsolutePathFactory(
-            innerTextEditor.PersistentState.ResourceUri.Value,
-            false,
-            tokenBuilder: new StringBuilder(),
-            formattedBuilder: new StringBuilder(),
-            AbsolutePathNameKind.NameWithExtension);
-
-        Enqueue(new IdeWorkArgs
-        {
-            WorkKind = IdeWorkKind.SaveFile,
-            AbsolutePath = absolutePath,
-            StringValue = innerContent,
-            OnAfterSaveCompletedWrittenDateTimeFunc = writtenDateTime =>
-            {
-                if (writtenDateTime is not null)
-                {
-                    TextEditorService.WorkerArbitrary.PostUnique(editContext =>
-                    {
-                        var modelModifier = editContext.GetModelModifier(innerTextEditor.PersistentState.ResourceUri);
-                        if (modelModifier is null)
-                            return ValueTask.CompletedTask;
-                    
-                        TextEditorService.Model_SetResourceData(
-                            editContext,
-                            modelModifier,
-                            writtenDateTime.Value);
-                        return ValueTask.CompletedTask;
-                    });
-                }
-
-                return Task.CompletedTask;
-            },
-            CancellationToken = CancellationToken.None
-        });
-    }
-
     public async Task<bool> Editor_TryShowViewModelFunc(TryShowViewModelArgs showViewModelArgs)
     {
         var viewModel = TextEditorService.ViewModel_GetOrDefault(showViewModelArgs.ViewModelKey);
@@ -301,42 +207,6 @@ public partial class IdeService : IBackgroundTaskGroup
         }
 
         return true;
-    }
-    
-    private async ValueTask Do_SaveFile(
-        AbsolutePath absolutePath,
-        string content,
-        Func<DateTime?, Task> onAfterSaveCompletedWrittenDateTimeFunc,
-        CancellationToken cancellationToken = default)
-    {
-        if (cancellationToken.IsCancellationRequested)
-            return;
-
-        var absolutePathString = absolutePath.Value;
-
-        if (absolutePathString is not null &&
-            await CommonService.FileSystemProvider.File.ExistsAsync(absolutePathString).ConfigureAwait(false))
-        {
-            await CommonService.FileSystemProvider.File.WriteAllTextAsync(absolutePathString, content).ConfigureAwait(false);
-        }
-        else
-        {
-            // TODO: Save As to make new file
-            NotificationHelper.DispatchInformative("Save Action", "File not found. TODO: Save As", CommonService, TimeSpan.FromSeconds(7));
-        }
-
-        DateTime? fileLastWriteTime = null;
-
-        if (absolutePathString is not null)
-        {
-            fileLastWriteTime = await CommonService.FileSystemProvider.File.GetLastWriteTimeAsync(
-                    absolutePathString,
-                    CancellationToken.None)
-                .ConfigureAwait(false);
-        }
-
-        if (onAfterSaveCompletedWrittenDateTimeFunc is not null)
-            await onAfterSaveCompletedWrittenDateTimeFunc.Invoke(fileLastWriteTime);
     }
     
     private ValueTask Do_SetFolderExplorerState(AbsolutePath folderAbsolutePath)

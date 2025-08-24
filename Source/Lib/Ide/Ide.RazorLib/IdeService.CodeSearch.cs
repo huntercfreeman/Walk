@@ -246,32 +246,29 @@ public partial class IdeService
                     new RegisterModelArgs(editContext, resourceUri, CommonService, this))
                 .ConfigureAwait(false);
 
-            if (TextEditorService.TextEditorConfig.TryRegisterViewModelFunc is not null)
+            var viewModelKey = await TextEditorService.TryRegisterViewModel_Configured(new TryRegisterViewModelArgs(
+                    editContext,
+                    outPreviewViewModelKey,
+                    resourceUri,
+                    new Category(nameof(IdeService)),
+                    false,
+                    CommonService,
+                    this))
+                .ConfigureAwait(false);
+
+            if (viewModelKey != Key<TextEditorViewModel>.Empty &&
+                TextEditorService.TextEditorConfig.TryShowViewModelFunc is not null)
             {
-                var viewModelKey = await TextEditorService.TextEditorConfig.TryRegisterViewModelFunc.Invoke(new TryRegisterViewModelArgs(
-                        editContext,
-                        outPreviewViewModelKey,
-                        resourceUri,
-                        new Category(nameof(IdeService)),
-                        false,
-                        CommonService,
-                        this))
-                    .ConfigureAwait(false);
-
-                if (viewModelKey != Key<TextEditorViewModel>.Empty &&
-                    TextEditorService.TextEditorConfig.TryShowViewModelFunc is not null)
+                CodeSearch_With(inState => inState with
                 {
-                    CodeSearch_With(inState => inState with
-                    {
-                        PreviewFilePath = filePath,
-                        PreviewViewModelKey = viewModelKey,
-                    });
+                    PreviewFilePath = filePath,
+                    PreviewViewModelKey = viewModelKey,
+                });
 
-                    if (inPreviewViewModelKey != Key<TextEditorViewModel>.Empty &&
-                        inPreviewViewModelKey != viewModelKey)
-                    {
-                        TextEditorService.ViewModel_Dispose(editContext, inPreviewViewModelKey);
-                    }
+                if (inPreviewViewModelKey != Key<TextEditorViewModel>.Empty &&
+                    inPreviewViewModelKey != viewModelKey)
+                {
+                    TextEditorService.ViewModel_Dispose(editContext, inPreviewViewModelKey);
                 }
             }
         });
