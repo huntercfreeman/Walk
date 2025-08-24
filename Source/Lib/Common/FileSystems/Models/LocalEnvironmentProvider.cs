@@ -167,7 +167,7 @@ public class LocalEnvironmentProvider : IEnvironmentProvider
 
     public void AssertDeletionPermitted(string path, bool isDirectory)
     {
-        CommonFacts.AssertDeletionPermitted(this, path, isDirectory);
+        PermittanceChecker.AssertDeletionPermitted(this, path, isDirectory);
     }
 
     public void DeletionPermittedRegister(SimplePath simplePath, StringBuilder tokenBuilder, StringBuilder formattedBuilder)
@@ -179,7 +179,7 @@ public class LocalEnvironmentProvider : IEnvironmentProvider
             if (absolutePath == "/" || absolutePath == "\\" || string.IsNullOrWhiteSpace(absolutePath))
                 return;
 
-            if (CommonFacts.IsRootOrHomeDirectory(simplePath, this, tokenBuilder, formattedBuilder))
+            if (PermittanceChecker.IsRootOrHomeDirectory(simplePath, this, tokenBuilder, formattedBuilder))
                 return;
 
             DeletionPermittedPathList.Add(simplePath);
@@ -211,7 +211,7 @@ public class LocalEnvironmentProvider : IEnvironmentProvider
             if (absolutePath == "/" || absolutePath == "\\" || string.IsNullOrWhiteSpace(absolutePath))
                 return;
 
-            if (CommonFacts.IsRootOrHomeDirectory(simplePath, this, tokenBuilder, formattedBuilder))
+            if (PermittanceChecker.IsRootOrHomeDirectory(simplePath, this, tokenBuilder, formattedBuilder))
                 return;
 
             ProtectedPathList.Remove(simplePath);

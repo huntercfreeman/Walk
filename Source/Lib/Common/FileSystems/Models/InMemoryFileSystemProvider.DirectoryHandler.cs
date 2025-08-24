@@ -443,8 +443,8 @@ public partial class InMemoryFileSystemProvider : IFileSystemProvider
         {
             var title = "FILESYSTEM ERROR";
 
-            if (exception.Message.StartsWith(CommonFacts.ERROR_PREFIX))
-                title = CommonFacts.ERROR_PREFIX;
+            if (exception.Message.StartsWith(PermittanceChecker.ERROR_PREFIX))
+                title = PermittanceChecker.ERROR_PREFIX;
 
             NotificationHelper.DispatchError(
                 title,
