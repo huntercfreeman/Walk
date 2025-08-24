@@ -182,19 +182,14 @@ public partial class TerminalOutputTextEditorExpandDisplay : ComponentBase, IDis
         {
             IdeService.TextEditorService.WorkerArbitrary.PostUnique(editContext =>
             {
-                var formatter = Terminal.OutputFormatter;
-                    
-                if (formatter is not TerminalOutputFormatterExpand terminalOutputFormatterExpand)
-                    return ValueTask.CompletedTask;
-                
-                var modelModifier = editContext.GetModelModifier(terminalOutputFormatterExpand.TextEditorModelResourceUri);
-                var viewModelModifier = editContext.GetViewModelModifier(terminalOutputFormatterExpand.TextEditorViewModelKey);
+                var localTerminal = Terminal;
+            
+                var modelModifier = editContext.GetModelModifier(localTerminal.TextEditorModelResourceUri);
+                var viewModelModifier = editContext.GetViewModelModifier(localTerminal.TextEditorViewModelKey);
 
                 if (modelModifier is null || viewModelModifier is null)
                     return ValueTask.CompletedTask;
 
-                var localTerminal = Terminal;
-                
                 var showingFinalLine = false;
 
                 if (viewModelModifier.Virtualization.Count > 0)
@@ -204,8 +199,7 @@ public partial class TerminalOutputTextEditorExpandDisplay : ComponentBase, IDis
                         showingFinalLine = true;
                 }
 
-                var outputFormatted = (TerminalOutputFormattedTextEditor)localTerminal
-                    .GetOutputFormatted(nameof(TerminalOutputFormatterExpand));
+                var outputFormatted = (TerminalOutputFormattedTextEditor)localTerminal.GetOutputFormatted();
                 
                 modelModifier.SetContent(outputFormatted.Text);
                 
@@ -255,7 +249,7 @@ public partial class TerminalOutputTextEditorExpandDisplay : ComponentBase, IDis
                 }  
                 
                 var compilerServiceResource = modelModifier.PersistentState.CompilerService.GetResource(
-                    terminalOutputFormatterExpand.TextEditorModelResourceUri);
+                    localTerminal.TextEditorModelResourceUri);
 
                 if (compilerServiceResource is TerminalResource terminalResource)
                 {

@@ -1,6 +1,8 @@
 using CliWrap.EventStream;
 using Walk.Common.RazorLib.Keys.Models;
 using Walk.Common.RazorLib.Keys.Models;
+using Walk.TextEditor.RazorLib.TextEditors.Models;
+using Walk.TextEditor.RazorLib.Lexers.Models;
 
 namespace Walk.Ide.RazorLib.Terminals.Models;
 
@@ -69,8 +71,6 @@ public interface ITerminal : IDisposable
     /* End ITerminalInteractive */
     
     /* Start ITerminalOutput */
-    public ITerminalOutputFormatter OutputFormatter { get; }
-
     /// <summary>
     /// TODO: Make this 'Action<Key<TerminalCommandParsed>>?' so one can
     ///       track the output of a specific command as it is being executed?
@@ -88,9 +88,17 @@ public interface ITerminal : IDisposable
     /// <summary>Conditionally clear the output</summary>
     public void ClearHistoryWhenExistingOutputTooLong();
     
-    public ITerminalOutputFormatted GetOutputFormatted(string terminalOutputFormatterName);
+    public ITerminalOutputFormatted GetOutputFormatted();
     public TerminalCommandParsed? GetParsedCommandOrDefault(Key<TerminalCommandRequest> terminalCommandRequestKey);
     public List<TerminalCommandParsed> GetParsedCommandList();
     public int GetParsedCommandListCount();
     /* End ITerminalOutput */
+    
+    /* Start ITerminalOutputFormatter */
+    public ResourceUri TextEditorModelResourceUri { get; }
+
+    public Key<TextEditorViewModel> TextEditorViewModelKey { get; }
+    
+    public ITerminalOutputFormatted Format();
+    /* End ITerminalOutputFormatter */
 }
