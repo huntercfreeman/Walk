@@ -1,9 +1,9 @@
-using Walk.Common.RazorLib;
-using Walk.Common.RazorLib.Menus.Models;
 using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Web;
+using Walk.Common.RazorLib;
+using Walk.Common.RazorLib.Menus.Models;
 
-namespace Walk.Ide.RazorLib.FormsGenerics.Displays;
+namespace Walk.Common.RazorLib.FormsGenerics.Displays;
 
 public partial class BooleanPromptOrCancelDisplay : ComponentBase
 {

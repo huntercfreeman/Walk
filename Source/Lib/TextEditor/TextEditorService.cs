@@ -2,8 +2,11 @@ using Microsoft.JSInterop;
 using System.Text;
 using Walk.Common.RazorLib;
 using Walk.Common.RazorLib.JsRuntimes.Models;
+using Walk.Common.RazorLib.Dynamics.Models;
+using Walk.Common.RazorLib.FileSystems.Models;
 using Walk.Common.RazorLib.Keys.Models;
 using Walk.Common.RazorLib.Reactives.Models;
+using Walk.Common.RazorLib.Notifications.Models;
 using Walk.TextEditor.RazorLib.BackgroundTasks.Models;
 using Walk.TextEditor.RazorLib.Groups.Models;
 using Walk.TextEditor.RazorLib.Installations.Models;
@@ -11,6 +14,7 @@ using Walk.TextEditor.RazorLib.JsRuntimes.Models;
 using Walk.TextEditor.RazorLib.Lexers.Models;
 using Walk.TextEditor.RazorLib.Lines.Models;
 using Walk.TextEditor.RazorLib.TextEditors.Models;
+using Walk.TextEditor.RazorLib.Decorations.Models;
 
 namespace Walk.TextEditor.RazorLib;
 
@@ -2456,12 +2460,7 @@ public sealed partial class TextEditorService
         Key<TextEditorViewModel> preferredViewModelKey)
     {
         // Standardize Resource Uri
-        if (TextEditorConfig.AbsolutePathStandardizeFunc is null)
-            return;
-            
-        var standardizedFilePathString = await TextEditorConfig.AbsolutePathStandardizeFunc
-            .Invoke(absolutePath, CommonService)
-            .ConfigureAwait(false);
+        var standardizedFilePathString = CommonService.TextEditor_AbsolutePathStandardize(absolutePath);
             
         var resourceUri = new ResourceUri(standardizedFilePathString);
 
@@ -2524,24 +2523,15 @@ public sealed partial class TextEditorService
         Key<TextEditorViewModel> preferredViewModelKey)
     {
         // RegisterModelFunc
-        if (TextEditorConfig.RegisterModelFunc is null)
-            return Key<TextEditorViewModel>.Empty;
-        await TextEditorConfig.RegisterModelFunc
-            .Invoke(new RegisterModelArgs(editContext, resourceUri, CommonService, IdeBackgroundTaskApi))
+        await RegisterModel_Configured(new RegisterModelArgs(editContext, resourceUri, CommonService, IdeBackgroundTaskApi))
             .ConfigureAwait(false);
     
         // TryRegisterViewModelFunc
-        if (TextEditorConfig.TryRegisterViewModelFunc is null)
-            return Key<TextEditorViewModel>.Empty;
-        var actualViewModelKey = await TextEditorConfig.TryRegisterViewModelFunc
-            .Invoke(new TryRegisterViewModelArgs(editContext, preferredViewModelKey, resourceUri, category, shouldSetFocusToEditor, CommonService, IdeBackgroundTaskApi))
+        var actualViewModelKey = await TryRegisterViewModel_Configured(new TryRegisterViewModelArgs(editContext, preferredViewModelKey, resourceUri, category, shouldSetFocusToEditor, CommonService, IdeBackgroundTaskApi))
             .ConfigureAwait(false);
     
         // TryShowViewModelFunc
-        if (actualViewModelKey == Key<TextEditorViewModel>.Empty || TextEditorConfig.TryShowViewModelFunc is null)
-            return Key<TextEditorViewModel>.Empty;
-        await TextEditorConfig.TryShowViewModelFunc
-            .Invoke(new TryShowViewModelArgs(actualViewModelKey, Key<TextEditorGroup>.Empty, shouldSetFocusToEditor, CommonService, IdeBackgroundTaskApi))
+        await TryShowViewModel_Configured(new TryShowViewModelArgs(actualViewModelKey, Key<TextEditorGroup>.Empty, shouldSetFocusToEditor, CommonService, IdeBackgroundTaskApi))
             .ConfigureAwait(false);
         
         return actualViewModelKey;
@@ -2688,5 +2678,309 @@ public sealed partial class TextEditorService
         }
 
         TextEditorStateChanged?.Invoke();
+    }
+    
+    public async Task RegisterModel_Configured(RegisterModelArgs registerModelArgs)
+    {
+        var standardizedAbsolutePathString = registerModelArgs.CommonService.TextEditor_AbsolutePathStandardize(
+            registerModelArgs.ResourceUri.Value);
+            
+        var standardizedResourceUri = new ResourceUri((string)standardizedAbsolutePathString);
+    
+        registerModelArgs = new RegisterModelArgs(
+            registerModelArgs.EditContext,
+            standardizedResourceUri,
+            registerModelArgs.CommonService,
+            registerModelArgs.IdeBackgroundTaskApi)
+        {
+            ShouldBlockUntilBackgroundTaskIsCompleted = registerModelArgs.ShouldBlockUntilBackgroundTaskIsCompleted
+        };
+
+        var model = Model_GetOrDefault(registerModelArgs.ResourceUri);
+        
+        if (model is not null)
+        {
+            await Editor_CheckIfContentsWereModifiedAsync(
+                    registerModelArgs.ResourceUri.Value,
+                    model)
+                .ConfigureAwait(false);
+            return;
+        }
+            
+        var resourceUri = registerModelArgs.ResourceUri;
+
+        var fileLastWriteTime = await CommonService.FileSystemProvider.File
+            .GetLastWriteTimeAsync(resourceUri.Value)
+            .ConfigureAwait(false);
+
+        var content = await CommonService.FileSystemProvider.File
+            .ReadAllTextAsync(resourceUri.Value)
+            .ConfigureAwait(false);
+
+        var absolutePath = new AbsolutePath(resourceUri.Value, false, CommonService.EnvironmentProvider, tokenBuilder: new StringBuilder(), formattedBuilder: new StringBuilder(), AbsolutePathNameKind.ExtensionNoPeriod);
+        var decorationMapper = GetDecorationMapper(absolutePath.Name);
+        var compilerService = GetCompilerService(absolutePath.Name);
+
+        model = new TextEditorModel(
+            resourceUri,
+            fileLastWriteTime,
+            absolutePath.Name,
+            content,
+            decorationMapper,
+            compilerService,
+            this);
+            
+        var modelModifier = new TextEditorModel(model);
+        modelModifier.PerformRegisterPresentationModelAction(TextEditorFacts.CompilerServiceDiagnosticPresentation_EmptyPresentationModel);
+        modelModifier.PerformRegisterPresentationModelAction(TextEditorFacts.FindOverlayPresentation_EmptyPresentationModel);
+        
+        model = modelModifier;
+
+        Model_RegisterCustom(registerModelArgs.EditContext, model);
+        
+        model.PersistentState.CompilerService.RegisterResource(
+            model.PersistentState.ResourceUri,
+            shouldTriggerResourceWasModified: false);
+        
+        modelModifier = registerModelArgs.EditContext.GetModelModifier(resourceUri);
+
+        if (modelModifier is null)
+            return;
+
+        await compilerService.ParseAsync(registerModelArgs.EditContext, modelModifier, shouldApplySyntaxHighlighting: false);
+    }
+    
+    private async Task Editor_CheckIfContentsWereModifiedAsync(
+        string inputFileAbsolutePathString,
+        TextEditorModel textEditorModel)
+    {
+        var fileLastWriteTime = await CommonService.FileSystemProvider.File
+            .GetLastWriteTimeAsync(inputFileAbsolutePathString)
+            .ConfigureAwait(false);
+
+        if (fileLastWriteTime > textEditorModel.ResourceLastWriteTime)
+        {
+            var notificationInformativeKey = Key<IDynamicViewModel>.NewKey();
+
+            var notificationInformative = new NotificationViewModel(
+                notificationInformativeKey,
+                "File contents were modified on disk",
+                typeof(Walk.Common.RazorLib.FormsGenerics.Displays.BooleanPromptOrCancelDisplay),
+                new Dictionary<string, object?>
+                {
+                        {
+                            nameof(Walk.Common.RazorLib.FormsGenerics.Displays.BooleanPromptOrCancelDisplay.Message),
+                            "File contents were modified on disk"
+                        },
+                        {
+                            nameof(Walk.Common.RazorLib.FormsGenerics.Displays.BooleanPromptOrCancelDisplay.AcceptOptionTextOverride),
+                            "Reload"
+                        },
+                        {
+                            nameof(Walk.Common.RazorLib.FormsGenerics.Displays.BooleanPromptOrCancelDisplay.OnAfterAcceptFunc),
+                            new Func<Task>(() =>
+                            {
+                                return Editor_Do_FileContentsWereModifiedOnDisk(
+                                    inputFileAbsolutePathString,
+                                    textEditorModel,
+                                    fileLastWriteTime,
+                                    notificationInformativeKey);
+                            })
+                        },
+                        {
+                            nameof(Walk.Common.RazorLib.FormsGenerics.Displays.BooleanPromptOrCancelDisplay.OnAfterDeclineFunc),
+                            new Func<Task>(() =>
+                            {
+                                CommonService.Notification_ReduceDisposeAction(notificationInformativeKey);
+                                return Task.CompletedTask;
+                            })
+                        },
+                },
+                TimeSpan.FromSeconds(20),
+                true,
+                null);
+
+            CommonService.Notification_ReduceRegisterAction(notificationInformative);
+        }
+    }
+    
+    private async Task Editor_Do_FileContentsWereModifiedOnDisk(string inputFileAbsolutePathString, TextEditorModel textEditorModel, DateTime fileLastWriteTime, Key<IDynamicViewModel> notificationInformativeKey)
+    {
+        CommonService.Notification_ReduceDisposeAction(notificationInformativeKey);
+        
+        WorkerArbitrary.PostUnique(async editContext =>
+        {
+            var content = await CommonService.FileSystemProvider.File
+                .ReadAllTextAsync(inputFileAbsolutePathString)
+                .ConfigureAwait(false);
+        
+            var modelModifier = editContext.GetModelModifier(textEditorModel.PersistentState.ResourceUri);
+            if (modelModifier is null)
+                return;
+
+            Model_Reload(
+                editContext,
+                modelModifier,
+                content,
+                fileLastWriteTime);
+
+            if (modelModifier.PersistentState.CompilerService is not null)    
+                modelModifier.PersistentState.CompilerService.ResourceWasModified(modelModifier.PersistentState.ResourceUri, Array.Empty<TextEditorTextSpan>());
+        });
+    }
+    
+    public Task<Key<TextEditorViewModel>> TryRegisterViewModel_Configured(TryRegisterViewModelArgs tryRegisterViewModelArgs)
+    {
+        var standardizedAbsolutePathString = tryRegisterViewModelArgs.CommonService.TextEditor_AbsolutePathStandardize(
+            tryRegisterViewModelArgs.ResourceUri.Value);
+            
+        var standardizedResourceUri = new ResourceUri((string)standardizedAbsolutePathString);
+        
+        tryRegisterViewModelArgs = new TryRegisterViewModelArgs(
+            tryRegisterViewModelArgs.EditContext,
+            tryRegisterViewModelArgs.ViewModelKey,
+            standardizedResourceUri,
+            tryRegisterViewModelArgs.Category,
+            tryRegisterViewModelArgs.ShouldSetFocusToEditor,
+            tryRegisterViewModelArgs.CommonService,
+            tryRegisterViewModelArgs.IdeBackgroundTaskApi);
+
+        return Editor_TryRegisterViewModelFunc(tryRegisterViewModelArgs);
+    }
+    
+    public async Task<Key<TextEditorViewModel>> Editor_TryRegisterViewModelFunc(TryRegisterViewModelArgs registerViewModelArgs)
+    {
+        var viewModelKey = Key<TextEditorViewModel>.NewKey();
+        
+        var model = Model_GetOrDefault(registerViewModelArgs.ResourceUri);
+
+        if (model is null)
+        {
+            NotificationHelper.DispatchDebugMessage(nameof(Editor_TryRegisterViewModelFunc), () => "model is null: " + registerViewModelArgs.ResourceUri.Value, CommonService, TimeSpan.FromSeconds(4));
+            return Key<TextEditorViewModel>.Empty;
+        }
+
+        var viewModel = Model_GetViewModelsOrEmpty(registerViewModelArgs.ResourceUri)
+            .FirstOrDefault(x => x.PersistentState.Category == registerViewModelArgs.Category);
+
+        if (viewModel is not null)
+            return viewModel.PersistentState.ViewModelKey;
+
+        viewModel = new TextEditorViewModel(
+            viewModelKey,
+            registerViewModelArgs.ResourceUri,
+            this,
+            TextEditorVirtualizationResult.ConstructEmpty(),
+            new TextEditorDimensions(0, 0, 0, 0),
+            scrollLeft: 0,
+            scrollTop: 0,
+            scrollWidth: 0,
+            scrollHeight: 0,
+            marginScrollHeight: 0,
+            registerViewModelArgs.Category);
+
+        var firstPresentationLayerKeys = new List<Key<TextEditorPresentationModel>>
+        {
+            TextEditorFacts.CompilerServiceDiagnosticPresentation_PresentationKey,
+            TextEditorFacts.FindOverlayPresentation_PresentationKey,
+        };
+
+        var absolutePath = CommonService.EnvironmentProvider.AbsolutePathFactory(
+            registerViewModelArgs.ResourceUri.Value,
+            false,
+            tokenBuilder: new StringBuilder(),
+            formattedBuilder: new StringBuilder(),
+            AbsolutePathNameKind.NameWithExtension);
+
+        viewModel.PersistentState.OnSaveRequested = Editor_HandleOnSaveRequested;
+        viewModel.PersistentState.GetTabDisplayNameFunc = _ => absolutePath.Name;
+        viewModel.PersistentState.FirstPresentationLayerKeysList = firstPresentationLayerKeys;
+        
+        ViewModel_Register(registerViewModelArgs.EditContext, viewModel);
+        return viewModelKey;
+    }
+    
+    private void Editor_HandleOnSaveRequested(TextEditorModel innerTextEditor)
+    {
+        var absolutePath = CommonService.EnvironmentProvider.AbsolutePathFactory(
+            innerTextEditor.PersistentState.ResourceUri.Value,
+            false,
+            tokenBuilder: new StringBuilder(),
+            formattedBuilder: new StringBuilder(),
+            AbsolutePathNameKind.NameWithExtension);
+
+        WorkerArbitrary.PostUnique(async editContext =>
+        {
+            var absolutePathString = absolutePath.Value;
+    
+            if (absolutePathString is not null &&
+                await CommonService.FileSystemProvider.File.ExistsAsync(absolutePathString).ConfigureAwait(false))
+            {
+                var content = innerTextEditor.GetAllText_WithOriginalLineEndings();
+                await CommonService.FileSystemProvider.File.WriteAllTextAsync(absolutePathString, content).ConfigureAwait(false);
+            }
+            else
+            {
+                // TODO: Save As to make new file
+                NotificationHelper.DispatchInformative("Save Action", "File not found. TODO: Save As", CommonService, TimeSpan.FromSeconds(7));
+            }
+    
+            DateTime? fileLastWriteTime = null;
+    
+            if (absolutePathString is not null)
+            {
+                fileLastWriteTime = await CommonService.FileSystemProvider.File.GetLastWriteTimeAsync(
+                        absolutePathString,
+                        CancellationToken.None)
+                    .ConfigureAwait(false);
+                Model_SetResourceData(
+                    editContext,
+                    innerTextEditor,
+                    fileLastWriteTime.Value);
+            }
+        });
+    }
+    
+    public async Task<bool> TryShowViewModel_Configured(TryShowViewModelArgs tryShowViewModelArgs)
+    {
+        var viewModel = ViewModel_GetOrDefault(tryShowViewModelArgs.ViewModelKey);
+        if (viewModel is null)
+            return false;
+
+        if (viewModel.PersistentState.Category == new Category("main") &&
+            tryShowViewModelArgs.GroupKey == Key<TextEditorGroup>.Empty)
+        {
+            tryShowViewModelArgs = new TryShowViewModelArgs(
+                tryShowViewModelArgs.ViewModelKey,
+                TextEditorService.EditorTextEditorGroupKey,
+                tryShowViewModelArgs.ShouldSetFocusToEditor,
+                tryShowViewModelArgs.CommonService,
+                tryShowViewModelArgs.IdeBackgroundTaskApi);
+        }
+
+        if (tryShowViewModelArgs.ViewModelKey == Key<TextEditorViewModel>.Empty ||
+            tryShowViewModelArgs.GroupKey == Key<TextEditorGroup>.Empty)
+        {
+            return false;
+        }
+
+        Group_AddViewModel(
+            tryShowViewModelArgs.GroupKey,
+            tryShowViewModelArgs.ViewModelKey);
+
+        Group_SetActiveViewModel(
+            tryShowViewModelArgs.GroupKey,
+            tryShowViewModelArgs.ViewModelKey);
+            
+        if (tryShowViewModelArgs.ShouldSetFocusToEditor)
+        {
+            WorkerArbitrary.PostUnique(editContext =>
+            {
+                var viewModelModifier = editContext.GetViewModelModifier(tryShowViewModelArgs.ViewModelKey);
+                return viewModel.FocusAsync();
+            });
+        }
+
+        return true;
     }
 }

@@ -4,8 +4,6 @@ public enum IdeWorkKind
 {
     None,
     IdeHeaderOnInit,
-    FileContentsWereModifiedOnDisk,
-    SaveFile,
     SetFolderExplorerState,
     SetFolderExplorerTreeView,
     RequestInputFileStateForm,

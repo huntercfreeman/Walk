@@ -543,6 +543,12 @@ public partial class CommonUiIsland : ComponentBase, IDisposable
 
         DotNetService.TextEditorService.WorkerArbitrary.PostUnique(editContext =>
         {
+            var tooltipState = DotNetService.CommonService.GetTooltipState();
+            if (tooltipState.TooltipModel is not null)
+            {
+                DotNetService.CommonService.SetTooltipModel(tooltipModel: null);
+            }
+        
             var viewModel = editContext.GetViewModelModifier(viewModelKey);
             var modelModifier = editContext.GetModelModifier(viewModel.PersistentState.ResourceUri);
             viewModel.FocusAsync();
