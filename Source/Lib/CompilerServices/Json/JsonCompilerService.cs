@@ -25,10 +25,6 @@ public sealed class JsonCompilerService : ICompilerService
         _textEditorService = textEditorService;
     }
 
-    public event Action? ResourceRegistered;
-    public event Action? ResourceParsed;
-    public event Action? ResourceDisposed;
-
     public IReadOnlyList<ICompilerServiceResource> CompilerServiceResources { get; }
     
     public IReadOnlyDictionary<string, TypeDefinitionNode> AllTypeDefinitions { get; }
@@ -45,8 +41,6 @@ public sealed class JsonCompilerService : ICompilerService
 
         if (shouldTriggerResourceWasModified)
             ResourceWasModified(resourceUri, Array.Empty<TextEditorTextSpan>());
-            
-        ResourceRegistered?.Invoke();
     }
     
     public void DisposeResource(ResourceUri resourceUri)
@@ -55,8 +49,6 @@ public sealed class JsonCompilerService : ICompilerService
         {
             _resourceMap.Remove(resourceUri);
         }
-
-        ResourceDisposed?.Invoke();
     }
 
     public void ResourceWasModified(ResourceUri resourceUri, IReadOnlyList<TextEditorTextSpan> editTextSpansList)
@@ -164,8 +156,6 @@ public sealed class JsonCompilerService : ICompilerService
             editContext,
             modelModifier,
             lexerOutput.TextSpanList);
-
-        ResourceParsed?.Invoke();
         
         return ValueTask.CompletedTask;
     }
