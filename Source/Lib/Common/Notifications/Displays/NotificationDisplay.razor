@@ -1,9 +1,9 @@
 <div class="di_notification @(Notification.NotificationCssClass ?? string.Empty)"
-     style="@CssStyleString">
+     style="@GetCssStyleString()">
      
     <div class="di_notification-toolbar">
         <div class="di_notification-title di_unselectable"
-             style="@NotificationTitleCssStyleString"
+             style="@GetNotificationTitleCssStyleString()"
              title="@Notification.Title">
             @Notification.Title
         </div>
@@ -23,7 +23,7 @@
                 @IconEmptyWindowFragment.Render(iconDriver)
             </button>
             <button class="di_button di_notification-button-entry"
-            		@onclick="() => HandleShouldNoLongerRender(wasCausedByUiEvent: true)">
+            		@onclick="Ui_HandleShouldNoLongerRender">
                 @IconCloseFragment.Render(iconDriver)
             </button>
         </div>

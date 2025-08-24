@@ -267,7 +267,6 @@ public partial class TreeViewContainerDisplay : ComponentBase, IDisposable
         }
         
         var treeViewCommandArgs = new TreeViewCommandArgs(
-            CommonService,
             _treeViewContainer,
             null,
             async () =>
@@ -379,7 +378,6 @@ public partial class TreeViewContainerDisplay : ComponentBase, IDisposable
         }
         
         _treeViewContextMenuCommandArgs = new TreeViewCommandArgs(
-            CommonService,
             _treeViewContainer,
             _flatNodeList[IndexActiveNode],
             async () =>
@@ -468,7 +466,6 @@ public partial class TreeViewContainerDisplay : ComponentBase, IDisposable
         IndexActiveNode = IndexBasicValidation(indexLocal);
         
         await TreeViewContainerParameter.TreeViewMouseEventHandler.OnClickAsync(new TreeViewCommandArgs(
-            CommonService,
             _treeViewContainer,
             _flatNodeList[IndexActiveNode],
             async () =>
@@ -508,7 +505,6 @@ public partial class TreeViewContainerDisplay : ComponentBase, IDisposable
         IndexActiveNode = IndexBasicValidation(indexLocal);
         
         await TreeViewContainerParameter.TreeViewMouseEventHandler.OnDoubleClickAsync(new TreeViewCommandArgs(
-            CommonService,
             _treeViewContainer,
             _flatNodeList[IndexActiveNode],
             async () =>

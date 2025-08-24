@@ -1,6 +1,7 @@
 using Walk.Common.RazorLib.Dynamics.Models;
 using Walk.Common.RazorLib.Keys.Models;
 using Walk.Common.RazorLib.Reactives.Models;
+using Walk.Common.RazorLib.Reactives.Displays;
 using Walk.Common.RazorLib.Notifications.Displays;
 
 namespace Walk.Common.RazorLib.Notifications.Models;
@@ -59,11 +60,11 @@ public static class NotificationHelper
     {
         var notificationProgress = new NotificationViewModel(Key<IDynamicViewModel>.NewKey(),
             title,
-            typeof(CommonProgressNotificationDisplay),
+            typeof(ProgressBarDisplay),
             new Dictionary<string, object?>
             {
                 {
-                    nameof(CommonProgressNotificationDisplay.ProgressBarModel),
+                    nameof(ProgressBarDisplay.ProgressBarModel),
                     progressBarModel
                 },
             },

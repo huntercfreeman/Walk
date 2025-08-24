@@ -50,8 +50,9 @@ public static class TextEditorFacts
         new TextEditorDevToolsDecorationMapper());
     /* End TextEditorDevToolsPresentationFacts */
     
-    /* Start Aaa */
-    /* End Aaa */
+    /* Start ScrollbarFacts */
+    public const int SCROLLBAR_SIZE_IN_PIXELS = 10;
+    /* End ScrollbarFacts */
     
     /* Start Aaa */
     /* End Aaa */

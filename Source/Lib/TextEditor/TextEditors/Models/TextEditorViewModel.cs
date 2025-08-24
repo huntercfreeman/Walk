@@ -56,7 +56,6 @@ public sealed class TextEditorViewModel : IDisposable
             menuKind: MenuKind.None,
             tooltipModel: null,
             shouldRevealCursor: false,
-            virtualAssociativityKind: VirtualAssociativityKind.None,
             textEditorDimensions,
             scrollLeft,
             scrollTop,

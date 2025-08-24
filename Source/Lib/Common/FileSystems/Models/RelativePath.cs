@@ -127,7 +127,7 @@ public struct RelativePath
     public string? ExactInput { get; }
     public List<(string NameWithExtension, string Path)> AncestorDirectoryList { get; } = new();
     public string? ParentDirectory => AncestorDirectoryList.LastOrDefault().Path;
-    public string NameWithExtension => _nameWithExtension ??= PathHelper.CalculateNameWithExtension(NameNoExtension, ExtensionNoPeriod, IsDirectory);
+    public string NameWithExtension => _nameWithExtension ??= CommonFacts.CalculateNameWithExtension(NameNoExtension, ExtensionNoPeriod, IsDirectory);
 
     public List<(string NameWithExtension, string Path)> GetAncestorDirectoryList() => AncestorDirectoryList;
 

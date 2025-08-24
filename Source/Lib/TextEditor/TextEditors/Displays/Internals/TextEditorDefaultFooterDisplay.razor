@@ -105,12 +105,15 @@ else
 	                <div class="di_te_text-editor-footer-entry">
 	                    <select @bind="SelectedLineEndKindString"
 	                            title="Line ending kind">
-	                        @foreach (var lineEndKind in LineEndKind.LineFeed.GetLineEndKindsUserAllowedToUse())
-	                        {
-	                            <option value="@lineEndKind.AsEnumName()">
-	                                @lineEndKind.AsFriendlyName()
-	                            </option>
-	                        }
+	                        <option value="@LineEndKind.CarriageReturn.AsEnumName()">
+                                @LineEndKind.CarriageReturn.AsFriendlyName()
+                            </option>
+                            <option value="@LineEndKind.LineFeed.AsEnumName()">
+                                @LineEndKind.LineFeed.AsFriendlyName()
+                            </option>
+                            <option value="@LineEndKind.CarriageReturnLineFeed.AsEnumName()">
+                                @LineEndKind.CarriageReturnLineFeed.AsFriendlyName()
+                            </option>
 	                    </select>
 	                </div>
 	            }

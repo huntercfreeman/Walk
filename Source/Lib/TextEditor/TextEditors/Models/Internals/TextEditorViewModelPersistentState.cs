@@ -40,7 +40,6 @@ public class TextEditorViewModelPersistentState : IDisposable, ITab, IPanelTab, 
         MenuKind menuKind,
         ITooltipModel tooltipModel,
         bool shouldRevealCursor,
-        VirtualAssociativityKind virtualAssociativityKind,
         TextEditorDimensions textEditorDimensions,
         int scrollLeft,
         int scrollTop,
@@ -534,14 +533,14 @@ public class TextEditorViewModelPersistentState : IDisposable, ITab, IPanelTab, 
 
     public string? DialogCssClass { get; set; }
     public string? DialogCssStyle { get; set; }
-    public ElementDimensions DialogElementDimensions { get; set; } = DialogHelper.ConstructDefaultElementDimensions();
+    public ElementDimensions DialogElementDimensions { get; set; } = CommonFacts.ConstructDefaultElementDimensions();
     public bool DialogIsMinimized { get; set; }
     public bool DialogIsMaximized { get; set; }
     public bool DialogIsResizable { get; set; } = true;
     public string DialogFocusPointHtmlElementId { get; init; }
     public List<IDropzone> DropzoneList { get; set; }
 
-    public ElementDimensions DragElementDimensions { get; set; } = DialogHelper.ConstructDefaultElementDimensions();
+    public ElementDimensions DragElementDimensions { get; set; } = CommonFacts.ConstructDefaultElementDimensions();
 
     public Type DragComponentType => TabGroup is null
         ? _dragDialogComponentType

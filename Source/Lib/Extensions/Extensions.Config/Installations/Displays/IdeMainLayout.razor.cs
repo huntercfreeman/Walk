@@ -414,7 +414,7 @@ public partial class IdeMainLayout : LayoutComponentBase, IDisposable
     
     private Task RenderFileDropdownOnClick()
     {
-        return DropdownHelper.RenderDropdownAsync(
+        return CommonFacts.RenderDropdownAsync(
             DotNetService.CommonService,
             DotNetService.CommonService.JsRuntimeCommonApi,
             IdeState.ButtonFileId,
@@ -427,7 +427,7 @@ public partial class IdeMainLayout : LayoutComponentBase, IDisposable
     
     private Task RenderToolsDropdownOnClick()
     {
-        return DropdownHelper.RenderDropdownAsync(
+        return CommonFacts.RenderDropdownAsync(
             DotNetService.CommonService,
             DotNetService.CommonService.JsRuntimeCommonApi,
             IdeState.ButtonToolsId,
@@ -442,7 +442,7 @@ public partial class IdeMainLayout : LayoutComponentBase, IDisposable
     {
         InitializationHelper.InitializeMenuView(DotNetService);
     
-        return DropdownHelper.RenderDropdownAsync(
+        return CommonFacts.RenderDropdownAsync(
             DotNetService.CommonService,
             DotNetService.CommonService.JsRuntimeCommonApi,
             IdeState.ButtonViewId,
@@ -455,7 +455,7 @@ public partial class IdeMainLayout : LayoutComponentBase, IDisposable
     
     private Task RenderRunDropdownOnClick()
     {
-        return DropdownHelper.RenderDropdownAsync(
+        return CommonFacts.RenderDropdownAsync(
             DotNetService.CommonService,
             DotNetService.CommonService.JsRuntimeCommonApi,
             IdeState.ButtonRunId,
@@ -557,7 +557,7 @@ public partial class IdeMainLayout : LayoutComponentBase, IDisposable
                         .Invoke(activeStartupControl);
                 }));
                 
-            await DropdownHelper.RenderDropdownAsync(
+            await CommonFacts.RenderDropdownAsync(
                 DotNetService.CommonService,
                 DotNetService.CommonService.JsRuntimeCommonApi,
                 _startButtonElementId,

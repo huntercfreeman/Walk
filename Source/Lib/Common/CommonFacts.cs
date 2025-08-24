@@ -1,6 +1,11 @@
 using System.Text;
+using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Web;
 using Walk.Common.RazorLib.Exceptions;
+using Walk.Common.RazorLib.Menus.Models;
+using Walk.Common.RazorLib.Menus.Displays;
+using Walk.Common.RazorLib.JsRuntimes.Models;
+using Walk.Common.RazorLib.Dropdowns.Models;
 using Walk.Common.RazorLib.Keymaps.Models;
 using Walk.Common.RazorLib.Panels.Models;
 using Walk.Common.RazorLib.FileSystems.Models;
@@ -561,6 +566,136 @@ public partial class {className} : ComponentBase
     }
     /* End FileTemplateFacts */
     
+    /* Start DialogHelper */
+    public static ElementDimensions ConstructDefaultElementDimensions()
+    {
+        var elementDimensions = new ElementDimensions
+        {
+            ElementPositionKind = ElementPositionKind.Fixed
+        };
+
+        elementDimensions.Width_Base_0 = new DimensionUnit(60, DimensionUnitKind.ViewportWidth);
+
+        elementDimensions.Height_Base_0 = new DimensionUnit(60, DimensionUnitKind.ViewportHeight);
+
+        elementDimensions.Left_Base_0 = new DimensionUnit(20, DimensionUnitKind.ViewportWidth);
+
+        elementDimensions.Top_Base_0 = new DimensionUnit(20, DimensionUnitKind.ViewportHeight);
+
+        return elementDimensions;
+    }
+    /* End DialogHelper */
+    
+    /* Start DropdownHelper */
+    public static Task RenderDropdownAsync(
+        CommonService commonService,
+        WalkCommonJavaScriptInteropApi walkCommonJavaScriptInteropApi,
+        string anchorHtmlElementId,
+        DropdownOrientation dropdownOrientation,
+        Key<DropdownRecord> dropdownKey,
+        MenuRecord menu,
+        string? elementHtmlIdForReturnFocus,
+        bool preventScroll)
+    {
+        return RenderDropdownAsync(
+            commonService,
+            walkCommonJavaScriptInteropApi,
+            anchorHtmlElementId,
+            dropdownOrientation,
+            dropdownKey,
+            menu,
+            async () => 
+            {
+                try
+                {
+                    await walkCommonJavaScriptInteropApi
+                        .FocusHtmlElementById(elementHtmlIdForReturnFocus, preventScroll)
+                        .ConfigureAwait(false);
+                }
+                catch (Exception)
+                {
+                    // TODO: Capture specifically the exception that is fired when the JsRuntime...
+                    //       ...tries to set focus to an HTML element, but that HTML element
+                    //       was not found.
+                }
+            });
+    }
+
+    public static Task RenderDropdownAsync(
+        CommonService commonService,
+        WalkCommonJavaScriptInteropApi walkCommonJavaScriptInteropApi,
+        string anchorHtmlElementId,
+        DropdownOrientation dropdownOrientation,
+        Key<DropdownRecord> dropdownKey,
+        MenuRecord menu,
+        ElementReference? elementReferenceForReturnFocus)
+    {
+        return RenderDropdownAsync(
+            commonService,
+            walkCommonJavaScriptInteropApi,
+            anchorHtmlElementId,
+            dropdownOrientation,
+            dropdownKey,
+            menu,
+            async () => 
+            {
+                try
+                {
+                    if (elementReferenceForReturnFocus is not null)
+                    {
+                        await elementReferenceForReturnFocus.Value
+                            .FocusAsync()
+                            .ConfigureAwait(false);
+                    }
+                }
+                catch (Exception)
+                {
+                    // TODO: Capture specifically the exception that is fired when the JsRuntime...
+                    //       ...tries to set focus to an HTML element, but that HTML element
+                    //       was not found.
+                }
+            });
+    }
+    
+    public static async Task RenderDropdownAsync(
+        CommonService commonService,
+        WalkCommonJavaScriptInteropApi walkCommonJavaScriptInteropApi,
+        string anchorHtmlElementId,
+        DropdownOrientation dropdownOrientation,
+        Key<DropdownRecord> dropdownKey,
+        MenuRecord menu,
+        Func<Task>? restoreFocusOnClose)
+    {
+        var buttonDimensions = await walkCommonJavaScriptInteropApi
+            .MeasureElementById(anchorHtmlElementId)
+            .ConfigureAwait(false);
+
+        var leftInitial = dropdownOrientation == DropdownOrientation.Right
+            ? buttonDimensions.LeftInPixels + buttonDimensions.WidthInPixels
+            : buttonDimensions.LeftInPixels;
+        
+        var topInitial = dropdownOrientation == DropdownOrientation.Bottom
+            ? buttonDimensions.TopInPixels + buttonDimensions.HeightInPixels
+            : buttonDimensions.TopInPixels;
+
+        var dropdownRecord = new DropdownRecord(
+            dropdownKey,
+            leftInitial,
+            topInitial,
+            typeof(MenuDisplay),
+            new Dictionary<string, object?>
+            {
+                {
+                    nameof(MenuDisplay.Menu),
+                    menu
+                }
+            },
+            restoreFocusOnClose);
+
+        commonService.Dropdown_ReduceRegisterAction(dropdownRecord);
+    }
+    /* End DropdownHelper */
+    
     /* Start HtmlFacts */
     public const int HtmlFacts_Button_PADDING_IN_PIXELS = 6;
 
@@ -588,4 +723,203 @@ public partial class {className} : ComponentBase
     /// </summary>
     public static readonly TimeSpan ThrottleFacts_TwentyFour_Frames_Per_Second = TimeSpan.FromMilliseconds(42);
     /* End ThrottleFacts */
+    
+    /* Start PathHelper */
+    /// <summary>
+    /// Given: "/Dir/Homework/math.txt" and "../Games/"<br/>
+    /// Then: "/Dir/Games/"<br/><br/>
+    /// |<br/>
+    /// Calculate an absolute-path-string by providing a starting AbsolutePath, then
+    /// a relative-path-string from the starting position.<br/>
+    /// |<br/>
+    /// Magic strings:<br/>
+    ///     -"./" (same directory) token<br/>
+    ///     -"../" (move up directory)<br/>
+    ///     -If the relative path does not start with the previously
+    ///      mentioned magic strings, then "./" (same directory) token is implicitly used.<br/>
+    /// |<br/>
+    /// This method accepts starting AbsolutePath that can be either a directory, or not.<br/>
+    ///     -If provided a directory, then a "./" (same directory) token will target the
+    ///      directory which the provided starting AbsolutePath is pointing to.<br/>
+    ///     -If provided a file, then a "./" (same directory) token will target the
+    ///      parent-directory in which the file is contained.<br/>
+    ///     -If provided a directory, then a "../" (move up directory) token will target the
+    ///      parent of the directory which the provided starting AbsolutePath is pointing to.<br/>
+    ///     -If provided a file, then a "../" (move up directory) token will target the
+    ///      parent directory of the parent directory in which the file is contained.<br/><br/>
+    /// </summary>
+    public static string GetAbsoluteFromAbsoluteAndRelative(
+        AbsolutePath absolutePath,
+        string relativePathString,
+        IEnvironmentProvider environmentProvider,
+        StringBuilder tokenBuilder,
+        StringBuilder formattedBuilder,
+        string moveUpDirectoryToken,
+        string sameDirectoryToken,
+        List<string> ancestorDirectoryList)
+    {
+        // Normalize the directory separator character
+        relativePathString = relativePathString.Replace(
+            environmentProvider.AltDirectorySeparatorChar,
+            environmentProvider.DirectorySeparatorChar);
+
+        // "../" is being called the 'moveUpDirectoryToken'
+        var moveUpDirectoryCount = 0;
+
+        // Count all usages of "../",
+        // and each time one is found: remove it from the relativePathString.
+        while (relativePathString.StartsWith(moveUpDirectoryToken, StringComparison.InvariantCulture))
+        {
+            moveUpDirectoryCount++;
+            relativePathString = relativePathString[moveUpDirectoryToken.Length..];
+        }
+
+        if (relativePathString.StartsWith(sameDirectoryToken))
+        {
+            if (moveUpDirectoryCount > 0)
+            {
+                // TODO: A filler expression is written here currently...
+                //       ...but perhaps throwing an exception here is the way to go?
+                //       |
+                //       This if-branch implies that the relative path used
+                //       "../" (move up directory) and
+                //       "./" (same directory) tokens.
+                _ = 0;
+            }
+
+            // Remove the same directory token text.
+            relativePathString = relativePathString[sameDirectoryToken.Length..];
+        }
+
+        if (moveUpDirectoryCount > 0)
+        {
+            if (moveUpDirectoryCount < ancestorDirectoryList.Count)
+            {
+                var nearestSharedAncestor = ancestorDirectoryList[^(1 + moveUpDirectoryCount)];
+                return nearestSharedAncestor + relativePathString;
+            }
+            else
+            {
+                // TODO: This case seems nonsensical?...
+                //       ...It was written here originally,
+                //       it is (2024-05-18) so this must have been here for a few months.
+                //       |
+                //       But, the root directory would always be a shared directory (I think)?
+                return environmentProvider.DirectorySeparatorChar + relativePathString;
+            }
+        }
+        else
+        {
+            // Side Note: A lack of both "../" (move up directory) and "./" (same directory) tokens,
+            //            Implicitly implies: the "./" (same directory) token
+            if (absolutePath.IsDirectory)
+            {
+                return absolutePath.Value + relativePathString;
+            }
+            else
+            {
+                var parentDirectory = absolutePath.CreateSubstringParentDirectory();
+                if (parentDirectory is null)
+                    throw new NotImplementedException();
+                else
+                    return parentDirectory + relativePathString;
+            }
+        }
+    }
+
+    /// <summary>
+    /// Given: "/Dir/Homework/math.txt" and "/Dir/Games/"<br/>
+    /// Then: "../Games/"<br/><br/>
+    /// 
+    /// Calculate an absolute-path-string by providing a starting AbsolutePath, then
+    /// an ending AbsolutePath. The relative-path-string to travel from start to end, will
+    /// be returned as a string.
+    /// </summary>
+    public static string GetRelativeFromTwoAbsolutes(
+        AbsolutePath startingPath,
+        string startingPathParentDirectory,
+        AbsolutePath endingPath,
+        string endingPathParentDirectory,
+        IEnvironmentProvider environmentProvider,
+        StringBuilder tokenBuilder,
+        StringBuilder formattedBuilder)
+    {
+        var pathBuilder = new StringBuilder();
+        
+        var startingPathAncestorDirectoryList = startingPath.GetAncestorDirectoryList(environmentProvider, tokenBuilder, formattedBuilder, AbsolutePathNameKind.NameWithExtension);
+        var endingPathAncestorDirectoryList = endingPath.GetAncestorDirectoryList(environmentProvider, tokenBuilder, formattedBuilder, AbsolutePathNameKind.NameWithExtension);
+        
+        var commonPath = startingPathAncestorDirectoryList.First();
+
+        if (startingPathParentDirectory == endingPathParentDirectory)
+        {
+            // TODO: Will this code break when the mounted drives are different, and parent directories share same name?
+
+            // Use './' because they share the same parent directory.
+            pathBuilder.Append($".{environmentProvider.DirectorySeparatorChar}");
+
+            commonPath = startingPathParentDirectory;
+        }
+        else
+        {
+            // Use '../' but first calculate how many UpDir(s) are needed
+            int limitingIndex = Math.Min(
+                startingPathAncestorDirectoryList.Count,
+                endingPathAncestorDirectoryList.Count);
+
+            var i = 0;
+
+            for (; i < limitingIndex; i++)
+            {
+                var startingPathAncestor = environmentProvider.AbsolutePathFactory(
+                    startingPathAncestorDirectoryList[i],
+                    true,
+                    tokenBuilder,
+                    formattedBuilder,
+                    AbsolutePathNameKind.NameWithExtension);
+
+                var endingPathAncestor = environmentProvider.AbsolutePathFactory(
+                    endingPathAncestorDirectoryList[i],
+                    true,
+                    tokenBuilder,
+                    formattedBuilder,
+                    AbsolutePathNameKind.NameWithExtension);
+
+                if (startingPathAncestor.Name == endingPathAncestor.Name)
+                    commonPath = startingPathAncestor.Value;
+                else
+                    break;
+            }
+
+            var upDirCount = startingPathAncestorDirectoryList.Count - i;
+
+            for (int appendUpDir = 0; appendUpDir < upDirCount; appendUpDir++)
+            {
+                pathBuilder.Append("../");
+            }
+        }
+
+        var notCommonPath = new string(endingPath.Value.Skip(commonPath.Length).ToArray());
+
+        return pathBuilder.Append(notCommonPath).ToString();
+    }
+
+    public static string CalculateNameWithExtension(
+        string nameNoExtension,
+        string extensionNoPeriod,
+        bool isDirectory)
+    {
+        if (isDirectory)
+        {
+            return nameNoExtension + extensionNoPeriod;
+        }
+        else
+        {
+            if (string.IsNullOrWhiteSpace(extensionNoPeriod))
+                return nameNoExtension;
+            else
+                return nameNoExtension + '.' + extensionNoPeriod;
+        }
+    }
+    /* End PathHelper */
 }

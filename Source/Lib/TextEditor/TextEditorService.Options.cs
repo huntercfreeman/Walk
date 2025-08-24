@@ -17,9 +17,6 @@ public partial class TextEditorService
     public const int Options_TAB_WIDTH_MAX = 4;
     public const int MINIMUM_CURSOR_SIZE_IN_PIXELS = 1;
 
-    private readonly TextEditorService Options_textEditorService;
-    private readonly CommonService Options_commonUtilityService;
-
     private TextEditorOptionsState Options_textEditorOptionsState = new();
 
     private IDialog? Options_findAllDialog;

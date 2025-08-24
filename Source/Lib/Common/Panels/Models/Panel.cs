@@ -54,7 +54,7 @@ public record Panel : IPanelTab, IDialog, IDrag
     public bool DialogIsResizable { get; set; } = true;
     public string? SetFocusOnCloseElementId { get; set; }
     public string DialogFocusPointHtmlElementId { get; init; }
-    public ElementDimensions DialogElementDimensions { get; set; } = DialogHelper.ConstructDefaultElementDimensions();
+    public ElementDimensions DialogElementDimensions { get; set; } = CommonFacts.ConstructDefaultElementDimensions();
 
     public List<IDropzone> DropzoneList { get; set; } = new();
     
