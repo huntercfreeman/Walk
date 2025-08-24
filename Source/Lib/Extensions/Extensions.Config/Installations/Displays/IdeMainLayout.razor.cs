@@ -553,8 +553,7 @@ public partial class IdeMainLayout : LayoutComponentBase, IDisposable
                     if (activeStartupControl is null)
                         return Task.CompletedTask;
                         
-                    return activeStartupControl.StopButtonOnClickTask
-                        .Invoke(activeStartupControl);
+                    return activeStartupControl.StopButtonOnClick(DotNetService);
                 }));
                 
             await CommonFacts.RenderDropdownAsync(
@@ -569,8 +568,7 @@ public partial class IdeMainLayout : LayoutComponentBase, IDisposable
         }
         else
         {
-            await activeStartupControl.StartButtonOnClickTask
-                .Invoke(activeStartupControl)
+            await activeStartupControl.StartButtonOnClick(DotNetService)
                 .ConfigureAwait(false);
         }
     }

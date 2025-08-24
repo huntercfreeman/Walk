@@ -37,7 +37,7 @@ public partial class DotNetService
     #region DotNetSolutionIdeApi
     // private readonly IServiceProvider _serviceProvider;
 
-    private readonly Key<TerminalCommandRequest> _newDotNetSolutionTerminalCommandRequestKey = Key<TerminalCommandRequest>.NewKey();
+    public readonly Key<TerminalCommandRequest> NewDotNetSolutionTerminalCommandRequestKey = Key<TerminalCommandRequest>.NewKey();
     private readonly CancellationTokenSource _newDotNetSolutionCancellationTokenSource = new();
     #endregion
 
@@ -989,68 +989,7 @@ public partial class DotNetService
         IdeService.Ide_RegisterStartupControl(
             new StartupControlModel(
                 project.DisplayName,
-                project.AbsolutePath.Value,
-                project.AbsolutePath,
-                null,
-                null,
-                startupControlModel => StartButtonOnClick(startupControlModel, project),
-                StopButtonOnClick));
-    }
-
-    private Task StartButtonOnClick(IStartupControlModel interfaceStartupControlModel, IDotNetProject project)
-    {
-        var startupControlModel = (StartupControlModel)interfaceStartupControlModel;
-
-        var ancestorDirectory = project.AbsolutePath.CreateSubstringParentDirectory();
-        if (ancestorDirectory is null)
-        {
-            return Task.CompletedTask;
-        }
-
-        var formattedCommandValue = DotNetCliCommandFormatter.FormatStartProjectWithoutDebugging(
-            project.AbsolutePath);
-
-        var terminalCommandRequest = new TerminalCommandRequest(
-            formattedCommandValue,
-            ancestorDirectory,
-            _newDotNetSolutionTerminalCommandRequestKey)
-        {
-            BeginWithFunc = parsedCommand =>
-            {
-                ParseOutputEntireDotNetRun(
-                    string.Empty,
-                    "Run-Project_started");
-
-                return Task.CompletedTask;
-            },
-            ContinueWithFunc = parsedCommand =>
-            {
-                startupControlModel.ExecutingTerminalCommandRequest = null;
-                IdeService.Ide_TriggerStartupControlStateChanged();
-
-                ParseOutputEntireDotNetRun(
-                    parsedCommand.OutputCache.ToString(),
-                    "Run-Project_completed");
-
-                return Task.CompletedTask;
-            }
-        };
-
-        startupControlModel.ExecutingTerminalCommandRequest = terminalCommandRequest;
-
-        IdeService.GetTerminalState().ExecutionTerminal.EnqueueCommand(terminalCommandRequest);
-        return Task.CompletedTask;
-    }
-
-    private Task StopButtonOnClick(IStartupControlModel interfaceStartupControlModel)
-    {
-        var startupControlModel = (StartupControlModel)interfaceStartupControlModel;
-
-        IdeService.GetTerminalState().ExecutionTerminal.KillProcess();
-        startupControlModel.ExecutingTerminalCommandRequest = null;
-
-        IdeService.Ide_TriggerStartupControlStateChanged();
-        return Task.CompletedTask;
+                project.AbsolutePath));
     }
 
     private ValueTask Do_Website_AddExistingProjectToSolution(
