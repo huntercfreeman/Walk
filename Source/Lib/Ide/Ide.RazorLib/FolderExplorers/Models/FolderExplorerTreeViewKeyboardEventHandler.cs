@@ -124,11 +124,11 @@ public class FolderExplorerTreeViewKeyboardEventHandler : TreeViewKeyboardEventH
                 treeViewAbsolutePath.Item,
                 async () =>
                 {
-                    var localParentOfCutFile = FolderExplorerContextMenu.ParentOfCutFile;
-                    FolderExplorerContextMenu.ParentOfCutFile = null;
+                    var localParentOfCutFile = _ideService.CommonService.ParentOfCutFile;
+                    _ideService.CommonService.ParentOfCutFile = null;
 
-                    if (localParentOfCutFile is not null)
-                        await ReloadTreeViewModel(localParentOfCutFile).ConfigureAwait(false);
+                    if (localParentOfCutFile is TreeViewAbsolutePath parentTreeViewAbsolutePath)
+                        await ReloadTreeViewModel(parentTreeViewAbsolutePath).ConfigureAwait(false);
 
                     await ReloadTreeViewModel(treeViewAbsolutePath).ConfigureAwait(false);
                 });
@@ -150,11 +150,11 @@ public class FolderExplorerTreeViewKeyboardEventHandler : TreeViewKeyboardEventH
                 parentDirectoryAbsolutePath,
                 async () =>
                 {
-                    var localParentOfCutFile = FolderExplorerContextMenu.ParentOfCutFile;
-                    FolderExplorerContextMenu.ParentOfCutFile = null;
+                    var localParentOfCutFile = _ideService.CommonService.ParentOfCutFile;
+                    _ideService.CommonService.ParentOfCutFile = null;
 
-                    if (localParentOfCutFile is not null)
-                        await ReloadTreeViewModel(localParentOfCutFile).ConfigureAwait(false);
+                    if (localParentOfCutFile is TreeViewAbsolutePath parentTreeViewAbsolutePath)
+                        await ReloadTreeViewModel(parentTreeViewAbsolutePath).ConfigureAwait(false);
 
                     await ReloadTreeViewModel(treeViewAbsolutePath).ConfigureAwait(false);
                 });
@@ -179,7 +179,7 @@ public class FolderExplorerTreeViewKeyboardEventHandler : TreeViewKeyboardEventH
             treeViewAbsolutePath.Item,
             () =>
             {
-                FolderExplorerContextMenu.ParentOfCutFile = parent;
+                _ideService.CommonService.ParentOfCutFile = parent;
                 CommonFacts.DispatchInformative("Cut Action", $"Cut: {treeViewAbsolutePath.Item.Name}", _ideService.CommonService, TimeSpan.FromSeconds(7));
                 return Task.CompletedTask;
             });
