@@ -115,7 +115,7 @@ public class TreeViewCSharpProjectToProjectReferences : TreeViewWithType<CSharpP
         
         foreach (var projectReference in relativePathReferenceList)
         {
-            var referenceProjectAbsolutePathString = PathHelper.GetAbsoluteFromAbsoluteAndRelative(
+            var referenceProjectAbsolutePathString = CommonFacts.GetAbsoluteFromAbsoluteAndRelative(
                 Item.CSharpProjectAbsolutePath,
                 projectReference,
                 (IEnvironmentProvider)CommonService.EnvironmentProvider,

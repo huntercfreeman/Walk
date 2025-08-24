@@ -603,7 +603,7 @@ public partial class DotNetService
             var relativePathFromSolutionFileString = projectTuple.RelativePathFromSolutionFileString;
             if (!RuntimeInformation.IsOSPlatform(OSPlatform.Windows))
                 relativePathFromSolutionFileString = relativePathFromSolutionFileString.Replace("\\", "/");
-            var absolutePathString = PathHelper.GetAbsoluteFromAbsoluteAndRelative(
+            var absolutePathString = CommonFacts.GetAbsoluteFromAbsoluteAndRelative(
                 dotNetSolutionModel.AbsolutePath,
                 relativePathFromSolutionFileString,
                 IdeService.TextEditorService.CommonService.EnvironmentProvider,
@@ -655,7 +655,7 @@ public partial class DotNetService
             
             foreach (var projectReference in relativePathReferenceList)
             {
-                var referenceProjectAbsolutePathString = PathHelper.GetAbsoluteFromAbsoluteAndRelative(
+                var referenceProjectAbsolutePathString = CommonFacts.GetAbsoluteFromAbsoluteAndRelative(
                     projectTuple.AbsolutePath,
                     projectReference,
                     IdeService.TextEditorService.CommonService.EnvironmentProvider,
