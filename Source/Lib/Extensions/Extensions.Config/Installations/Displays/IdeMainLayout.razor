@@ -114,7 +114,7 @@
             <div class="di_startup-controls">
                <div class="di_startup-controls-entry">
                    <select @bind="SelectedStartupControlAbsolutePathValue"
-                           title="@(activeStartupControl?.TitleVerbose ?? "Choose startup project")">
+                           title="@(activeStartupControl?.StartupProjectAbsolutePath.Value ?? "Choose startup project")">
                    	<option title="Choose startup project"
                			    value="@string.Empty">
                	    	Choose startup project
@@ -134,7 +134,7 @@
                             class="di_button"
                             id="@_startButtonElementId"
                             disabled=@(activeStartupControl is null)
-                            title="@(activeStartupControl?.TitleVerbose)">
+                            title="@(activeStartupControl?.StartupProjectAbsolutePath.Value)">
                         
                         @if (_userInterfaceSawIsExecuting)
                         {

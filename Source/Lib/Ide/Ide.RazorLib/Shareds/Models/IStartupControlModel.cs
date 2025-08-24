@@ -9,26 +9,26 @@ public interface IStartupControlModel
     /// </summary>
     public string Title { get; }
     
-    /// <summary>
-    /// By default, this is used as hover text (HTML 'title' attribute on the select dropdown)
-    /// </summary>
-    public string TitleVerbose { get; }
-    
     public AbsolutePath StartupProjectAbsolutePath { get; }
     
-    /// <summary>
-    /// If more than a 'start button' is necessary, one can provide a Blazor component,
-    /// and it will be rendered "to the left"/"prior" to the start button.
-    /// </summary>
-    public Type? ComponentType { get; }
-    
-    /// <summary>
-    /// The Blazor parameters to pass to the <see cref="ComponentType"/>
-    /// </summary>
-    public Dictionary<string, object?>? ComponentParameterMap { get; }
-
-    public Func<IStartupControlModel, Task> StartButtonOnClickTask { get; }
-    public Func<IStartupControlModel, Task> StopButtonOnClickTask { get; }
-    
     public bool IsExecuting { get; }
+    
+    /// <summary>
+    /// This accepts an object because:
+    /// The StartupControlModel for C# needs the DotNetService.
+    /// Rather than store a reference to the DotNetService
+    /// foreach of the projects.
+    /// Can just pass it in for the occasions where
+    /// the user clicks the start/stop buttons.
+    /// </summary>
+    public Task StartButtonOnClick(object item);
+    /// <summary>
+    /// This accepts an object because:
+    /// The StartupControlModel for C# needs the DotNetService.
+    /// Rather than store a reference to the DotNetService
+    /// foreach of the projects.
+    /// Can just pass it in for the occasions where
+    /// the user clicks the start/stop buttons.
+    /// </summary>
+    public Task StopButtonOnClick(object item);
 }
