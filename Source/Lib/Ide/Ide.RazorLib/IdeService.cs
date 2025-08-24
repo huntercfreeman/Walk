@@ -146,22 +146,6 @@ public partial class IdeService : IBackgroundTaskGroup
         });
     }
 
-    public async Task Editor_FastParseFunc(FastParseArgs fastParseArgs)
-    {
-        /*var resourceUri = fastParseArgs.ResourceUri;
-
-        var compilerService = _compilerServiceRegistry.GetCompilerService(fastParseArgs.ExtensionNoPeriod);
-
-        compilerService.RegisterResource(
-            fastParseArgs.ResourceUri,
-            shouldTriggerResourceWasModified: false);
-            
-        var uniqueTextEditorWork = new UniqueTextEditorWork(TextEditorService, editContext =>
-            compilerService.FastParseAsync(editContext, fastParseArgs.ResourceUri, _fileSystemProvider));
-        
-        TextEditorService.WorkerArbitrary.EnqueueUniqueTextEditorWork(uniqueTextEditorWork);*/
-    }
-
     private ValueTask Do_SetFolderExplorerState(AbsolutePath folderAbsolutePath)
     {
         FolderExplorer_With(
