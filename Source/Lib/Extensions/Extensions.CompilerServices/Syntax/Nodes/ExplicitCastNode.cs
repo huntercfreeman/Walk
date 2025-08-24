@@ -9,10 +9,6 @@ public sealed class ExplicitCastNode : IExpressionNode
         TypeReference resultTypeReference,
         SyntaxToken closeParenthesisToken)
     {
-        #if DEBUG
-        Walk.Common.RazorLib.Installations.Models.WalkDebugSomething.ExplicitCastNode++;
-        #endif
-    
         OpenParenthesisToken = openParenthesisToken;
         ResultTypeReference = resultTypeReference;
         CloseParenthesisToken = closeParenthesisToken;
@@ -30,11 +26,4 @@ public sealed class ExplicitCastNode : IExpressionNode
     public int Unsafe_ParentIndexKey { get; set; }
     public bool IsFabricated { get; init; }
     public SyntaxKind SyntaxKind => SyntaxKind.ExplicitCastNode;
-
-#if DEBUG
-    ~ExplicitCastNode()
-    {
-        Walk.Common.RazorLib.Installations.Models.WalkDebugSomething.ExplicitCastNode--;
-    }
-    #endif
 }

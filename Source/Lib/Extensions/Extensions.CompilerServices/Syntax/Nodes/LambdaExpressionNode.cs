@@ -22,10 +22,6 @@ public sealed class LambdaExpressionNode : IExpressionNode, ICodeBlockOwner
 {
     public LambdaExpressionNode(TypeReference resultTypeReference)
     {
-        #if DEBUG
-        Walk.Common.RazorLib.Installations.Models.WalkDebugSomething.LambdaExpressionNode++;
-        #endif
-    
         ResultTypeReference = resultTypeReference;
     }
 
@@ -65,11 +61,4 @@ public sealed class LambdaExpressionNode : IExpressionNode, ICodeBlockOwner
         return ReturnTypeReference;
     }
     #endregion
-
-    #if DEBUG    
-    ~LambdaExpressionNode()
-    {
-        Walk.Common.RazorLib.Installations.Models.WalkDebugSomething.LambdaExpressionNode--;
-    }
-    #endif
 }

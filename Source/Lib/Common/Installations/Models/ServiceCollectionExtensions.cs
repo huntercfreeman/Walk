@@ -12,13 +12,9 @@ public static class ServiceCollectionExtensions
     /// </summary>
     public static IServiceCollection AddWalkCommonServices(
         this IServiceCollection services,
-        WalkHostingInformation hostingInformation,
-        Func<WalkCommonConfig, WalkCommonConfig>? configure = null)
+        WalkHostingInformation hostingInformation)
     {
         var commonConfig = new WalkCommonConfig();
-
-        if (configure is not null)
-            commonConfig = configure.Invoke(commonConfig);
 
         services
             .AddScoped<BrowserResizeInterop>()

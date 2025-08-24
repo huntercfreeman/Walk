@@ -13,10 +13,6 @@ public sealed class VariableDeclarationNode : IExpressionNode
         bool isInitialized,
         ResourceUri resourceUri)
     {
-        #if DEBUG
-        Walk.Common.RazorLib.Installations.Models.WalkDebugSomething.VariableDeclarationNode++;
-        #endif
-    
         TypeReference = typeReference;
         IdentifierToken = identifierToken;
         VariableKind = variableKind;
@@ -62,11 +58,4 @@ public sealed class VariableDeclarationNode : IExpressionNode
         TypeReference = typeReference;
         return this;
     }
-
-    #if DEBUG    
-    ~VariableDeclarationNode()
-    {
-        Walk.Common.RazorLib.Installations.Models.WalkDebugSomething.VariableDeclarationNode--;
-    }
-    #endif
 }

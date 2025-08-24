@@ -6,10 +6,6 @@ public sealed class KeywordFunctionOperatorNode : IExpressionNode
 {
     public KeywordFunctionOperatorNode(SyntaxToken keywordToken, IExpressionNode expressionNodeToMakePrimary)
     {
-        #if DEBUG
-        Walk.Common.RazorLib.Installations.Models.WalkDebugSomething.KeywordFunctionOperatorNode++;
-        #endif
-    
         KeywordToken = keywordToken;
         ExpressionNodeToMakePrimary = expressionNodeToMakePrimary;
     }
@@ -21,11 +17,4 @@ public sealed class KeywordFunctionOperatorNode : IExpressionNode
     public int Unsafe_ParentIndexKey { get; set; }
     public bool IsFabricated { get; init; }
     public SyntaxKind SyntaxKind => SyntaxKind.KeywordFunctionOperatorNode;
-
-#if DEBUG
-    ~KeywordFunctionOperatorNode()
-    {
-        Walk.Common.RazorLib.Installations.Models.WalkDebugSomething.KeywordFunctionOperatorNode--;
-    }
-    #endif
 }

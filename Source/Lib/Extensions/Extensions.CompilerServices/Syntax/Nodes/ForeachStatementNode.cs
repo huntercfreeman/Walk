@@ -12,10 +12,6 @@ public sealed class ForeachStatementNode : ICodeBlockOwner
         SyntaxToken closeParenthesisToken,
         CodeBlock codeBlock)
     {
-        #if DEBUG
-        Walk.Common.RazorLib.Installations.Models.WalkDebugSomething.ForeachStatementNode++;
-        #endif
-    
         ForeachKeywordToken = foreachKeywordToken;
         OpenParenthesisToken = openParenthesisToken;
         InKeywordToken = inKeywordToken;
@@ -47,11 +43,4 @@ public sealed class ForeachStatementNode : ICodeBlockOwner
         return TypeFacts.Empty.ToTypeReference();
     }
     #endregion
-
-    #if DEBUG    
-    ~ForeachStatementNode()
-    {
-        Walk.Common.RazorLib.Installations.Models.WalkDebugSomething.ForeachStatementNode--;
-    }
-    #endif
 }

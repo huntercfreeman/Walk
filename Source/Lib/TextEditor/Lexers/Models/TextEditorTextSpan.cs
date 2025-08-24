@@ -69,7 +69,6 @@ public record struct TextEditorTextSpan(
         {
             if (textEditorService is null)
             {
-                Walk.Common.RazorLib.Installations.Models.WalkDebugSomething.StringAllocation++;
                 return sourceText.Substring(StartInclusiveIndex, Length);
             }
             else

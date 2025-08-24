@@ -9,10 +9,6 @@ public sealed class IfStatementNode : ICodeBlockOwner
         SyntaxToken keywordToken,
         CodeBlock codeBlock)
     {
-        #if DEBUG
-        Walk.Common.RazorLib.Installations.Models.WalkDebugSomething.IfStatementNode++;
-        #endif
-    
         KeywordToken = keywordToken;
     }
 
@@ -38,11 +34,4 @@ public sealed class IfStatementNode : ICodeBlockOwner
         return TypeFacts.Empty.ToTypeReference();
     }
     #endregion
-
-    #if DEBUG    
-    ~IfStatementNode()
-    {
-        Walk.Common.RazorLib.Installations.Models.WalkDebugSomething.IfStatementNode--;
-    }
-    #endif
 }

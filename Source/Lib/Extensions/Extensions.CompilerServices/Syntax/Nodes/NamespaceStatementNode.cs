@@ -12,10 +12,6 @@ public sealed class NamespaceStatementNode : ICodeBlockOwner
         CodeBlock codeBlock,
         ResourceUri resourceUri)
     {
-        #if DEBUG
-        Walk.Common.RazorLib.Installations.Models.WalkDebugSomething.NamespaceStatementNode++;
-        #endif
-    
         KeywordToken = keywordToken;
         IdentifierToken = identifierToken;
         ResourceUri = resourceUri;
@@ -45,11 +41,4 @@ public sealed class NamespaceStatementNode : ICodeBlockOwner
         return TypeFacts.Empty.ToTypeReference();
     }
     #endregion
-
-    #if DEBUG    
-    ~NamespaceStatementNode()
-    {
-        Walk.Common.RazorLib.Installations.Models.WalkDebugSomething.NamespaceStatementNode--;
-    }
-    #endif
 }

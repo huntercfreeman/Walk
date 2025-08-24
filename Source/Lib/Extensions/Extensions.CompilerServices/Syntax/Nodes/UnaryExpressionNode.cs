@@ -8,10 +8,6 @@ public sealed class UnaryExpressionNode : IExpressionNode
         IExpressionNode expression,
         UnaryOperatorNode unaryOperatorNode)
     {
-        #if DEBUG
-        Walk.Common.RazorLib.Installations.Models.WalkDebugSomething.UnaryExpressionNode++;
-        #endif
-    
         Expression = expression;
         UnaryOperatorNode = unaryOperatorNode;
     }
@@ -23,11 +19,4 @@ public sealed class UnaryExpressionNode : IExpressionNode
     public int Unsafe_ParentIndexKey { get; set; }
     public bool IsFabricated { get; init; }
     public SyntaxKind SyntaxKind => SyntaxKind.UnaryExpressionNode;
-
-#if DEBUG
-    ~UnaryExpressionNode()
-    {
-        Walk.Common.RazorLib.Installations.Models.WalkDebugSomething.UnaryExpressionNode--;
-    }
-    #endif
 }

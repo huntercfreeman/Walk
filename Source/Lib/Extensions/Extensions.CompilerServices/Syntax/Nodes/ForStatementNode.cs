@@ -13,10 +13,6 @@ public sealed class ForStatementNode : ICodeBlockOwner
         SyntaxToken closeParenthesisToken,
         CodeBlock codeBlock)
     {
-        #if DEBUG
-        Walk.Common.RazorLib.Installations.Models.WalkDebugSomething.ForStatementNode++;
-        #endif
-    
         KeywordToken = keywordToken;
         OpenParenthesisToken = openParenthesisToken;
         InitializationStatementDelimiterToken = initializationStatementDelimiterToken;
@@ -50,11 +46,4 @@ public sealed class ForStatementNode : ICodeBlockOwner
         return TypeFacts.Empty.ToTypeReference();
     }
     #endregion
-
-    #if DEBUG    
-    ~ForStatementNode()
-    {
-        Walk.Common.RazorLib.Installations.Models.WalkDebugSomething.ForStatementNode--;
-    }
-    #endif
 }

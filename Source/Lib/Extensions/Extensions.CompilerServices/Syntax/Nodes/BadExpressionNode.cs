@@ -16,10 +16,6 @@ public sealed class BadExpressionNode : IExpressionNode
 {
     public BadExpressionNode(TypeReference resultTypeReference, ISyntax syntaxPrimary, ISyntax syntaxSecondary)
     {
-        #if DEBUG
-        Walk.Common.RazorLib.Installations.Models.WalkDebugSomething.BadExpressionNode++;
-        #endif
-    
         ResultTypeReference = resultTypeReference;
         SyntaxPrimary = syntaxPrimary;
         SyntaxSecondary = syntaxSecondary;
@@ -46,11 +42,4 @@ public sealed class BadExpressionNode : IExpressionNode
     public int Unsafe_ParentIndexKey { get; set; }
     public bool IsFabricated { get; init; }
     public SyntaxKind SyntaxKind => SyntaxKind.BadExpressionNode;
-
-#if DEBUG
-    ~BadExpressionNode()
-    {
-        Walk.Common.RazorLib.Installations.Models.WalkDebugSomething.BadExpressionNode--;
-    }
-    #endif
 }

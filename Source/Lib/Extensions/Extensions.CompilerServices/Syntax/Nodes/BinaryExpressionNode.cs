@@ -11,10 +11,6 @@ public sealed class BinaryExpressionNode : IExpressionNode
         TypeReference resultTypeReference,
         TypeReference rightExpressionResultTypeReference)
     {
-        #if DEBUG
-        Walk.Common.RazorLib.Installations.Models.WalkDebugSomething.BinaryExpressionNode++;
-        #endif
-    
         LeftOperandTypeReference = leftOperandTypeReference;
         OperatorToken = operatorToken;
         RightOperandTypeReference = rightOperandTypeReference;
@@ -28,10 +24,6 @@ public sealed class BinaryExpressionNode : IExpressionNode
         TypeReference rightOperandTypeReference,
         TypeReference resultTypeReference)
     {
-        #if DEBUG
-        Walk.Common.RazorLib.Installations.Models.WalkDebugSomething.BinaryExpressionNode++;
-        #endif
-    
         LeftOperandTypeReference = leftOperandTypeReference;
         OperatorToken = operatorToken;
         RightOperandTypeReference = rightOperandTypeReference;
@@ -59,11 +51,4 @@ public sealed class BinaryExpressionNode : IExpressionNode
     public int Unsafe_ParentIndexKey { get; set; }
     public bool IsFabricated { get; init; }
     public SyntaxKind SyntaxKind => SyntaxKind.BinaryExpressionNode;
-
-#if DEBUG
-    ~BinaryExpressionNode()
-    {
-        Walk.Common.RazorLib.Installations.Models.WalkDebugSomething.BinaryExpressionNode--;
-    }
-    #endif
 }

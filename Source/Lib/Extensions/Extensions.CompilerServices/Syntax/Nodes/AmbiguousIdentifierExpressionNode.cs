@@ -12,10 +12,6 @@ public sealed class AmbiguousIdentifierExpressionNode : IGenericParameterNode
         SyntaxToken closeAngleBracketToken,
         TypeReference resultTypeReference)
     {
-        #if DEBUG
-        Walk.Common.RazorLib.Installations.Models.WalkDebugSomething.AmbiguousIdentifierExpressionNode++;
-        #endif
-    
         Token = token;
         
         OpenAngleBracketToken = openAngleBracketToken;
@@ -58,12 +54,5 @@ public sealed class AmbiguousIdentifierExpressionNode : IGenericParameterNode
             HasQuestionMark = HasQuestionMark,
         };
     }
-
-    #if DEBUG
-    ~AmbiguousIdentifierExpressionNode()
-    {
-        Walk.Common.RazorLib.Installations.Models.WalkDebugSomething.AmbiguousIdentifierExpressionNode--;
-    }
-    #endif
 }
 

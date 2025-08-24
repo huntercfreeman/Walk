@@ -8,20 +8,12 @@ public sealed class VariableReferenceNode : IExpressionNode
         SyntaxToken variableIdentifierToken,
         VariableDeclarationNode variableDeclarationNode)
     {
-        #if DEBUG
-        Walk.Common.RazorLib.Installations.Models.WalkDebugSomething.VariableReferenceNode++;
-        #endif
-    
         VariableIdentifierToken = variableIdentifierToken;
         VariableDeclarationNode = variableDeclarationNode;
     }
     
     public VariableReferenceNode(VariableReference variableReference)
     {
-        #if DEBUG
-        Walk.Common.RazorLib.Installations.Models.WalkDebugSomething.VariableReferenceNode++;
-        #endif
-    
         VariableIdentifierToken = variableReference.VariableIdentifierToken;
         IsFabricated = variableReference.IsFabricated;
     }
@@ -59,11 +51,4 @@ public sealed class VariableReferenceNode : IExpressionNode
         }
     }
     public SyntaxKind SyntaxKind => SyntaxKind.VariableReferenceNode;
-
-    #if DEBUG    
-    ~VariableReferenceNode()
-    {
-        Walk.Common.RazorLib.Installations.Models.WalkDebugSomething.VariableReferenceNode--;
-    }
-    #endif
 }

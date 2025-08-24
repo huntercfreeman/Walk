@@ -6,19 +6,11 @@ public sealed class NamespaceClauseNode : IExpressionNode
 {
     public NamespaceClauseNode(SyntaxToken identifierToken)
     {
-        #if DEBUG
-        Walk.Common.RazorLib.Installations.Models.WalkDebugSomething.NamespaceClauseNode++;
-        #endif
-    
         IdentifierToken = identifierToken;
     }
     
     public NamespaceClauseNode(SyntaxToken identifierToken, NamespacePrefixNode namespacePrefixNode, int startOfMemberAccessChainPositionIndex)
     {
-        #if DEBUG
-        Walk.Common.RazorLib.Installations.Models.WalkDebugSomething.NamespaceClauseNode++;
-        #endif
-    
         IdentifierToken = identifierToken;
         NamespacePrefixNode = namespacePrefixNode;
         StartOfMemberAccessChainPositionIndex = startOfMemberAccessChainPositionIndex;
@@ -47,11 +39,4 @@ public sealed class NamespaceClauseNode : IExpressionNode
     }
     
     public SyntaxKind SyntaxKind => SyntaxKind.NamespaceClauseNode;
-
-    #if DEBUG
-    ~NamespaceClauseNode()
-    {
-        Walk.Common.RazorLib.Installations.Models.WalkDebugSomething.NamespaceClauseNode--;
-    }
-    #endif
 }

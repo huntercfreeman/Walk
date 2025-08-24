@@ -7,10 +7,6 @@ public sealed class UnaryOperatorNode : ISyntaxNode
         SyntaxToken operatorToken,
         TypeReference resultTypeReference)
     {
-        #if DEBUG
-        Walk.Common.RazorLib.Installations.Models.WalkDebugSomething.UnaryOperatorNode++;
-        #endif
-    
         OperandTypeReference = operandTypeReference;
         OperatorToken = operatorToken;
         ResultTypeReference = resultTypeReference;
@@ -23,11 +19,4 @@ public sealed class UnaryOperatorNode : ISyntaxNode
     public int Unsafe_ParentIndexKey { get; set; }
     public bool IsFabricated { get; init; }
     public SyntaxKind SyntaxKind => SyntaxKind.UnaryOperatorNode;
-
-#if DEBUG
-    ~UnaryOperatorNode()
-    {
-        Walk.Common.RazorLib.Installations.Models.WalkDebugSomething.UnaryOperatorNode--;
-    }
-    #endif
 }

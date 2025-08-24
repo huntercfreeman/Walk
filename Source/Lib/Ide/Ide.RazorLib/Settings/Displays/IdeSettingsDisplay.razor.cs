@@ -14,7 +14,7 @@ public partial class IdeSettingsDisplay : ComponentBase
     
     private void WriteWalkDebugSomethingToConsole()
     {
-        Console.WriteLine(WalkDebugSomething.CreateText());
+        Console.WriteLine(CommonFacts.CreateText());
         /*
         #if DEBUG
         Console.WriteLine(WalkDebugSomething.CreateText());

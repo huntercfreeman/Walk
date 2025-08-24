@@ -11,10 +11,6 @@ public sealed class LockStatementNode : ICodeBlockOwner
         SyntaxToken closeParenthesisToken,
         CodeBlock codeBlock)
     {
-        #if DEBUG
-        Walk.Common.RazorLib.Installations.Models.WalkDebugSomething.LockStatementNode++;
-        #endif
-    
         KeywordToken = keywordToken;
         OpenParenthesisToken = openParenthesisToken;
         CloseParenthesisToken = closeParenthesisToken;
@@ -44,11 +40,4 @@ public sealed class LockStatementNode : ICodeBlockOwner
         return TypeFacts.Empty.ToTypeReference();
     }
     #endregion
-
-    #if DEBUG    
-    ~LockStatementNode()
-    {
-        Walk.Common.RazorLib.Installations.Models.WalkDebugSomething.LockStatementNode--;
-    }
-    #endif
 }

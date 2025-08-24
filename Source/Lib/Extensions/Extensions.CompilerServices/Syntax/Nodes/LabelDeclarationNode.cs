@@ -6,10 +6,6 @@ public sealed class LabelDeclarationNode : IExpressionNode
 {
     public LabelDeclarationNode(SyntaxToken identifierToken)
     {
-        #if DEBUG
-        Walk.Common.RazorLib.Installations.Models.WalkDebugSomething.LabelDeclarationNode++;
-        #endif
-    
         IdentifierToken = identifierToken;
     }
 
@@ -20,12 +16,5 @@ public sealed class LabelDeclarationNode : IExpressionNode
     public int Unsafe_ParentIndexKey { get; set; }
     public bool IsFabricated { get; init; }
     public SyntaxKind SyntaxKind => SyntaxKind.LabelDeclarationNode;
-
-    #if DEBUG    
-    ~LabelDeclarationNode()
-    {
-        Walk.Common.RazorLib.Installations.Models.WalkDebugSomething.LabelDeclarationNode--;
-    }
-    #endif
 }
 

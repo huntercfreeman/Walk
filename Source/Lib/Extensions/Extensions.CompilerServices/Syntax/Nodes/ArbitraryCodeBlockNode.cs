@@ -7,10 +7,6 @@ public sealed class ArbitraryCodeBlockNode : ICodeBlockOwner
 {
     public ArbitraryCodeBlockNode(ICodeBlockOwner parentCodeBlockOwner)
     {
-        #if DEBUG
-        Walk.Common.RazorLib.Installations.Models.WalkDebugSomething.ArbitraryCodeBlockNode++;
-        #endif
-    
         ParentCodeBlockOwner = parentCodeBlockOwner;
     }
 
@@ -39,11 +35,4 @@ public sealed class ArbitraryCodeBlockNode : ICodeBlockOwner
         return ParentCodeBlockOwner.GetReturnTypeReference();
     }
     #endregion
-
-    #if DEBUG    
-    ~ArbitraryCodeBlockNode()
-    {
-        Walk.Common.RazorLib.Installations.Models.WalkDebugSomething.ArbitraryCodeBlockNode--;
-    }
-    #endif
 }

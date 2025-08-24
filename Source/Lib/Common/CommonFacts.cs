@@ -995,4 +995,20 @@ public partial class {className} : ComponentBase
         commonService.Notification_ReduceRegisterAction(notificationProgress);
     }
     /* End NotificationHelper */
+    
+    /* Start WalkDebugSomething */
+    public static string CreateText()
+    {
+        var builder = new StringBuilder();
+        
+        builder.AppendLine();
+        
+        //builder.AppendLine($"AvoidStringLogicByCheckingLength: {AvoidStringLogicByCheckingLength}");
+        //builder.AppendLine($"AvoidStringLogicByCheckingCharIntSum: {AvoidStringLogicByCheckingCharIntSum}");
+        
+        builder.AppendLine();
+        
+        return builder.ToString();
+    }
+    /* End WalkDebugSomething */
 }

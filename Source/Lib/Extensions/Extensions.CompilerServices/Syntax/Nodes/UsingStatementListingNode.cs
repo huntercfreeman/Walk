@@ -2,13 +2,6 @@ namespace Walk.Extensions.CompilerServices.Syntax.Nodes;
 
 public sealed class UsingStatementListingNode : ISyntaxNode
 {
-    public UsingStatementListingNode()
-    {
-        #if DEBUG
-        Walk.Common.RazorLib.Installations.Models.WalkDebugSomething.UsingStatementListingNode++;
-        #endif
-    }
-
     /// <summary>
     /// Note: don't store as ISyntax in order to avoid boxing.
     /// If someone explicitly invokes 'GetChildList()' then box at that point
@@ -19,11 +12,4 @@ public sealed class UsingStatementListingNode : ISyntaxNode
     public int Unsafe_ParentIndexKey { get; set; }
     public bool IsFabricated { get; init; }
     public SyntaxKind SyntaxKind => SyntaxKind.UsingStatementListingNode;
-
-#if DEBUG
-    ~UsingStatementListingNode()
-    {
-        Walk.Common.RazorLib.Installations.Models.WalkDebugSomething.UsingStatementListingNode--;
-    }
-    #endif
 }

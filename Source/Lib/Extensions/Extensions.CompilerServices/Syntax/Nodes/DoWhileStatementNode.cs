@@ -11,10 +11,6 @@ public sealed class DoWhileStatementNode : ICodeBlockOwner
         SyntaxToken openParenthesisToken,
         SyntaxToken closeParenthesisToken)
     {
-        #if DEBUG
-        Walk.Common.RazorLib.Installations.Models.WalkDebugSomething.DoWhileStatementNode++;
-        #endif
-    
         DoKeywordToken = doKeywordToken;
         WhileKeywordToken = whileKeywordToken;
         OpenParenthesisToken = openParenthesisToken;
@@ -46,11 +42,4 @@ public sealed class DoWhileStatementNode : ICodeBlockOwner
         return TypeFacts.Empty.ToTypeReference();
     }
     #endregion
-
-    #if DEBUG    
-    ~DoWhileStatementNode()
-    {
-        Walk.Common.RazorLib.Installations.Models.WalkDebugSomething.DoWhileStatementNode--;
-    }
-    #endif
 }

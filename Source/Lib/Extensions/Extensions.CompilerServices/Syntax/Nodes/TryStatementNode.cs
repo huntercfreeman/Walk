@@ -9,10 +9,6 @@ public sealed class TryStatementNode : ISyntaxNode
         TryStatementCatchNode? catchNode,
         TryStatementFinallyNode? finallyNode)
     {
-        #if DEBUG
-        Walk.Common.RazorLib.Installations.Models.WalkDebugSomething.TryStatementNode++;
-        #endif
-    
         TryNode = tryNode;
         CatchNode = catchNode;
         FinallyNode = finallyNode;
@@ -27,11 +23,4 @@ public sealed class TryStatementNode : ISyntaxNode
     public int Unsafe_ParentIndexKey { get; set; }
     public bool IsFabricated { get; init; }
     public SyntaxKind SyntaxKind => SyntaxKind.TryStatementNode;
-
-#if DEBUG
-    ~TryStatementNode()
-    {
-        Walk.Common.RazorLib.Installations.Models.WalkDebugSomething.TryStatementNode--;
-    }
-    #endif
 }

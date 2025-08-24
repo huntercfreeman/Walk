@@ -17,10 +17,6 @@ public sealed class FunctionInvocationNode : IInvocationNode, IGenericParameterN
         SyntaxToken closeParenthesisToken,
         TypeReference resultTypeReference)
     {
-        #if DEBUG
-        Walk.Common.RazorLib.Installations.Models.WalkDebugSomething.FunctionInvocationNode++;
-        #endif
-    
         FunctionInvocationIdentifierToken = functionInvocationIdentifierToken;
         
         OpenAngleBracketToken = openAngleBracketToken;
@@ -67,11 +63,4 @@ public sealed class FunctionInvocationNode : IInvocationNode, IGenericParameterN
     public bool IsParsingGenericParameters { get; set; }
     
     public TextEditorTextSpan ExplicitDefinitionTextSpan { get; set; }
-
-    #if DEBUG
-    ~FunctionInvocationNode()
-    {
-        Walk.Common.RazorLib.Installations.Models.WalkDebugSomething.FunctionInvocationNode--;
-    }
-    #endif
 }

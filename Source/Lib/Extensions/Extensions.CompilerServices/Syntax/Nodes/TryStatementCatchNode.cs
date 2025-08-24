@@ -11,10 +11,6 @@ public sealed class TryStatementCatchNode : ICodeBlockOwner
         SyntaxToken closeParenthesisToken,
         CodeBlock codeBlock)
     {
-        #if DEBUG
-        Walk.Common.RazorLib.Installations.Models.WalkDebugSomething.TryStatementCatchNode++;
-        #endif
-
         KeywordToken = keywordToken;
         OpenParenthesisToken = openParenthesisToken;
         CloseParenthesisToken = closeParenthesisToken;
@@ -45,11 +41,4 @@ public sealed class TryStatementCatchNode : ICodeBlockOwner
         return TypeFacts.Empty.ToTypeReference();
     }
     #endregion
-
-    #if DEBUG    
-    ~TryStatementCatchNode()
-    {
-        Walk.Common.RazorLib.Installations.Models.WalkDebugSomething.TryStatementCatchNode--;
-    }
-    #endif
 }

@@ -6,10 +6,6 @@ public sealed class ReturnStatementNode : IExpressionNode
 {
     public ReturnStatementNode(SyntaxToken keywordToken, IExpressionNode expressionNode)
     {
-        #if DEBUG
-        Walk.Common.RazorLib.Installations.Models.WalkDebugSomething.ReturnStatementNode++;
-        #endif
-    
         KeywordToken = keywordToken;
         // ExpressionNode = expressionNode;
         
@@ -23,11 +19,4 @@ public sealed class ReturnStatementNode : IExpressionNode
     public int Unsafe_ParentIndexKey { get; set; }
     public bool IsFabricated { get; init; }
     public SyntaxKind SyntaxKind => SyntaxKind.ReturnStatementNode;
-
-#if DEBUG
-    ~ReturnStatementNode()
-    {
-        Walk.Common.RazorLib.Installations.Models.WalkDebugSomething.ReturnStatementNode--;
-    }
-    #endif
 }

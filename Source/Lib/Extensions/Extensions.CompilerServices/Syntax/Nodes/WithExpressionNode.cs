@@ -6,10 +6,6 @@ public sealed class WithExpressionNode : IExpressionNode
 {
     public WithExpressionNode(VariableReference variableReference)
     {
-        #if DEBUG
-        Walk.Common.RazorLib.Installations.Models.WalkDebugSomething.WithExpressionNode++;
-        #endif
-    
         VariableReference = variableReference;
         ResultTypeReference = variableReference.ResultTypeReference;
     }
@@ -20,11 +16,4 @@ public sealed class WithExpressionNode : IExpressionNode
     public int Unsafe_ParentIndexKey { get; set; }
     public bool IsFabricated { get; init; }
     public SyntaxKind SyntaxKind => SyntaxKind.WithExpressionNode;
-
-#if DEBUG
-    ~WithExpressionNode()
-    {
-        Walk.Common.RazorLib.Installations.Models.WalkDebugSomething.WithExpressionNode--;
-    }
-    #endif
 }
