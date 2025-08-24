@@ -40,10 +40,10 @@ public partial class TextEditorService
         Options_findAllDialog ??= new DialogViewModel(
             Key<IDynamicViewModel>.NewKey(),
             "Find All",
-            TextEditorConfig.FindAllDialogConfig.ComponentRendererType,
+            typeof(Walk.TextEditor.RazorLib.FindAlls.Displays.FindAllDisplay),
             null,
             cssClassString,
-            isResizableOverride ?? TextEditorConfig.FindAllDialogConfig.ComponentIsResizable,
+            isResizableOverride ?? true,
             null);
 
         CommonService.Dialog_ReduceRegisterAction(Options_findAllDialog);

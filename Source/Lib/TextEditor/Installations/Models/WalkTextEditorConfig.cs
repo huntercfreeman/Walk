@@ -21,12 +21,6 @@ public record WalkTextEditorConfig
     /// </summary>
     public int InitialThemeKey { get; init; } = CommonFacts.VisualStudioDarkThemeClone.Key;
     /// <summary>
-    /// When a user hits the keymap { Control + , } then a dialog will be rendered where they can
-    /// search for text through "all files". Where "all files" relates to the implementation details
-    /// of the given find all dialog.
-    /// </summary>
-    public FindAllDialogConfig FindAllDialogConfig { get; init; } = new();
-    /// <summary>
     /// Default value is <see cref="true"/>.<br/>
     /// 
     /// If one wishes to configure Walk.Common themselves, then set this to false, and invoke
