@@ -170,12 +170,12 @@ public partial class DotNetService
         if (workingDirectory is null)
             return ValueTask.CompletedTask;
 
-        var formattedCommand = DotNetCliCommandFormatter.FormatRemoveCSharpProjectReferenceFromSolutionAction(
+        var formattedCommandValue = DotNetCliCommandFormatter.FormatRemoveCSharpProjectReferenceFromSolutionAction(
             treeViewSolution.Item.AbsolutePath.Value,
             projectNode.Item.Value);
 
         var terminalCommandRequest = new TerminalCommandRequest(
-            formattedCommand.Value,
+            formattedCommandValue,
             workingDirectory)
         {
             ContinueWithFunc = parsedCommand => onAfterCompletion.Invoke()
@@ -200,12 +200,12 @@ public partial class DotNetService
                 if (referencedProject.Value is null)
                     return Task.CompletedTask;
 
-                var formattedCommand = DotNetCliCommandFormatter.FormatAddProjectToProjectReference(
+                var formattedCommandValue = DotNetCliCommandFormatter.FormatAddProjectToProjectReference(
                     projectReceivingReference.Item.Value,
                     referencedProject.Value);
 
                 var terminalCommandRequest = new TerminalCommandRequest(
-                    formattedCommand.Value,
+                    formattedCommandValue,
                     null)
                 {
                     ContinueWithFunc = parsedCommand =>
@@ -256,12 +256,12 @@ public partial class DotNetService
         CommonService commonService,
         Func<Task> onAfterCompletion)
     {
-        var formattedCommand = DotNetCliCommandFormatter.FormatRemoveProjectToProjectReference(
+        var formattedCommandValue = DotNetCliCommandFormatter.FormatRemoveProjectToProjectReference(
             treeViewCSharpProjectToProjectReference.Item.ModifyProjectAbsolutePath.Value,
             treeViewCSharpProjectToProjectReference.Item.ReferenceProjectAbsolutePath.Value);
 
         var terminalCommandRequest = new TerminalCommandRequest(
-            formattedCommand.Value,
+            formattedCommandValue,
             null)
         {
             ContinueWithFunc = parsedCommand =>
@@ -302,13 +302,13 @@ public partial class DotNetService
         CommonService commonService,
         Func<Task> onAfterCompletion)
     {
-        var formattedCommand = DotNetCliCommandFormatter.FormatMoveProjectToSolutionFolder(
+        var formattedCommandValue = DotNetCliCommandFormatter.FormatMoveProjectToSolutionFolder(
             treeViewSolution.Item.AbsolutePath.Value,
             treeViewProjectToMove.Item.Value,
             solutionFolderPath);
 
         var terminalCommandRequest = new TerminalCommandRequest(
-            formattedCommand.Value,
+            formattedCommandValue,
             null)
         {
             ContinueWithFunc = parsedCommand =>
@@ -359,12 +359,12 @@ public partial class DotNetService
         CommonService commonService,
         Func<Task> onAfterCompletion)
     {
-        var formattedCommand = DotNetCliCommandFormatter.FormatRemoveNugetPackageReferenceFromProject(
+        var formattedCommandValue = DotNetCliCommandFormatter.FormatRemoveNugetPackageReferenceFromProject(
             modifyProjectAbsolutePath.Value,
             treeViewCSharpProjectNugetPackageReference.Item.LightWeightNugetPackageRecord.Id);
 
         var terminalCommandRequest = new TerminalCommandRequest(
-            formattedCommand.Value,
+            formattedCommandValue,
             null)
         {
             ContinueWithFunc = parsedCommand =>

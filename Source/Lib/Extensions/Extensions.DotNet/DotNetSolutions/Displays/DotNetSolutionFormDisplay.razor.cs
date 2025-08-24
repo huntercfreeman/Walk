@@ -7,7 +7,6 @@ using Walk.Common.RazorLib.Keys.Models;
 using Walk.Common.RazorLib.Dynamics.Models;
 using Walk.Common.RazorLib.FileSystems.Models;
 using Walk.Ide.RazorLib;
-using Walk.Ide.RazorLib.CommandLines.Models;
 using Walk.Ide.RazorLib.Terminals.Models;
 using Walk.Ide.RazorLib.InputFiles.Models;
 using Walk.Ide.RazorLib.BackgroundTasks.Models;
@@ -37,7 +36,7 @@ public partial class DotNetSolutionFormDisplay : ComponentBase, IDisposable
         ? "{enter parent directory name}"
         : _parentDirectoryName;
 
-    private FormattedCommand FormattedCommand => DotNetCliCommandFormatter.FormatDotnetNewSln(_solutionName);
+    private string FormattedCommandValue => DotNetCliCommandFormatter.FormatDotnetNewSln(_solutionName);
     
     protected override void OnInitialized()
     {
@@ -74,7 +73,7 @@ public partial class DotNetSolutionFormDisplay : ComponentBase, IDisposable
 
     private async Task StartNewDotNetSolutionCommandOnClick()
     {
-        var localFormattedCommand = FormattedCommand;
+        var localFormattedCommandValue = FormattedCommandValue;
         var localSolutionName = _solutionName;
         var localParentDirectoryName = _parentDirectoryName;
 
@@ -94,7 +93,7 @@ public partial class DotNetSolutionFormDisplay : ComponentBase, IDisposable
         else
         {
             var terminalCommandRequest = new TerminalCommandRequest(
-                localFormattedCommand.Value,
+                localFormattedCommandValue,
                 _parentDirectoryName,
                 new Key<TerminalCommandRequest>(NewDotNetSolutionTerminalCommandRequestKey.Guid))
             {

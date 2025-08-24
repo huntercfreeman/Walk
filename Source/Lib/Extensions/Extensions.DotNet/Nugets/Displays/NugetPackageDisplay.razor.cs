@@ -81,13 +81,13 @@ public partial class NugetPackageDisplay : ComponentBase, IDisposable
         if (parentDirectory is null)
             return;
 
-        var formattedCommand = DotNetCliCommandFormatter.FormatAddNugetPackageReferenceToProject(
+        var formattedCommandValue = DotNetCliCommandFormatter.FormatAddNugetPackageReferenceToProject(
             targetProject.AbsolutePath.Value,
             targetNugetPackage.Id,
             targetNugetVersion);
 
         var terminalCommandRequest = new TerminalCommandRequest(
-            formattedCommand.Value,
+            formattedCommandValue,
             parentDirectory,
             AddNugetPackageTerminalCommandRequestKey)
         {

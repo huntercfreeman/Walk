@@ -8,10 +8,9 @@
 @{
 	var localTerminal = Terminal;
 	
-	var localFormatter = localTerminal.TerminalOutput.OutputFormatterList.FirstOrDefault(
-		x => x.Name == nameof(TerminalOutputFormatterExpand));
+	var localFormatter = localTerminal;
 	
-	var workingDirectory = localTerminal.TerminalInteractive.WorkingDirectory
+	var workingDirectory = localTerminal.WorkingDirectory
 		?? "null";
 	
 	var paddingForWorkingDirectoryText = 2;
@@ -19,30 +18,23 @@
 }
 
 <div class="di_ide_new-terminal-panel">
-	@if (localFormatter is not TerminalOutputFormatterExpand terminalOutputFormatterExpand)
-	{
-		<text>@nameof(ITerminalOutputFormatter) was not nameof(TerminalOutputFormatterExpand)</text>
-	}
-	else
-	{
-		<div style="height: calc(100% - 2em);">
-			<TextEditorViewModelSlimDisplay TextEditorViewModelKey="terminalOutputFormatterExpand.TextEditorViewModelKey"
-										    ViewModelDisplayOptions="_textEditorViewModelDisplayOptions" />
-		</div>
-	
-		<div style="height: 2em; display: flex;">
-			<input type="text"
-				   style="width: @(workingDirectoryTextWidth)ch; height: 100%;"
-				   title="Working directory"
-				   readonly
-				   value="@workingDirectory" />
-				   
-			<input type="text"
-				   style="width: calc(100% - @(workingDirectoryTextWidth)ch); height: 100%;"
-				   title="Command"
-				   @bind="CommandUiInputBinding"
-				   @bind:event="oninput"
-				   @onkeydown="HandleOnKeyDown" />
-		</div>
-	}
+	<div style="height: calc(100% - 2em);">
+		<TextEditorViewModelSlimDisplay TextEditorViewModelKey="localTerminal.TextEditorViewModelKey"
+									    ViewModelDisplayOptions="_textEditorViewModelDisplayOptions" />
+	</div>
+
+	<div style="height: 2em; display: flex;">
+		<input type="text"
+			   style="width: @(workingDirectoryTextWidth)ch; height: 100%;"
+			   title="Working directory"
+			   readonly
+			   value="@workingDirectory" />
+			   
+		<input type="text"
+			   style="width: calc(100% - @(workingDirectoryTextWidth)ch); height: 100%;"
+			   title="Command"
+			   @bind="CommandUiInputBinding"
+			   @bind:event="oninput"
+			   @onkeydown="HandleOnKeyDown" />
+	</div>
 </div>

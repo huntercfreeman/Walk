@@ -70,14 +70,14 @@ public partial class TerminalOutputTextEditorExpandDisplay : ComponentBase, IDis
         {
             if (_previousTerminal is not null)
             {
-                _previousTerminal.TerminalInteractive.WorkingDirectoryChanged -= OnWorkingDirectoryChanged;
-                _previousTerminal.TerminalOutput.OnWriteOutput -= OnWriteOutput;
+                _previousTerminal.WorkingDirectoryChanged -= OnWorkingDirectoryChanged;
+                _previousTerminal.OnWriteOutput -= OnWriteOutput;
             }
             
             if (nextTerminal is not null)
             {
-                nextTerminal.TerminalInteractive.WorkingDirectoryChanged += OnWorkingDirectoryChanged;
-                nextTerminal.TerminalOutput.OnWriteOutput += OnWriteOutput;
+                nextTerminal.WorkingDirectoryChanged += OnWorkingDirectoryChanged;
+                nextTerminal.OnWriteOutput += OnWriteOutput;
             }
             
             // TODO: Is it possible for the Dispose() method to be invoked prior to...
@@ -121,7 +121,7 @@ public partial class TerminalOutputTextEditorExpandDisplay : ComponentBase, IDis
         {
             if (_terminalCommandRequestHistory is null)
             {
-                _terminalCommandRequestHistory = Terminal.TerminalInteractive.GetTerminalCommandRequestHistory();
+                _terminalCommandRequestHistory = Terminal.GetTerminalCommandRequestHistory();
                 _indexHistory = 0;
                 
                 var commandAtIndex = GetTerminalCommandRequestAtIndexHistory(
@@ -182,20 +182,14 @@ public partial class TerminalOutputTextEditorExpandDisplay : ComponentBase, IDis
         {
             IdeService.TextEditorService.WorkerArbitrary.PostUnique(editContext =>
             {
-                var formatter = Terminal.TerminalOutput.OutputFormatterList.FirstOrDefault(
-                    x => x.Name == nameof(TerminalOutputFormatterExpand));
-                    
-                if (formatter is not TerminalOutputFormatterExpand terminalOutputFormatterExpand)
-                    return ValueTask.CompletedTask;
-                
-                var modelModifier = editContext.GetModelModifier(terminalOutputFormatterExpand.TextEditorModelResourceUri);
-                var viewModelModifier = editContext.GetViewModelModifier(terminalOutputFormatterExpand.TextEditorViewModelKey);
+                var localTerminal = Terminal;
+            
+                var modelModifier = editContext.GetModelModifier(localTerminal.TextEditorModelResourceUri);
+                var viewModelModifier = editContext.GetViewModelModifier(localTerminal.TextEditorViewModelKey);
 
                 if (modelModifier is null || viewModelModifier is null)
                     return ValueTask.CompletedTask;
 
-                var localTerminal = Terminal;
-                
                 var showingFinalLine = false;
 
                 if (viewModelModifier.Virtualization.Count > 0)
@@ -205,8 +199,7 @@ public partial class TerminalOutputTextEditorExpandDisplay : ComponentBase, IDis
                         showingFinalLine = true;
                 }
 
-                var outputFormatted = (TerminalOutputFormattedTextEditor)localTerminal.TerminalOutput
-                    .GetOutputFormatted(nameof(TerminalOutputFormatterExpand));
+                var outputFormatted = (TerminalOutputFormattedTextEditor)localTerminal.GetOutputFormatted();
                 
                 modelModifier.SetContent(outputFormatted.Text);
                 
@@ -256,7 +249,7 @@ public partial class TerminalOutputTextEditorExpandDisplay : ComponentBase, IDis
                 }  
                 
                 var compilerServiceResource = modelModifier.PersistentState.CompilerService.GetResource(
-                    terminalOutputFormatterExpand.TextEditorModelResourceUri);
+                    localTerminal.TextEditorModelResourceUri);
 
                 if (compilerServiceResource is TerminalResource terminalResource)
                 {
@@ -290,7 +283,7 @@ public partial class TerminalOutputTextEditorExpandDisplay : ComponentBase, IDis
     {
         var localPreviousTerminal = _previousTerminal;
     
-        localPreviousTerminal.TerminalInteractive.WorkingDirectoryChanged -= OnWorkingDirectoryChanged;
-        localPreviousTerminal.TerminalOutput.OnWriteOutput -= OnWriteOutput;
+        localPreviousTerminal.WorkingDirectoryChanged -= OnWorkingDirectoryChanged;
+        localPreviousTerminal.OnWriteOutput -= OnWriteOutput;
     }
 }

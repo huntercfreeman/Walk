@@ -96,11 +96,11 @@ public partial class CSharpProjectFormDisplay : ComponentBase, IDisposable
             _viewModel.IsReadingProjectTemplates = true;
             await InvokeAsync(StateHasChanged);
 
-            var formattedCommand = DotNetCliCommandFormatter.FormatDotnetNewList();
+            var formattedCommandValue = DotNetCliCommandFormatter.FormatDotnetNewList();
             var generalTerminal = DotNetService.IdeService.GetTerminalState().GeneralTerminal;
                 
             var terminalCommandRequest = new TerminalCommandRequest(
-                formattedCommand.Value,
+                formattedCommandValue,
                 DotNetService.IdeService.CommonService.EnvironmentProvider.HomeDirectoryAbsolutePath.Value,
                 new Key<TerminalCommandRequest>(_viewModel.LoadProjectTemplatesTerminalCommandRequestKey.Guid))
             {
@@ -131,11 +131,11 @@ public partial class CSharpProjectFormDisplay : ComponentBase, IDisposable
             _viewModel.IsReadingProjectTemplates = true;
             await InvokeAsync(StateHasChanged);
 
-            var formattedCommand = DotNetCliCommandFormatter.FormatDotnetNewListDeprecated();
+            var formattedCommandValue = DotNetCliCommandFormatter.FormatDotnetNewListDeprecated();
             var generalTerminal = DotNetService.IdeService.GetTerminalState().GeneralTerminal;
 
             var terminalCommandRequest = new TerminalCommandRequest(
-                formattedCommand.Value,
+                formattedCommandValue,
                 DotNetService.IdeService.TextEditorService.CommonService.EnvironmentProvider.HomeDirectoryAbsolutePath.Value,
                 new Key<TerminalCommandRequest>(_viewModel.LoadProjectTemplatesTerminalCommandRequestKey.Guid))
             {
@@ -187,14 +187,14 @@ public partial class CSharpProjectFormDisplay : ComponentBase, IDisposable
             var generalTerminal = DotNetService.IdeService.GetTerminalState().GeneralTerminal;
 
             var terminalCommandRequest = new TerminalCommandRequest(
-                immutableView.FormattedNewCSharpProjectCommand.Value,
+                immutableView.FormattedNewCSharpProjectCommandValue,
                 immutableView.ParentDirectoryNameValue,
                 new Key<TerminalCommandRequest>(immutableView.NewCSharpProjectTerminalCommandRequestKey.Guid))
             {
                 ContinueWithFunc = parsedCommand =>
                 {
                     var terminalCommandRequest = new TerminalCommandRequest(
-                        immutableView.FormattedAddExistingProjectToSolutionCommand.Value,
+                        immutableView.FormattedAddExistingProjectToSolutionCommandValue,
                         immutableView.ParentDirectoryNameValue,
                         new Key<TerminalCommandRequest>(immutableView.AddCSharpProjectToSolutionTerminalCommandRequestKey.Guid))
                     {

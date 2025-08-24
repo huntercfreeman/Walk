@@ -1,216 +1,277 @@
+using System.Text;
 using Walk.Common.RazorLib.FileSystems.Models;
-using Walk.Ide.RazorLib.CommandLines.Models;
 
 namespace Walk.Extensions.DotNet.CommandLines.Models;
 
 /// <summary>
-/// TODO: The terminal code was rewritten, I think we need to change this code
-///       to wrap arguments in quotes? I don't think CliWrap is receiving
-///       the arguments the same way as it was when just left it to CliWrap to do the wrapping.
-///
-/// Any values given will NOT be wrapped in quotes internally at this step.
-/// Later, if one uses CliWrap, then at that point they will be wrapped in quotes.
+/// Any values given will be wrapped in quotes internally at this step.
 /// </summary>
 public static class DotNetCliCommandFormatter
 {
     public const string DOT_NET_CLI_TARGET_FILE_NAME = "dotnet";
 
-    public static FormattedCommand FormatStartProjectWithoutDebugging(AbsolutePath projectAbsolutePath)
+    public static string FormatStartProjectWithoutDebugging(AbsolutePath projectAbsolutePath)
     {
         return FormatStartProjectWithoutDebugging(projectAbsolutePath.Value);
     }
 
-    public static FormattedCommand FormatStartProjectWithoutDebugging(string projectPath)
+    public static string FormatStartProjectWithoutDebugging(string projectPath)
     {
-        return new FormattedCommand(DOT_NET_CLI_TARGET_FILE_NAME, new[]
-        {
-            "run",
-            "--project",
-            projectPath
-        });
+        var stringBuilder = new StringBuilder();
+        
+        stringBuilder.Append(DOT_NET_CLI_TARGET_FILE_NAME);
+        stringBuilder.Append(" run");
+        stringBuilder.Append(" --project \"");
+        stringBuilder.Append(projectPath);
+        stringBuilder.Append("\"");
+        
+        return stringBuilder.ToString();
     }
 
-    public static FormattedCommand FormatDotnetNewSln(string solutionName)
+    public static string FormatDotnetNewSln(string solutionName)
     {
-        return new FormattedCommand(DOT_NET_CLI_TARGET_FILE_NAME, new[]
-        {
-            "new",
-            "sln",
-            "-o",
-            solutionName
-        });
+        var stringBuilder = new StringBuilder();
+    
+        stringBuilder.Append(DOT_NET_CLI_TARGET_FILE_NAME);
+        stringBuilder.Append(" new");
+        stringBuilder.Append(" sln");
+        stringBuilder.Append(" -o \"");
+        stringBuilder.Append(solutionName);
+        stringBuilder.Append("\"");
+        
+        return stringBuilder.ToString();
     }
 
-    public static FormattedCommand FormatDotnetNewCSharpProject(
+    public static string FormatDotnetNewCSharpProject(
         string projectTemplateName,
         string cSharpProjectName,
-        string optionalParameters)
+        string manuallyDoubleQuotedOptionalParameters)
     {
-        var argumentsList = new List<string>
-        {
-            "new",
-            projectTemplateName,
-            "-o",
-            cSharpProjectName
-        };
+        var stringBuilder = new StringBuilder();
+        
+        stringBuilder.Append(DOT_NET_CLI_TARGET_FILE_NAME);
+        stringBuilder.Append(" new \"");
+        stringBuilder.Append(projectTemplateName);
+        stringBuilder.Append("\" -o \"");
+        stringBuilder.Append(cSharpProjectName);
+        stringBuilder.Append("\"");
+    
+        if (!string.IsNullOrWhiteSpace(manuallyDoubleQuotedOptionalParameters))
+            stringBuilder.Append(manuallyDoubleQuotedOptionalParameters);
 
-        if (!string.IsNullOrWhiteSpace(optionalParameters))
-            argumentsList.Add(optionalParameters);
-
-        return new FormattedCommand(DOT_NET_CLI_TARGET_FILE_NAME, argumentsList);
+        return stringBuilder.ToString();
     }
 
-    public static FormattedCommand FormatAddExistingProjectToSolution(
+    public static string FormatAddExistingProjectToSolution(
         string solutionAbsolutePathString,
         string cSharpProjectPath)
     {
-        return new FormattedCommand(DOT_NET_CLI_TARGET_FILE_NAME, new[]
-        {
-            "sln",
-            solutionAbsolutePathString,
-            "add",
-            cSharpProjectPath
-        });
+        var stringBuilder = new StringBuilder();
+        
+        stringBuilder.Append(DOT_NET_CLI_TARGET_FILE_NAME);
+        stringBuilder.Append(" sln \"");
+        stringBuilder.Append(solutionAbsolutePathString);
+        stringBuilder.Append("\" add \"");
+        stringBuilder.Append(cSharpProjectPath);
+        stringBuilder.Append("\"");
+        
+        return stringBuilder.ToString();
     }
 
-    public static FormattedCommand FormatRemoveCSharpProjectReferenceFromSolutionAction(
+    public static string FormatRemoveCSharpProjectReferenceFromSolutionAction(
         string solutionAbsolutePathString,
         string cSharpProjectAbsolutePathString)
     {
-        return new FormattedCommand(DOT_NET_CLI_TARGET_FILE_NAME, new[]
-        {
-            "sln",
-            solutionAbsolutePathString,
-            "remove",
-            cSharpProjectAbsolutePathString
-        });
+        var stringBuilder = new StringBuilder();
+        
+        stringBuilder.Append(DOT_NET_CLI_TARGET_FILE_NAME);
+        stringBuilder.Append(" sln \"");
+        stringBuilder.Append(solutionAbsolutePathString);
+        stringBuilder.Append("\" remove \"");
+        stringBuilder.Append(cSharpProjectAbsolutePathString);
+        stringBuilder.Append("\"");
+        
+        return stringBuilder.ToString();
     }
 
-    public static FormattedCommand FormatAddNugetPackageReferenceToProject(
+    public static string FormatAddNugetPackageReferenceToProject(
         string cSharpProjectAbsolutePathString,
         string nugetPackageId,
         string nugetPackageVersion)
     {
-        return new FormattedCommand(DOT_NET_CLI_TARGET_FILE_NAME, new[]
-        {
-            "add",
-            cSharpProjectAbsolutePathString,
-            "package",
-            nugetPackageId,
-            "--version",
-            nugetPackageVersion
-        });
+        var stringBuilder = new StringBuilder();
+        
+        stringBuilder.Append(DOT_NET_CLI_TARGET_FILE_NAME);
+        stringBuilder.Append(" add \"");
+        stringBuilder.Append(cSharpProjectAbsolutePathString);
+        stringBuilder.Append("\" package \"");
+        stringBuilder.Append(nugetPackageId);
+        stringBuilder.Append("\" --version \"");
+        stringBuilder.Append(nugetPackageVersion);
+        stringBuilder.Append("\"");
+        
+        return stringBuilder.ToString();
     }
 
-    public static FormattedCommand FormatRemoveNugetPackageReferenceFromProject(
+    public static string FormatRemoveNugetPackageReferenceFromProject(
         string cSharpProjectAbsolutePathString,
         string nugetPackageId)
     {
-        return new FormattedCommand(DOT_NET_CLI_TARGET_FILE_NAME, new[]
-        {
-            "remove",
-            cSharpProjectAbsolutePathString,
-            "package",
-            nugetPackageId
-        });
+        var stringBuilder = new StringBuilder();
+        
+        stringBuilder.Append(DOT_NET_CLI_TARGET_FILE_NAME);
+        stringBuilder.Append(" remove \"");
+        stringBuilder.Append(cSharpProjectAbsolutePathString);
+        stringBuilder.Append("\" package \"");
+        stringBuilder.Append(nugetPackageId);
+        stringBuilder.Append("\"");
+        
+        return stringBuilder.ToString();
     }
 
-    public static FormattedCommand FormatAddProjectToProjectReference(
+    public static string FormatAddProjectToProjectReference(
         string receivingProjectAbsolutePathString,
         string referenceProjectAbsolutePathString)
     {
-        return new FormattedCommand(DOT_NET_CLI_TARGET_FILE_NAME, new[]
-        {
-            "add",
-            receivingProjectAbsolutePathString,
-            "reference",
-            referenceProjectAbsolutePathString
-        });
+        var stringBuilder = new StringBuilder();
+        
+        stringBuilder.Append(DOT_NET_CLI_TARGET_FILE_NAME);
+        stringBuilder.Append(" add \"");
+        stringBuilder.Append(receivingProjectAbsolutePathString);
+        stringBuilder.Append("\" reference \"");
+        stringBuilder.Append(referenceProjectAbsolutePathString);
+        stringBuilder.Append("\"");
+    
+        return stringBuilder.ToString();
     }
 
-    public static FormattedCommand FormatRemoveProjectToProjectReference(
+    public static string FormatRemoveProjectToProjectReference(
         string modifyProjectAbsolutePathString,
         string referenceProjectAbsolutePathString)
     {
-        return new FormattedCommand(DOT_NET_CLI_TARGET_FILE_NAME, new[]
-        {
-            "remove",
-            modifyProjectAbsolutePathString,
-            "reference",
-            referenceProjectAbsolutePathString
-        });
+        var stringBuilder = new StringBuilder();
+    
+        stringBuilder.Append(DOT_NET_CLI_TARGET_FILE_NAME);
+        stringBuilder.Append(" remove \"");
+        stringBuilder.Append(modifyProjectAbsolutePathString);
+        stringBuilder.Append("\" reference \"");
+        stringBuilder.Append(referenceProjectAbsolutePathString);
+        stringBuilder.Append("\"");
+    
+        return stringBuilder.ToString();
     }
 
-    public static FormattedCommand FormatMoveProjectToSolutionFolder(
+    public static string FormatMoveProjectToSolutionFolder(
         string solutionAbsolutePathString,
         string projectToMoveAbsolutePathString,
         string solutionFolderPath)
     {
-        return new FormattedCommand(DOT_NET_CLI_TARGET_FILE_NAME, new[]
-        {
-            "sln",
-            solutionAbsolutePathString,
-            "add",
-            projectToMoveAbsolutePathString,
-            "--solution-folder",
-            solutionFolderPath,
-        });
+        var stringBuilder = new StringBuilder();
+        
+        stringBuilder.Append(DOT_NET_CLI_TARGET_FILE_NAME);
+        stringBuilder.Append(" sln \"");
+        stringBuilder.Append(solutionAbsolutePathString);
+        stringBuilder.Append("\" add \"");
+        stringBuilder.Append(projectToMoveAbsolutePathString);
+        stringBuilder.Append("\" --solution-folder \"");
+        stringBuilder.Append(solutionFolderPath);
+        stringBuilder.Append("\"");
+        
+        return stringBuilder.ToString();
     }
 
-    public static FormattedCommand FormatDotnetNewList() =>
-        new FormattedCommand(DOT_NET_CLI_TARGET_FILE_NAME, new[]
-        {
-            "new",
-            "list",
-        });
-
-    public static FormattedCommand FormatDotnetNewListDeprecated() =>
-        new FormattedCommand(DOT_NET_CLI_TARGET_FILE_NAME, new[]
-        {
-            "new",
-            "--list",
-        });
-
-    public static FormattedCommand FormatDotNetTestListTests() =>
-        new FormattedCommand(DOT_NET_CLI_TARGET_FILE_NAME, new[]
-        {
-            "test",
-            "-t",
-        });
-
-    public static FormattedCommand FormatDotNetTestByFullyQualifiedName(string fullyQualifiedName) =>
-        new FormattedCommand(DOT_NET_CLI_TARGET_FILE_NAME, new[]
-        {
-            "test",
-            "--filter",
-            $"FullyQualifiedName={fullyQualifiedName}",
-        });
-
-    public static FormattedCommand FormatDotnetBuildProject(string projectAbsolutePathString) =>
-        new FormattedCommand(DOT_NET_CLI_TARGET_FILE_NAME, new[]
-        {
-            "build",
-            projectAbsolutePathString,
-        });
-
-    public static FormattedCommand FormatDotnetCleanProject(string projectAbsolutePathString) =>
-        new FormattedCommand(DOT_NET_CLI_TARGET_FILE_NAME, new[]
-        {
-            "clean",
-            projectAbsolutePathString,
-        });
-
-    public static FormattedCommand FormatDotnetBuildSolution(string solutionAbsolutePathString) =>
-        new FormattedCommand(DOT_NET_CLI_TARGET_FILE_NAME, new[]
-        {
-            "build",
-            solutionAbsolutePathString,
-        });
-
-    public static FormattedCommand FormatDotnetCleanSolution(string solutionAbsolutePathString) =>
-        new FormattedCommand(DOT_NET_CLI_TARGET_FILE_NAME, new[]
-        {
-            "clean",
-            solutionAbsolutePathString,
-        });
+    public static string FormatDotnetNewList()
+    {
+        var stringBuilder = new StringBuilder();
+        
+        stringBuilder.Append(DOT_NET_CLI_TARGET_FILE_NAME);
+        stringBuilder.Append(" new");
+        stringBuilder.Append(" list");
+        
+        return stringBuilder.ToString();
+    }
+    
+    public static string FormatDotnetNewListDeprecated()
+    {
+        var stringBuilder = new StringBuilder();
+        
+        stringBuilder.Append(DOT_NET_CLI_TARGET_FILE_NAME);
+        stringBuilder.Append(" new");
+        stringBuilder.Append(" --list");
+        
+        return stringBuilder.ToString();
+    }
+    
+    public static string FormatDotNetTestListTests()
+    {
+        var stringBuilder = new StringBuilder();
+        
+        stringBuilder.Append(DOT_NET_CLI_TARGET_FILE_NAME);
+        stringBuilder.Append(" test");
+        stringBuilder.Append(" -t");
+        
+        return stringBuilder.ToString();
+    }
+    
+    public static string FormatDotNetTestByFullyQualifiedName(string fullyQualifiedName)
+    {
+        var stringBuilder = new StringBuilder();
+        
+        stringBuilder.Append(DOT_NET_CLI_TARGET_FILE_NAME);
+        stringBuilder.Append(" test");
+        stringBuilder.Append(" --filter");
+        stringBuilder.Append(" FullyQualifiedName=\"");
+        stringBuilder.Append(fullyQualifiedName);
+        stringBuilder.Append("\"");
+        
+        return stringBuilder.ToString();
+    }
+    
+    public static string FormatDotnetBuildProject(string projectAbsolutePathString)
+    {
+        var stringBuilder = new StringBuilder();
+        
+        stringBuilder.Append(DOT_NET_CLI_TARGET_FILE_NAME);
+        stringBuilder.Append(" build \"");
+        stringBuilder.Append(projectAbsolutePathString);
+        stringBuilder.Append("\"");
+        
+        return stringBuilder.ToString();
+    }
+    
+    public static string FormatDotnetCleanProject(string projectAbsolutePathString)
+    {
+        var stringBuilder = new StringBuilder();
+        
+        stringBuilder.Append(DOT_NET_CLI_TARGET_FILE_NAME);
+        stringBuilder.Append(" clean \"");
+        stringBuilder.Append(projectAbsolutePathString);
+        stringBuilder.Append("\"");
+        
+        return stringBuilder.ToString();
+    }
+    
+    public static string FormatDotnetBuildSolution(string solutionAbsolutePathString)
+    {
+        var stringBuilder = new StringBuilder();
+        
+        stringBuilder.Append(DOT_NET_CLI_TARGET_FILE_NAME);
+        stringBuilder.Append(" build \"");
+        stringBuilder.Append(solutionAbsolutePathString);
+        stringBuilder.Append("\"");
+        
+        return stringBuilder.ToString();
+    }
+    
+    public static string FormatDotnetCleanSolution(string solutionAbsolutePathString)
+    {
+        var stringBuilder = new StringBuilder();
+        
+        stringBuilder.Append(DOT_NET_CLI_TARGET_FILE_NAME);
+        stringBuilder.Append(" clean \"");
+        stringBuilder.Append(solutionAbsolutePathString);
+        stringBuilder.Append("\"");
+        
+        return stringBuilder.ToString();
+    }
 }

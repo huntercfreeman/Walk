@@ -1,7 +1,6 @@
 using Walk.Common.RazorLib.FileSystems.Models;
 using Walk.Common.RazorLib.Keys.Models;
 using Walk.CompilerServices.DotNetSolution.Models;
-using Walk.Ide.RazorLib.CommandLines.Models;
 using Walk.Ide.RazorLib.Terminals.Models;
 
 namespace Walk.Extensions.DotNet.CSharpProjects.Models;
@@ -23,8 +22,8 @@ public record CSharpProjectFormViewModelImmutable(
     string CSharpProjectNameDisplay,
     string OptionalParametersDisplay,
     string ParentDirectoryNameDisplay,
-    FormattedCommand FormattedNewCSharpProjectCommand,
-    FormattedCommand FormattedAddExistingProjectToSolutionCommand,
+    string FormattedNewCSharpProjectCommandValue,
+    string FormattedAddExistingProjectToSolutionCommandValue,
     Key<TerminalCommandRequest> NewCSharpProjectTerminalCommandRequestKey,
     Key<TerminalCommandRequest> AddCSharpProjectToSolutionTerminalCommandRequestKey,
     Key<TerminalCommandRequest> LoadProjectTemplatesTerminalCommandRequestKey,

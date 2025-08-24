@@ -118,7 +118,7 @@ public partial class DotNetService
         string fullyQualifiedName,
         string? directoryNameForTestDiscovery)
     {
-        var dotNetTestByFullyQualifiedNameFormattedCommand = DotNetCliCommandFormatter
+        var dotNetTestByFullyQualifiedNameFormattedCommandValue = DotNetCliCommandFormatter
             .FormatDotNetTestByFullyQualifiedName(fullyQualifiedName);
 
         if (string.IsNullOrWhiteSpace(directoryNameForTestDiscovery) ||
@@ -128,7 +128,7 @@ public partial class DotNetService
         }
 
         var terminalCommandRequest = new TerminalCommandRequest(
-            dotNetTestByFullyQualifiedNameFormattedCommand.Value,
+            dotNetTestByFullyQualifiedNameFormattedCommandValue,
             directoryNameForTestDiscovery,
             treeViewStringFragment.Item.DotNetTestByFullyQualifiedNameFormattedTerminalCommandRequestKey)
         {
@@ -272,7 +272,7 @@ public partial class DotNetService
             TerminalCommandRequest terminalCommandRequest;
 
             var slnFoundString = $"sln found: {solutionAbsolutePath.Value}";
-            var prefix = TerminalInteractive.RESERVED_TARGET_FILENAME_PREFIX + nameof(DotNetService);
+            var prefix = Terminal.RESERVED_TARGET_FILENAME_PREFIX + nameof(DotNetService);
 
             // Set 'generalTerminal' working directory
             terminalCommandRequest = new TerminalCommandRequest(
@@ -281,7 +281,7 @@ public partial class DotNetService
             {
                 BeginWithFunc = parsedCommand =>
                 {
-                    IdeService.GetTerminalState().GeneralTerminal.TerminalOutput.WriteOutput(
+                    IdeService.GetTerminalState().GeneralTerminal.WriteOutput(
                         parsedCommand,
                         // If newlines are added to this make sure to use '.ReplaceLineEndings("\n")' because the syntax highlighting and text editor are expecting this line ending.
                         new StandardOutputCommandEvent(slnFoundString));
@@ -297,7 +297,7 @@ public partial class DotNetService
             {
                 BeginWithFunc = parsedCommand =>
                 {
-                    IdeService.GetTerminalState().ExecutionTerminal.TerminalOutput.WriteOutput(
+                    IdeService.GetTerminalState().ExecutionTerminal.WriteOutput(
                         parsedCommand,
                         // If newlines are added to this make sure to use '.ReplaceLineEndings("\n")' because the syntax highlighting and text editor are expecting this line ending.
                         new StandardOutputCommandEvent(slnFoundString));
@@ -1007,11 +1007,11 @@ public partial class DotNetService
             return Task.CompletedTask;
         }
 
-        var formattedCommand = DotNetCliCommandFormatter.FormatStartProjectWithoutDebugging(
+        var formattedCommandValue = DotNetCliCommandFormatter.FormatStartProjectWithoutDebugging(
             project.AbsolutePath);
 
         var terminalCommandRequest = new TerminalCommandRequest(
-            formattedCommand.Value,
+            formattedCommandValue,
             ancestorDirectory,
             _newDotNetSolutionTerminalCommandRequestKey)
         {
