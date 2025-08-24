@@ -23,7 +23,6 @@ public sealed partial class TextEditorService
     private readonly IJSRuntime _jsRuntime;
 
     public TextEditorService(
-        WalkTextEditorConfig textEditorConfig,
         IJSRuntime jsRuntime,
         CommonService commonService)
     {
@@ -56,7 +55,6 @@ public sealed partial class TextEditorService
                 return Task.CompletedTask;
             });
         
-        TextEditorConfig = textEditorConfig;
         _jsRuntime = jsRuntime;
         JsRuntimeTextEditorApi = _jsRuntime.GetWalkTextEditorApi();
         
@@ -67,7 +65,6 @@ public sealed partial class TextEditorService
 
     public WalkTextEditorJavaScriptInteropApi JsRuntimeTextEditorApi { get; }
     public WalkCommonJavaScriptInteropApi JsRuntimeCommonApi => CommonService.JsRuntimeCommonApi;
-    public WalkTextEditorConfig TextEditorConfig { get; }
 
 #if DEBUG
     public string StorageKey => "di_te_text-editor-options-debug";

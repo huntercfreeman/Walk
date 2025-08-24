@@ -9,22 +9,14 @@ public static class ServiceCollectionExtensions
 {
     public static IServiceCollection AddWalkTextEditor(
         this IServiceCollection services,
-        WalkHostingInformation hostingInformation,
-        Func<WalkTextEditorConfig, WalkTextEditorConfig>? configure = null)
+        WalkHostingInformation hostingInformation)
     {
-        var textEditorConfig = new WalkTextEditorConfig();
-
-        if (configure is not null)
-            textEditorConfig = configure.Invoke(textEditorConfig);
-
-        if (textEditorConfig.AddWalkCommon)
-            services.AddWalkCommonServices(hostingInformation);
+        services.AddWalkCommonServices(hostingInformation);
 
         services
             .AddScoped<TextEditorService>(sp =>
             {
                 return new TextEditorService(
-                    textEditorConfig,
                     sp.GetRequiredService<IJSRuntime>(),
                     sp.GetRequiredService<CommonService>());
             });
