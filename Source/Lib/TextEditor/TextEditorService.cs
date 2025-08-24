@@ -2528,7 +2528,7 @@ public sealed partial class TextEditorService
             .ConfigureAwait(false);
     
         // TryShowViewModelFunc
-        await TryShowViewModel_Configured(new TryShowViewModelArgs(actualViewModelKey, Key<TextEditorGroup>.Empty, shouldSetFocusToEditor, CommonService, IdeBackgroundTaskApi))
+        await TryShowViewModel_Configured(actualViewModelKey, Key<TextEditorGroup>.Empty, shouldSetFocusToEditor)
             .ConfigureAwait(false);
         
         return actualViewModelKey;
@@ -2911,42 +2911,40 @@ public sealed partial class TextEditorService
         });
     }
     
-    public async Task<bool> TryShowViewModel_Configured(TryShowViewModelArgs tryShowViewModelArgs)
+    public async Task<bool> TryShowViewModel_Configured(
+        Key<TextEditorViewModel> viewModelKey,
+        Key<TextEditorGroup> groupKey,
+        bool shouldSetFocusToEditor)
     {
-        var viewModel = ViewModel_GetOrDefault(tryShowViewModelArgs.ViewModelKey);
+        var viewModel = ViewModel_GetOrDefault(viewModelKey);
         if (viewModel is null)
             return false;
 
         if (viewModel.PersistentState.Category == new Category("main") &&
-            tryShowViewModelArgs.GroupKey == Key<TextEditorGroup>.Empty)
+            groupKey == Key<TextEditorGroup>.Empty)
         {
-            tryShowViewModelArgs = new TryShowViewModelArgs(
-                tryShowViewModelArgs.ViewModelKey,
-                TextEditorService.EditorTextEditorGroupKey,
-                tryShowViewModelArgs.ShouldSetFocusToEditor,
-                tryShowViewModelArgs.CommonService,
-                tryShowViewModelArgs.IdeBackgroundTaskApi);
+            groupKey = TextEditorService.EditorTextEditorGroupKey;
         }
 
-        if (tryShowViewModelArgs.ViewModelKey == Key<TextEditorViewModel>.Empty ||
-            tryShowViewModelArgs.GroupKey == Key<TextEditorGroup>.Empty)
+        if (viewModelKey == Key<TextEditorViewModel>.Empty ||
+            groupKey == Key<TextEditorGroup>.Empty)
         {
             return false;
         }
 
         Group_AddViewModel(
-            tryShowViewModelArgs.GroupKey,
-            tryShowViewModelArgs.ViewModelKey);
+            groupKey,
+            viewModelKey);
 
         Group_SetActiveViewModel(
-            tryShowViewModelArgs.GroupKey,
-            tryShowViewModelArgs.ViewModelKey);
+            groupKey,
+            viewModelKey);
             
-        if (tryShowViewModelArgs.ShouldSetFocusToEditor)
+        if (shouldSetFocusToEditor)
         {
             WorkerArbitrary.PostUnique(editContext =>
             {
-                var viewModelModifier = editContext.GetViewModelModifier(tryShowViewModelArgs.ViewModelKey);
+                var viewModelModifier = editContext.GetViewModelModifier(viewModelKey);
                 return viewModel.FocusAsync();
             });
         }
