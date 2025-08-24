@@ -29,16 +29,24 @@ public partial class NotificationDisplay : ComponentBase, IDisposable
     private readonly CancellationTokenSource _notificationOverlayCancellationTokenSource = new();
     private readonly Key<IDialog> _dialogKey = Key<IDialog>.NewKey();
 
-    private string CssStyleString => GetCssStyleString();
-
-    private string IconSizeInPixelsCssValue =>
-        $"{CommonService.GetAppOptionsState().Options.IconSizeInPixels.ToCssValue()}";
-
-    private string NotificationTitleCssStyleString =>
-        "width: calc(100% -" +
-        $" ({COUNT_OF_CONTROL_BUTTONS} * ({IconSizeInPixelsCssValue}px)) -" +
-        $" ({COUNT_OF_CONTROL_BUTTONS} * ({CommonFacts.HtmlFacts_Button_ButtonPaddingHorizontalTotalInPixelsCssValue})));";
-
+    private string GetNotificationTitleCssStyleString()
+    {
+        CommonService.UiStringBuilder.Clear();
+        
+        CommonService.UiStringBuilder.Append("width: calc(100% -");
+        CommonService.UiStringBuilder.Append(" (");
+        CommonService.UiStringBuilder.Append(COUNT_OF_CONTROL_BUTTONS);
+        CommonService.UiStringBuilder.Append(" * (");
+        CommonService.UiStringBuilder.Append(CommonService.GetAppOptionsState().Options.IconSizeInPixels.ToCssValue());
+        CommonService.UiStringBuilder.Append("px)) - (");
+        CommonService.UiStringBuilder.Append(COUNT_OF_CONTROL_BUTTONS);
+        CommonService.UiStringBuilder.Append(" * (");
+        CommonService.UiStringBuilder.Append(CommonFacts.HtmlFacts_Button_ButtonPaddingHorizontalTotalInPixelsCssValue);
+        CommonService.UiStringBuilder.Append(")));");
+    
+        return CommonService.UiStringBuilder.ToString();
+    }
+    
     protected override Task OnAfterRenderAsync(bool firstRender)
     {
         if (firstRender)
@@ -56,7 +64,7 @@ public partial class NotificationDisplay : ComponentBase, IDisposable
                                 _notificationOverlayCancellationTokenSource.Token)
                             .ConfigureAwait(false);
 
-                        await HandleShouldNoLongerRender(wasCausedByUiEvent: false);
+                        await HandleShouldNoLongerRender();
                     }
                     catch (Exception e)
                     {
@@ -72,19 +80,27 @@ public partial class NotificationDisplay : ComponentBase, IDisposable
 
     private string GetCssStyleString()
     {
-        var styleBuilder = new StringBuilder();
+        var styleBuilder = CommonService.UiStringBuilder;
+        CommonService.UiStringBuilder.Clear();
 
         var widthInFontWidthInvariantCulture = WIDTH_IN_FONT_WIDTH.ToCssValue();
         //var widthInPixelsInvariantCulture = WIDTH_IN_PIXELS.ToCssValue();
         var heightInFontHeightInvariantCulture = HEIGHT_IN_FONT_HEIGHT.ToCssValue();
         //var heightInPixelsInvariantCulture = HEIGHT_IN_PIXELS.ToCssValue();
 
-        styleBuilder.Append($" width: {widthInFontWidthInvariantCulture}ch;");
-        styleBuilder.Append($" height: {heightInFontHeightInvariantCulture}em;");
+        styleBuilder.Append(" width: ");
+        styleBuilder.Append(widthInFontWidthInvariantCulture);
+        styleBuilder.Append("ch;");
+        
+        styleBuilder.Append(" height: ");
+        styleBuilder.Append(heightInFontHeightInvariantCulture);
+        styleBuilder.Append("em;");
 
         var rightOffsetInPixelsInvariantCulture = RIGHT_OFFSET_IN_PIXELS.ToCssValue();
 
-        styleBuilder.Append($" right: {rightOffsetInPixelsInvariantCulture}px;");
+        styleBuilder.Append($" right: ");
+        styleBuilder.Append(rightOffsetInPixelsInvariantCulture);
+        styleBuilder.Append("px;");
 
         var bottomOffsetDueToHeightInFontHeight = HEIGHT_IN_FONT_HEIGHT * Index;
         //var bottomOffsetDueToHeight = HEIGHT_IN_FONT_HEIGHT * Index;
@@ -110,22 +126,30 @@ public partial class NotificationDisplay : ComponentBase, IDisposable
 
         //var totalBottomOffsetInvariantCulture = totalBottomOffset.ToCssValue();
 
-        styleBuilder.Append($" bottom: calc({bottomOffsetDueToHeightInFontHeightInvariantCulture}em + {bottomOffsetDueToBottomOffsetInPixelsInvariantCulture}px + {panelBottomHeight}) ;");
+        styleBuilder.Append(" bottom: calc(");
+        styleBuilder.Append(bottomOffsetDueToHeightInFontHeightInvariantCulture);
+        styleBuilder.Append("em + ");
+        styleBuilder.Append(bottomOffsetDueToBottomOffsetInPixelsInvariantCulture);
+        styleBuilder.Append("px + ");
+        styleBuilder.Append(panelBottomHeight);
+        styleBuilder.Append(") ;");
 
         return styleBuilder.ToString();
     }
 
-    private async Task HandleShouldNoLongerRender(bool wasCausedByUiEvent)
+    private async Task HandleShouldNoLongerRender()
     {
         CommonService.Notification_ReduceDisposeAction(Notification.DynamicViewModelKey);
+    }
+    
+    private async Task Ui_HandleShouldNoLongerRender()
+    {
+        HandleShouldNoLongerRender();
             
-        if (wasCausedByUiEvent)
-        {
-            await CommonService.JsRuntimeCommonApi
-                .FocusHtmlElementById(Notification.SetFocusOnCloseElementId
-                     ?? IDynamicViewModel.DefaultSetFocusOnCloseElementId)
-                .ConfigureAwait(false);
-        }
+        await CommonService.JsRuntimeCommonApi
+            .FocusHtmlElementById(Notification.SetFocusOnCloseElementId
+                 ?? IDynamicViewModel.DefaultSetFocusOnCloseElementId)
+            .ConfigureAwait(false);
     }
 
     private Task ChangeNotificationToDialog()
@@ -141,7 +165,7 @@ public partial class NotificationDisplay : ComponentBase, IDisposable
 
         CommonService.Dialog_ReduceRegisterAction(dialogRecord);
 
-        return HandleShouldNoLongerRender(wasCausedByUiEvent: false);
+        return HandleShouldNoLongerRender();
     }
 
     public void Dispose()

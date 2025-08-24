@@ -18,6 +18,10 @@ public partial class CommonService
     
     public bool __TaskCompletionSourceWasCreated { get; set; }
     
+    /// <summary>
+    /// Clear() prior to use.
+    /// Only use from "UI Thread".
+    /// </summary>
     public StringBuilder UiStringBuilder { get; } = new();
     
     public WalkCommonConfig CommonConfig { get; }
