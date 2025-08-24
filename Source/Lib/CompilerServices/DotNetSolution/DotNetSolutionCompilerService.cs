@@ -27,10 +27,6 @@ public sealed class DotNetSolutionCompilerService : ICompilerService
         _textEditorService = textEditorService;
     }
 
-    public event Action? ResourceRegistered;
-    public event Action? ResourceParsed;
-    public event Action? ResourceDisposed;
-
     public IReadOnlyList<ICompilerServiceResource> CompilerServiceResources { get; }
     
     public IReadOnlyDictionary<string, TypeDefinitionNode> AllTypeDefinitions { get; }
@@ -47,8 +43,6 @@ public sealed class DotNetSolutionCompilerService : ICompilerService
 
         if (shouldTriggerResourceWasModified)
             ResourceWasModified(resourceUri, Array.Empty<TextEditorTextSpan>());
-            
-        ResourceRegistered?.Invoke();
     }
     
     public void DisposeResource(ResourceUri resourceUri)
@@ -57,8 +51,6 @@ public sealed class DotNetSolutionCompilerService : ICompilerService
         {
             _resourceMap.Remove(resourceUri);
         }
-
-        ResourceDisposed?.Invoke();
     }
 
     public void ResourceWasModified(ResourceUri resourceUri, IReadOnlyList<TextEditorTextSpan> editTextSpansList)
@@ -178,8 +170,6 @@ public sealed class DotNetSolutionCompilerService : ICompilerService
             editContext,
             modelModifier,
             syntaxTokenList.Select(x => x.TextSpan));
-
-        ResourceParsed?.Invoke();
         
         return ValueTask.CompletedTask;
     }

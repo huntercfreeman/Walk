@@ -90,10 +90,6 @@ public sealed class CSharpCompilerService : IExtendedCompilerService
         StreamReaderTupleCache.Clear();
     }
 
-    public event Action? ResourceRegistered;
-    public event Action? ResourceParsed;
-    public event Action? ResourceDisposed;
-
     public IReadOnlyList<ICompilerServiceResource> CompilerServiceResources { get; }
     
     public IReadOnlyDictionary<string, TypeDefinitionNode> AllTypeDefinitions { get; }
@@ -108,14 +104,11 @@ public sealed class CSharpCompilerService : IExtendedCompilerService
             
         if (shouldTriggerResourceWasModified)
             ResourceWasModified(resourceUri, Array.Empty<TextEditorTextSpan>());
-            
-        ResourceRegistered?.Invoke();
     }
     
     public void DisposeResource(ResourceUri resourceUri)
     {
         __CSharpBinder.RemoveCompilationUnit(resourceUri);
-        ResourceDisposed?.Invoke();
     }
 
     public void ResourceWasModified(ResourceUri resourceUri, IReadOnlyList<TextEditorTextSpan> editTextSpansList)
@@ -1477,8 +1470,6 @@ public sealed class CSharpCompilerService : IExtendedCompilerService
             _currentFileBeingParsedTuple = (null, null);
 
             ClearStreamReaderTupleCache();
-
-            ResourceParsed?.Invoke();
         }
         
         return ValueTask.CompletedTask;

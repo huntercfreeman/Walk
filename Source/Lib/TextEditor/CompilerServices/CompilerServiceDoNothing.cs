@@ -9,10 +9,6 @@ namespace Walk.TextEditor.RazorLib.CompilerServices;
 
 public class CompilerServiceDoNothing : ICompilerService
 {
-    public event Action? ResourceRegistered;
-    public event Action? ResourceParsed;
-    public event Action? ResourceDisposed;
-
     public IReadOnlyList<ICompilerServiceResource> CompilerServiceResources { get; }
 
     public void RegisterResource(ResourceUri resourceUri, bool shouldTriggerResourceWasModified)
