@@ -43,7 +43,7 @@ public class TerminalOutputFormatterExpand : ITerminalOutputFormatter
         var outSymbolList = new List<Symbol>();
         var outTextSpanList = new List<TextEditorTextSpan>();
         
-        var parsedCommandList = _terminal.TerminalOutput.GetParsedCommandList();
+        var parsedCommandList = _terminal.GetParsedCommandList();
         
         var outputBuilder = new StringBuilder();
         

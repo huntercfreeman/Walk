@@ -8,8 +8,7 @@
 @{
 	var localTerminal = Terminal;
 	
-	var localFormatter = localTerminal.TerminalOutput.OutputFormatterList.FirstOrDefault(
-		x => x.Name == nameof(TerminalOutputFormatterExpand));
+	var localFormatter = localTerminal.OutputFormatter;
 	
 	var workingDirectory = localTerminal.WorkingDirectory
 		?? "null";

@@ -1,3 +1,5 @@
+using CliWrap.EventStream;
+using Walk.Common.RazorLib.Keys.Models;
 using Walk.Common.RazorLib.Keys.Models;
 
 namespace Walk.Ide.RazorLib.Terminals.Models;
@@ -7,7 +9,6 @@ public interface ITerminal : IDisposable
 {
     public Key<ITerminal> Key { get; }
     public string DisplayName { get; }
-    public ITerminalOutput TerminalOutput { get; }
     public bool HasExecutingProcess { get; }
     
     public void EnqueueCommand(TerminalCommandRequest terminalCommandRequest);
@@ -66,4 +67,30 @@ public interface ITerminal : IDisposable
     /// </summary>
     public Task<TerminalCommandParsed?> TryHandleCommand(TerminalCommandRequest terminalCommandRequest);
     /* End ITerminalInteractive */
+    
+    /* Start ITerminalOutput */
+    public ITerminalOutputFormatter OutputFormatter { get; }
+
+    /// <summary>
+    /// TODO: Make this 'Action<Key<TerminalCommandParsed>>?' so one can
+    ///       track the output of a specific command as it is being executed?
+    /// </summary>
+    public event Action? OnWriteOutput;
+    
+    public void WriteOutput(TerminalCommandParsed terminalCommandParsed, CommandEvent commandEvent);
+    
+    /// <summary>Guaranteed to clear the output</summary>
+    public void ClearOutput();
+    
+    /// <summary>Guaranteed to clear the output, but will keep the most recent command</summary>
+    public void ClearOutputExceptMostRecentCommand();
+    
+    /// <summary>Conditionally clear the output</summary>
+    public void ClearHistoryWhenExistingOutputTooLong();
+    
+    public ITerminalOutputFormatted GetOutputFormatted(string terminalOutputFormatterName);
+    public TerminalCommandParsed? GetParsedCommandOrDefault(Key<TerminalCommandRequest> terminalCommandRequestKey);
+    public List<TerminalCommandParsed> GetParsedCommandList();
+    public int GetParsedCommandListCount();
+    /* End ITerminalOutput */
 }

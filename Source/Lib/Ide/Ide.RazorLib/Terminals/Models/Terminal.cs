@@ -7,6 +7,7 @@ using Walk.Common.RazorLib.BackgroundTasks.Models;
 using Walk.Common.RazorLib.Keys.Models;
 using Walk.Common.RazorLib.Notifications.Models;
 using Walk.Common.RazorLib.Reactives.Models;
+using Walk.Common.RazorLib.Keys.Models;
 using Walk.TextEditor.RazorLib.CompilerServices;
 using Walk.TextEditor.RazorLib.Lexers.Models;
 
@@ -24,11 +25,9 @@ public class Terminal : ITerminal, IBackgroundTaskGroup
 
     public Terminal(
         string displayName,
-        Func<Terminal, ITerminalOutput> terminalOutputFactory,
         IdeService ideService)
     {
         DisplayName = displayName;
-        TerminalOutput = terminalOutputFactory.Invoke(this);
         
         _ideService = ideService;
         
@@ -39,6 +38,10 @@ public class Terminal : ITerminal, IBackgroundTaskGroup
                 _ideService.Terminal_HasExecutingProcess_StateHasChanged();
                 return Task.CompletedTask;
             });
+    
+        OutputFormatter = new TerminalOutputFormatterExpand(
+            this,
+            ideService.TextEditorService);
     }
 
     public Key<IBackgroundTaskGroup> BackgroundTaskKey { get; } = Key<IBackgroundTaskGroup>.NewKey();
@@ -51,7 +54,6 @@ public class Terminal : ITerminal, IBackgroundTaskGroup
     public static readonly TimeSpan DelaySetHasExecutingProcess = TimeSpan.FromMilliseconds(200);
 
     public string DisplayName { get; }
-    public ITerminalOutput TerminalOutput { get; }
 
     private CancellationTokenSource _commandCancellationTokenSource = new();
 
@@ -100,11 +102,11 @@ public class Terminal : ITerminal, IBackgroundTaskGroup
         {
             if (localHasExecutingProcess)
             {
-                TerminalOutput.ClearOutputExceptMostRecentCommand();
+                ClearOutputExceptMostRecentCommand();
             }
             else
             {
-                TerminalOutput.ClearOutput();
+                ClearOutput();
             }
             
             return Task.CompletedTask;
@@ -113,7 +115,7 @@ public class Terminal : ITerminal, IBackgroundTaskGroup
 
     private async ValueTask HandleCommand(TerminalCommandRequest terminalCommandRequest)
     {
-        TerminalOutput.ClearHistoryWhenExistingOutputTooLong();
+        ClearHistoryWhenExistingOutputTooLong();
     
         var parsedCommand = await TryHandleCommand(terminalCommandRequest);
         ActiveTerminalCommandParsed = parsedCommand;
@@ -156,11 +158,11 @@ public class Terminal : ITerminal, IBackgroundTaskGroup
         {
             // TODO: This will erroneously write 'StartedCommandEvent' out twice...
             //       ...unless a check is added to see WHEN the exception was thrown.
-            TerminalOutput.WriteOutput(
+            WriteOutput(
                 parsedCommand,
                 new StartedCommandEvent(-1));
         
-            TerminalOutput.WriteOutput(
+            WriteOutput(
                 parsedCommand,
                 new StandardErrorCommandEvent(
                     parsedCommand.SourceTerminalCommandRequest.CommandText +
@@ -194,7 +196,7 @@ public class Terminal : ITerminal, IBackgroundTaskGroup
     
     private void HandleOutput(CommandEvent commandEvent)
     {
-        TerminalOutput.WriteOutput(ActiveTerminalCommandParsed, commandEvent);
+        WriteOutput(ActiveTerminalCommandParsed, commandEvent);
     }
 
     public void KillProcess()
@@ -242,7 +244,11 @@ public class Terminal : ITerminal, IBackgroundTaskGroup
 
     public void Dispose()
     {
-        TerminalOutput.Dispose();
+        var outputFormatter = OutputFormatter;
+        if (outputFormatter is not null)
+        {
+            outputFormatter.Dispose();
+        }
     }
     
     /* Start TerminalInteractive */
@@ -281,7 +287,7 @@ public class Terminal : ITerminal, IBackgroundTaskGroup
         
         if (parsedCommand.TargetFileName.StartsWith(RESERVED_TARGET_FILENAME_PREFIX))
         {
-            TerminalOutput.WriteOutput(
+            WriteOutput(
                 parsedCommand,
                 new StartedCommandEvent(-1));
         
@@ -292,18 +298,18 @@ public class Terminal : ITerminal, IBackgroundTaskGroup
         switch (parsedCommand.TargetFileName)
         {
             case "cd":
-                TerminalOutput.WriteOutput(
+                WriteOutput(
                     parsedCommand,
                     new StartedCommandEvent(-1));
             
                 SetWorkingDirectory(parsedCommand.Arguments);
                 
-                TerminalOutput.WriteOutput(
+                WriteOutput(
                     parsedCommand,
                     new StandardOutputCommandEvent($"WorkingDirectory set to: '{parsedCommand.Arguments}'\n"));
                 return null;
             case "clear":
-                TerminalOutput.ClearOutput();
+                ClearOutput();
                 return null;
             default:
                 return parsedCommand;
@@ -375,4 +381,141 @@ public class Terminal : ITerminal, IBackgroundTaskGroup
         }
     }
     /* End TerminalInteractive */
+    
+    /* Start TerminalOutput */
+    private readonly List<TerminalCommandParsed> _parsedCommandList = new();
+    private readonly object _listLock = new();
+
+    public ITerminalOutputFormatter OutputFormatter { get; set; }
+    
+    public event Action? OnWriteOutput;
+    
+    public ITerminalOutputFormatted? GetOutputFormatted(string terminalOutputFormatterName)
+    {
+        var outputFormatter = OutputFormatter;
+            
+        if (outputFormatter is null)
+            return null;
+            
+        return outputFormatter.Format();
+    }
+    
+    public TerminalCommandParsed? GetParsedCommandOrDefault(Key<TerminalCommandRequest> terminalCommandRequestKey)
+    {
+        lock (_listLock)
+        {
+            return _parsedCommandList.FirstOrDefault(x =>
+                x.SourceTerminalCommandRequest.Key == terminalCommandRequestKey);
+        }
+    }
+    
+    public List<TerminalCommandParsed> GetParsedCommandList()
+    {
+        lock (_listLock)
+        {
+            return _parsedCommandList;
+        }
+    }
+    
+    public int GetParsedCommandListCount()
+    {
+        lock (_listLock)
+        {
+            return _parsedCommandList.Count;
+        }
+    }
+    
+    public void WriteOutput(TerminalCommandParsed terminalCommandParsed, CommandEvent commandEvent)
+    {
+        var output = (string?)null;
+
+        switch (commandEvent)
+        {
+            case StartedCommandEvent started:
+                
+                // Delete any output of the previous invocation.
+                lock (_listLock)
+                {
+                    var indexPreviousOutput = _parsedCommandList.FindIndex(x =>
+                        x.SourceTerminalCommandRequest.Key ==
+                            terminalCommandParsed.SourceTerminalCommandRequest.Key);
+                            
+                    if (indexPreviousOutput != -1)
+                        _parsedCommandList.RemoveAt(indexPreviousOutput);
+                        
+                    _parsedCommandList.Add(terminalCommandParsed);
+                }
+                
+                break;
+            case StandardOutputCommandEvent stdOut:
+                terminalCommandParsed.OutputCache.AppendTwo(stdOut.Text, "\n");
+                break;
+            case StandardErrorCommandEvent stdErr:
+                terminalCommandParsed.OutputCache.AppendTwo(stdErr.Text, "\n");
+                break;
+            case ExitedCommandEvent exited:
+                break;
+        }
+        
+        OnWriteOutput?.Invoke();
+    }
+    
+    public void ClearOutput()
+    {
+        lock (_listLock)
+        {
+            _parsedCommandList.Clear();
+        }
+
+        OnWriteOutput?.Invoke();
+    }
+    
+    public void ClearOutputExceptMostRecentCommand()
+    {
+        lock (_listLock)
+        {
+            var rememberLastCommand = _parsedCommandList.LastOrDefault();
+            
+            _parsedCommandList.Clear();
+            
+            if (rememberLastCommand is not null &&
+                rememberLastCommand.OutputCache.GetLength() < IdeFacts.MAX_OUTPUT_LENGTH)
+            {
+                _parsedCommandList.Add(rememberLastCommand);
+            }
+        }
+
+        OnWriteOutput?.Invoke();
+    }
+    
+    public void ClearHistoryWhenExistingOutputTooLong()
+    {
+        lock (_listLock)
+        {
+            var sumOutputLength = _parsedCommandList.Sum(x => x.OutputCache.GetLength());
+
+            if (sumOutputLength > IdeFacts.MAX_OUTPUT_LENGTH ||
+                _parsedCommandList.Count > IdeFacts.MAX_COMMAND_COUNT)
+            {
+                var rememberLastCommand = _parsedCommandList.LastOrDefault();
+            
+                _parsedCommandList.Clear();
+                
+                if (rememberLastCommand is not null &&
+                    rememberLastCommand.OutputCache.GetLength() < IdeFacts.OUTPUT_LENGTH_PADDING)
+                {
+                    // It feels odd to clear the entire terminal when there is too much text output
+                    // that has accumulated.
+                    //
+                    // So, keep the most recent command's output,
+                    // unless its output length is greater than or equal to the TerminalOutputFacts.OUTPUT_LENGTH_PADDING.
+                    _parsedCommandList.Add(rememberLastCommand);
+                }
+            }
+        }
+
+        OnWriteOutput?.Invoke();
+    }
+    /* End TerminalOutput */
 }
+

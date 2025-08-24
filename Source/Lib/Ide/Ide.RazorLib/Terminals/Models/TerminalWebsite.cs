@@ -4,6 +4,7 @@ using Walk.Common.RazorLib;
 using Walk.Common.RazorLib.BackgroundTasks.Models;
 using Walk.Common.RazorLib.Keys.Models;
 using Walk.Common.RazorLib.Notifications.Models;
+using Walk.TextEditor.RazorLib;
 using Walk.TextEditor.RazorLib.CompilerServices;
 using Walk.TextEditor.RazorLib.Lexers.Models;
 using Walk.Ide.RazorLib.Exceptions;
@@ -16,16 +17,21 @@ namespace Walk.Ide.RazorLib.Terminals.Models;
 public class TerminalWebsite : ITerminal, IBackgroundTaskGroup
 {
     private readonly CommonService _commonService;
+    private readonly TextEditorService _textEditorService;
 
     public TerminalWebsite(
         string displayName,
-        Func<TerminalWebsite, ITerminalOutput> terminalOutputFactory,
-        CommonService commonService)
+        CommonService commonService,
+        TextEditorService textEditorService)
     {
         DisplayName = displayName;
-        TerminalOutput = terminalOutputFactory.Invoke(this);
-        
+
         _commonService = commonService;
+        _textEditorService = textEditorService;
+        
+        OutputFormatter = new TerminalOutputFormatterExpand(
+            this,
+            _textEditorService);
     }
 
     public Key<IBackgroundTaskGroup> BackgroundTaskKey { get; } = Key<IBackgroundTaskGroup>.NewKey();
@@ -36,7 +42,6 @@ public class TerminalWebsite : ITerminal, IBackgroundTaskGroup
     private readonly object _workLock = new();
 
     public string DisplayName { get; }
-    public ITerminalOutput TerminalOutput { get; }
 
     private CancellationTokenSource _commandCancellationTokenSource = new();
 
@@ -85,11 +90,11 @@ public class TerminalWebsite : ITerminal, IBackgroundTaskGroup
         {
             if (localHasExecutingProcess)
             {
-                TerminalOutput.ClearOutputExceptMostRecentCommand();
+                ClearOutputExceptMostRecentCommand();
             }
             else
             {
-                TerminalOutput.ClearOutput();
+                ClearOutput();
             }
             
             return Task.CompletedTask;
@@ -98,7 +103,7 @@ public class TerminalWebsite : ITerminal, IBackgroundTaskGroup
 
     private async ValueTask HandleCommand(TerminalCommandRequest terminalCommandRequest)
     {
-        TerminalOutput.ClearHistoryWhenExistingOutputTooLong();
+        ClearHistoryWhenExistingOutputTooLong();
     
         var parsedCommand = await TryHandleCommand(terminalCommandRequest);
         ActiveTerminalCommandParsed = parsedCommand;
@@ -124,9 +129,9 @@ public class TerminalWebsite : ITerminal, IBackgroundTaskGroup
         {
             // TODO: This will erroneously write 'StartedCommandEvent' out twice...
             //       ...unless a check is added to see WHEN the exception was thrown.
-            TerminalOutput.WriteOutput(parsedCommand, new StartedCommandEvent(-1));
+            WriteOutput(parsedCommand, new StartedCommandEvent(-1));
         
-            TerminalOutput.WriteOutput(
+            WriteOutput(
                 parsedCommand,
                 new StandardErrorCommandEvent(parsedCommand.SourceTerminalCommandRequest.CommandText + " threw an exception" + "\n"));
         
@@ -147,7 +152,7 @@ public class TerminalWebsite : ITerminal, IBackgroundTaskGroup
     
     private void HandleOutput(CommandEvent commandEvent)
     {
-        TerminalOutput.WriteOutput(ActiveTerminalCommandParsed, commandEvent);
+        WriteOutput(ActiveTerminalCommandParsed, commandEvent);
     }
     
     private Task ExecuteWebsiteCliAsync(
@@ -155,9 +160,9 @@ public class TerminalWebsite : ITerminal, IBackgroundTaskGroup
         Action<CommandEvent> handleOutputAction,
         CancellationToken cancellationToken)
     {
-        TerminalOutput.WriteOutput(parsedCommand, new StartedCommandEvent(-1));
+        WriteOutput(parsedCommand, new StartedCommandEvent(-1));
         
-        TerminalOutput.WriteOutput(
+        WriteOutput(
             parsedCommand, new StandardErrorCommandEvent("run source locally for terminal"));
             
         return Task.CompletedTask;
@@ -196,7 +201,7 @@ public class TerminalWebsite : ITerminal, IBackgroundTaskGroup
         
         if (string.IsNullOrWhiteSpace(firstArgument))
         {
-            TerminalOutput.WriteOutput(parsedCommand, new StandardErrorCommandEvent($"firstArgument was null or whitespace."));
+            WriteOutput(parsedCommand, new StandardErrorCommandEvent($"firstArgument was null or whitespace."));
         }
     
         switch (firstArgument)
@@ -213,7 +218,7 @@ public class TerminalWebsite : ITerminal, IBackgroundTaskGroup
                 {
                     if (argumentList[1] != IdeFacts.Options_PROJECT)
                     {
-                        TerminalOutput.WriteOutput(parsedCommand, new StandardErrorCommandEvent($"argumentList[1]:{argumentList[1]} != {IdeFacts.Options_PROJECT}"));
+                        WriteOutput(parsedCommand, new StandardErrorCommandEvent($"argumentList[1]:{argumentList[1]} != {IdeFacts.Options_PROJECT}"));
                         return Task.CompletedTask;
                     }
                 
@@ -221,16 +226,16 @@ public class TerminalWebsite : ITerminal, IBackgroundTaskGroup
                 }
                 else
                 {
-                    TerminalOutput.WriteOutput(parsedCommand, new StandardErrorCommandEvent($"Bad argument count: '{argumentList.Length}'."));
+                    WriteOutput(parsedCommand, new StandardErrorCommandEvent($"Bad argument count: '{argumentList.Length}'."));
                     return Task.CompletedTask;
                 }
             
-                TerminalOutput.WriteOutput(parsedCommand, new StandardErrorCommandEvent($"projectPath:{projectPath}"));
+                WriteOutput(parsedCommand, new StandardErrorCommandEvent($"projectPath:{projectPath}"));
                 return Task.CompletedTask;
             }
             default:
             {
-                TerminalOutput.WriteOutput(parsedCommand, new StandardErrorCommandEvent($"First argument: '{firstArgument}' was not recognized."));
+                WriteOutput(parsedCommand, new StandardErrorCommandEvent($"First argument: '{firstArgument}' was not recognized."));
                 return Task.CompletedTask;
             }
         }
@@ -277,7 +282,11 @@ public class TerminalWebsite : ITerminal, IBackgroundTaskGroup
 
     public void Dispose()
     {
-        TerminalOutput.Dispose();
+        var outputFormatter = OutputFormatter;
+        if (outputFormatter is not null)
+        {
+            outputFormatter.Dispose();
+        }
     }
     
     /* Start TerminalInteractive */
@@ -316,7 +325,7 @@ public class TerminalWebsite : ITerminal, IBackgroundTaskGroup
         
         if (parsedCommand.TargetFileName.StartsWith(RESERVED_TARGET_FILENAME_PREFIX))
         {
-            TerminalOutput.WriteOutput(
+            WriteOutput(
                 parsedCommand,
                 new StartedCommandEvent(-1));
         
@@ -327,18 +336,18 @@ public class TerminalWebsite : ITerminal, IBackgroundTaskGroup
         switch (parsedCommand.TargetFileName)
         {
             case "cd":
-                TerminalOutput.WriteOutput(
+                WriteOutput(
                     parsedCommand,
                     new StartedCommandEvent(-1));
             
                 SetWorkingDirectory(parsedCommand.Arguments);
                 
-                TerminalOutput.WriteOutput(
+                WriteOutput(
                     parsedCommand,
                     new StandardOutputCommandEvent($"WorkingDirectory set to: '{parsedCommand.Arguments}'\n"));
                 return null;
             case "clear":
-                TerminalOutput.ClearOutput();
+                ClearOutput();
                 return null;
             default:
                 return parsedCommand;
@@ -410,5 +419,143 @@ public class TerminalWebsite : ITerminal, IBackgroundTaskGroup
         }
     }
     /* End TerminalInteractive */
+    
+    /* Start TerminalOutput */
+    private readonly ITerminal _terminal;
+    
+    private readonly List<TerminalCommandParsed> _parsedCommandList = new();
+    private readonly object _listLock = new();
+
+    public ITerminalOutputFormatter OutputFormatter { get; set; }
+    
+    public event Action? OnWriteOutput;
+    
+    public ITerminalOutputFormatted? GetOutputFormatted(string terminalOutputFormatterName)
+    {
+        var outputFormatter = OutputFormatter;
+            
+        if (outputFormatter is null)
+            return null;
+            
+        return outputFormatter.Format();
+    }
+    
+    public TerminalCommandParsed? GetParsedCommandOrDefault(Key<TerminalCommandRequest> terminalCommandRequestKey)
+    {
+        lock (_listLock)
+        {
+            return _parsedCommandList.FirstOrDefault(x =>
+                x.SourceTerminalCommandRequest.Key == terminalCommandRequestKey);
+        }
+    }
+    
+    public List<TerminalCommandParsed> GetParsedCommandList()
+    {
+        lock (_listLock)
+        {
+            return _parsedCommandList;
+        }
+    }
+    
+    public int GetParsedCommandListCount()
+    {
+        lock (_listLock)
+        {
+            return _parsedCommandList.Count;
+        }
+    }
+    
+    public void WriteOutput(TerminalCommandParsed terminalCommandParsed, CommandEvent commandEvent)
+    {
+        var output = (string?)null;
+
+        switch (commandEvent)
+        {
+            case StartedCommandEvent started:
+                
+                // Delete any output of the previous invocation.
+                lock (_listLock)
+                {
+                    var indexPreviousOutput = _parsedCommandList.FindIndex(x =>
+                        x.SourceTerminalCommandRequest.Key ==
+                            terminalCommandParsed.SourceTerminalCommandRequest.Key);
+                            
+                    if (indexPreviousOutput != -1)
+                        _parsedCommandList.RemoveAt(indexPreviousOutput);
+                        
+                    _parsedCommandList.Add(terminalCommandParsed);
+                }
+                
+                break;
+            case StandardOutputCommandEvent stdOut:
+                terminalCommandParsed.OutputCache.AppendTwo(stdOut.Text, "\n");
+                break;
+            case StandardErrorCommandEvent stdErr:
+                terminalCommandParsed.OutputCache.AppendTwo(stdErr.Text, "\n");
+                break;
+            case ExitedCommandEvent exited:
+                break;
+        }
+        
+        OnWriteOutput?.Invoke();
+    }
+    
+    public void ClearOutput()
+    {
+        lock (_listLock)
+        {
+            _parsedCommandList.Clear();
+        }
+
+        OnWriteOutput?.Invoke();
+    }
+    
+    public void ClearOutputExceptMostRecentCommand()
+    {
+        lock (_listLock)
+        {
+            var rememberLastCommand = _parsedCommandList.LastOrDefault();
+            
+            _parsedCommandList.Clear();
+            
+            if (rememberLastCommand is not null &&
+                rememberLastCommand.OutputCache.GetLength() < IdeFacts.MAX_OUTPUT_LENGTH)
+            {
+                _parsedCommandList.Add(rememberLastCommand);
+            }
+        }
+
+        OnWriteOutput?.Invoke();
+    }
+    
+    public void ClearHistoryWhenExistingOutputTooLong()
+    {
+        lock (_listLock)
+        {
+            var sumOutputLength = _parsedCommandList.Sum(x => x.OutputCache.GetLength());
+
+            if (sumOutputLength > IdeFacts.MAX_OUTPUT_LENGTH ||
+                _parsedCommandList.Count > IdeFacts.MAX_COMMAND_COUNT)
+            {
+                var rememberLastCommand = _parsedCommandList.LastOrDefault();
+            
+                _parsedCommandList.Clear();
+                
+                if (rememberLastCommand is not null &&
+                    rememberLastCommand.OutputCache.GetLength() < IdeFacts.OUTPUT_LENGTH_PADDING)
+                {
+                    // It feels odd to clear the entire terminal when there is too much text output
+                    // that has accumulated.
+                    //
+                    // So, keep the most recent command's output,
+                    // unless its output length is greater than or equal to the TerminalOutputFacts.OUTPUT_LENGTH_PADDING.
+                    _parsedCommandList.Add(rememberLastCommand);
+                }
+            }
+        }
+
+        OnWriteOutput?.Invoke();
+    }
+    /* End TerminalOutput */
 }
 

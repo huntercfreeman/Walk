@@ -281,7 +281,7 @@ public partial class DotNetService
             {
                 BeginWithFunc = parsedCommand =>
                 {
-                    IdeService.GetTerminalState().GeneralTerminal.TerminalOutput.WriteOutput(
+                    IdeService.GetTerminalState().GeneralTerminal.WriteOutput(
                         parsedCommand,
                         // If newlines are added to this make sure to use '.ReplaceLineEndings("\n")' because the syntax highlighting and text editor are expecting this line ending.
                         new StandardOutputCommandEvent(slnFoundString));
@@ -297,7 +297,7 @@ public partial class DotNetService
             {
                 BeginWithFunc = parsedCommand =>
                 {
-                    IdeService.GetTerminalState().ExecutionTerminal.TerminalOutput.WriteOutput(
+                    IdeService.GetTerminalState().ExecutionTerminal.WriteOutput(
                         parsedCommand,
                         // If newlines are added to this make sure to use '.ReplaceLineEndings("\n")' because the syntax highlighting and text editor are expecting this line ending.
                         new StandardOutputCommandEvent(slnFoundString));

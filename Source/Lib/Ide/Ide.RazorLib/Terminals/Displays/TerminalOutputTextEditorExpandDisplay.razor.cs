@@ -71,13 +71,13 @@ public partial class TerminalOutputTextEditorExpandDisplay : ComponentBase, IDis
             if (_previousTerminal is not null)
             {
                 _previousTerminal.WorkingDirectoryChanged -= OnWorkingDirectoryChanged;
-                _previousTerminal.TerminalOutput.OnWriteOutput -= OnWriteOutput;
+                _previousTerminal.OnWriteOutput -= OnWriteOutput;
             }
             
             if (nextTerminal is not null)
             {
                 nextTerminal.WorkingDirectoryChanged += OnWorkingDirectoryChanged;
-                nextTerminal.TerminalOutput.OnWriteOutput += OnWriteOutput;
+                nextTerminal.OnWriteOutput += OnWriteOutput;
             }
             
             // TODO: Is it possible for the Dispose() method to be invoked prior to...
@@ -182,8 +182,7 @@ public partial class TerminalOutputTextEditorExpandDisplay : ComponentBase, IDis
         {
             IdeService.TextEditorService.WorkerArbitrary.PostUnique(editContext =>
             {
-                var formatter = Terminal.TerminalOutput.OutputFormatterList.FirstOrDefault(
-                    x => x.Name == nameof(TerminalOutputFormatterExpand));
+                var formatter = Terminal.OutputFormatter;
                     
                 if (formatter is not TerminalOutputFormatterExpand terminalOutputFormatterExpand)
                     return ValueTask.CompletedTask;
@@ -205,7 +204,7 @@ public partial class TerminalOutputTextEditorExpandDisplay : ComponentBase, IDis
                         showingFinalLine = true;
                 }
 
-                var outputFormatted = (TerminalOutputFormattedTextEditor)localTerminal.TerminalOutput
+                var outputFormatted = (TerminalOutputFormattedTextEditor)localTerminal
                     .GetOutputFormatted(nameof(TerminalOutputFormatterExpand));
                 
                 modelModifier.SetContent(outputFormatted.Text);
@@ -291,6 +290,6 @@ public partial class TerminalOutputTextEditorExpandDisplay : ComponentBase, IDis
         var localPreviousTerminal = _previousTerminal;
     
         localPreviousTerminal.WorkingDirectoryChanged -= OnWorkingDirectoryChanged;
-        localPreviousTerminal.TerminalOutput.OnWriteOutput -= OnWriteOutput;
+        localPreviousTerminal.OnWriteOutput -= OnWriteOutput;
     }
 }

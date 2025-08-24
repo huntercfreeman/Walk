@@ -22,24 +22,16 @@ public partial class IdeService
         {
             executionTerminal = new TerminalWebsite(
                 "Execution",
-                terminal => new TerminalOutput(
-                    terminal,
-                    new TerminalOutputFormatterExpand(
-                        terminal,
-                        TextEditorService)),
-                CommonService)
+                CommonService,
+                TextEditorService)
             {
                 Key = IdeFacts.EXECUTION_KEY
             };
             
             generalTerminal = new TerminalWebsite(
                 "General",
-                terminal => new TerminalOutput(
-                    terminal,
-                    new TerminalOutputFormatterExpand(
-                        terminal,
-                        TextEditorService)),
-                CommonService)
+                CommonService,
+                TextEditorService)
             {
                 Key = IdeFacts.GENERAL_KEY
             };
@@ -48,11 +40,6 @@ public partial class IdeService
         {
             executionTerminal = new Terminal(
                 "Execution",
-                terminal => new TerminalOutput(
-                    terminal,
-                    new TerminalOutputFormatterExpand(
-                        terminal,
-                        TextEditorService)),
                 this)
             {
                 Key = IdeFacts.EXECUTION_KEY
@@ -60,11 +47,6 @@ public partial class IdeService
             
             generalTerminal = new Terminal(
                 "General",
-                terminal => new TerminalOutput(
-                    terminal,
-                    new TerminalOutputFormatterExpand(
-                        terminal,
-                        TextEditorService)),
                 this)
             {
                 Key = IdeFacts.GENERAL_KEY

@@ -43,7 +43,7 @@ public partial class TestExplorerDetailsDisplay : ComponentBase, IDisposable
     {
         var terminalState = IdeService.GetTerminalState();
         _executionTerminal = terminalState.ExecutionTerminal;
-        _executionTerminal.TerminalOutput.OnWriteOutput += OnWriteOutput;
+        _executionTerminal.OnWriteOutput += OnWriteOutput;
     }
 
     protected override void OnParametersSet()
@@ -313,6 +313,6 @@ public partial class TestExplorerDetailsDisplay : ComponentBase, IDisposable
 
     public void Dispose()
     {
-        _executionTerminal.TerminalOutput.OnWriteOutput -= OnWriteOutput;
+        _executionTerminal.OnWriteOutput -= OnWriteOutput;
     }
 }
