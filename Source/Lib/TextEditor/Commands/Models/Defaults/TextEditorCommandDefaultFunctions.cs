@@ -81,7 +81,7 @@ public class TextEditorCommandDefaultFunctions
     {
         if (viewModel.PersistentState.OnSaveRequested is null)
         {
-            NotificationHelper.DispatchError(
+            CommonFacts.DispatchError(
                 nameof(TriggerSave),
                 $"{nameof(TriggerSave)} was null",
                 commonService,
@@ -125,7 +125,7 @@ public class TextEditorCommandDefaultFunctions
                 if (componentData is not null)
                     componentData.ThrottleApplySyntaxHighlighting(modelModifier);
                 
-                NotificationHelper.DispatchInformative(
+                CommonFacts.DispatchInformative(
                     title: "Save_NoTextEditorFocus",
                     message: viewModel.PersistentState.ResourceUri.Value,
                     textEditorService.CommonService,
@@ -175,7 +175,7 @@ public class TextEditorCommandDefaultFunctions
                         viewModel,
                         textEditorService.CommonService);
                     
-                    NotificationHelper.DispatchInformative(
+                    CommonFacts.DispatchInformative(
                         title: "SaveAll",
                         message: viewModel.PersistentState.ResourceUri.Value,
                         textEditorService.CommonService,

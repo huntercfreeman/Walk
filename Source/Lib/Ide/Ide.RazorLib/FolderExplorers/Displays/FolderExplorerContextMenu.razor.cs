@@ -1,4 +1,5 @@
 using Microsoft.AspNetCore.Components;
+using Walk.Common.RazorLib;
 using Walk.Common.RazorLib.Commands.Models;
 using Walk.Common.RazorLib.Menus.Models;
 using Walk.Common.RazorLib.Dropdowns.Models;
@@ -108,13 +109,13 @@ public partial class FolderExplorerContextMenu : ComponentBase
             IdeService.CopyFile(
                 treeViewModel.Item,
                 (Func<Task>)(() => {
-                    NotificationHelper.DispatchInformative("Copy Action", $"Copied: {treeViewModel.Item.Name}", IdeService.CommonService, TimeSpan.FromSeconds(7));
+                    CommonFacts.DispatchInformative("Copy Action", $"Copied: {treeViewModel.Item.Name}", IdeService.CommonService, TimeSpan.FromSeconds(7));
                     return Task.CompletedTask;
                 })),
             IdeService.CutFile(
                 treeViewModel.Item,
                 (Func<Task>)(() => {
-                    NotificationHelper.DispatchInformative("Cut Action", $"Cut: {treeViewModel.Item.Name}", IdeService.CommonService, TimeSpan.FromSeconds(7));
+                    CommonFacts.DispatchInformative("Cut Action", $"Cut: {treeViewModel.Item.Name}", IdeService.CommonService, TimeSpan.FromSeconds(7));
                     ParentOfCutFile = parentTreeViewModel;
                     return Task.CompletedTask;
                 })),

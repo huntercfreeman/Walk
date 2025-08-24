@@ -13,6 +13,10 @@ using Walk.Common.RazorLib.Keys.Models;
 using Walk.Common.RazorLib.Themes.Models;
 using Walk.Common.RazorLib.Dimensions.Models;
 using Walk.Common.RazorLib.Dynamics.Models;
+using Walk.Common.RazorLib.Reactives.Models;
+using Walk.Common.RazorLib.Reactives.Displays;
+using Walk.Common.RazorLib.Notifications.Models;
+using Walk.Common.RazorLib.Notifications.Displays;
 
 namespace Walk.Common.RazorLib;
 
@@ -922,4 +926,73 @@ public partial class {className} : ComponentBase
         }
     }
     /* End PathHelper */
+    
+    /* Start NotificationHelper */
+    public static void DispatchInformative(
+        string title,
+        string message,
+        CommonService commonService,
+        TimeSpan? notificationOverlayLifespan)
+    {
+        var notificationInformative = new NotificationViewModel(
+            Key<IDynamicViewModel>.NewKey(),
+            title,
+            typeof(CommonInformativeNotificationDisplay),
+            new Dictionary<string, object?>
+            {
+                {
+                    nameof(CommonInformativeNotificationDisplay.Message),
+                    message
+                },
+            },
+            notificationOverlayLifespan,
+            true,
+            null);
+
+        commonService.Notification_ReduceRegisterAction(notificationInformative);
+    }
+
+    public static void DispatchError(
+        string title,
+        string message,
+        CommonService commonService,
+        TimeSpan? notificationOverlayLifespan)
+    {
+        var notificationError = new NotificationViewModel(Key<IDynamicViewModel>.NewKey(),
+            title,
+            typeof(CommonErrorNotificationDisplay),
+            new Dictionary<string, object?>
+            {
+                { nameof(CommonErrorNotificationDisplay.Message), $"ERROR: {message}" },
+            },
+            notificationOverlayLifespan,
+            true,
+            "di_error");
+
+        commonService.Notification_ReduceRegisterAction(notificationError);
+    }
+
+    public static void DispatchProgress(
+        string title,
+        ProgressBarModel progressBarModel,
+        CommonService commonService,
+        TimeSpan? notificationOverlayLifespan)
+    {
+        var notificationProgress = new NotificationViewModel(Key<IDynamicViewModel>.NewKey(),
+            title,
+            typeof(ProgressBarDisplay),
+            new Dictionary<string, object?>
+            {
+                {
+                    nameof(ProgressBarDisplay.ProgressBarModel),
+                    progressBarModel
+                },
+            },
+            notificationOverlayLifespan,
+            true,
+            null);
+
+        commonService.Notification_ReduceRegisterAction(notificationProgress);
+    }
+    /* End NotificationHelper */
 }

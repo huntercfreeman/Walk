@@ -99,7 +99,7 @@ public class FolderExplorerTreeViewKeyboardEventHandler : TreeViewKeyboardEventH
             treeViewAbsolutePath.Item,
             () =>
             {
-                NotificationHelper.DispatchInformative("Copy Action", $"Copied: {treeViewAbsolutePath.Item.Name}", _ideService.CommonService, TimeSpan.FromSeconds(7));
+                CommonFacts.DispatchInformative("Copy Action", $"Copied: {treeViewAbsolutePath.Item.Name}", _ideService.CommonService, TimeSpan.FromSeconds(7));
                 return Task.CompletedTask;
             });
 
@@ -180,7 +180,7 @@ public class FolderExplorerTreeViewKeyboardEventHandler : TreeViewKeyboardEventH
             () =>
             {
                 FolderExplorerContextMenu.ParentOfCutFile = parent;
-                NotificationHelper.DispatchInformative("Cut Action", $"Cut: {treeViewAbsolutePath.Item.Name}", _ideService.CommonService, TimeSpan.FromSeconds(7));
+                CommonFacts.DispatchInformative("Cut Action", $"Cut: {treeViewAbsolutePath.Item.Name}", _ideService.CommonService, TimeSpan.FromSeconds(7));
                 return Task.CompletedTask;
             });
 

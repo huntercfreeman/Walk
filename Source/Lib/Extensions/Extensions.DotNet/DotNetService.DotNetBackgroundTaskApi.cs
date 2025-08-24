@@ -316,7 +316,7 @@ public partial class DotNetService
         }
         catch (Exception e)
         {
-            NotificationHelper.DispatchError(
+            CommonFacts.DispatchError(
                 $"ERROR: nameof(_appDataService.WriteAppDataAsync)",
                 e.ToString(),
                 IdeService.TextEditorService.CommonService,
@@ -761,7 +761,7 @@ public partial class DotNetService
             }
         };
 
-        NotificationHelper.DispatchProgress(
+        CommonFacts.DispatchProgress(
             $"Parse: {dotNetSolutionModel.AbsolutePath.Name}",
             progressBarModel,
             IdeService.TextEditorService.CommonService,

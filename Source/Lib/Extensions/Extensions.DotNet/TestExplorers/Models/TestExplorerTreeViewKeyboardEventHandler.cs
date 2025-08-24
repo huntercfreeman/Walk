@@ -40,7 +40,7 @@ public class TestExplorerTreeViewKeyboardEventHandler : TreeViewKeyboardEventHan
 
         if (activeNode is not TreeViewStringFragment treeViewStringFragment)
         {
-            NotificationHelper.DispatchInformative(
+            CommonFacts.DispatchInformative(
                 nameof(TestExplorerTreeViewKeyboardEventHandler),
                 $"Could not open in editor because node is not type: {nameof(TreeViewStringFragment)}",
                 _textEditorService.CommonService,
@@ -51,7 +51,7 @@ public class TestExplorerTreeViewKeyboardEventHandler : TreeViewKeyboardEventHan
 
         if (treeViewStringFragment.Parent is not TreeViewStringFragment parentTreeViewStringFragment)
         {
-            NotificationHelper.DispatchInformative(
+            CommonFacts.DispatchInformative(
                 nameof(TestExplorerTreeViewKeyboardEventHandler),
                 $"Could not open in editor because node's parent does not seem to include a class name",
                 _textEditorService.CommonService,
@@ -62,7 +62,7 @@ public class TestExplorerTreeViewKeyboardEventHandler : TreeViewKeyboardEventHan
 
         var className = parentTreeViewStringFragment.Item.Value.Split('.').Last();
 
-        NotificationHelper.DispatchInformative(
+        CommonFacts.DispatchInformative(
             nameof(TestExplorerTreeViewMouseEventHandler),
             className + ".cs",
             _textEditorService.CommonService,
@@ -70,7 +70,7 @@ public class TestExplorerTreeViewKeyboardEventHandler : TreeViewKeyboardEventHan
 
         var methodName = treeViewStringFragment.Item.Value.Trim();
 
-        NotificationHelper.DispatchInformative(
+        CommonFacts.DispatchInformative(
             nameof(TestExplorerTreeViewMouseEventHandler),
             methodName + "()",
             _textEditorService.CommonService,

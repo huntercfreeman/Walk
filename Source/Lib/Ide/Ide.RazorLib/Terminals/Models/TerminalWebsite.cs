@@ -142,7 +142,7 @@ public class TerminalWebsite : ITerminal, IBackgroundTaskGroup
                 parsedCommand,
                 new StandardErrorCommandEvent(parsedCommand.SourceTerminalCommandRequest.CommandText + " threw an exception" + "\n"));
         
-            NotificationHelper.DispatchError("Terminal Exception", e.ToString(), _commonService, TimeSpan.FromSeconds(14));
+            CommonFacts.DispatchError("Terminal Exception", e.ToString(), _commonService, TimeSpan.FromSeconds(14));
         }
         finally
         {

@@ -167,7 +167,7 @@ public partial class DotNetSolutionFormDisplay : ComponentBase, IDisposable
         // Close Dialog
         DotNetService.IdeService.CommonService.Dialog_ReduceDisposeAction(DialogRecord.DynamicViewModelKey);
 
-        NotificationHelper.DispatchInformative("Website .sln template was used", "No terminal available", DotNetService.IdeService.CommonService, TimeSpan.FromSeconds(7));
+        CommonFacts.DispatchInformative("Website .sln template was used", "No terminal available", DotNetService.IdeService.CommonService, TimeSpan.FromSeconds(7));
 
         var solutionAbsolutePath = DotNetService.IdeService.CommonService.EnvironmentProvider.AbsolutePathFactory(
             solutionAbsolutePathString,

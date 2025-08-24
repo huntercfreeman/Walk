@@ -2853,7 +2853,7 @@ public sealed partial class TextEditorService
 
         if (model is null)
         {
-            NotificationHelper.DispatchDebugMessage(nameof(Editor_TryRegisterViewModelFunc), () => "model is null: " + registerViewModelArgs.ResourceUri.Value, CommonService, TimeSpan.FromSeconds(4));
+            CommonFacts.DispatchError(nameof(Editor_TryRegisterViewModelFunc), $"model is null: {registerViewModelArgs.ResourceUri.Value}", CommonService, TimeSpan.FromSeconds(4));
             return Key<TextEditorViewModel>.Empty;
         }
 
@@ -2919,7 +2919,7 @@ public sealed partial class TextEditorService
             else
             {
                 // TODO: Save As to make new file
-                NotificationHelper.DispatchInformative("Save Action", "File not found. TODO: Save As", CommonService, TimeSpan.FromSeconds(7));
+                CommonFacts.DispatchInformative("Save Action", "File not found. TODO: Save As", CommonService, TimeSpan.FromSeconds(7));
             }
     
             DateTime? fileLastWriteTime = null;

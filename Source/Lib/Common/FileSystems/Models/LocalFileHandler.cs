@@ -172,7 +172,7 @@ public class LocalFileHandler : IFileHandler
         if (exception.Message.StartsWith(PermittanceChecker.ERROR_PREFIX))
             title = PermittanceChecker.ERROR_PREFIX;
 
-        NotificationHelper.DispatchError(
+        CommonFacts.DispatchError(
             title,
             exception.ToString(),
             _commonService,

@@ -1,3 +1,4 @@
+using Walk.Common.RazorLib;
 using Walk.Common.RazorLib.Commands.Models;
 using Walk.Common.RazorLib.TreeViews.Models;
 using Walk.Common.RazorLib.Notifications.Models;
@@ -21,7 +22,7 @@ public class TestExplorerTreeViewMouseEventHandler : TreeViewMouseEventHandler
 
         if (commandArgs.NodeThatReceivedMouseEvent is not TreeViewStringFragment treeViewStringFragment)
         {
-            NotificationHelper.DispatchInformative(
+            CommonFacts.DispatchInformative(
                 nameof(TestExplorerTreeViewMouseEventHandler),
                 $"Could not open in editor because node is not type: {nameof(TreeViewStringFragment)}",
                 _textEditorService.CommonService,
@@ -32,7 +33,7 @@ public class TestExplorerTreeViewMouseEventHandler : TreeViewMouseEventHandler
 
         if (treeViewStringFragment.Parent is not TreeViewStringFragment parentTreeViewStringFragment)
         {
-            NotificationHelper.DispatchInformative(
+            CommonFacts.DispatchInformative(
                 nameof(TestExplorerTreeViewMouseEventHandler),
                 $"Could not open in editor because node's parent does not seem to include a class name",
                 _textEditorService.CommonService,
@@ -43,7 +44,7 @@ public class TestExplorerTreeViewMouseEventHandler : TreeViewMouseEventHandler
 
         var className = parentTreeViewStringFragment.Item.Value.Split('.').Last();
 
-        NotificationHelper.DispatchInformative(
+        CommonFacts.DispatchInformative(
             nameof(TestExplorerTreeViewMouseEventHandler),
             className + ".cs",
             _textEditorService.CommonService,
@@ -51,7 +52,7 @@ public class TestExplorerTreeViewMouseEventHandler : TreeViewMouseEventHandler
 
         var methodName = treeViewStringFragment.Item.Value.Trim();
 
-        NotificationHelper.DispatchInformative(
+        CommonFacts.DispatchInformative(
             nameof(TestExplorerTreeViewMouseEventHandler),
             methodName + "()",
             _textEditorService.CommonService,

@@ -98,7 +98,7 @@ public class SolutionExplorerTreeViewKeyboardEventHandler : TreeViewKeyboardEven
             treeViewNamespacePath.Item,
             () =>
             {
-                NotificationHelper.DispatchInformative("Copy Action", $"Copied: {treeViewNamespacePath.Item.Name}", _ideService.TextEditorService.CommonService, TimeSpan.FromSeconds(7));
+                CommonFacts.DispatchInformative("Copy Action", $"Copied: {treeViewNamespacePath.Item.Name}", _ideService.TextEditorService.CommonService, TimeSpan.FromSeconds(7));
                 return Task.CompletedTask;
             });
 
@@ -178,7 +178,7 @@ public class SolutionExplorerTreeViewKeyboardEventHandler : TreeViewKeyboardEven
             treeViewNamespacePath.Item,
             () =>
             {
-                NotificationHelper.DispatchInformative("Cut Action", $"Cut: {treeViewNamespacePath.Item.Name}", _ideService.TextEditorService.CommonService, TimeSpan.FromSeconds(7));
+                CommonFacts.DispatchInformative("Cut Action", $"Cut: {treeViewNamespacePath.Item.Name}", _ideService.TextEditorService.CommonService, TimeSpan.FromSeconds(7));
                 SolutionExplorerContextMenu.ParentOfCutFile = parent;
                 return Task.CompletedTask;
             });

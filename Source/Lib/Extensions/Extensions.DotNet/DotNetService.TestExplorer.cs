@@ -1,3 +1,4 @@
+using Walk.Common.RazorLib;
 using Walk.Common.RazorLib.Notifications.Models;
 using Walk.Common.RazorLib.Reactives.Models;
 using Walk.Common.RazorLib.TreeViews.Models;
@@ -368,7 +369,7 @@ public partial class DotNetService
                 }
             };
 
-            NotificationHelper.DispatchProgress(
+            CommonFacts.DispatchProgress(
                 $"Test Discovery: {dotNetSolutionModel.AbsolutePath.Name}",
                 progressBarModel,
                 IdeService.TextEditorService.CommonService,

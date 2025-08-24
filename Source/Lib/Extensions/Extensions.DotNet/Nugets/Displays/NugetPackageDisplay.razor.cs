@@ -1,4 +1,5 @@
 using Microsoft.AspNetCore.Components;
+using Walk.Common.RazorLib;
 using Walk.Common.RazorLib.Notifications.Models;
 using Walk.Common.RazorLib.Keys.Models;
 using Walk.Ide.RazorLib;
@@ -93,7 +94,7 @@ public partial class NugetPackageDisplay : ComponentBase, IDisposable
         {
             ContinueWithFunc = parsedCommand =>
             {
-                NotificationHelper.DispatchInformative("Add Nuget Package Reference", $"{targetNugetPackage.Title}, {targetNugetVersion} was added to {targetProject.DisplayName}", DotNetService.IdeService.CommonService, TimeSpan.FromSeconds(7));
+                CommonFacts.DispatchInformative("Add Nuget Package Reference", $"{targetNugetPackage.Title}, {targetNugetVersion} was added to {targetProject.DisplayName}", DotNetService.IdeService.CommonService, TimeSpan.FromSeconds(7));
                 return Task.CompletedTask;
             }
         };
