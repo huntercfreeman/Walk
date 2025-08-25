@@ -4,9 +4,9 @@ namespace Walk.CompilerServices.Json;
 
 public struct JsonLexerOutput
 {
-    public JsonLexerOutput()
+    public JsonLexerOutput(List<TextEditorTextSpan> textSpanList)
     {
-        TextSpanList = new();
+        TextSpanList = textSpanList;
     }
     
     public List<TextEditorTextSpan> TextSpanList { get; }

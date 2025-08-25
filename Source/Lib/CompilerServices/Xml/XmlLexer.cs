@@ -13,10 +13,10 @@ public static class XmlLexer
         Expect_AttributeValue,
     }
 
-    public static XmlLexerOutput Lex(StreamReaderWrap streamReaderWrap)
+    public static XmlLexerOutput Lex(StreamReaderWrap streamReaderWrap, List<TextEditorTextSpan> textSpanList)
     {
         var context = XmlLexerContextKind.Expect_TagOrText;
-        var output = new XmlLexerOutput();
+        var output = new XmlLexerOutput(textSpanList);
         
         // This gets updated throughout the loop
         var startPosition = streamReaderWrap.PositionIndex;

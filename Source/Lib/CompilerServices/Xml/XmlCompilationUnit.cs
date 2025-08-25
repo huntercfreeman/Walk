@@ -5,5 +5,4 @@ namespace Walk.CompilerServices.Xml;
 
 public class XmlCompilationUnit : ICompilationUnit
 {
-    public List<TextEditorTextSpan> TextSpanList { get; set; }
 }

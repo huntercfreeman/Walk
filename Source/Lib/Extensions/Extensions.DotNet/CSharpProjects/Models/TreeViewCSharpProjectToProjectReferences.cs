@@ -80,7 +80,7 @@ public class TreeViewCSharpProjectToProjectReferences : TreeViewWithType<CSharpP
         var previousChildren = new List<TreeViewNoType>(ChildList);
 
         using StreamReader sr = new StreamReader(Item.CSharpProjectAbsolutePath.Value);
-        var lexerOutput = XmlLexer.Lex(new StreamReaderWrap(sr));
+        var lexerOutput = XmlLexer.Lex(new StreamReaderWrap(sr), textSpanList: new());
         
         var stringBuilder = new StringBuilder();
         var getTextBuffer = new char[1];

@@ -11,10 +11,10 @@ public static class JsonLexer
         Expect_PropertyValue,
     }
 
-    public static JsonLexerOutput Lex(StreamReaderWrap streamReaderWrap)
+    public static JsonLexerOutput Lex(StreamReaderWrap streamReaderWrap, List<TextEditorTextSpan> textSpanList)
     {
         var context = CssLexerContextKind.Expect_PropertyName;
-        var output = new JsonLexerOutput();
+        var output = new JsonLexerOutput(textSpanList);
         
         while (!streamReaderWrap.IsEof)
         {

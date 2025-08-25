@@ -137,7 +137,8 @@ public sealed class CssCompilerService : ICompilerService
     public ValueTask ParseAsync(TextEditorEditContext editContext, TextEditorModel modelModifier, bool shouldApplySyntaxHighlighting)
     {
         using StreamReader sr = new StreamReader(modelModifier.PersistentState.ResourceUri.Value);
-        var lexerOutput = CssLexer.Lex(new StreamReaderWrap(sr));
+        _textEditorService.LEXER_miscTextSpanList.Clear();
+        var lexerOutput = CssLexer.Lex(new StreamReaderWrap(sr), _textEditorService.LEXER_miscTextSpanList);
     
         lock (_resourceMapLock)
         {
@@ -145,10 +146,10 @@ public sealed class CssCompilerService : ICompilerService
             {
                 var resource = (CompilerServiceResource)_resourceMap[modelModifier.PersistentState.ResourceUri];
                 
-                resource.CompilationUnit = new CssCompilationUnit
+                /*resource.CompilationUnit = new CssCompilationUnit
                 {
                     TextSpanList = lexerOutput.TextSpanList
-                };
+                };*/
             }
         }
         

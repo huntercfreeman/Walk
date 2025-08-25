@@ -4,9 +4,9 @@ namespace Walk.CompilerServices.Css;
 
 public struct CssLexerOutput
 {
-    public CssLexerOutput()
+    public CssLexerOutput(List<TextEditorTextSpan> textSpanList)
     {
-        TextSpanList = new();
+        TextSpanList = textSpanList;
     }
     
     public List<TextEditorTextSpan> TextSpanList { get; }

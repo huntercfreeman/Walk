@@ -5,5 +5,4 @@ namespace Walk.CompilerServices.Razor;
 
 public class RazorCompilationUnit : ICompilationUnit
 {
-    public List<TextEditorTextSpan> TextSpanList { get; set; }
 }

@@ -11,10 +11,10 @@ public static class CssLexer
         Expect_PropertyValue,
     }
     
-    public static CssLexerOutput Lex(StreamReaderWrap streamReaderWrap)
+    public static CssLexerOutput Lex(StreamReaderWrap streamReaderWrap, List<TextEditorTextSpan> textSpanList)
     {
         var context = CssLexerContextKind.Expect_PropertyName;
-        var output = new CssLexerOutput();
+        var output = new CssLexerOutput(textSpanList);
         
         var braceMatching = 0;
         

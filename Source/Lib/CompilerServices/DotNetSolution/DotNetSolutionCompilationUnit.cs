@@ -5,5 +5,4 @@ namespace Walk.CompilerServices.DotNetSolution;
 
 public class DotNetSolutionCompilationUnit : ICompilationUnit
 {
-    public List<TextEditorTextSpan> TextSpanList { get; set; }
 }

@@ -4,9 +4,9 @@ namespace Walk.CompilerServices.JavaScript;
 
 public struct JavaScriptLexerOutput
 {
-    public JavaScriptLexerOutput()
+    public JavaScriptLexerOutput(List<TextEditorTextSpan> textSpanList)
     {
-        TextSpanList = new();
+        TextSpanList = textSpanList;
     }
     
     public List<TextEditorTextSpan> TextSpanList { get; }
