@@ -122,22 +122,31 @@ public partial class IdeService
 
     public MenuOptionRecord DeleteFile(AbsolutePath absolutePath, Func<Task> onAfterCompletion)
     {
-        return new MenuOptionRecord("Delete", MenuOptionKind.Delete/*,
-            simpleWidgetKind: Walk.Common.RazorLib.Widgets.Models.SimpleWidgetKind.DeleteFileForm,
-            widgetParameterMap: new Dictionary<string, object?>
+        return new MenuOptionRecord(
+            "Delete",
+            MenuOptionKind.Delete,
+            menuOptionOnClickArgs => 
             {
-                { nameof(Walk.Common.RazorLib.FileSystems.Displays.DeleteFileFormDisplay.AbsolutePath), absolutePath },
-                { nameof(Walk.Common.RazorLib.FileSystems.Displays.DeleteFileFormDisplay.IsDirectory), true },
-                {
-                    nameof(Walk.Common.RazorLib.FileSystems.Displays.DeleteFileFormDisplay.OnAfterSubmitFunc),
-                    new Func<AbsolutePath, Task>(
+                MenuRecord.OpenWidget(
+                    CommonService,
+                    menuOptionOnClickArgs.MenuMeasurements,
+                    menuOptionOnClickArgs.TopOffsetOptionFromMenu,
+                    elementIdToRestoreFocusToOnClose: menuOptionOnClickArgs.MenuHtmlId,
+                    SimpleWidgetKind.DeleteFileForm,
+                    isDirectory: true,
+                    checkForTemplates: true,
+                    fileName: string.Empty,
+                    onAfterSubmitFuncAbsolutePathTask: new Func<AbsolutePath, Task>(
                         x =>
                         {
                             Enqueue_PerformDeleteFile(x, onAfterCompletion);
                             return Task.CompletedTask;
-                        })
-                },
-            }*/)
+                        }),
+                    onAfterSubmitFuncOther: null,
+                    absolutePath: absolutePath);
+                    
+                return Task.CompletedTask;
+            })
             {
                 IconKind = AutocompleteEntryKind.Widget,
             };
@@ -145,7 +154,9 @@ public partial class IdeService
 
     public MenuOptionRecord RenameFile(AbsolutePath sourceAbsolutePath, CommonService commonService, Func<Task> onAfterCompletion)
     {
-        return new MenuOptionRecord("Rename", MenuOptionKind.Update/*,
+        return new MenuOptionRecord(
+            "Rename",
+            MenuOptionKind.Update/*,
             simpleWidgetKind: Walk.Common.RazorLib.Widgets.Models.SimpleWidgetKind.FileForm,
             widgetParameterMap: new Dictionary<string, object?>
             {
