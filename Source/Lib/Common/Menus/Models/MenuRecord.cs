@@ -1,3 +1,4 @@
+using Microsoft.JSInterop;
 using Walk.Common.RazorLib.Dropdowns.Models;
 using Walk.Common.RazorLib.Keys.Models;
 using Walk.Common.RazorLib.Menus.Displays;
@@ -101,8 +102,28 @@ public record MenuRecord(IReadOnlyList<MenuOptionRecord> MenuOptionList)
             }
         }
         
+        var dropdownKey = Key<DropdownRecord>.NewKey();
+        
+        var menuOptionCallbacks = new MenuOptionCallbacks(
+            async () =>
+            {
+                commonService.Dropdown_ReduceDisposeAction(dropdownKey);
+                await commonService.JsRuntimeCommonApi.JsRuntime.InvokeVoidAsync(
+                    "walkCommon.focusHtmlElementById",
+                    elementIdToRestoreFocusToOnClose,
+                    /*preventScroll:*/ true);
+            },
+            onAfterWidgetHiddenAction =>
+            {
+                onAfterWidgetHiddenAction.Invoke();
+                commonService.Dropdown_ReduceClearAction();
+                return Task.CompletedTask;
+            });
+        
+        componentParameterMap.Add(nameof(MenuOptionCallbacks), menuOptionCallbacks);
+        
         var submenuDropdown = new DropdownRecord(
-            Key<DropdownRecord>.NewKey(),
+            dropdownKey,
             leftInitial: menuMeasurements.BoundingClientRectLeft + menuMeasurements.ViewWidth,
             topInitial: menuMeasurements.BoundingClientRectTop + topOffsetOptionFromMenu,
             componentType,

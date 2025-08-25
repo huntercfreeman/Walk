@@ -10,9 +10,8 @@ public partial class DeleteFileFormDisplay : ComponentBase
     [Inject]
     private CommonService CommonService { get; set; } = null!;
 
-    [CascadingParameter]
+    [Parameter, EditorRequired]
     public MenuOptionCallbacks? MenuOptionCallbacks { get; set; }
-
     [Parameter, EditorRequired]
     public AbsolutePath AbsolutePath { get; set; }
     [Parameter, EditorRequired]

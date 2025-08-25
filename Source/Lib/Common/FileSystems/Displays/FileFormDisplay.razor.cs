@@ -7,9 +7,8 @@ namespace Walk.Common.RazorLib.FileSystems.Displays;
 
 public partial class FileFormDisplay : ComponentBase
 {
-    [CascadingParameter]
+    [Parameter, EditorRequired]
     public MenuOptionCallbacks? MenuOptionCallbacks { get; set; }
-
     [Parameter, EditorRequired]
     public string FileName { get; set; } = string.Empty;
     [Parameter, EditorRequired]
