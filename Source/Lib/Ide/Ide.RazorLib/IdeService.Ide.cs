@@ -205,10 +205,13 @@ public partial class IdeService
     
     public void Ide_TriggerStartupControlStateChanged(TerminalCommandRequest? executingTerminalCommandRequest)
     {
-        _startupControlState = _startupControlState with
+        lock (_stateModificationLock)
         {
-            ExecutingTerminalCommandRequest = executingTerminalCommandRequest
-        };
+            _startupControlState = _startupControlState with
+            {
+                ExecutingTerminalCommandRequest = executingTerminalCommandRequest
+            };
+        }
         IdeStateChanged?.Invoke(IdeStateChangedKind.Ide_StartupControlStateChanged);
     }
 }
