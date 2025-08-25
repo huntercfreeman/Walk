@@ -12,7 +12,38 @@ public partial class IdeService
 {
     public MenuOptionRecord NewEmptyFile(AbsolutePath parentDirectory, Func<Task> onAfterCompletion)
     {
-        return new MenuOptionRecord("New Empty File", MenuOptionKind.Create/*,
+        return new MenuOptionRecord(
+            "New Empty File",
+            MenuOptionKind.Create,
+            menuOptionOnClickArgs => 
+            {
+                MenuRecord.OpenWidget(
+                    CommonService,
+                    menuOptionOnClickArgs.MenuMeasurements,
+                    menuOptionOnClickArgs.TopOffsetOptionFromMenu,
+                    elementIdToRestoreFocusToOnClose: menuOptionOnClickArgs.MenuHtmlId,
+                    SimpleWidgetKind.FileForm,
+                    isDirectory: default,
+                    checkForTemplates: false,
+                    fileName: string.Empty,
+                    onAfterSubmitFuncAbsolutePathTask: null,
+                    onAfterSubmitFuncOther: new Func<string, IFileTemplate?, List<IFileTemplate>, Task>(
+                        (fileName, exactMatchFileTemplate, relatedMatchFileTemplates) =>
+                        {
+                            Enqueue_PerformNewFile(
+                                fileName,
+                                exactMatchFileTemplate,
+                                relatedMatchFileTemplates,
+                                parentDirectory,
+                                string.Empty,
+                                onAfterCompletion);
+        
+                            return Task.CompletedTask;
+                        }),
+                    absolutePath: default);
+                    
+                return Task.CompletedTask;
+            }/*,
             simpleWidgetKind: SimpleWidgetKind.FileForm,
             widgetParameterMap: new Dictionary<string, object?>
             {
@@ -34,7 +65,10 @@ public partial class IdeService
                             return Task.CompletedTask;
                         })
                 },
-            }*/);
+            }*/)
+            {
+                IconKind = AutocompleteEntryKind.Widget,
+            };
     }
 
     public MenuOptionRecord NewTemplatedFile(AbsolutePath parentDirectory, Func<string> getParentDirectoryNamespaceFunc, Func<Task> onAfterCompletion)

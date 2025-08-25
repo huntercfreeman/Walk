@@ -175,7 +175,7 @@ public partial class MenuDisplay : ComponentBase, IDisposable
                         MenuHtmlId = _htmlId,
                     });
                     
-                    if (option.IconKind != AutocompleteEntryKind.Chevron)
+                    if (option.IconKind != AutocompleteEntryKind.Chevron && option.IconKind != AutocompleteEntryKind.Widget)
                         await Close();
                 }
                 //else if (option.SimpleWidgetKind != SimpleWidgetKind.None)
@@ -245,7 +245,7 @@ public partial class MenuDisplay : ComponentBase, IDisposable
                 MenuHtmlId = _htmlId,
             });
             
-            if (option.IconKind != AutocompleteEntryKind.Chevron)
+            if (option.IconKind != AutocompleteEntryKind.Chevron && option.IconKind != AutocompleteEntryKind.Widget)
                 await Close();
         }
         //else if (option.SimpleWidgetKind != SimpleWidgetKind.None)
