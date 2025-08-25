@@ -12,15 +12,22 @@ public partial class IdeService
 {
     public MenuOptionRecord NewEmptyFile(AbsolutePath parentDirectory, Func<Task> onAfterCompletion)
     {
-        return new MenuOptionRecord("New Empty File", MenuOptionKind.Create,
-            simpleWidgetKind: SimpleWidgetKind.FileForm,
-            widgetParameterMap: new Dictionary<string, object?>
+        return new MenuOptionRecord(
+            "New Empty File",
+            MenuOptionKind.Create,
+            menuOptionOnClickArgs => 
             {
-                { nameof(Walk.Common.RazorLib.FileSystems.Displays.FileFormDisplay.FileName), string.Empty },
-                { nameof(Walk.Common.RazorLib.FileSystems.Displays.FileFormDisplay.CheckForTemplates), false },
-                {
-                    nameof(Walk.Common.RazorLib.FileSystems.Displays.FileFormDisplay.OnAfterSubmitFunc),
-                    new Func<string, IFileTemplate?, List<IFileTemplate>, Task>(
+                MenuRecord.OpenWidget(
+                    CommonService,
+                    menuOptionOnClickArgs.MenuMeasurements,
+                    menuOptionOnClickArgs.TopOffsetOptionFromMenu,
+                    elementIdToRestoreFocusToOnClose: menuOptionOnClickArgs.MenuHtmlId,
+                    SimpleWidgetKind.FileForm,
+                    isDirectory: default,
+                    checkForTemplates: false,
+                    fileName: string.Empty,
+                    onAfterSubmitFuncAbsolutePathTask: null,
+                    onAfterSubmitFuncOther: new Func<string, IFileTemplate?, List<IFileTemplate>, Task>(
                         (fileName, exactMatchFileTemplate, relatedMatchFileTemplates) =>
                         {
                             Enqueue_PerformNewFile(
@@ -30,24 +37,36 @@ public partial class IdeService
                                 parentDirectory,
                                 string.Empty,
                                 onAfterCompletion);
-
+        
                             return Task.CompletedTask;
-                        })
-                },
-            });
+                        }),
+                    absolutePath: default);
+                    
+                return Task.CompletedTask;
+            })
+            {
+                IconKind = AutocompleteEntryKind.Widget,
+            };
     }
 
     public MenuOptionRecord NewTemplatedFile(AbsolutePath parentDirectory, Func<string> getParentDirectoryNamespaceFunc, Func<Task> onAfterCompletion)
     {
-        return new MenuOptionRecord("New Templated File", MenuOptionKind.Create,
-            simpleWidgetKind: Walk.Common.RazorLib.Widgets.Models.SimpleWidgetKind.FileForm,
-            widgetParameterMap: new Dictionary<string, object?>
+        return new MenuOptionRecord(
+            "New Templated File",
+            MenuOptionKind.Create,
+            menuOptionOnClickArgs => 
             {
-                { nameof(Walk.Common.RazorLib.FileSystems.Displays.FileFormDisplay.FileName), string.Empty },
-                { nameof(Walk.Common.RazorLib.FileSystems.Displays.FileFormDisplay.CheckForTemplates), true },
-                {
-                    nameof(Walk.Common.RazorLib.FileSystems.Displays.FileFormDisplay.OnAfterSubmitFunc),
-                    new Func<string, IFileTemplate?, List<IFileTemplate>, Task>(
+                MenuRecord.OpenWidget(
+                    CommonService,
+                    menuOptionOnClickArgs.MenuMeasurements,
+                    menuOptionOnClickArgs.TopOffsetOptionFromMenu,
+                    elementIdToRestoreFocusToOnClose: menuOptionOnClickArgs.MenuHtmlId,
+                    SimpleWidgetKind.FileForm,
+                    isDirectory: default,
+                    checkForTemplates: true,
+                    fileName: string.Empty,
+                    onAfterSubmitFuncAbsolutePathTask: null,
+                    onAfterSubmitFuncOther: new Func<string, IFileTemplate?, List<IFileTemplate>, Task>(
                         (fileName, exactMatchFileTemplate, relatedMatchFileTemplates) =>
                         {
                             Enqueue_PerformNewFile(
@@ -59,79 +78,115 @@ public partial class IdeService
                                 onAfterCompletion);
 
                             return Task.CompletedTask;
-                        })
-                },
-            });
+                        }),
+                    absolutePath: default);
+                    
+                return Task.CompletedTask;
+            })
+            {
+                IconKind = AutocompleteEntryKind.Widget,
+            };
     }
 
     public MenuOptionRecord NewDirectory(AbsolutePath parentDirectory, Func<Task> onAfterCompletion)
     {
-        return new MenuOptionRecord("New Directory", MenuOptionKind.Create,
-            simpleWidgetKind: Walk.Common.RazorLib.Widgets.Models.SimpleWidgetKind.FileForm,
-            widgetParameterMap: new Dictionary<string, object?>
+        return new MenuOptionRecord(
+            "New Directory",
+            MenuOptionKind.Create,
+            menuOptionOnClickArgs => 
             {
-                { nameof(Walk.Common.RazorLib.FileSystems.Displays.FileFormDisplay.FileName), string.Empty },
-                { nameof(Walk.Common.RazorLib.FileSystems.Displays.FileFormDisplay.IsDirectory), true },
-                {
-                    nameof(Walk.Common.RazorLib.FileSystems.Displays.FileFormDisplay.OnAfterSubmitFunc),
-                    new Func<string, IFileTemplate?, List<IFileTemplate>, Task>(
+                MenuRecord.OpenWidget(
+                    CommonService,
+                    menuOptionOnClickArgs.MenuMeasurements,
+                    menuOptionOnClickArgs.TopOffsetOptionFromMenu,
+                    elementIdToRestoreFocusToOnClose: menuOptionOnClickArgs.MenuHtmlId,
+                    SimpleWidgetKind.FileForm,
+                    isDirectory: true,
+                    checkForTemplates: true,
+                    fileName: string.Empty,
+                    onAfterSubmitFuncAbsolutePathTask: null,
+                    onAfterSubmitFuncOther: new Func<string, IFileTemplate?, List<IFileTemplate>, Task>(
                         (directoryName, _, _) =>
                         {
                             Enqueue_PerformNewDirectory(directoryName, parentDirectory, onAfterCompletion);
                             return Task.CompletedTask;
-                        })
-                },
-            });
+                        }),
+                    absolutePath: default);
+                    
+                return Task.CompletedTask;
+            })
+            {
+                IconKind = AutocompleteEntryKind.Widget,
+            };
     }
 
     public MenuOptionRecord DeleteFile(AbsolutePath absolutePath, Func<Task> onAfterCompletion)
     {
-        return new MenuOptionRecord("Delete", MenuOptionKind.Delete,
-            simpleWidgetKind: Walk.Common.RazorLib.Widgets.Models.SimpleWidgetKind.DeleteFileForm,
-            widgetParameterMap: new Dictionary<string, object?>
+        return new MenuOptionRecord(
+            "Delete",
+            MenuOptionKind.Delete,
+            menuOptionOnClickArgs => 
             {
-                { nameof(Walk.Common.RazorLib.FileSystems.Displays.DeleteFileFormDisplay.AbsolutePath), absolutePath },
-                { nameof(Walk.Common.RazorLib.FileSystems.Displays.DeleteFileFormDisplay.IsDirectory), true },
-                {
-                    nameof(Walk.Common.RazorLib.FileSystems.Displays.DeleteFileFormDisplay.OnAfterSubmitFunc),
-                    new Func<AbsolutePath, Task>(
+                MenuRecord.OpenWidget(
+                    CommonService,
+                    menuOptionOnClickArgs.MenuMeasurements,
+                    menuOptionOnClickArgs.TopOffsetOptionFromMenu,
+                    elementIdToRestoreFocusToOnClose: menuOptionOnClickArgs.MenuHtmlId,
+                    SimpleWidgetKind.DeleteFileForm,
+                    isDirectory: true,
+                    checkForTemplates: true,
+                    fileName: string.Empty,
+                    onAfterSubmitFuncAbsolutePathTask: new Func<AbsolutePath, Task>(
                         x =>
                         {
                             Enqueue_PerformDeleteFile(x, onAfterCompletion);
                             return Task.CompletedTask;
-                        })
-                },
-            });
+                        }),
+                    onAfterSubmitFuncOther: null,
+                    absolutePath: absolutePath);
+                    
+                return Task.CompletedTask;
+            })
+            {
+                IconKind = AutocompleteEntryKind.Widget,
+            };
     }
 
     public MenuOptionRecord RenameFile(AbsolutePath sourceAbsolutePath, CommonService commonService, Func<Task> onAfterCompletion)
     {
-        return new MenuOptionRecord("Rename", MenuOptionKind.Update,
-            simpleWidgetKind: Walk.Common.RazorLib.Widgets.Models.SimpleWidgetKind.FileForm,
-            widgetParameterMap: new Dictionary<string, object?>
+        return new MenuOptionRecord(
+            "Rename",
+            MenuOptionKind.Update,
+            menuOptionOnClickArgs => 
             {
-                {
-                    nameof(Walk.Common.RazorLib.FileSystems.Displays.FileFormDisplay.FileName),
-                    sourceAbsolutePath.IsDirectory
-                        ? sourceAbsolutePath.Name
-                        : sourceAbsolutePath.Name
-                },
-                { nameof(Walk.Common.RazorLib.FileSystems.Displays.FileFormDisplay.IsDirectory), sourceAbsolutePath.IsDirectory },
-                {
-                    nameof(Walk.Common.RazorLib.FileSystems.Displays.FileFormDisplay.OnAfterSubmitFunc),
-                    new Func<string, IFileTemplate?, List<IFileTemplate>, Task>((nextName, _, _) =>
-                    {
-                        PerformRename(sourceAbsolutePath, nextName, commonService, onAfterCompletion);
-                        return Task.CompletedTask;
-                    })
-                },
-            });
+                MenuRecord.OpenWidget(
+                    CommonService,
+                    menuOptionOnClickArgs.MenuMeasurements,
+                    menuOptionOnClickArgs.TopOffsetOptionFromMenu,
+                    elementIdToRestoreFocusToOnClose: menuOptionOnClickArgs.MenuHtmlId,
+                    SimpleWidgetKind.FileForm,
+                    isDirectory: sourceAbsolutePath.IsDirectory,
+                    checkForTemplates: false,
+                    fileName: sourceAbsolutePath.Name,
+                    onAfterSubmitFuncAbsolutePathTask: null,
+                    onAfterSubmitFuncOther: new Func<string, IFileTemplate?, List<IFileTemplate>, Task>((nextName, _, _) =>
+                        {
+                            PerformRename(sourceAbsolutePath, nextName, commonService, onAfterCompletion);
+                            return Task.CompletedTask;
+                        }),
+                    absolutePath: default);
+                    
+                return Task.CompletedTask;
+            })
+            {
+                IconKind = AutocompleteEntryKind.Widget,
+            };
     }
 
     public MenuOptionRecord CopyFile(AbsolutePath absolutePath, Func<Task> onAfterCompletion)
     {
         return new MenuOptionRecord("Copy", MenuOptionKind.Update,
-            onClickFunc: () =>
+            onClickFunc: _ =>
             {
                 Enqueue_PerformCopyFile(absolutePath, onAfterCompletion);
                 return Task.CompletedTask;
@@ -141,7 +196,7 @@ public partial class IdeService
     public MenuOptionRecord CutFile(AbsolutePath absolutePath, Func<Task> onAfterCompletion)
     {
         return new MenuOptionRecord("Cut", MenuOptionKind.Update,
-            onClickFunc: () =>
+            onClickFunc: _ =>
             {
                 Enqueue_PerformCutFile(absolutePath, onAfterCompletion);
                 return Task.CompletedTask;
@@ -151,7 +206,7 @@ public partial class IdeService
     public MenuOptionRecord PasteClipboard(AbsolutePath directoryAbsolutePath, Func<Task> onAfterCompletion)
     {
         return new MenuOptionRecord("Paste", MenuOptionKind.Update,
-            onClickFunc: () =>
+            onClickFunc: _ =>
             {
                 Enqueue_PerformPasteFile(directoryAbsolutePath, onAfterCompletion);
                 return Task.CompletedTask;

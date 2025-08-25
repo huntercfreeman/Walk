@@ -151,16 +151,16 @@ public partial class ContextMenu : ComponentBase, ITextEditorDependentComponent
     {
         List<MenuOptionRecord> menuOptionRecordsList = new();
         
-        var cut = new MenuOptionRecord("Cut (Ctrl x)", MenuOptionKind.Other, () => SelectMenuOption(CutMenuOption));
+        var cut = new MenuOptionRecord("Cut (Ctrl x)", MenuOptionKind.Other, _ => SelectMenuOption(CutMenuOption));
         menuOptionRecordsList.Add(cut);
 
-        var copy = new MenuOptionRecord("Copy (Ctrl c)", MenuOptionKind.Other, () => SelectMenuOption(CopyMenuOption));
+        var copy = new MenuOptionRecord("Copy (Ctrl c)", MenuOptionKind.Other, _ => SelectMenuOption(CopyMenuOption));
         menuOptionRecordsList.Add(copy);
 
-        var paste = new MenuOptionRecord("Paste (Ctrl v)", MenuOptionKind.Other, () => SelectMenuOption(PasteMenuOption));
+        var paste = new MenuOptionRecord("Paste (Ctrl v)", MenuOptionKind.Other, _ => SelectMenuOption(PasteMenuOption));
         menuOptionRecordsList.Add(paste);
         
-        var findInTextEditor = new MenuOptionRecord("Find (Ctrl f)", MenuOptionKind.Other, () => SelectMenuOption(FindInTextEditor));
+        var findInTextEditor = new MenuOptionRecord("Find (Ctrl f)", MenuOptionKind.Other, _ => SelectMenuOption(FindInTextEditor));
         menuOptionRecordsList.Add(findInTextEditor);
         
         /*
@@ -169,16 +169,16 @@ public partial class ContextMenu : ComponentBase, ITextEditorDependentComponent
         menuOptionRecordsList.Add(findAllReferences);
         */
         
-        var relatedFilesQuickPick = new MenuOptionRecord("Related Files (F7)", MenuOptionKind.Other, () => SelectMenuOption(RelatedFilesQuickPick));
+        var relatedFilesQuickPick = new MenuOptionRecord("Related Files (F7)", MenuOptionKind.Other, _ => SelectMenuOption(RelatedFilesQuickPick));
         menuOptionRecordsList.Add(relatedFilesQuickPick);
         
-        var peekDefinition = new MenuOptionRecord("Peek definition (Alt F12)", MenuOptionKind.Other, () => SelectMenuOption(PeekDefinitionOption));
+        var peekDefinition = new MenuOptionRecord("Peek definition (Alt F12)", MenuOptionKind.Other, _ => SelectMenuOption(PeekDefinitionOption));
         menuOptionRecordsList.Add(peekDefinition);
         
-        var goToDefinition = new MenuOptionRecord("Go to definition (F12)", MenuOptionKind.Other, () => SelectMenuOption(GoToDefinitionOption));
+        var goToDefinition = new MenuOptionRecord("Go to definition (F12)", MenuOptionKind.Other, _ => SelectMenuOption(GoToDefinitionOption));
         menuOptionRecordsList.Add(goToDefinition);
         
-        var quickActionsSlashRefactors = new MenuOptionRecord("QuickActions/Refactors (Ctrl .)", MenuOptionKind.Other, () => SelectMenuOption(QuickActionsSlashRefactors));
+        var quickActionsSlashRefactors = new MenuOptionRecord("QuickActions/Refactors (Ctrl .)", MenuOptionKind.Other, _ => SelectMenuOption(QuickActionsSlashRefactors));
         menuOptionRecordsList.Add(quickActionsSlashRefactors);
 
         if (!menuOptionRecordsList.Any())

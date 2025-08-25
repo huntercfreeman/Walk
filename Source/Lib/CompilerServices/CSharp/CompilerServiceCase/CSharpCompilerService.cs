@@ -582,7 +582,7 @@ public sealed class CSharpCompilerService : IExtendedCompilerService
                                     var menuOptionRecord = new MenuOptionRecord(
                                         entry.DisplayName,
                                         MenuOptionKind.Other,
-                                        () => entry.SideEffectFunc?.Invoke() ?? Task.CompletedTask);
+                                        _ => entry.SideEffectFunc?.Invoke() ?? Task.CompletedTask);
                                     menuOptionRecord.IconKind = entry.AutocompleteEntryKind;
                                     return menuOptionRecord;
                                 })
@@ -739,7 +739,7 @@ public sealed class CSharpCompilerService : IExtendedCompilerService
                     var menuOptionRecord = new MenuOptionRecord(
                         entry.DisplayName,
                         MenuOptionKind.Other,
-                        () => entry.SideEffectFunc?.Invoke() ?? Task.CompletedTask);
+                        _ => entry.SideEffectFunc?.Invoke() ?? Task.CompletedTask);
                     
                     menuOptionRecord.IconKind = entry.AutocompleteEntryKind;
                     return menuOptionRecord;
@@ -822,7 +822,7 @@ public sealed class CSharpCompilerService : IExtendedCompilerService
             menuOptionList.Add(new MenuOptionRecord(
                 "syntaxNode was null",
                 MenuOptionKind.Other,
-                onClickFunc: async () => {}));
+                onClickFunc: async _ => {}));
         }
         else
         {
@@ -839,7 +839,7 @@ public sealed class CSharpCompilerService : IExtendedCompilerService
                     menuOptionList.Add(new MenuOptionRecord(
                         $"Copy: {usingStatementText}",
                         MenuOptionKind.Other,
-                        onClickFunc: async () =>
+                        onClickFunc: async _ =>
                         {
                             await _textEditorService.CommonService.SetClipboard(usingStatementText).ConfigureAwait(false);
                         }));
@@ -849,7 +849,7 @@ public sealed class CSharpCompilerService : IExtendedCompilerService
                     menuOptionList.Add(new MenuOptionRecord(
                         "type not found",
                         MenuOptionKind.Other,
-                        onClickFunc: async () => {}));
+                        onClickFunc: async _ => {}));
                 }
             }
             else
@@ -857,7 +857,7 @@ public sealed class CSharpCompilerService : IExtendedCompilerService
                 menuOptionList.Add(new MenuOptionRecord(
                     syntaxNode.SyntaxKind.ToString(),
                     MenuOptionKind.Other,
-                    onClickFunc: async () => {}));
+                    onClickFunc: async _ => {}));
             }
         }
         
@@ -1287,7 +1287,7 @@ public sealed class CSharpCompilerService : IExtendedCompilerService
                 menuOptionList.Add(new MenuOptionRecord(
                     siblingAbsolutePath.Name,
                     MenuOptionKind.Other,
-                    onClickFunc: async () => 
+                    onClickFunc: async _ => 
                     {
                         int? positionIndex = null;
                         
@@ -1343,7 +1343,7 @@ public sealed class CSharpCompilerService : IExtendedCompilerService
             
             if (menuOptionList.Count == 1)
             {
-                await menuOptionList[0].OnClickFunc.Invoke();
+                await menuOptionList[0].OnClickFunc.Invoke(default);
             }
             else
             {

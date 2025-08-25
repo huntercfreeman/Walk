@@ -7,9 +7,8 @@ namespace Walk.Common.RazorLib.FormsGenerics.Displays;
 
 public partial class BooleanPromptOrCancelDisplay : ComponentBase
 {
-    [CascadingParameter]
+    [Parameter, EditorRequired]
     public MenuOptionCallbacks? MenuOptionCallbacks { get; set; }
-
     [Parameter, EditorRequired]
     public bool IncludeCancelOption { get; set; }
     [Parameter, EditorRequired]

@@ -117,6 +117,9 @@ public partial class SolutionExplorerContextMenu : ComponentBase
 
     private MenuRecord GetMenuRecordManySelections(TreeViewCommandArgs commandArgs)
     {
+        return new MenuRecord(MenuRecord.NoMenuOptionsExistList);
+        
+        /*
         var menuOptionList = new List<MenuOptionRecord>();
 
         var getFileOptions = true;
@@ -141,7 +144,7 @@ public partial class SolutionExplorerContextMenu : ComponentBase
         {
             menuOptionList.Add(new MenuOptionRecord(
                 "Delete",
-                MenuOptionKind.Delete,
+                MenuOptionKind.Delete/*,
                 simpleWidgetKind: Walk.Common.RazorLib.Widgets.Models.SimpleWidgetKind.BooleanPromptOrCancel,
                 widgetParameterMap: new Dictionary<string, object?>
                 {
@@ -167,7 +170,7 @@ public partial class SolutionExplorerContextMenu : ComponentBase
                     },
                     { nameof(BooleanPromptOrCancelDisplay.OnAfterDeclineFunc), commandArgs.RestoreFocusToTreeView },
                     { nameof(BooleanPromptOrCancelDisplay.OnAfterCancelFunc), commandArgs.RestoreFocusToTreeView },
-                }));
+                }*//*));
         }
 
         if (!menuOptionList.Any())
@@ -182,7 +185,7 @@ public partial class SolutionExplorerContextMenu : ComponentBase
             var menuRecord = new MenuRecord(menuOptionList);
             _previousGetMenuRecordInvocation = (commandArgs, menuRecord);
             return menuRecord;
-        }
+        }*/
     }
 
     private MenuOptionRecord[] GetDotNetSolutionMenuOptions(TreeViewSolution treeViewSolution)
@@ -192,33 +195,48 @@ public partial class SolutionExplorerContextMenu : ComponentBase
         var addNewCSharpProject = new MenuOptionRecord(
             "New C# Project",
             MenuOptionKind.Other,
-            () => OpenNewCSharpProjectDialog(treeViewSolution.Item));
+            _ => OpenNewCSharpProjectDialog(treeViewSolution.Item));
 
         var addExistingCSharpProject = new MenuOptionRecord(
             "Existing C# Project",
             MenuOptionKind.Other,
-            () =>
+            _ =>
             {
                 AddExistingProjectToSolution(treeViewSolution.Item);
                 return Task.CompletedTask;
             });
 
-        var createOptions = new MenuOptionRecord("Add", MenuOptionKind.Create,
-            subMenu: new MenuRecord(new List<MenuOptionRecord>
+        var createOptions = new MenuOptionRecord(
+            "Add",
+            MenuOptionKind.Create,
+            menuOptionOnClickArgs =>
             {
-                addNewCSharpProject,
-                addExistingCSharpProject,
-            }));
+                MenuRecord.OpenSubMenu(
+                    DotNetService.CommonService,
+                    subMenu: new MenuRecord(new List<MenuOptionRecord>
+                    {
+                        addNewCSharpProject,
+                        addExistingCSharpProject,
+                    }),
+                    menuOptionOnClickArgs.MenuMeasurements,
+                    menuOptionOnClickArgs.TopOffsetOptionFromMenu,
+                    elementIdToRestoreFocusToOnClose: menuOptionOnClickArgs.MenuHtmlId);
+                    
+                return Task.CompletedTask;
+            })
+        {
+            IconKind = AutocompleteEntryKind.Chevron
+        };
 
         var openInTextEditor = new MenuOptionRecord(
             "Open in text editor",
             MenuOptionKind.Update,
-            () => OpenSolutionInTextEditor(treeViewSolution.Item));
+            _ => OpenSolutionInTextEditor(treeViewSolution.Item));
             
         var properties = new MenuOptionRecord(
             "Properties",
             MenuOptionKind.Update,
-            () => OpenSolutionProperties(treeViewSolution.Item));
+            _ => OpenSolutionProperties(treeViewSolution.Item));
 
         return new[]
         {
@@ -308,7 +326,7 @@ public partial class SolutionExplorerContextMenu : ComponentBase
             new MenuOptionRecord(
                 "Set as Startup Project",
                 MenuOptionKind.Other,
-                () =>
+                _ =>
                 {
                     var startupControl = DotNetService.IdeService.GetIdeStartupControlState().StartupControlList.FirstOrDefault(
                         x => x.StartupProjectAbsolutePath.Value == treeViewModel.Item.Value);

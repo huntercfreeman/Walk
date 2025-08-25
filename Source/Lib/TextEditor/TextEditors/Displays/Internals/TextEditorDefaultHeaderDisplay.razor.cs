@@ -247,7 +247,7 @@ public partial class TextEditorDefaultHeaderDisplay : ComponentBase, ITextEditor
         menuOptionList.Add(new MenuOptionRecord(
             "Cancel",
             MenuOptionKind.Read,
-            onClickFunc: () =>
+            onClickFunc: _ =>
             {
                 TextEditorService.CommonService.Dropdown_ReduceDisposeAction(dropdownKey);
                 return Task.CompletedTask;
@@ -256,7 +256,7 @@ public partial class TextEditorDefaultHeaderDisplay : ComponentBase, ITextEditor
         menuOptionList.Add(new MenuOptionRecord(
             $"Reset: '{absolutePath.Name}'",
             MenuOptionKind.Delete,
-            onClickFunc: () =>
+            onClickFunc: _ =>
             {
                 TextEditorService.WorkerArbitrary.PostUnique(editContext =>
                 {
