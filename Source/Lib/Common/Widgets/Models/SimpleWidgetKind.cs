@@ -31,6 +31,5 @@ public enum SimpleWidgetKind
     None,
     FileForm,
     DeleteFileForm,
-    BooleanPromptOrCancel,
     RemoveCSharpProjectFromSolution,
 }
