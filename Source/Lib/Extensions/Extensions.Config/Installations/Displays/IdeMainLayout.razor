@@ -102,7 +102,7 @@
                     }
                 }
                 
-            	if (activeStartupControl.Title is null)
+            	if (activeStartupControl.StartupProjectAbsolutePath.Value is null)
             	{
             		_userInterfaceSawIsExecuting = false;
             	}
@@ -134,7 +134,7 @@
                     <button @onclick="StartProgramWithoutDebuggingOnClick"
                             class="di_button"
                             id="@_startButtonElementId"
-                            disabled=@(activeStartupControl.Title is null)
+                            disabled=@(activeStartupControl.StartupProjectAbsolutePath.Value is null)
                             title="@(activeStartupControl.StartupProjectAbsolutePath.Value)">
                         
                         @if (_userInterfaceSawIsExecuting)

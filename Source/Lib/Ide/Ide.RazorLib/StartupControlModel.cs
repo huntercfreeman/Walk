@@ -22,7 +22,8 @@ namespace Walk.Ide.RazorLib;
 ///
 ///
 /// All in all, I'm extremely anxious and I cannot in this moment deal with this situation.
-/// I will check if `Title` is null for now.
+/// I will check if `StartupProjectAbsolutePath.Value` is null for now
+/// (since it is used as a key).
 ///
 ///
 /// What I mean is, I need to first know every bit of overhead that comes with defining this a `record struct`,

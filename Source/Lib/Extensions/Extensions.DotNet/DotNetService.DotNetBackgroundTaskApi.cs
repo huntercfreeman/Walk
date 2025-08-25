@@ -830,7 +830,7 @@ public partial class DotNetService
         }
         finally
         {
-            if (originallyActiveStartupControl.Title is not null)
+            if (originallyActiveStartupControl.StartupProjectAbsolutePath.Value is not null)
             {
                 var localStartupControlState = IdeService.GetIdeStartupControlState();
                 

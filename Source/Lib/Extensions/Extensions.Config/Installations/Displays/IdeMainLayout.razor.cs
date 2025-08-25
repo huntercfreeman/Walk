@@ -511,7 +511,7 @@ public partial class IdeMainLayout : LayoutComponentBase, IDisposable
         var activeStartupControl = localStartupControlState.StartupControlList.FirstOrDefault(
             x => x.StartupProjectAbsolutePath.Value == localStartupControlState.ActiveStartupProjectAbsolutePathValue);
         
-        if (activeStartupControl.Title is null)
+        if (activeStartupControl.StartupProjectAbsolutePath.Value is null)
             return;
     
         if (_userInterfaceSawIsExecuting)
@@ -550,7 +550,7 @@ public partial class IdeMainLayout : LayoutComponentBase, IDisposable
                     var activeStartupControl = localStartupControlState.StartupControlList.FirstOrDefault(
                         x => x.StartupProjectAbsolutePath.Value == localStartupControlState.ActiveStartupProjectAbsolutePathValue);
                     
-                    if (activeStartupControl.Title is null)
+                    if (activeStartupControl.StartupProjectAbsolutePath.Value is null)
                         return Task.CompletedTask;
                         
                     return DotNetService.StopButtonOnClick(activeStartupControl);
