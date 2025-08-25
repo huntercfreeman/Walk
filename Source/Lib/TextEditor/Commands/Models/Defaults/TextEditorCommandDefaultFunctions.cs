@@ -875,7 +875,7 @@ public class TextEditorCommandDefaultFunctions
             menuOptionList.Add(new MenuOptionRecord(
                 siblingAbsolutePath.Name,
                 MenuOptionKind.Other,
-                onClickFunc: async () => 
+                onClickFunc: async _ => 
                 {
                     textEditorService.WorkerArbitrary.PostUnique(async editContext =>
                     {

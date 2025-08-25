@@ -91,7 +91,7 @@ public partial class TestExplorerContextMenu : ComponentBase
                     menuRecordsList.Add(new MenuOptionRecord(
                         $"Send to Output panel",
                         MenuOptionKind.Other,
-                        onClickFunc: () =>
+                        onClickFunc: _ =>
                         {
                             return SendToOutputPanelAsync(treeViewStringFragment.Item.TerminalCommandParsed?.OutputCache.ToString() ?? string.Empty);
                         }));
@@ -110,7 +110,7 @@ public partial class TestExplorerContextMenu : ComponentBase
             menuRecordsList.Add(new MenuOptionRecord(
                 $"Refresh: {treeViewProjectTestModel.Item.AbsolutePath.Name}",
                 MenuOptionKind.Other,
-                onClickFunc: async () =>
+                onClickFunc: async _ =>
                 {
                     // TODO: This code is not concurrency safe with 'TestExplorerScheduler.Task_DiscoverTests()'
                     DotNetService.ReduceWithAction(inState =>
@@ -170,7 +170,7 @@ public partial class TestExplorerContextMenu : ComponentBase
                 menuRecordsList.Add(new MenuOptionRecord(
                     $"Send to Output panel",
                     MenuOptionKind.Other,
-                    onClickFunc: () =>
+                    onClickFunc: _ =>
                     {
                         return SendToOutputPanelAsync(treeViewProjectTestModel.Item.TerminalCommandParsed?.OutputCache.ToString() ?? string.Empty);
                     }));
@@ -191,7 +191,7 @@ public partial class TestExplorerContextMenu : ComponentBase
         var menuOptionRecord = new MenuOptionRecord(
             $"Run: {treeViewStringFragment.Item.Value}",
             MenuOptionKind.Other,
-            onClickFunc: () =>
+            onClickFunc: _ =>
             {
                 if (treeViewProjectTestModel.Item.AbsolutePath.CreateSubstringParentDirectory() is not null)
                 {

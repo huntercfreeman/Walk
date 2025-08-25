@@ -1,3 +1,7 @@
+using Walk.Common.RazorLib.Dropdowns.Models;
+using Walk.Common.RazorLib.Keys.Models;
+using Walk.Common.RazorLib.Menus.Displays;
+
 namespace Walk.Common.RazorLib.Menus.Models;
 
 /// <summary>
@@ -18,4 +22,29 @@ public record MenuRecord(IReadOnlyList<MenuOptionRecord> MenuOptionList)
     public bool ShouldImmediatelyTakeFocus { get; set; } = true;
     public bool UseIcons { get; set; }
     public string? ElementIdToRestoreFocusToOnClose { get; set; } = CommonFacts.RootHtmlElementId;
+    
+    public static void OpenSubMenu(
+        CommonService commonService,
+        MenuRecord subMenu,
+        MenuMeasurements menuMeasurements,
+        double topOffsetOptionFromMenu,
+        string elementIdToRestoreFocusToOnClose)
+    {
+        subMenu.ElementIdToRestoreFocusToOnClose = elementIdToRestoreFocusToOnClose;
+        
+        var submenuDropdown = new DropdownRecord(
+            Key<DropdownRecord>.NewKey(),
+            leftInitial: menuMeasurements.BoundingClientRectLeft + menuMeasurements.ViewWidth,
+            topInitial: menuMeasurements.BoundingClientRectTop + topOffsetOptionFromMenu,
+            typeof(MenuDisplay),
+            new Dictionary<string, object?>
+            {
+                {
+                    nameof(MenuDisplay.Menu),
+                    subMenu
+                }
+            },
+            restoreFocusOnClose: null);
+        commonService.Dropdown_ReduceRegisterAction(submenuDropdown);
+    }
 }

@@ -26,12 +26,12 @@ public partial class TabContextMenu : ComponentBase
         menuOptionList.Add(new MenuOptionRecord(
             "Close All",
             MenuOptionKind.Delete,
-            () => tabContextMenuEventArgs.Tab.TabGroup.CloseAllAsync()));
+            _ => tabContextMenuEventArgs.Tab.TabGroup.CloseAllAsync()));
 
         menuOptionList.Add(new MenuOptionRecord(
             "Close Others",
             MenuOptionKind.Delete,
-            () => tabContextMenuEventArgs.Tab.TabGroup.CloseOthersAsync(tabContextMenuEventArgs.Tab)));
+            _ => tabContextMenuEventArgs.Tab.TabGroup.CloseOthersAsync(tabContextMenuEventArgs.Tab)));
 
         if (!menuOptionList.Any())
         {

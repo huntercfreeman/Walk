@@ -56,7 +56,7 @@ public partial class DotNetService
     {
         return new MenuOptionRecord("Add Project Reference", MenuOptionKind.Other,
             onClickFunc:
-            () =>
+            _ =>
             {
                 PerformAddProjectToProjectReference(
                     projectReceivingReference,
@@ -76,7 +76,7 @@ public partial class DotNetService
     {
         return new MenuOptionRecord("Remove Project Reference", MenuOptionKind.Other,
             onClickFunc:
-                () =>
+                _ =>
                 {
                     Enqueue_PerformRemoveProjectToProjectReference(
                         treeViewCSharpProjectToProjectReference,
@@ -128,7 +128,7 @@ public partial class DotNetService
         Func<Task> onAfterCompletion)
     {
         return new MenuOptionRecord("Remove NuGet Package Reference", MenuOptionKind.Other,
-            onClickFunc: () =>
+            onClickFunc: _ =>
             {
                 Enqueue_PerformRemoveNuGetPackageReferenceFromProject(
                     modifyProjectAbsolutePath,

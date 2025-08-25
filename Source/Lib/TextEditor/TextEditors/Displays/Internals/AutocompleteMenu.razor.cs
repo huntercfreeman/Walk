@@ -144,7 +144,7 @@ public partial class AutocompleteMenu : ComponentBase, ITextEditorDependentCompo
                         var menuOptionRecord = new MenuOptionRecord(
                             entry.DisplayName,
                             MenuOptionKind.Other,
-                            () => SelectMenuOption(() =>
+                            _ => SelectMenuOption(() =>
                             {
                                 if (entry.AutocompleteEntryKind != AutocompleteEntryKind.Snippet)
                                     InsertAutocompleteMenuOption(word, entry, virtualizationResult.ViewModel);

@@ -106,7 +106,7 @@ public class FolderExplorerTreeViewKeyboardEventHandler : TreeViewKeyboardEventH
         if (copyFileMenuOption.OnClickFunc is null)
             return Task.CompletedTask;
 
-        return copyFileMenuOption.OnClickFunc.Invoke();
+        return copyFileMenuOption.OnClickFunc.Invoke(default);
     }
 
     private Task PasteClipboard(TreeViewCommandArgs commandArgs)
@@ -163,7 +163,7 @@ public class FolderExplorerTreeViewKeyboardEventHandler : TreeViewKeyboardEventH
         if (pasteMenuOptionRecord.OnClickFunc is null)
             return Task.CompletedTask;
 
-        return pasteMenuOptionRecord.OnClickFunc.Invoke();
+        return pasteMenuOptionRecord.OnClickFunc.Invoke(default);
     }
 
     private Task CutFile(TreeViewCommandArgs commandArgs)
@@ -187,7 +187,7 @@ public class FolderExplorerTreeViewKeyboardEventHandler : TreeViewKeyboardEventH
         if (cutFileOptionRecord.OnClickFunc is null)
             return Task.CompletedTask;
 
-        return cutFileOptionRecord.OnClickFunc.Invoke();
+        return cutFileOptionRecord.OnClickFunc.Invoke(default);
     }
 
     private Task InvokeOpenInEditorAsync(TreeViewCommandArgs commandArgs, bool shouldSetFocusToEditor)

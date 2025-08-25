@@ -131,7 +131,7 @@ public partial class IdeService
     public MenuOptionRecord CopyFile(AbsolutePath absolutePath, Func<Task> onAfterCompletion)
     {
         return new MenuOptionRecord("Copy", MenuOptionKind.Update,
-            onClickFunc: () =>
+            onClickFunc: _ =>
             {
                 Enqueue_PerformCopyFile(absolutePath, onAfterCompletion);
                 return Task.CompletedTask;
@@ -141,7 +141,7 @@ public partial class IdeService
     public MenuOptionRecord CutFile(AbsolutePath absolutePath, Func<Task> onAfterCompletion)
     {
         return new MenuOptionRecord("Cut", MenuOptionKind.Update,
-            onClickFunc: () =>
+            onClickFunc: _ =>
             {
                 Enqueue_PerformCutFile(absolutePath, onAfterCompletion);
                 return Task.CompletedTask;
@@ -151,7 +151,7 @@ public partial class IdeService
     public MenuOptionRecord PasteClipboard(AbsolutePath directoryAbsolutePath, Func<Task> onAfterCompletion)
     {
         return new MenuOptionRecord("Paste", MenuOptionKind.Update,
-            onClickFunc: () =>
+            onClickFunc: _ =>
             {
                 Enqueue_PerformPasteFile(directoryAbsolutePath, onAfterCompletion);
                 return Task.CompletedTask;

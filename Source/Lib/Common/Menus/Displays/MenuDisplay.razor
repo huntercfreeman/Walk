@@ -68,10 +68,10 @@
             
             @menuOption.DisplayName
             
-            @*@if (menuOption.SubMenu is not null)
+            @if (menuOption.IconKind == AutocompleteEntryKind.Chevron)
             {
                 @IconChevronRightFragment.Render(iconDriver)
-            }*@
+            }
         </div>
         
         @*@if (i == _indexMenuOptionShouldDisplayWidget)

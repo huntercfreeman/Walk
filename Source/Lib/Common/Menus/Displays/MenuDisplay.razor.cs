@@ -168,8 +168,15 @@ public partial class MenuDisplay : ComponentBase, IDisposable
                 //}
                 /*else */if (option.OnClickFunc is not null)
                 {
-                    await option.OnClickFunc.Invoke();
-                    await Close();
+                    await option.OnClickFunc.Invoke(new MenuOptionOnClickArgs
+                    {
+                        MenuMeasurements = _menuMeasurements,
+                        TopOffsetOptionFromMenu = GetTopByIndex(_activeIndex),
+                        MenuHtmlId = _htmlId,
+                    });
+                    
+                    if (option.IconKind != AutocompleteEntryKind.Chevron)
+                        await Close();
                 }
                 //else if (option.SimpleWidgetKind != SimpleWidgetKind.None)
                 //{
@@ -231,8 +238,15 @@ public partial class MenuDisplay : ComponentBase, IDisposable
         //}
         /*else */if (option.OnClickFunc is not null)
         {
-            await option.OnClickFunc.Invoke();
-            await Close();
+            await option.OnClickFunc.Invoke(new MenuOptionOnClickArgs
+            {
+                MenuMeasurements = _menuMeasurements,
+                TopOffsetOptionFromMenu = GetTopByIndex(_activeIndex),
+                MenuHtmlId = _htmlId,
+            });
+            
+            if (option.IconKind != AutocompleteEntryKind.Chevron)
+                await Close();
         }
         //else if (option.SimpleWidgetKind != SimpleWidgetKind.None)
         //{
@@ -338,29 +352,6 @@ public partial class MenuDisplay : ComponentBase, IDisposable
                 /*preventScroll:*/ true);
         }
     }
-    
-    /*private void OpenSubmenu()
-    {
-        var menuOption = Menu.MenuOptionList[_activeIndex];
-        menuOption.SubMenu.ElementIdToRestoreFocusToOnClose = _htmlId;
-        
-        var topByIndex = GetTopByIndex(_activeIndex);
-        
-        var submenuDropdown = new DropdownRecord(
-            Key<DropdownRecord>.NewKey(),
-            leftInitial: _menuMeasurements.BoundingClientRectLeft + _menuMeasurements.ViewWidth,
-            topInitial: _menuMeasurements.BoundingClientRectTop + topByIndex,
-            typeof(MenuDisplay),
-            new Dictionary<string, object?>
-            {
-                {
-                    nameof(Menu),
-                    menuOption.SubMenu
-                }
-            },
-            restoreFocusOnClose: null);
-        CommonService.Dropdown_ReduceRegisterAction(submenuDropdown);
-    }*/
     
     public void Dispose()
     {

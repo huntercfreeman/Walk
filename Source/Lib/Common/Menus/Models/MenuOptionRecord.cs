@@ -7,7 +7,7 @@ public struct MenuOptionRecord
     public MenuOptionRecord(
         string displayName,
         MenuOptionKind menuOptionKind,
-        Func<Task>? onClickFunc = null)
+        Func<MenuOptionOnClickArgs, Task>? onClickFunc = null)
     {
         DisplayName = displayName;
         MenuOptionKind = menuOptionKind;
@@ -16,6 +16,6 @@ public struct MenuOptionRecord
     
     public string DisplayName { get; init; }
     public MenuOptionKind MenuOptionKind { get; init; }
-    public Func<Task>? OnClickFunc{ get; init; }
+    public Func<MenuOptionOnClickArgs, Task>? OnClickFunc { get; init; }
     public AutocompleteEntryKind IconKind { get; set; }
 }
