@@ -7,99 +7,9 @@ namespace Walk.Ide.RazorLib;
 
 public partial class IdeService
 {
-    private IdeState _ideState = new();
     private StartupControlState _startupControlState = new();
 
-    public IdeState GetIdeState() => _ideState;
     public StartupControlState GetIdeStartupControlState() => _startupControlState;
-
-    public void Ide_SetMenuFile(MenuRecord menu)
-    {
-        lock (_stateModificationLock)
-        {
-            _ideState = _ideState with
-            {
-                MenuFile = menu
-            };
-        }
-    }
-
-    public void Ide_SetMenuTools(MenuRecord menu)
-    {
-        lock (_stateModificationLock)
-        {
-            _ideState = _ideState with
-            {
-                MenuTools = menu
-            };
-        }
-    }
-
-    public void Ide_SetMenuView(MenuRecord menu)
-    {
-        lock (_stateModificationLock)
-        {
-            _ideState = _ideState with
-            {
-                MenuView = menu
-            };
-        }
-    }
-
-    public void Ide_SetMenuRun(MenuRecord menu)
-    {
-        lock (_stateModificationLock)
-        {
-            _ideState = _ideState with
-            {
-                MenuRun = menu
-            };
-        }
-    }
-
-    public void Ide_ModifyMenuFile(Func<MenuRecord, MenuRecord> menuFunc)
-    {
-        lock (_stateModificationLock)
-        {
-            _ideState = _ideState with
-            {
-                MenuFile = menuFunc.Invoke(_ideState.MenuFile)
-            };
-        }
-    }
-
-    public void Ide_ModifyMenuTools(Func<MenuRecord, MenuRecord> menuFunc)
-    {
-        lock (_stateModificationLock)
-        {
-            _ideState = _ideState with
-            {
-                MenuTools = menuFunc.Invoke(_ideState.MenuTools)
-            };
-        }
-    }
-
-    public void Ide_ModifyMenuView(Func<MenuRecord, MenuRecord> menuFunc)
-    {
-        lock (_stateModificationLock)
-        {
-            _ideState = _ideState with
-            {
-                MenuView = menuFunc.Invoke(_ideState.MenuView)
-            };
-        }
-    }
-
-    public void Ide_ModifyMenuRun(Func<MenuRecord, MenuRecord> menuFunc)
-    {
-        lock (_stateModificationLock)
-        {
-            _ideState = _ideState with
-            {
-                MenuRun = menuFunc.Invoke(_ideState.MenuRun)
-            };
-        }
-    }
 
     public void Ide_ClearAllStartupControls()
     {

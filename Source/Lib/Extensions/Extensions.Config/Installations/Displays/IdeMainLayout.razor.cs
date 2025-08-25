@@ -15,11 +15,14 @@ using Walk.TextEditor.RazorLib.Groups.Models;
 using Walk.TextEditor.RazorLib.TextEditors.Models;
 using Walk.TextEditor.RazorLib.TextEditors.Models.Internals;
 using Walk.TextEditor.RazorLib.TextEditors.Displays.Internals;
+using Walk.TextEditor.RazorLib.Commands.Models.Defaults;
 using Walk.Ide.RazorLib;
 using Walk.Ide.RazorLib.Settings.Displays;
 using Walk.Ide.RazorLib.Shareds.Displays.Internals;
 using Walk.Ide.RazorLib.Shareds.Models;
+using Walk.Ide.RazorLib.CodeSearches.Displays;
 using Walk.Extensions.DotNet;
+using Walk.Extensions.DotNet.DotNetSolutions.Models;
 
 namespace Walk.Extensions.Config.Installations.Displays;
 
@@ -66,6 +69,18 @@ public partial class IdeMainLayout : LayoutComponentBase, IDisposable
     private Key<DropdownRecord> _startButtonDropdownKey = Key<DropdownRecord>.NewKey();
 
     private Key<IDynamicViewModel> _dynamicViewModelKeyPrevious;
+    
+    public static readonly Key<DropdownRecord> DropdownKeyFile = Key<DropdownRecord>.NewKey();
+    public const string ButtonFileId = "di_header-button-file";
+
+    public static readonly Key<DropdownRecord> DropdownKeyTools = Key<DropdownRecord>.NewKey();
+    public const string ButtonToolsId = "di_header-button-tools";
+
+    public static readonly Key<DropdownRecord> DropdownKeyView = Key<DropdownRecord>.NewKey();
+    public const string ButtonViewId = "di_header-button-view";
+
+    public static readonly Key<DropdownRecord> DropdownKeyRun = Key<DropdownRecord>.NewKey();
+    public const string ButtonRunId = "di_header-button-run";
 
     private string GetIsActiveCssClass(ITab localTabViewModel) => (localTabViewModel.TabGroup?.GetIsActive(localTabViewModel) ?? false)
         ? "di_active"
@@ -417,11 +432,11 @@ public partial class IdeMainLayout : LayoutComponentBase, IDisposable
         return CommonFacts.RenderDropdownAsync(
             DotNetService.CommonService,
             DotNetService.CommonService.JsRuntimeCommonApi,
-            IdeState.ButtonFileId,
+            ButtonFileId,
             DropdownOrientation.Bottom,
-            IdeState.DropdownKeyFile,
-            DotNetService.IdeService.GetIdeState().MenuFile,
-            IdeState.ButtonFileId,
+            DropdownKeyFile,
+            InitializeMenuFile(DotNetService),
+            ButtonFileId,
             preventScroll: false);
     }
     
@@ -430,26 +445,24 @@ public partial class IdeMainLayout : LayoutComponentBase, IDisposable
         return CommonFacts.RenderDropdownAsync(
             DotNetService.CommonService,
             DotNetService.CommonService.JsRuntimeCommonApi,
-            IdeState.ButtonToolsId,
+            ButtonToolsId,
             DropdownOrientation.Bottom,
-            IdeState.DropdownKeyTools,
-            DotNetService.IdeService.GetIdeState().MenuTools,
-            IdeState.ButtonToolsId,
+            DropdownKeyTools,
+            InitializeMenuTools(DotNetService),
+            ButtonToolsId,
             preventScroll: false);
     }
     
     private Task RenderViewDropdownOnClick()
     {
-        InitializationHelper.InitializeMenuView(DotNetService);
-    
         return CommonFacts.RenderDropdownAsync(
             DotNetService.CommonService,
             DotNetService.CommonService.JsRuntimeCommonApi,
-            IdeState.ButtonViewId,
+            ButtonViewId,
             DropdownOrientation.Bottom,
-            IdeState.DropdownKeyView,
-            DotNetService.IdeService.GetIdeState().MenuView,
-            IdeState.ButtonViewId,
+            DropdownKeyView,
+            InitializeMenuView(DotNetService),
+            ButtonViewId,
             preventScroll: false);
     }
     
@@ -458,11 +471,11 @@ public partial class IdeMainLayout : LayoutComponentBase, IDisposable
         return CommonFacts.RenderDropdownAsync(
             DotNetService.CommonService,
             DotNetService.CommonService.JsRuntimeCommonApi,
-            IdeState.ButtonRunId,
+            ButtonRunId,
             DropdownOrientation.Bottom,
-            IdeState.DropdownKeyRun,
-            DotNetService.IdeService.GetIdeState().MenuRun,
-            IdeState.ButtonRunId,
+            DropdownKeyRun,
+            InitializeMenuRun(DotNetService),
+            ButtonRunId,
             preventScroll: false);
     }
     
@@ -595,6 +608,231 @@ public partial class IdeMainLayout : LayoutComponentBase, IDisposable
                 null,
                 true,
                 null));
+    }
+    
+    public static MenuRecord InitializeMenuRun(DotNetService DotNetService)
+    {
+        var menuOptionsList = new List<MenuOptionRecord>();
+
+        // Menu Option Build Project (startup project)
+        menuOptionsList.Add(new MenuOptionRecord(
+            "Build Project (startup project)",
+            MenuOptionKind.Create,
+            () =>
+            {
+                var startupControlState = DotNetService.IdeService.GetIdeStartupControlState();
+                var activeStartupControl = startupControlState.StartupControlList.FirstOrDefault(
+                    x => x.StartupProjectAbsolutePath.Value == startupControlState.ActiveStartupProjectAbsolutePathValue);
+
+                if (activeStartupControl.StartupProjectAbsolutePath.Value is not null)
+                    InitializationHelper.BuildProjectOnClick(DotNetService, activeStartupControl.StartupProjectAbsolutePath.Value);
+                else
+                    CommonFacts.DispatchError(nameof(InitializationHelper.BuildProjectOnClick), "activeStartupControl?.StartupProjectAbsolutePath was null", DotNetService.CommonService, TimeSpan.FromSeconds(6));
+                return Task.CompletedTask;
+            }));
+
+        // Menu Option Clean (startup project)
+        menuOptionsList.Add(new MenuOptionRecord(
+            "Clean Project (startup project)",
+            MenuOptionKind.Create,
+            () =>
+            {
+                var startupControlState = DotNetService.IdeService.GetIdeStartupControlState();
+                var activeStartupControl = startupControlState.StartupControlList.FirstOrDefault(
+                    x => x.StartupProjectAbsolutePath.Value == startupControlState.ActiveStartupProjectAbsolutePathValue);
+
+                if (activeStartupControl.StartupProjectAbsolutePath.Value is not null)
+                    InitializationHelper.CleanProjectOnClick(DotNetService, activeStartupControl.StartupProjectAbsolutePath.Value);
+                else
+                    CommonFacts.DispatchError(nameof(InitializationHelper.CleanProjectOnClick), "activeStartupControl?.StartupProjectAbsolutePath was null", DotNetService.CommonService, TimeSpan.FromSeconds(6));
+                return Task.CompletedTask;
+            }));
+
+        // Menu Option Build Solution
+        menuOptionsList.Add(new MenuOptionRecord(
+            "Build Solution",
+            MenuOptionKind.Delete,
+            () =>
+            {
+                var dotNetSolutionState = DotNetService.GetDotNetSolutionState();
+                var dotNetSolutionModel = dotNetSolutionState.DotNetSolutionModel;
+
+                if (dotNetSolutionModel?.AbsolutePath is not null)
+                    InitializationHelper.BuildSolutionOnClick(DotNetService, dotNetSolutionModel.AbsolutePath.Value);
+                else
+                    CommonFacts.DispatchError(nameof(InitializationHelper.BuildSolutionOnClick), "dotNetSolutionModel?.AbsolutePath was null", DotNetService.CommonService, TimeSpan.FromSeconds(6));
+                return Task.CompletedTask;
+            }));
+
+        // Menu Option Clean Solution
+        menuOptionsList.Add(new MenuOptionRecord(
+            "Clean Solution",
+            MenuOptionKind.Delete,
+            () =>
+            {
+                var dotNetSolutionState = DotNetService.GetDotNetSolutionState();
+                var dotNetSolutionModel = dotNetSolutionState.DotNetSolutionModel;
+
+                if (dotNetSolutionModel?.AbsolutePath is not null)
+                    InitializationHelper.CleanSolutionOnClick(DotNetService, dotNetSolutionModel.AbsolutePath.Value);
+                else
+                    CommonFacts.DispatchError(nameof(InitializationHelper.CleanSolutionOnClick), "dotNetSolutionModel?.AbsolutePath was null", DotNetService.CommonService, TimeSpan.FromSeconds(6));
+                return Task.CompletedTask;
+            }));
+
+        return new MenuRecord(menuOptionsList);
+    }
+    
+    public static MenuRecord InitializeMenuView(DotNetService DotNetService)
+    {
+        var menuOptionsList = new List<MenuOptionRecord>();
+        var panelState = DotNetService.CommonService.GetPanelState();
+        var dialogState = DotNetService.CommonService.GetDialogState();
+    
+        foreach (var panel in panelState.PanelList)
+        {
+            menuOptionsList.Add(new MenuOptionRecord(
+                panel.Title,
+                MenuOptionKind.Delete,
+                () => DotNetService.CommonService.ShowOrAddPanelTab(panel)));
+        }
+    
+        if (menuOptionsList.Count == 0)
+        {
+            return new MenuRecord(MenuRecord.NoMenuOptionsExistList);
+        }
+        else
+        {
+            return new MenuRecord(menuOptionsList);
+        }
+    }
+    
+    public static MenuRecord InitializeMenuFile(DotNetService DotNetService)
+    {
+        var menuOptionsList = new List<MenuOptionRecord>();
+
+        // Menu Option New
+        var menuOptionNewDotNetSolution = new MenuOptionRecord(
+            ".NET Solution",
+            MenuOptionKind.Other,
+            DotNetService.OpenNewDotNetSolutionDialog);
+
+        var menuOptionNew = new MenuOptionRecord(
+            "New",
+            MenuOptionKind.Other,
+            subMenu: new MenuRecord(new List<MenuOptionRecord> { menuOptionNewDotNetSolution }));
+
+        menuOptionsList.Add(menuOptionNew);
+        
+        // Menu Option Open
+        var menuOptionOpenDotNetSolution = new MenuOptionRecord(
+            ".NET Solution",
+            MenuOptionKind.Other,
+            () =>
+            {
+                DotNetSolutionState.ShowInputFile(DotNetService.IdeService, DotNetService);
+                return Task.CompletedTask;
+            });
+        
+        var menuOptionOpenFile = new MenuOptionRecord(
+            "File",
+            MenuOptionKind.Other,
+            () =>
+            {
+                DotNetService.IdeService.Editor_ShowInputFile();
+                return Task.CompletedTask;
+            });
+
+        var menuOptionOpenDirectory = new MenuOptionRecord(
+            "Directory",
+            MenuOptionKind.Other,
+            () =>
+            {
+                DotNetService.IdeService.FolderExplorer_ShowInputFile();
+                return Task.CompletedTask;
+            });
+
+        var menuOptionOpen = new MenuOptionRecord(
+            "Open",
+            MenuOptionKind.Other,
+            subMenu: new MenuRecord(new List<MenuOptionRecord>()
+            {
+                menuOptionOpenDotNetSolution,
+                menuOptionOpenFile,
+                menuOptionOpenDirectory,
+            }));
+
+        menuOptionsList.Add(menuOptionOpen);
+
+        var menuOptionSave = new MenuOptionRecord(
+            "Save (Ctrl s)",
+            MenuOptionKind.Other,
+            () =>
+            {
+                TextEditorCommandDefaultFunctions.TriggerSave_NoTextEditorFocus(DotNetService.TextEditorService, Walk.TextEditor.RazorLib.TextEditorService.EditorTextEditorGroupKey);
+                return Task.CompletedTask;
+            });
+        menuOptionsList.Add(menuOptionSave);
+
+        var menuOptionSaveAll = new MenuOptionRecord(
+            "Save All (Ctrl Shift s)",
+            MenuOptionKind.Other,
+            () =>
+            {
+                TextEditorCommandDefaultFunctions.TriggerSaveAll(DotNetService.TextEditorService, Walk.TextEditor.RazorLib.TextEditorService.EditorTextEditorGroupKey);
+                return Task.CompletedTask;
+            });
+        menuOptionsList.Add(menuOptionSaveAll);
+
+        // Menu Option Permissions
+        var menuOptionPermissions = new MenuOptionRecord(
+            "Permissions",
+            MenuOptionKind.Delete,
+            () => InitializationHelper.ShowPermissionsDialog(DotNetService));
+
+        menuOptionsList.Add(menuOptionPermissions);
+
+        return new MenuRecord(menuOptionsList);
+    }
+
+    public static MenuRecord InitializeMenuTools(DotNetService DotNetService)
+    {
+        var menuOptionsList = new List<MenuOptionRecord>();
+
+        // Menu Option Find All
+        var menuOptionFindAll = new MenuOptionRecord(
+            "Find All (Ctrl Shift f)",
+            MenuOptionKind.Delete,
+            () =>
+            {
+                DotNetService.TextEditorService.Options_ShowFindAllDialog();
+                return Task.CompletedTask;
+            });
+
+        menuOptionsList.Add(menuOptionFindAll);
+
+        // Menu Option Code Search
+        var menuOptionCodeSearch = new MenuOptionRecord(
+            "Code Search (Ctrl ,)",
+            MenuOptionKind.Delete,
+            () =>
+            {
+                DotNetService.IdeService.CodeSearchDialog ??= new DialogViewModel(
+                    Key<IDynamicViewModel>.NewKey(),
+                    "Code Search",
+                    typeof(CodeSearchDisplay),
+                    null,
+                    null,
+                    true,
+                    null);
+
+                DotNetService.CommonService.Dialog_ReduceRegisterAction(DotNetService.IdeService.CodeSearchDialog);
+                return Task.CompletedTask;
+            });
+
+        menuOptionsList.Add(menuOptionCodeSearch);
+
+        return new MenuRecord(menuOptionsList);
     }
     
     public void Dispose()
