@@ -70,7 +70,10 @@ public class CSharpBinder
     public List<Symbol> SymbolList { get; } = new();
     public List<ISyntaxNode> NodeList { get; } = new();
     public List<ICodeBlockOwner> CodeBlockOwnerList { get; } = new();
-    
+
+    internal readonly List<SyntaxToken> LEXER_syntaxTokenList = new();
+    internal readonly List<TextEditorTextSpan> LEXER_miscTextSpanList = new();
+
     public char[] KeywordCheckBuffer { get; } = new char[10];
     
     internal const int POOL_TYPE_CLAUSE_NODE_MAX_COUNT = 3;
@@ -1751,7 +1754,7 @@ public class CSharpBinder
     }
     
     private readonly List<TypeDefinitionNode> _getTopLevelTypeDefinitionNodes = new();
-    
+
     /// <summary>Object-allocation-less version of the public version for internal use.</summary>
     internal List<TypeDefinitionNode> Internal_GetTopLevelTypeDefinitionNodes_NamespaceStatementNode(
         NamespaceStatementNode namespaceStatementNode,

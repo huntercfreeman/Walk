@@ -10,9 +10,16 @@ public static class CSharpLexer
     /// <summary>
     /// Initialize the CSharpLexerOutput here, then start the while loop with 'Lex_Frame(...)'.
     /// </summary>
-    public static CSharpLexerOutput Lex(CSharpBinder binder, ResourceUri resourceUri, StreamReaderWrap streamReaderWrap, bool shouldUseSharedStringWalker)
+    public static CSharpLexerOutput Lex(
+        CSharpBinder binder,
+        ResourceUri resourceUri,
+        StreamReaderWrap streamReaderWrap,
+        bool shouldUseSharedStringWalker)
     {
-        var lexerOutput = new CSharpLexerOutput(resourceUri);
+        binder.LEXER_syntaxTokenList.Clear();
+        binder.LEXER_miscTextSpanList.Clear();
+
+        var lexerOutput = new CSharpLexerOutput(resourceUri, binder.LEXER_syntaxTokenList, binder.LEXER_miscTextSpanList);
         
         var previousEscapeCharacterTextSpan = new TextEditorTextSpan(
             0,
