@@ -43,29 +43,7 @@ public partial class IdeService
                     absolutePath: default);
                     
                 return Task.CompletedTask;
-            }/*,
-            simpleWidgetKind: SimpleWidgetKind.FileForm,
-            widgetParameterMap: new Dictionary<string, object?>
-            {
-                { nameof(Walk.Common.RazorLib.FileSystems.Displays.FileFormDisplay.FileName), string.Empty },
-                { nameof(Walk.Common.RazorLib.FileSystems.Displays.FileFormDisplay.CheckForTemplates), false },
-                {
-                    nameof(Walk.Common.RazorLib.FileSystems.Displays.FileFormDisplay.OnAfterSubmitFunc),
-                    new Func<string, IFileTemplate?, List<IFileTemplate>, Task>(
-                        (fileName, exactMatchFileTemplate, relatedMatchFileTemplates) =>
-                        {
-                            Enqueue_PerformNewFile(
-                                fileName,
-                                exactMatchFileTemplate,
-                                relatedMatchFileTemplates,
-                                parentDirectory,
-                                string.Empty,
-                                onAfterCompletion);
-
-                            return Task.CompletedTask;
-                        })
-                },
-            }*/)
+            })
             {
                 IconKind = AutocompleteEntryKind.Widget,
             };
@@ -73,15 +51,22 @@ public partial class IdeService
 
     public MenuOptionRecord NewTemplatedFile(AbsolutePath parentDirectory, Func<string> getParentDirectoryNamespaceFunc, Func<Task> onAfterCompletion)
     {
-        return new MenuOptionRecord("New Templated File", MenuOptionKind.Create/*,
-            simpleWidgetKind: Walk.Common.RazorLib.Widgets.Models.SimpleWidgetKind.FileForm,
-            widgetParameterMap: new Dictionary<string, object?>
+        return new MenuOptionRecord(
+            "New Templated File",
+            MenuOptionKind.Create,
+            menuOptionOnClickArgs => 
             {
-                { nameof(Walk.Common.RazorLib.FileSystems.Displays.FileFormDisplay.FileName), string.Empty },
-                { nameof(Walk.Common.RazorLib.FileSystems.Displays.FileFormDisplay.CheckForTemplates), true },
-                {
-                    nameof(Walk.Common.RazorLib.FileSystems.Displays.FileFormDisplay.OnAfterSubmitFunc),
-                    new Func<string, IFileTemplate?, List<IFileTemplate>, Task>(
+                MenuRecord.OpenWidget(
+                    CommonService,
+                    menuOptionOnClickArgs.MenuMeasurements,
+                    menuOptionOnClickArgs.TopOffsetOptionFromMenu,
+                    elementIdToRestoreFocusToOnClose: menuOptionOnClickArgs.MenuHtmlId,
+                    SimpleWidgetKind.FileForm,
+                    isDirectory: default,
+                    checkForTemplates: true,
+                    fileName: string.Empty,
+                    onAfterSubmitFuncAbsolutePathTask: null,
+                    onAfterSubmitFuncOther: new Func<string, IFileTemplate?, List<IFileTemplate>, Task>(
                         (fileName, exactMatchFileTemplate, relatedMatchFileTemplates) =>
                         {
                             Enqueue_PerformNewFile(
@@ -93,14 +78,25 @@ public partial class IdeService
                                 onAfterCompletion);
 
                             return Task.CompletedTask;
-                        })
-                },
-            }*/);
+                        }),
+                    absolutePath: default);
+                    
+                return Task.CompletedTask;
+            })
+            {
+                IconKind = AutocompleteEntryKind.Widget,
+            };
     }
 
     public MenuOptionRecord NewDirectory(AbsolutePath parentDirectory, Func<Task> onAfterCompletion)
     {
-        return new MenuOptionRecord("New Directory", MenuOptionKind.Create/*,
+        return new MenuOptionRecord(
+            "New Directory",
+            MenuOptionKind.Create
+            
+            
+            
+            /*,
             simpleWidgetKind: Walk.Common.RazorLib.Widgets.Models.SimpleWidgetKind.FileForm,
             widgetParameterMap: new Dictionary<string, object?>
             {
@@ -115,7 +111,10 @@ public partial class IdeService
                             return Task.CompletedTask;
                         })
                 },
-            }*/);
+            }*/)
+            {
+                IconKind = AutocompleteEntryKind.Widget,
+            };
     }
 
     public MenuOptionRecord DeleteFile(AbsolutePath absolutePath, Func<Task> onAfterCompletion)
@@ -135,7 +134,10 @@ public partial class IdeService
                             return Task.CompletedTask;
                         })
                 },
-            }*/);
+            }*/)
+            {
+                IconKind = AutocompleteEntryKind.Widget,
+            };
     }
 
     public MenuOptionRecord RenameFile(AbsolutePath sourceAbsolutePath, CommonService commonService, Func<Task> onAfterCompletion)
@@ -159,7 +161,10 @@ public partial class IdeService
                         return Task.CompletedTask;
                     })
                 },
-            }*/);
+            }*/)
+            {
+                IconKind = AutocompleteEntryKind.Widget,
+            };
     }
 
     public MenuOptionRecord CopyFile(AbsolutePath absolutePath, Func<Task> onAfterCompletion)
