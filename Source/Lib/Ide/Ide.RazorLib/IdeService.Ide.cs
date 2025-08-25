@@ -106,14 +106,14 @@ public partial class IdeService
         {
             _startupControlState = _startupControlState with
             {
-                StartupControlList = new List<IStartupControlModel>()
+                StartupControlList = new List<StartupControlModel>()
             };
         }
 
         IdeStateChanged?.Invoke(IdeStateChangedKind.Ide_StartupControlStateChanged);
     }
     
-    public void Ide_RegisterStartupControl(IStartupControlModel startupControl)
+    public void Ide_RegisterStartupControl(StartupControlModel startupControl)
     {
         lock (_stateModificationLock)
         {
@@ -122,7 +122,7 @@ public partial class IdeService
 
             if (indexOfStartupControl == -1 && !string.IsNullOrWhiteSpace(startupControl.StartupProjectAbsolutePath.Value))
             {
-                var outStartupControlList = new List<IStartupControlModel>(_startupControlState.StartupControlList);
+                var outStartupControlList = new List<StartupControlModel>(_startupControlState.StartupControlList);
                 outStartupControlList.Add(startupControl);
 
                 _startupControlState = _startupControlState with
@@ -148,7 +148,7 @@ public partial class IdeService
                 if (_startupControlState.ActiveStartupProjectAbsolutePathValue == startupProjectAbsolutePathValue)
                     outActiveStartupProjectAbsolutePathValue = string.Empty;
 
-                var outStartupControlList = new List<IStartupControlModel>(_startupControlState.StartupControlList);
+                var outStartupControlList = new List<StartupControlModel>(_startupControlState.StartupControlList);
                 outStartupControlList.RemoveAt(indexOfStartupControl);
 
                 _startupControlState = _startupControlState with
@@ -170,7 +170,7 @@ public partial class IdeService
                 x => x.StartupProjectAbsolutePath.Value == startupProjectAbsolutePathValue);
 
             if (startupProjectAbsolutePathValue == string.Empty ||
-                startupControl is null)
+                startupControl.Title is not null)
             {
                 _startupControlState = _startupControlState with
                 {

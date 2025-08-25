@@ -767,7 +767,7 @@ public partial class DotNetService
             IdeService.TextEditorService.CommonService,
             TimeSpan.FromMilliseconds(-1));
 
-        IStartupControlModel? originallyActiveStartupControl = null;
+        StartupControlModel originallyActiveStartupControl = default;
         
         try
         {
@@ -839,7 +839,7 @@ public partial class DotNetService
         }
         finally
         {
-            if (originallyActiveStartupControl is not null)
+            if (originallyActiveStartupControl.Title is not null)
             {
                 var localStartupControlState = IdeService.GetIdeStartupControlState();
                 
@@ -1032,4 +1032,56 @@ public partial class DotNetService
         });
     }
     #endregion
+    
+    public Task StartButtonOnClick(StartupControlModel startupControlModel)
+    {
+        var ancestorDirectory = startupControlModel.StartupProjectAbsolutePath.CreateSubstringParentDirectory();
+        if (ancestorDirectory is null)
+        {
+            return Task.CompletedTask;
+        }
+
+        var formattedCommandValue = DotNetCliCommandFormatter.FormatStartProjectWithoutDebugging(
+            startupControlModel.StartupProjectAbsolutePath);
+
+        var terminalCommandRequest = new TerminalCommandRequest(
+            formattedCommandValue,
+            ancestorDirectory,
+            NewDotNetSolutionTerminalCommandRequestKey)
+        {
+            BeginWithFunc = parsedCommand =>
+            {
+                ParseOutputEntireDotNetRun(
+                    string.Empty,
+                    "Run-Project_started");
+
+                return Task.CompletedTask;
+            },
+            ContinueWithFunc = parsedCommand =>
+            {
+                startupControlModel.ExecutingTerminalCommandRequest = null;
+                IdeService.Ide_TriggerStartupControlStateChanged();
+
+                ParseOutputEntireDotNetRun(
+                    parsedCommand.OutputCache.ToString(),
+                    "Run-Project_completed");
+
+                return Task.CompletedTask;
+            }
+        };
+
+        startupControlModel.ExecutingTerminalCommandRequest = terminalCommandRequest;
+
+        IdeService.GetTerminalState().ExecutionTerminal.EnqueueCommand(terminalCommandRequest);
+        return Task.CompletedTask;
+    }
+
+    public Task StopButtonOnClick(StartupControlModel startupControlModel)
+    {
+        IdeService.GetTerminalState().ExecutionTerminal.KillProcess();
+        startupControlModel.ExecutingTerminalCommandRequest = null;
+
+        IdeService.Ide_TriggerStartupControlStateChanged();
+        return Task.CompletedTask;
+    }
 }

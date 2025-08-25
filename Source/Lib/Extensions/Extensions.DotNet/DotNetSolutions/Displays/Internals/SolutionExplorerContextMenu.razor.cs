@@ -313,7 +313,7 @@ public partial class SolutionExplorerContextMenu : ComponentBase
                     var startupControl = DotNetService.IdeService.GetIdeStartupControlState().StartupControlList.FirstOrDefault(
                         x => x.StartupProjectAbsolutePath.Value == treeViewModel.Item.Value);
                         
-                    if (startupControl is null)
+                    if (startupControl.Title is null)
                         return Task.CompletedTask;
                     
                     DotNetService.IdeService.Ide_SetActiveStartupControlKey(startupControl.StartupProjectAbsolutePath.Value);
