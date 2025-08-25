@@ -5,5 +5,4 @@ namespace Walk.CompilerServices.JavaScript;
 
 public class JavaScriptCompilationUnit : ICompilationUnit
 {
-    public List<TextEditorTextSpan> TextSpanList { get; set; }
 }

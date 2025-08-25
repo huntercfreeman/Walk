@@ -46,6 +46,8 @@ public sealed class CSharpCompilerService : IExtendedCompilerService
         
         __CSharpBinder.UpsertCompilationUnit(new ResourceUri(string.Empty), primitiveKeywordsTextFile);
     }
+    
+    public TextEditorService TextEditorService => _textEditorService;
 
     /// <summary>
     /// unsafe vs safe are duplicates of the same code

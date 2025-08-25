@@ -16,10 +16,21 @@ public static class CSharpLexer
         StreamReaderWrap streamReaderWrap,
         bool shouldUseSharedStringWalker)
     {
+        // !!!!
+        // The other lexers take 'TextEditorService.LEXER_miscTextSpanList'
+        // as a method argument.
+        //
+        // Prior to invoking the other lexers, the LEXER_miscTextSpanList must be cleared.
+        //
+        // CSharpLexer is an exception to this at the moment.
+        // As this lexer will clear LEXER_miscTextSpanList.
+        //
+        // TODO: This is confusing and a decision needs to be made on this.
+        //
         binder.LEXER_syntaxTokenList.Clear();
-        binder.LEXER_miscTextSpanList.Clear();
+        binder.CSharpCompilerService.TextEditorService.LEXER_miscTextSpanList.Clear();
 
-        var lexerOutput = new CSharpLexerOutput(resourceUri, binder.LEXER_syntaxTokenList, binder.LEXER_miscTextSpanList);
+        var lexerOutput = new CSharpLexerOutput(resourceUri, binder.LEXER_syntaxTokenList, binder.CSharpCompilerService.TextEditorService.LEXER_miscTextSpanList);
         
         var previousEscapeCharacterTextSpan = new TextEditorTextSpan(
             0,

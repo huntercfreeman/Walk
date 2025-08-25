@@ -5,5 +5,4 @@ namespace Walk.CompilerServices.Css;
 
 public class CssCompilationUnit : ICompilationUnit
 {
-    public List<TextEditorTextSpan> TextSpanList { get; set; }
 }

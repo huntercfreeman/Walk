@@ -418,7 +418,7 @@ public partial class DotNetService
         var solutionFolderList = new List<SolutionFolder>();
     
         using StreamReader sr = new StreamReader(solutionAbsolutePath.Value);
-        var lexerOutput = XmlLexer.Lex(new StreamReaderWrap(sr));
+        var lexerOutput = XmlLexer.Lex(new StreamReaderWrap(sr), textSpanList: new());
         
         var stringBuilder = new StringBuilder();
         var getTextBuffer = new char[1];
@@ -584,6 +584,8 @@ public partial class DotNetService
             tokenBuilder,
             formattedBuilder,
             AbsolutePathNameKind.NameWithExtension);
+            
+        var textSpanList = new List<TextEditorTextSpan>();
     
         for (int i = dotNetSolutionModel.DotNetProjectList.Count - 1; i >= 0; i--)
         {
@@ -629,7 +631,8 @@ public partial class DotNetService
             }
 
             using StreamReader sr = new StreamReader(projectTuple.AbsolutePath.Value);
-            var lexerOutput = XmlLexer.Lex(new StreamReaderWrap(sr));
+            textSpanList.Clear();
+            var lexerOutput = XmlLexer.Lex(new StreamReaderWrap(sr), textSpanList);
             
             var stringBuilder = new StringBuilder();
             var getTextBuffer = new char[1];

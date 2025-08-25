@@ -137,7 +137,8 @@ public sealed class JsonCompilerService : ICompilerService
     public ValueTask ParseAsync(TextEditorEditContext editContext, TextEditorModel modelModifier, bool shouldApplySyntaxHighlighting)
     {
         using StreamReader sr = new StreamReader(modelModifier.PersistentState.ResourceUri.Value);
-        var lexerOutput = JsonLexer.Lex(new StreamReaderWrap(sr));
+        _textEditorService.LEXER_miscTextSpanList.Clear();
+        var lexerOutput = JsonLexer.Lex(new StreamReaderWrap(sr), _textEditorService.LEXER_miscTextSpanList);
     
         lock (_resourceMapLock)
         {
@@ -145,10 +146,10 @@ public sealed class JsonCompilerService : ICompilerService
             {
                 var resource = (CompilerServiceResource)_resourceMap[modelModifier.PersistentState.ResourceUri];
                 
-                resource.CompilationUnit = new JsonCompilationUnit
+                /*resource.CompilationUnit = new JsonCompilationUnit
                 {
                     TextSpanList = lexerOutput.TextSpanList
-                };
+                };*/
             }
         }
         

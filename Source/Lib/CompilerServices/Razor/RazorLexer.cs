@@ -13,10 +13,10 @@ public static class RazorLexer
         Expect_AttributeValue,
     }
 
-    public static RazorLexerOutput Lex(StreamReaderWrap streamReaderWrap)
+    public static RazorLexerOutput Lex(StreamReaderWrap streamReaderWrap, List<TextEditorTextSpan> textSpan)
     {
         var context = RazorLexerContextKind.Expect_TagOrText;
-        var output = new RazorLexerOutput();
+        var output = new RazorLexerOutput(textSpan);
         
         // This gets updated throughout the loop
         var startPosition = streamReaderWrap.PositionIndex;

@@ -5,5 +5,4 @@ namespace Walk.CompilerServices.Json;
 
 public class JsonCompilationUnit : ICompilationUnit
 {
-    public List<TextEditorTextSpan> TextSpanList { get; set; }
 }

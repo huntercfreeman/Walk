@@ -143,12 +143,16 @@ public sealed class DotNetSolutionCompilerService : ICompilerService
         if (modelModifier.PersistentState.ResourceUri.Value.EndsWith(CommonFacts.DOT_NET_SOLUTION_X))
         {
             using StreamReader sr = new StreamReader(modelModifier.PersistentState.ResourceUri.Value);
-            var lexerOutput = XmlLexer.Lex(new StreamReaderWrap(sr));
+            _textEditorService.LEXER_miscTextSpanList.Clear();
+            var lexerOutput = XmlLexer.Lex(new StreamReaderWrap(sr), _textEditorService.LEXER_miscTextSpanList);
             syntaxTokenList = lexerOutput.TextSpanList.Select(x => new SyntaxToken(SyntaxKind.NotApplicable, x)).ToList();
         }
         else
         {
             using StreamReader sr = new StreamReader(modelModifier.PersistentState.ResourceUri.Value);
+            _textEditorService.LEXER_miscTextSpanList.Clear();
+            // I removed the '_textEditorService.LEXER_miscTextSpanList' usage here
+            // I'm not sure if I want it for the '.sln' I have to consider it.
             var lexerOutput = DotNetSolutionLexer.Lex(new StreamReaderWrap(sr));
             syntaxTokenList = lexerOutput.TextSpanList.Select(x => new SyntaxToken(SyntaxKind.NotApplicable, x)).ToList();
         }

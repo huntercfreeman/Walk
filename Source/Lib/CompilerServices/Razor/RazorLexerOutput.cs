@@ -4,9 +4,9 @@ namespace Walk.CompilerServices.Razor;
 
 public struct RazorLexerOutput
 {
-    public RazorLexerOutput()
+    public RazorLexerOutput(List<TextEditorTextSpan> textSpan)
     {
-        TextSpanList = new();
+        TextSpanList = textSpan;
     }
     
     public List<TextEditorTextSpan> TextSpanList { get; }

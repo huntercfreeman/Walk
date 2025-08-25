@@ -122,6 +122,11 @@ public sealed partial class TextEditorService
     /// </summary>
     public List<TextEditorTextSpan> __OutTextSpansList { get; set; } = new();
     
+    /// <summary>
+    /// This list is used within TextEditorEditContext and for the lexers to re-use by clearing it prior to starting the lexing.
+    /// </summary>
+    public List<TextEditorTextSpan> LEXER_miscTextSpanList { get; } = new();
+    
     public int SeenTabWidth { get; set; }
     public string TabKeyOutput_ShowWhitespaceTrue { get; set; }
     public string TabKeyOutput_ShowWhitespaceFalse { get; set; }

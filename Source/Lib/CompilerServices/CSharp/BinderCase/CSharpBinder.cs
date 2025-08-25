@@ -71,8 +71,10 @@ public class CSharpBinder
     public List<ISyntaxNode> NodeList { get; } = new();
     public List<ICodeBlockOwner> CodeBlockOwnerList { get; } = new();
 
+    /// <summary>
+    /// This list is used within TextEditorEditContext and for the lexers to re-use by clearing it prior to starting the lexing.
+    /// </summary>
     internal readonly List<SyntaxToken> LEXER_syntaxTokenList = new();
-    internal readonly List<TextEditorTextSpan> LEXER_miscTextSpanList = new();
 
     public char[] KeywordCheckBuffer { get; } = new char[10];
     

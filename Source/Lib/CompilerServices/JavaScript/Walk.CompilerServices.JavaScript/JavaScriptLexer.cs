@@ -5,9 +5,12 @@ namespace Walk.CompilerServices.JavaScript;
 
 public static class JavaScriptLexer
 {
-    public static JavaScriptLexerOutput Lex(JavaScriptCompilerService javaScriptCompilerService, StreamReaderWrap streamReaderWrap)
+    public static JavaScriptLexerOutput Lex(
+        JavaScriptCompilerService javaScriptCompilerService,
+        StreamReaderWrap streamReaderWrap,
+        List<TextEditorTextSpan> textSpanList)
     {
-        var output = new JavaScriptLexerOutput();
+        var output = new JavaScriptLexerOutput(textSpanList);
         
         while (!streamReaderWrap.IsEof)
         {
