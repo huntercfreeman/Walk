@@ -12,7 +12,7 @@ public partial class IdeService
 {
     public MenuOptionRecord NewEmptyFile(AbsolutePath parentDirectory, Func<Task> onAfterCompletion)
     {
-        return new MenuOptionRecord("New Empty File", MenuOptionKind.Create,
+        return new MenuOptionRecord("New Empty File", MenuOptionKind.Create/*,
             simpleWidgetKind: SimpleWidgetKind.FileForm,
             widgetParameterMap: new Dictionary<string, object?>
             {
@@ -34,12 +34,12 @@ public partial class IdeService
                             return Task.CompletedTask;
                         })
                 },
-            });
+            }*/);
     }
 
     public MenuOptionRecord NewTemplatedFile(AbsolutePath parentDirectory, Func<string> getParentDirectoryNamespaceFunc, Func<Task> onAfterCompletion)
     {
-        return new MenuOptionRecord("New Templated File", MenuOptionKind.Create,
+        return new MenuOptionRecord("New Templated File", MenuOptionKind.Create/*,
             simpleWidgetKind: Walk.Common.RazorLib.Widgets.Models.SimpleWidgetKind.FileForm,
             widgetParameterMap: new Dictionary<string, object?>
             {
@@ -61,12 +61,12 @@ public partial class IdeService
                             return Task.CompletedTask;
                         })
                 },
-            });
+            }*/);
     }
 
     public MenuOptionRecord NewDirectory(AbsolutePath parentDirectory, Func<Task> onAfterCompletion)
     {
-        return new MenuOptionRecord("New Directory", MenuOptionKind.Create,
+        return new MenuOptionRecord("New Directory", MenuOptionKind.Create/*,
             simpleWidgetKind: Walk.Common.RazorLib.Widgets.Models.SimpleWidgetKind.FileForm,
             widgetParameterMap: new Dictionary<string, object?>
             {
@@ -81,12 +81,12 @@ public partial class IdeService
                             return Task.CompletedTask;
                         })
                 },
-            });
+            }*/);
     }
 
     public MenuOptionRecord DeleteFile(AbsolutePath absolutePath, Func<Task> onAfterCompletion)
     {
-        return new MenuOptionRecord("Delete", MenuOptionKind.Delete,
+        return new MenuOptionRecord("Delete", MenuOptionKind.Delete/*,
             simpleWidgetKind: Walk.Common.RazorLib.Widgets.Models.SimpleWidgetKind.DeleteFileForm,
             widgetParameterMap: new Dictionary<string, object?>
             {
@@ -101,12 +101,12 @@ public partial class IdeService
                             return Task.CompletedTask;
                         })
                 },
-            });
+            }*/);
     }
 
     public MenuOptionRecord RenameFile(AbsolutePath sourceAbsolutePath, CommonService commonService, Func<Task> onAfterCompletion)
     {
-        return new MenuOptionRecord("Rename", MenuOptionKind.Update,
+        return new MenuOptionRecord("Rename", MenuOptionKind.Update/*,
             simpleWidgetKind: Walk.Common.RazorLib.Widgets.Models.SimpleWidgetKind.FileForm,
             widgetParameterMap: new Dictionary<string, object?>
             {
@@ -125,7 +125,7 @@ public partial class IdeService
                         return Task.CompletedTask;
                     })
                 },
-            });
+            }*/);
     }
 
     public MenuOptionRecord CopyFile(AbsolutePath absolutePath, Func<Task> onAfterCompletion)

@@ -719,8 +719,8 @@ public partial class IdeMainLayout : LayoutComponentBase, IDisposable
 
         var menuOptionNew = new MenuOptionRecord(
             "New",
-            MenuOptionKind.Other,
-            subMenu: new MenuRecord(new List<MenuOptionRecord> { menuOptionNewDotNetSolution }));
+            MenuOptionKind.Other/*,
+            subMenu: new MenuRecord(new List<MenuOptionRecord> { menuOptionNewDotNetSolution })*/);
 
         menuOptionsList.Add(menuOptionNew);
         
@@ -754,13 +754,13 @@ public partial class IdeMainLayout : LayoutComponentBase, IDisposable
 
         var menuOptionOpen = new MenuOptionRecord(
             "Open",
-            MenuOptionKind.Other,
+            MenuOptionKind.Other/*,
             subMenu: new MenuRecord(new List<MenuOptionRecord>()
             {
                 menuOptionOpenDotNetSolution,
                 menuOptionOpenFile,
                 menuOptionOpenDirectory,
-            }));
+            })*/);
 
         menuOptionsList.Add(menuOptionOpen);
 

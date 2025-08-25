@@ -254,15 +254,16 @@ public partial class TestExplorerContextMenu : ComponentBase
 
         var menuOptionRecord = new MenuOptionRecord(
             $"Namespace: {treeViewStringFragment.Item.Value} | {fabricateSelectedNodeList.Count}",
-            MenuOptionKind.Other,
-            subMenu: multiSelectionMenuRecord);
+            MenuOptionKind.Other/*,
+            subMenu: multiSelectionMenuRecord*/);
 
         return new() { menuOptionRecord };
     }
 
     private async Task<MenuRecord> GetMultiSelectionMenuRecord(TreeViewCommandArgs commandArgs)
     {
-        var menuOptionRecordList = new List<MenuOptionRecord>();
+        return new MenuRecord(MenuRecord.NoMenuOptionsExistList);
+        /*var menuOptionRecordList = new List<MenuOptionRecord>();
         Func<Task> runAllOnClicksWithinSelection = () => Task.CompletedTask;
         bool runAllOnClicksWithinSelectionHasEffect = false;
 
@@ -282,8 +283,8 @@ public partial class TestExplorerContextMenu : ComponentBase
 
                 menuOption = new(
                     treeViewStringFragment.Item.Value,
-                    MenuOptionKind.Other,
-                    subMenu: await GetMenuRecord(innerTreeViewCommandArgs, true).ConfigureAwait(false));
+                    MenuOptionKind.Other/*,
+                    subMenu: await GetMenuRecord(innerTreeViewCommandArgs, true).ConfigureAwait(false)*//*);
 
                 var copyRunAllOnClicksWithinSelection = runAllOnClicksWithinSelection;
 
@@ -324,7 +325,7 @@ public partial class TestExplorerContextMenu : ComponentBase
         if (!menuOptionRecordList.Any())
             return new MenuRecord(MenuRecord.NoMenuOptionsExistList);
 
-        return new MenuRecord(menuOptionRecordList);
+        return new MenuRecord(menuOptionRecordList);*/
     }
     
     private async Task SendToOutputPanelAsync(string output)

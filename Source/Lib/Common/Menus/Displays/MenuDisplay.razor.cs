@@ -145,7 +145,7 @@ public partial class MenuDisplay : ComponentBase, IDisposable
                 }
                 break;
             case "ArrowRight":
-                OpenSubmenu();
+                //OpenSubmenu();
                 break;
             case "ArrowLeft":
                 await Close();
@@ -162,19 +162,19 @@ public partial class MenuDisplay : ComponentBase, IDisposable
             case "Enter":
             case " ":
                 var option = Menu.MenuOptionList[_activeIndex];
-                if (option.SubMenu is not null)
-                {
-                    OpenSubmenu();
-                }
-                else if (option.OnClickFunc is not null)
+                //if (option.SubMenu is not null)
+                //{
+                //    OpenSubmenu();
+                //}
+                /*else */if (option.OnClickFunc is not null)
                 {
                     await option.OnClickFunc.Invoke();
                     await Close();
                 }
-                else if (option.SimpleWidgetKind != SimpleWidgetKind.None)
-                {
-                    _indexMenuOptionShouldDisplayWidget = _activeIndex;
-                }
+                //else if (option.SimpleWidgetKind != SimpleWidgetKind.None)
+                //{
+                //    _indexMenuOptionShouldDisplayWidget = _activeIndex;
+                //}
                 break;
         }
         
@@ -225,20 +225,20 @@ public partial class MenuDisplay : ComponentBase, IDisposable
         _activeIndex = indexClicked;
         var option = Menu.MenuOptionList[indexClicked];
         
-        if (option.SubMenu is not null)
-        {
-            OpenSubmenu();
-        }
-        else if (option.OnClickFunc is not null)
+        //if (option.SubMenu is not null)
+        //{
+        //    OpenSubmenu();
+        //}
+        /*else */if (option.OnClickFunc is not null)
         {
             await option.OnClickFunc.Invoke();
             await Close();
         }
-        else if (option.SimpleWidgetKind != SimpleWidgetKind.None)
-        {
-            _indexMenuOptionShouldDisplayWidget = indexClicked;
-            StateHasChanged();
-        }
+        //else if (option.SimpleWidgetKind != SimpleWidgetKind.None)
+        //{
+        //    _indexMenuOptionShouldDisplayWidget = indexClicked;
+        //    StateHasChanged();
+        //}
     }
     
     [JSInvokable]
@@ -339,7 +339,7 @@ public partial class MenuDisplay : ComponentBase, IDisposable
         }
     }
     
-    private void OpenSubmenu()
+    /*private void OpenSubmenu()
     {
         var menuOption = Menu.MenuOptionList[_activeIndex];
         menuOption.SubMenu.ElementIdToRestoreFocusToOnClose = _htmlId;
@@ -360,7 +360,7 @@ public partial class MenuDisplay : ComponentBase, IDisposable
             },
             restoreFocusOnClose: null);
         CommonService.Dropdown_ReduceRegisterAction(submenuDropdown);
-    }
+    }*/
     
     public void Dispose()
     {

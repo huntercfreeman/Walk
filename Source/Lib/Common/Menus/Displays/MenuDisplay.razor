@@ -68,13 +68,13 @@
             
             @menuOption.DisplayName
             
-            @if (menuOption.SubMenu is not null)
+            @*@if (menuOption.SubMenu is not null)
             {
                 @IconChevronRightFragment.Render(iconDriver)
-            }
+            }*@
         </div>
         
-        @if (i == _indexMenuOptionShouldDisplayWidget)
+        @*@if (i == _indexMenuOptionShouldDisplayWidget)
         {
             <CascadingValue Value="MenuOptionCallbacks">
                 <div class="di_menu-option-widget"
@@ -118,6 +118,6 @@
                     }
                 </div>
             </CascadingValue>
-        }
+        }*@
     }
 </div>

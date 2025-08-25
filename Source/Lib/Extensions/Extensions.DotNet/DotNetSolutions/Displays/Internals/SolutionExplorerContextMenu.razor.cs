@@ -141,7 +141,7 @@ public partial class SolutionExplorerContextMenu : ComponentBase
         {
             menuOptionList.Add(new MenuOptionRecord(
                 "Delete",
-                MenuOptionKind.Delete,
+                MenuOptionKind.Delete/*,
                 simpleWidgetKind: Walk.Common.RazorLib.Widgets.Models.SimpleWidgetKind.BooleanPromptOrCancel,
                 widgetParameterMap: new Dictionary<string, object?>
                 {
@@ -167,7 +167,7 @@ public partial class SolutionExplorerContextMenu : ComponentBase
                     },
                     { nameof(BooleanPromptOrCancelDisplay.OnAfterDeclineFunc), commandArgs.RestoreFocusToTreeView },
                     { nameof(BooleanPromptOrCancelDisplay.OnAfterCancelFunc), commandArgs.RestoreFocusToTreeView },
-                }));
+                }*/));
         }
 
         if (!menuOptionList.Any())
@@ -203,12 +203,12 @@ public partial class SolutionExplorerContextMenu : ComponentBase
                 return Task.CompletedTask;
             });
 
-        var createOptions = new MenuOptionRecord("Add", MenuOptionKind.Create,
+        var createOptions = new MenuOptionRecord("Add", MenuOptionKind.Create/*,
             subMenu: new MenuRecord(new List<MenuOptionRecord>
             {
                 addNewCSharpProject,
                 addExistingCSharpProject,
-            }));
+            })*/);
 
         var openInTextEditor = new MenuOptionRecord(
             "Open in text editor",

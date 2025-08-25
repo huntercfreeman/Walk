@@ -22,7 +22,7 @@ public partial class DotNetService
         CommonService commonService,
         Func<Task> onAfterCompletion)
     {
-        return new MenuOptionRecord("Remove (no files are deleted)", MenuOptionKind.Delete,
+        return new MenuOptionRecord("Remove (no files are deleted)", MenuOptionKind.Delete/*,
             simpleWidgetKind: Walk.Common.RazorLib.Widgets.Models.SimpleWidgetKind.RemoveCSharpProjectFromSolution,
             widgetParameterMap: new Dictionary<string, object?>
             {
@@ -45,7 +45,7 @@ public partial class DotNetService
                             return Task.CompletedTask;
                         })
                 },
-            });
+            }*/);
     }
 
     public MenuOptionRecord AddProjectToProjectReference(
@@ -95,7 +95,7 @@ public partial class DotNetService
         CommonService commonService,
         Func<Task> onAfterCompletion)
     {
-        return new MenuOptionRecord("Move to Solution Folder", MenuOptionKind.Other,
+        return new MenuOptionRecord("Move to Solution Folder", MenuOptionKind.Other/*,
             simpleWidgetKind: Walk.Common.RazorLib.Widgets.Models.SimpleWidgetKind.FileForm,
             widgetParameterMap: new Dictionary<string, object?>
             {
@@ -116,7 +116,7 @@ public partial class DotNetService
                         return Task.CompletedTask;
                     })
                 },
-            });
+            }*/);
     }
 
     public MenuOptionRecord RemoveNuGetPackageReferenceFromProject(
