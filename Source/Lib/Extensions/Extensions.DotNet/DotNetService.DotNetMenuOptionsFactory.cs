@@ -2,6 +2,7 @@ using Walk.Common.RazorLib;
 using Walk.Common.RazorLib.FileSystems.Models;
 using Walk.Common.RazorLib.Menus.Models;
 using Walk.Common.RazorLib.Notifications.Models;
+using Walk.Common.RazorLib.Widgets.Models;
 using Walk.Extensions.DotNet.CommandLines.Models;
 using Walk.Extensions.DotNet.CSharpProjects.Models;
 using Walk.Extensions.DotNet.DotNetSolutions.Models;
@@ -22,17 +23,21 @@ public partial class DotNetService
         CommonService commonService,
         Func<Task> onAfterCompletion)
     {
-        return new MenuOptionRecord("Remove (no files are deleted)", MenuOptionKind.Delete/*,
-            simpleWidgetKind: Walk.Common.RazorLib.Widgets.Models.SimpleWidgetKind.RemoveCSharpProjectFromSolution,
-            widgetParameterMap: new Dictionary<string, object?>
+        return new MenuOptionRecord(
+            "Remove (no files are deleted)",
+            MenuOptionKind.Delete,
+            menuOptionOnClickArgs => 
             {
-                {
-                    nameof(Walk.Common.RazorLib.FileSystems.Displays.RemoveCSharpProjectFromSolutionDisplay.AbsolutePath),
-                    projectNode.Item
-                },
-                {
-                    nameof(Walk.Common.RazorLib.FileSystems.Displays.RemoveCSharpProjectFromSolutionDisplay.OnAfterSubmitFunc),
-                    new Func<AbsolutePath, Task>(
+                MenuRecord.OpenWidget(
+                    CommonService,
+                    menuOptionOnClickArgs.MenuMeasurements,
+                    menuOptionOnClickArgs.TopOffsetOptionFromMenu,
+                    elementIdToRestoreFocusToOnClose: menuOptionOnClickArgs.MenuHtmlId,
+                    SimpleWidgetKind.RemoveCSharpProjectFromSolution,
+                    isDirectory: default,
+                    checkForTemplates: false,
+                    fileName: string.Empty,
+                    onAfterSubmitFuncAbsolutePathTask: new Func<AbsolutePath, Task>(
                         _ =>
                         {
                             Enqueue_PerformRemoveCSharpProjectReferenceFromSolution(
@@ -43,9 +48,15 @@ public partial class DotNetService
                                 onAfterCompletion);
 
                             return Task.CompletedTask;
-                        })
-                },
-            }*/);
+                        }),
+                    onAfterSubmitFuncOther: null,
+                    absolutePath: projectNode.Item);
+                    
+                return Task.CompletedTask;
+            })
+            {
+                IconKind = AutocompleteEntryKind.Widget,
+            };;
     }
 
     public MenuOptionRecord AddProjectToProjectReference(
@@ -95,28 +106,40 @@ public partial class DotNetService
         CommonService commonService,
         Func<Task> onAfterCompletion)
     {
-        return new MenuOptionRecord("Move to Solution Folder", MenuOptionKind.Other/*,
-            simpleWidgetKind: Walk.Common.RazorLib.Widgets.Models.SimpleWidgetKind.FileForm,
-            widgetParameterMap: new Dictionary<string, object?>
+        return new MenuOptionRecord(
+            "Move to Solution Folder",
+            MenuOptionKind.Other,
+            menuOptionOnClickArgs => 
             {
-                { nameof(Walk.Common.RazorLib.FileSystems.Displays.FileFormDisplay.FileName), string.Empty },
-                { nameof(Walk.Common.RazorLib.FileSystems.Displays.FileFormDisplay.IsDirectory), false },
-                {
-                    nameof(Walk.Common.RazorLib.FileSystems.Displays.FileFormDisplay.OnAfterSubmitFunc),
-                    new Func<string, IFileTemplate?, List<IFileTemplate>, Task>((nextName, _, _) =>
-                    {
-                        Enqueue_PerformMoveProjectToSolutionFolder(
-                            treeViewSolution,
-                            treeViewProjectToMove,
-                            nextName,
-                            terminal,
-                            commonService,
-                            onAfterCompletion);
-
-                        return Task.CompletedTask;
-                    })
-                },
-            }*/);
+                MenuRecord.OpenWidget(
+                    CommonService,
+                    menuOptionOnClickArgs.MenuMeasurements,
+                    menuOptionOnClickArgs.TopOffsetOptionFromMenu,
+                    elementIdToRestoreFocusToOnClose: menuOptionOnClickArgs.MenuHtmlId,
+                    SimpleWidgetKind.FileForm,
+                    isDirectory: false,
+                    checkForTemplates: false,
+                    fileName: string.Empty,
+                    onAfterSubmitFuncAbsolutePathTask: null,
+                    onAfterSubmitFuncOther: new Func<string, IFileTemplate?, List<IFileTemplate>, Task>((nextName, _, _) =>
+                        {
+                            Enqueue_PerformMoveProjectToSolutionFolder(
+                                treeViewSolution,
+                                treeViewProjectToMove,
+                                nextName,
+                                terminal,
+                                commonService,
+                                onAfterCompletion);
+        
+                            return Task.CompletedTask;
+                        }),
+                    absolutePath: default);
+                    
+                return Task.CompletedTask;
+            })
+            {
+                IconKind = AutocompleteEntryKind.Widget,
+            };;
     }
 
     public MenuOptionRecord RemoveNuGetPackageReferenceFromProject(

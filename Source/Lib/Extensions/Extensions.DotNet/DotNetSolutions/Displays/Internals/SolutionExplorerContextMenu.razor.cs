@@ -117,6 +117,9 @@ public partial class SolutionExplorerContextMenu : ComponentBase
 
     private MenuRecord GetMenuRecordManySelections(TreeViewCommandArgs commandArgs)
     {
+        return new MenuRecord(MenuRecord.NoMenuOptionsExistList);
+        
+        /*
         var menuOptionList = new List<MenuOptionRecord>();
 
         var getFileOptions = true;
@@ -167,7 +170,7 @@ public partial class SolutionExplorerContextMenu : ComponentBase
                     },
                     { nameof(BooleanPromptOrCancelDisplay.OnAfterDeclineFunc), commandArgs.RestoreFocusToTreeView },
                     { nameof(BooleanPromptOrCancelDisplay.OnAfterCancelFunc), commandArgs.RestoreFocusToTreeView },
-                }*/));
+                }*//*));
         }
 
         if (!menuOptionList.Any())
@@ -182,7 +185,7 @@ public partial class SolutionExplorerContextMenu : ComponentBase
             var menuRecord = new MenuRecord(menuOptionList);
             _previousGetMenuRecordInvocation = (commandArgs, menuRecord);
             return menuRecord;
-        }
+        }*/
     }
 
     private MenuOptionRecord[] GetDotNetSolutionMenuOptions(TreeViewSolution treeViewSolution)
