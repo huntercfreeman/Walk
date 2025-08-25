@@ -135,6 +135,19 @@ public partial class IdeService
 
         IdeStateChanged?.Invoke(IdeStateChangedKind.Ide_StartupControlStateChanged);
     }
+    
+    public void Ide_SetStartupControlList(List<StartupControlModel> startupControlList)
+    {
+        lock (_stateModificationLock)
+        {
+            _startupControlState = _startupControlState with
+            {
+                StartupControlList = startupControlList
+            };
+        }
+
+        IdeStateChanged?.Invoke(IdeStateChangedKind.Ide_StartupControlStateChanged);
+    }
 
     public void Ide_DisposeStartupControl(string startupProjectAbsolutePathValue)
     {
