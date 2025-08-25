@@ -156,26 +156,28 @@ public partial class IdeService
     {
         return new MenuOptionRecord(
             "Rename",
-            MenuOptionKind.Update/*,
-            simpleWidgetKind: Walk.Common.RazorLib.Widgets.Models.SimpleWidgetKind.FileForm,
-            widgetParameterMap: new Dictionary<string, object?>
+            MenuOptionKind.Update,
+            menuOptionOnClickArgs => 
             {
-                {
-                    nameof(Walk.Common.RazorLib.FileSystems.Displays.FileFormDisplay.FileName),
-                    sourceAbsolutePath.IsDirectory
-                        ? sourceAbsolutePath.Name
-                        : sourceAbsolutePath.Name
-                },
-                { nameof(Walk.Common.RazorLib.FileSystems.Displays.FileFormDisplay.IsDirectory), sourceAbsolutePath.IsDirectory },
-                {
-                    nameof(Walk.Common.RazorLib.FileSystems.Displays.FileFormDisplay.OnAfterSubmitFunc),
-                    new Func<string, IFileTemplate?, List<IFileTemplate>, Task>((nextName, _, _) =>
-                    {
-                        PerformRename(sourceAbsolutePath, nextName, commonService, onAfterCompletion);
-                        return Task.CompletedTask;
-                    })
-                },
-            }*/)
+                MenuRecord.OpenWidget(
+                    CommonService,
+                    menuOptionOnClickArgs.MenuMeasurements,
+                    menuOptionOnClickArgs.TopOffsetOptionFromMenu,
+                    elementIdToRestoreFocusToOnClose: menuOptionOnClickArgs.MenuHtmlId,
+                    SimpleWidgetKind.FileForm,
+                    isDirectory: sourceAbsolutePath.IsDirectory,
+                    checkForTemplates: false,
+                    fileName: sourceAbsolutePath.Name,
+                    onAfterSubmitFuncAbsolutePathTask: null,
+                    onAfterSubmitFuncOther: new Func<string, IFileTemplate?, List<IFileTemplate>, Task>((nextName, _, _) =>
+                        {
+                            PerformRename(sourceAbsolutePath, nextName, commonService, onAfterCompletion);
+                            return Task.CompletedTask;
+                        }),
+                    absolutePath: default);
+                    
+                return Task.CompletedTask;
+            })
             {
                 IconKind = AutocompleteEntryKind.Widget,
             };
