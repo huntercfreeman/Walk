@@ -44,7 +44,4 @@ public struct StartupControlModel
     
     public string Title { get; }
     public AbsolutePath StartupProjectAbsolutePath { get; }
-    
-    public TerminalCommandRequest? ExecutingTerminalCommandRequest { get; set; }
-    public bool IsExecuting => ExecutingTerminalCommandRequest is not null;
 }

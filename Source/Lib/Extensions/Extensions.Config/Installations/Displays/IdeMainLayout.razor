@@ -108,7 +108,7 @@
             	}
             	else
             	{
-            		_userInterfaceSawIsExecuting = activeStartupControl.IsExecuting;
+            		_userInterfaceSawIsExecuting = localStartupControlState.ExecutingTerminalCommandRequest is not null;
             	}
             }
             

@@ -1,6 +1,7 @@
 using Walk.Common.RazorLib.Menus.Models;
 using Walk.Common.RazorLib.ListExtensions;
 using Walk.Ide.RazorLib.Shareds.Models;
+using Walk.Ide.RazorLib.Terminals.Models;
 
 namespace Walk.Ide.RazorLib;
 
@@ -170,7 +171,7 @@ public partial class IdeService
                 x => x.StartupProjectAbsolutePath.Value == startupProjectAbsolutePathValue);
 
             if (startupProjectAbsolutePathValue == string.Empty ||
-                startupControl.Title is not null)
+                startupControl.StartupProjectAbsolutePath.Value is null)
             {
                 _startupControlState = _startupControlState with
                 {
@@ -189,8 +190,12 @@ public partial class IdeService
         IdeStateChanged?.Invoke(IdeStateChangedKind.Ide_StartupControlStateChanged);
     }
     
-    public void Ide_TriggerStartupControlStateChanged()
+    public void Ide_TriggerStartupControlStateChanged(TerminalCommandRequest? executingTerminalCommandRequest)
     {
+        _startupControlState = _startupControlState with
+        {
+            ExecutingTerminalCommandRequest = executingTerminalCommandRequest
+        };
         IdeStateChanged?.Invoke(IdeStateChangedKind.Ide_StartupControlStateChanged);
     }
 }

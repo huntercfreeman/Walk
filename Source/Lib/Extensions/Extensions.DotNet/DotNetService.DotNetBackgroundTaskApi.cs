@@ -1054,13 +1054,12 @@ public partial class DotNetService
                 ParseOutputEntireDotNetRun(
                     string.Empty,
                     "Run-Project_started");
-
+    
                 return Task.CompletedTask;
             },
             ContinueWithFunc = parsedCommand =>
             {
-                startupControlModel.ExecutingTerminalCommandRequest = null;
-                IdeService.Ide_TriggerStartupControlStateChanged();
+                IdeService.Ide_TriggerStartupControlStateChanged(executingTerminalCommandRequest: null);
 
                 ParseOutputEntireDotNetRun(
                     parsedCommand.OutputCache.ToString(),
@@ -1069,9 +1068,9 @@ public partial class DotNetService
                 return Task.CompletedTask;
             }
         };
-
-        startupControlModel.ExecutingTerminalCommandRequest = terminalCommandRequest;
-
+        
+        IdeService.Ide_TriggerStartupControlStateChanged(terminalCommandRequest);
+        
         IdeService.GetTerminalState().ExecutionTerminal.EnqueueCommand(terminalCommandRequest);
         return Task.CompletedTask;
     }
@@ -1079,9 +1078,7 @@ public partial class DotNetService
     public Task StopButtonOnClick(StartupControlModel startupControlModel)
     {
         IdeService.GetTerminalState().ExecutionTerminal.KillProcess();
-        startupControlModel.ExecutingTerminalCommandRequest = null;
-
-        IdeService.Ide_TriggerStartupControlStateChanged();
+        IdeService.Ide_TriggerStartupControlStateChanged(executingTerminalCommandRequest: null);
         return Task.CompletedTask;
     }
 }
