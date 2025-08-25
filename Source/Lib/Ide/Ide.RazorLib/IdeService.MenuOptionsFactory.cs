@@ -92,26 +92,29 @@ public partial class IdeService
     {
         return new MenuOptionRecord(
             "New Directory",
-            MenuOptionKind.Create
-            
-            
-            
-            /*,
-            simpleWidgetKind: Walk.Common.RazorLib.Widgets.Models.SimpleWidgetKind.FileForm,
-            widgetParameterMap: new Dictionary<string, object?>
+            MenuOptionKind.Create,
+            menuOptionOnClickArgs => 
             {
-                { nameof(Walk.Common.RazorLib.FileSystems.Displays.FileFormDisplay.FileName), string.Empty },
-                { nameof(Walk.Common.RazorLib.FileSystems.Displays.FileFormDisplay.IsDirectory), true },
-                {
-                    nameof(Walk.Common.RazorLib.FileSystems.Displays.FileFormDisplay.OnAfterSubmitFunc),
-                    new Func<string, IFileTemplate?, List<IFileTemplate>, Task>(
+                MenuRecord.OpenWidget(
+                    CommonService,
+                    menuOptionOnClickArgs.MenuMeasurements,
+                    menuOptionOnClickArgs.TopOffsetOptionFromMenu,
+                    elementIdToRestoreFocusToOnClose: menuOptionOnClickArgs.MenuHtmlId,
+                    SimpleWidgetKind.FileForm,
+                    isDirectory: true,
+                    checkForTemplates: true,
+                    fileName: string.Empty,
+                    onAfterSubmitFuncAbsolutePathTask: null,
+                    onAfterSubmitFuncOther: new Func<string, IFileTemplate?, List<IFileTemplate>, Task>(
                         (directoryName, _, _) =>
                         {
                             Enqueue_PerformNewDirectory(directoryName, parentDirectory, onAfterCompletion);
                             return Task.CompletedTask;
-                        })
-                },
-            }*/)
+                        }),
+                    absolutePath: default);
+                    
+                return Task.CompletedTask;
+            })
             {
                 IconKind = AutocompleteEntryKind.Widget,
             };
