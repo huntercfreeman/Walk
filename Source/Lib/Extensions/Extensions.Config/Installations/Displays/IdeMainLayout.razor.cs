@@ -768,13 +768,24 @@ public partial class IdeMainLayout : LayoutComponentBase, IDisposable
 
         var menuOptionOpen = new MenuOptionRecord(
             "Open",
-            MenuOptionKind.Other/*,
-            subMenu: new MenuRecord(new List<MenuOptionRecord>()
+            MenuOptionKind.Other,
+            menuOptionOnClickArgs =>
             {
-                menuOptionOpenDotNetSolution,
-                menuOptionOpenFile,
-                menuOptionOpenDirectory,
-            })*/)
+                MenuRecord.OpenSubMenu(
+                    DotNetService.CommonService,
+                    subMenu: new MenuRecord(new List<MenuOptionRecord>()
+                    {
+                        menuOptionOpenDotNetSolution,
+                        menuOptionOpenFile,
+                        menuOptionOpenDirectory,
+                    }),
+                    menuOptionOnClickArgs.MenuMeasurements,
+                    menuOptionOnClickArgs.TopOffsetOptionFromMenu,
+                    elementIdToRestoreFocusToOnClose: menuOptionOnClickArgs.MenuHtmlId);
+                    
+                return Task.CompletedTask;
+            }/*,
+            )*/)
         {
             IconKind = AutocompleteEntryKind.Chevron
         };

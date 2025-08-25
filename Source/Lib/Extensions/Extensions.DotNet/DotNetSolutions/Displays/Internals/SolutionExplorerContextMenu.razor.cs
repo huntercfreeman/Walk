@@ -203,12 +203,27 @@ public partial class SolutionExplorerContextMenu : ComponentBase
                 return Task.CompletedTask;
             });
 
-        var createOptions = new MenuOptionRecord("Add", MenuOptionKind.Create/*,
-            subMenu: new MenuRecord(new List<MenuOptionRecord>
+        var createOptions = new MenuOptionRecord(
+            "Add",
+            MenuOptionKind.Create,
+            menuOptionOnClickArgs =>
             {
-                addNewCSharpProject,
-                addExistingCSharpProject,
-            })*/);
+                MenuRecord.OpenSubMenu(
+                    DotNetService.CommonService,
+                    subMenu: new MenuRecord(new List<MenuOptionRecord>
+                    {
+                        addNewCSharpProject,
+                        addExistingCSharpProject,
+                    }),
+                    menuOptionOnClickArgs.MenuMeasurements,
+                    menuOptionOnClickArgs.TopOffsetOptionFromMenu,
+                    elementIdToRestoreFocusToOnClose: menuOptionOnClickArgs.MenuHtmlId);
+                    
+                return Task.CompletedTask;
+            })
+        {
+            IconKind = AutocompleteEntryKind.Chevron
+        };
 
         var openInTextEditor = new MenuOptionRecord(
             "Open in text editor",
