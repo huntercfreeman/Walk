@@ -767,24 +767,15 @@ public partial class DotNetService
             IdeService.TextEditorService.CommonService,
             TimeSpan.FromMilliseconds(-1));
 
-        IStartupControlModel? originallyActiveStartupControl = null;
+        StartupControlModel originallyActiveStartupControl = default;
         
         try
         {
             var localStartupControlState = IdeService.GetIdeStartupControlState();
         	originallyActiveStartupControl = localStartupControlState.StartupControlList.FirstOrDefault(
         	    x => x.StartupProjectAbsolutePath.Value == localStartupControlState.ActiveStartupProjectAbsolutePathValue);
-            IdeService.Ide_ClearAllStartupControls();
         
-            foreach (var project in dotNetSolutionModel.DotNetProjectList)
-            {
-                RegisterStartupControl(project);
-
-                var resourceUri = new ResourceUri(project.AbsolutePath.Value);
-
-                if (!IdeService.TextEditorService.CommonService.FileSystemProvider.File.Exists(resourceUri.Value))
-                    continue; // TODO: This can still cause a race condition exception if the file is removed before the next line runs.
-            }
+            RegisterStartupControl_Range(dotNetSolutionModel.DotNetProjectList);
 
             var previousStageProgress = 0.05;
             var dotNetProjectListLength = dotNetSolutionModel.DotNetProjectList.Count;
@@ -839,7 +830,7 @@ public partial class DotNetService
         }
         finally
         {
-            if (originallyActiveStartupControl is not null)
+            if (originallyActiveStartupControl.StartupProjectAbsolutePath.Value is not null)
             {
                 var localStartupControlState = IdeService.GetIdeStartupControlState();
                 
@@ -984,12 +975,22 @@ public partial class DotNetService
             dotNetSolutionModel));
     }
 
-    private void RegisterStartupControl(IDotNetProject project)
+    private void RegisterStartupControl_Range(List<IDotNetProject> projectList)
     {
-        IdeService.Ide_RegisterStartupControl(
-            new StartupControlModel(
-                project.DisplayName,
-                project.AbsolutePath));
+        var startupControlList = new List<StartupControlModel>();
+        var startupControlAbsolutePathValueHashSet = new HashSet<string>();
+        
+        foreach (var project in projectList)
+        {
+            if (startupControlAbsolutePathValueHashSet.Add(project.AbsolutePath.Value))
+            {
+                startupControlList.Add(new StartupControlModel(
+                    project.DisplayName,
+                    project.AbsolutePath));
+            }
+        }
+    
+        IdeService.Ide_SetStartupControlList(startupControlList);
     }
 
     private ValueTask Do_Website_AddExistingProjectToSolution(
@@ -1032,4 +1033,53 @@ public partial class DotNetService
         });
     }
     #endregion
+    
+    public Task StartButtonOnClick(StartupControlModel startupControlModel)
+    {
+        var ancestorDirectory = startupControlModel.StartupProjectAbsolutePath.CreateSubstringParentDirectory();
+        if (ancestorDirectory is null)
+        {
+            return Task.CompletedTask;
+        }
+
+        var formattedCommandValue = DotNetCliCommandFormatter.FormatStartProjectWithoutDebugging(
+            startupControlModel.StartupProjectAbsolutePath);
+
+        var terminalCommandRequest = new TerminalCommandRequest(
+            formattedCommandValue,
+            ancestorDirectory,
+            NewDotNetSolutionTerminalCommandRequestKey)
+        {
+            BeginWithFunc = parsedCommand =>
+            {
+                ParseOutputEntireDotNetRun(
+                    string.Empty,
+                    "Run-Project_started");
+    
+                return Task.CompletedTask;
+            },
+            ContinueWithFunc = parsedCommand =>
+            {
+                IdeService.Ide_TriggerStartupControlStateChanged(executingTerminalCommandRequest: null);
+
+                ParseOutputEntireDotNetRun(
+                    parsedCommand.OutputCache.ToString(),
+                    "Run-Project_completed");
+
+                return Task.CompletedTask;
+            }
+        };
+        
+        IdeService.Ide_TriggerStartupControlStateChanged(terminalCommandRequest);
+        
+        IdeService.GetTerminalState().ExecutionTerminal.EnqueueCommand(terminalCommandRequest);
+        return Task.CompletedTask;
+    }
+
+    public Task StopButtonOnClick(StartupControlModel startupControlModel)
+    {
+        IdeService.GetTerminalState().ExecutionTerminal.KillProcess();
+        IdeService.Ide_TriggerStartupControlStateChanged(executingTerminalCommandRequest: null);
+        return Task.CompletedTask;
+    }
 }

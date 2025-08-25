@@ -1,12 +1,16 @@
+using Walk.Ide.RazorLib.Terminals.Models;
+
 namespace Walk.Ide.RazorLib.Shareds.Models;
 
 public record struct StartupControlState(
     string ActiveStartupProjectAbsolutePathValue,
-    IReadOnlyList<IStartupControlModel> StartupControlList)
+    TerminalCommandRequest? ExecutingTerminalCommandRequest,
+    IReadOnlyList<StartupControlModel> StartupControlList)
 {
     public StartupControlState() : this(
         string.Empty,
-        Array.Empty<IStartupControlModel>())
+        ExecutingTerminalCommandRequest: null,
+        Array.Empty<StartupControlModel>())
     {
     }
 }

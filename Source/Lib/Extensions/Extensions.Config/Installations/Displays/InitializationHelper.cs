@@ -107,7 +107,7 @@ public static class InitializationHelper
                 var activeStartupControl = startupControlState.StartupControlList.FirstOrDefault(
                     x => x.StartupProjectAbsolutePath.Value == startupControlState.ActiveStartupProjectAbsolutePathValue);
 
-                if (activeStartupControl?.StartupProjectAbsolutePath is not null)
+                if (activeStartupControl.StartupProjectAbsolutePath.Value is not null)
                     BuildProjectOnClick(DotNetService, activeStartupControl.StartupProjectAbsolutePath.Value);
                 else
                     CommonFacts.DispatchError(nameof(BuildProjectOnClick), "activeStartupControl?.StartupProjectAbsolutePath was null", DotNetService.CommonService, TimeSpan.FromSeconds(6));
@@ -124,7 +124,7 @@ public static class InitializationHelper
                 var activeStartupControl = startupControlState.StartupControlList.FirstOrDefault(
                     x => x.StartupProjectAbsolutePath.Value == startupControlState.ActiveStartupProjectAbsolutePathValue);
 
-                if (activeStartupControl?.StartupProjectAbsolutePath is not null)
+                if (activeStartupControl.StartupProjectAbsolutePath.Value is not null)
                     CleanProjectOnClick(DotNetService, activeStartupControl.StartupProjectAbsolutePath.Value);
                 else
                     CommonFacts.DispatchError(nameof(CleanProjectOnClick), "activeStartupControl?.StartupProjectAbsolutePath was null", DotNetService.CommonService, TimeSpan.FromSeconds(6));

@@ -14,6 +14,7 @@
 @using Walk.Common.RazorLib.Notifications.Models;
 @using Walk.TextEditor.RazorLib.TextEditors.Displays
 @using Walk.TextEditor.RazorLib.TextEditors.Displays.Internals
+@using Walk.Ide.RazorLib
 @using Walk.Ide.RazorLib.Shareds.Displays.Internals
 @using Walk.Ide.RazorLib.Settings.Displays
 @using Walk.Ide.RazorLib.Shareds.Models
@@ -91,7 +92,7 @@
             @{
             	var localStartupControlState = DotNetService.IdeService.GetIdeStartupControlState();
             	
-                IStartupControlModel? activeStartupControl = null;
+                StartupControlModel activeStartupControl = default;
                 for (int i = 0; i < localStartupControlState.StartupControlList.Count; i++)
                 {
                     if (localStartupControlState.StartupControlList[i].StartupProjectAbsolutePath.Value == localStartupControlState.ActiveStartupProjectAbsolutePathValue)
@@ -101,20 +102,20 @@
                     }
                 }
                 
-            	if (activeStartupControl is null)
+            	if (activeStartupControl.StartupProjectAbsolutePath.Value is null)
             	{
             		_userInterfaceSawIsExecuting = false;
             	}
             	else
             	{
-            		_userInterfaceSawIsExecuting = activeStartupControl.IsExecuting;
+            		_userInterfaceSawIsExecuting = localStartupControlState.ExecutingTerminalCommandRequest is not null;
             	}
             }
             
             <div class="di_startup-controls">
                <div class="di_startup-controls-entry">
                    <select @bind="SelectedStartupControlAbsolutePathValue"
-                           title="@(activeStartupControl?.StartupProjectAbsolutePath.Value ?? "Choose startup project")">
+                           title="@(activeStartupControl.StartupProjectAbsolutePath.Value ?? "Choose startup project")">
                    	<option title="Choose startup project"
                			    value="@string.Empty">
                	    	Choose startup project
@@ -133,8 +134,8 @@
                     <button @onclick="StartProgramWithoutDebuggingOnClick"
                             class="di_button"
                             id="@_startButtonElementId"
-                            disabled=@(activeStartupControl is null)
-                            title="@(activeStartupControl?.StartupProjectAbsolutePath.Value)">
+                            disabled=@(activeStartupControl.StartupProjectAbsolutePath.Value is null)
+                            title="@(activeStartupControl.StartupProjectAbsolutePath.Value)">
                         
                         @if (_userInterfaceSawIsExecuting)
                         {

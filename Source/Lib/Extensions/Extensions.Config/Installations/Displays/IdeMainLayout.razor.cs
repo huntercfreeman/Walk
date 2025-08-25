@@ -511,7 +511,7 @@ public partial class IdeMainLayout : LayoutComponentBase, IDisposable
         var activeStartupControl = localStartupControlState.StartupControlList.FirstOrDefault(
             x => x.StartupProjectAbsolutePath.Value == localStartupControlState.ActiveStartupProjectAbsolutePathValue);
         
-        if (activeStartupControl is null)
+        if (activeStartupControl.StartupProjectAbsolutePath.Value is null)
             return;
     
         if (_userInterfaceSawIsExecuting)
@@ -550,10 +550,10 @@ public partial class IdeMainLayout : LayoutComponentBase, IDisposable
                     var activeStartupControl = localStartupControlState.StartupControlList.FirstOrDefault(
                         x => x.StartupProjectAbsolutePath.Value == localStartupControlState.ActiveStartupProjectAbsolutePathValue);
                     
-                    if (activeStartupControl is null)
+                    if (activeStartupControl.StartupProjectAbsolutePath.Value is null)
                         return Task.CompletedTask;
                         
-                    return activeStartupControl.StopButtonOnClick(DotNetService);
+                    return DotNetService.StopButtonOnClick(activeStartupControl);
                 }));
                 
             await CommonFacts.RenderDropdownAsync(
@@ -568,7 +568,7 @@ public partial class IdeMainLayout : LayoutComponentBase, IDisposable
         }
         else
         {
-            await activeStartupControl.StartButtonOnClick(DotNetService)
+            await DotNetService.StartButtonOnClick(activeStartupControl)
                 .ConfigureAwait(false);
         }
     }
