@@ -23,6 +23,14 @@ namespace Walk.Ide.RazorLib;
 ///
 /// All in all, I'm extremely anxious and I cannot in this moment deal with this situation.
 /// I will check if `Title` is null for now.
+///
+///
+/// What I mean is, I need to first know every bit of overhead that comes with defining this a `record struct`,
+/// if there even is any (perhaps it is negligible).
+///
+/// And I suppose what I just said pertains to every other point.
+/// I have the entire application in my mind right now, working out optimizations for every line of code.
+/// And this is just all I have right now.
 /// </summary>
 public struct StartupControlModel
 {
