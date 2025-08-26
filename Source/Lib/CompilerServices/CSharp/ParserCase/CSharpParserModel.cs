@@ -1857,6 +1857,11 @@ public ref struct CSharpParserModel
         return Binder.CSharpCompilerService.SafeGetText(ResourceUri.Value, textSpan) ?? string.Empty;
     }
     
+    public readonly bool CompareTextSpanText(string value, TextEditorTextSpan textSpan)
+    {
+        return Binder.CSharpCompilerService.SafeCompareText(ResourceUri.Value, value, textSpan);
+    }
+    
     public readonly TypeClauseNode ToTypeClause(TypeDefinitionNode typeDefinitionNode)
     {
         var typeClauseNode = Rent_TypeClauseNode();
