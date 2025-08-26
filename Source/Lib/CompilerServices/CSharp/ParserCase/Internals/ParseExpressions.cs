@@ -3578,8 +3578,8 @@ public static class ParseExpressions
                             if (!parserModel.Binder.__CompilationUnitMap.TryGetValue(typeDefinitionNode.ResourceUri, out innerCompilationUnit))
                                 continue;
                         }
-                    
-                        if (parserModel.Binder.CSharpCompilerService.SafeGetText(typeDefinitionNode.ResourceUri.Value, typeDefinitionNode.TypeIdentifierToken.TextSpan) == memberIdentifierText)
+
+                        if (parserModel.Binder.CSharpCompilerService.SafeCompareText(typeDefinitionNode.ResourceUri.Value, memberIdentifierText, typeDefinitionNode.TypeIdentifierToken.TextSpan))
                         {
                             var typeClauseNode = parserModel.Rent_TypeClauseNode();
                             typeClauseNode.TypeIdentifierToken = memberIdentifierToken;
