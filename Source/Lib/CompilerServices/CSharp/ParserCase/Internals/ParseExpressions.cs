@@ -1863,7 +1863,7 @@ public static class ParseExpressions
         //
         if (parserModel.Binder.__CompilationUnitMap.TryGetValue(constructorInvocationExpressionNode.ResultTypeReference.ExplicitDefinitionResourceUri, out var innerCompilationUnit))
         {
-            if ("void" == parserModel.Binder.CSharpCompilerService.SafeGetText(constructorInvocationExpressionNode.ResultTypeReference.ExplicitDefinitionResourceUri.Value, constructorInvocationExpressionNode.ResultTypeReference.TypeIdentifierToken.TextSpan))
+            if (parserModel.Binder.CSharpCompilerService.SafeCompareText(constructorInvocationExpressionNode.ResultTypeReference.ExplicitDefinitionResourceUri.Value, "void", constructorInvocationExpressionNode.ResultTypeReference.TypeIdentifierToken.TextSpan))
                 isVoidType = true;
         }
         
@@ -3908,8 +3908,7 @@ public static class ParseExpressions
         {
             var variableDeclarationNode = (VariableDeclarationNode)expressionSecondary;
             
-            if (parserModel.Binder.CSharpCompilerService.SafeGetText(parserModel.ResourceUri.Value, variableDeclarationNode.TypeReference.TypeIdentifierToken.TextSpan) ==
-                "var")
+            if (parserModel.Binder.CSharpCompilerService.SafeCompareText(parserModel.ResourceUri.Value, "var", variableDeclarationNode.TypeReference.TypeIdentifierToken.TextSpan))
             {
                 if (invocationNode.SyntaxKind == SyntaxKind.FunctionInvocationNode)
                 {

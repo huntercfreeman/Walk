@@ -1041,7 +1041,7 @@ public ref struct CSharpParserModel
                     // It was validated that neither CharIntSum is 0 here so removing the checks
                     if (otherTextSpan.CharIntSum == typeIdentifierTextSpan.CharIntSum)
                     {
-                        if (GetIdentifierText(x, resourceUri, compilationUnit) == typeIdentifierText)
+                        if (CompareIdentifierText(x, resourceUri, compilationUnit, typeIdentifierText))
                         {
                             typeDefinitionNode = (TypeDefinitionNode)x;
                             break;
@@ -1063,7 +1063,7 @@ public ref struct CSharpParserModel
                         // It was validated that neither CharIntSum is 0 here so removing the checks
                         if (otherTextSpan.CharIntSum == typeIdentifierTextSpan.CharIntSum)
                         {
-                            if (GetIdentifierText(x, resourceUri, compilationUnit) == typeIdentifierText)
+                            if (CompareIdentifierText(x, resourceUri, compilationUnit, typeIdentifierText))
                             {
                                 typeDefinitionNode = (TypeDefinitionNode)x;
                                 break;
@@ -1106,7 +1106,7 @@ public ref struct CSharpParserModel
                     // It was validated that neither CharIntSum is 0 here so removing the checks
                     if (otherTextSpan.CharIntSum == typeDefinitionNode.TypeIdentifierToken.TextSpan.CharIntSum)
                     {
-                        if (GetIdentifierText(x, resourceUri, compilationUnit) == typeIdentifierText)
+                        if (CompareIdentifierText(x, resourceUri, compilationUnit, typeIdentifierText))
                         {
                             matchNode = (TypeDefinitionNode)x;
                             break;
@@ -1208,7 +1208,7 @@ public ref struct CSharpParserModel
                     // It was validated that neither CharIntSum is 0 here so removing the checks
                     if (otherTextSpan.CharIntSum == functionIdentifierTextSpan.CharIntSum)
                     {
-                        if (GetIdentifierText(x, resourceUri, compilationUnit) == functionIdentifierText)
+                        if (CompareIdentifierText(x, resourceUri, compilationUnit, functionIdentifierText))
                         {
                             functionDefinitionNode = (FunctionDefinitionNode)x;
                             break;
@@ -1370,7 +1370,7 @@ public ref struct CSharpParserModel
                     // It was validated that neither CharIntSum is 0 here so removing the checks
                     if (otherTextSpan.CharIntSum == variableIdentifierTextSpan.CharIntSum)
                     {
-                        if (GetIdentifierText(x, resourceUri, compilationUnit) == variableIdentifierText)
+                        if (CompareIdentifierText(x, resourceUri, compilationUnit, variableIdentifierText))
                         {
                             variableDeclarationNode = (VariableDeclarationNode)x;
                             break;
@@ -1491,7 +1491,7 @@ public ref struct CSharpParserModel
                     // It was validated that neither CharIntSum is 0 here so removing the checks
                     if (otherTextSpan.CharIntSum == variableDeclarationNode.IdentifierToken.TextSpan.CharIntSum)
                     {
-                        if (GetIdentifierText(x, ResourceUri, Compilation) == variableIdentifierText)
+                        if (CompareIdentifierText(x, ResourceUri, Compilation, variableIdentifierText))
                         {
                             matchNode = (VariableDeclarationNode)x;
                             break;
@@ -1539,7 +1539,7 @@ public ref struct CSharpParserModel
                     // It was validated that neither CharIntSum is 0 here so removing the checks
                     if (otherTextSpan.CharIntSum == variableDeclarationNode.IdentifierToken.TextSpan.CharIntSum)
                     {
-                        if (GetIdentifierText(x, ResourceUri, Compilation) == variableIdentifierText)
+                        if (CompareIdentifierText(x, ResourceUri, Compilation, variableIdentifierText))
                         {
                             matchNode = (VariableDeclarationNode)x;
                             break;
@@ -1606,7 +1606,7 @@ public ref struct CSharpParserModel
                     // It was validated that neither CharIntSum is 0 here so removing the checks
                     if (otherTextSpan.CharIntSum == labelIdentifierTextSpan.CharIntSum)
                     {
-                        if (GetIdentifierText(x, ResourceUri, Compilation) == labelIdentifierText)
+                        if (CompareIdentifierText(x, ResourceUri, Compilation, labelIdentifierText))
                         {
                             labelDeclarationNode = (LabelDeclarationNode)x;
                             break;
@@ -1642,7 +1642,7 @@ public ref struct CSharpParserModel
                     // It was validated that neither CharIntSum is 0 here so removing the checks
                     if (otherTextSpan.CharIntSum == labelIdentifierTextSpan.CharIntSum)
                     {
-                        if (GetIdentifierText(x, ResourceUri, Compilation) == labelIdentifierText)
+                        if (CompareIdentifierText(x, ResourceUri, Compilation, labelIdentifierText))
                         {
                             matchNode = (LabelDeclarationNode)x;
                             break;
@@ -1689,7 +1689,7 @@ public ref struct CSharpParserModel
                     // It was validated that neither CharIntSum is 0 here so removing the checks
                     if (otherTextSpan.CharIntSum == labelDeclarationNode.IdentifierToken.TextSpan.CharIntSum)
                     {
-                        if (GetIdentifierText(x, ResourceUri, Compilation) == labelIdentifierText)
+                        if (CompareIdentifierText(x, ResourceUri, Compilation, labelIdentifierText))
                         {
                             matchNode = (LabelDeclarationNode)x;
                             break;
@@ -1827,6 +1827,82 @@ public ref struct CSharpParserModel
         }
     }
     
+    public readonly bool CompareIdentifierText(
+        ISyntaxNode node,
+        ResourceUri resourceUri,
+        CSharpCompilationUnit compilationUnit,
+        string identifierText)
+    {
+        string absolutePathString = resourceUri.Value;
+        TextEditorTextSpan textSpan;
+        
+        switch (node.SyntaxKind)
+        {
+            case SyntaxKind.TypeDefinitionNode:
+            {
+                var typeDefinitionNode = (TypeDefinitionNode)node;
+                textSpan = typeDefinitionNode.TypeIdentifierToken.TextSpan;
+                absolutePathString = typeDefinitionNode.ResourceUri.Value;
+                break;
+            }
+            case SyntaxKind.TypeClauseNode:
+            {
+                var typeClauseNode = (TypeClauseNode)node;
+                textSpan = typeClauseNode.TypeIdentifierToken.TextSpan;
+                absolutePathString = typeClauseNode.ExplicitDefinitionResourceUri.Value;
+                break;
+            }
+            case SyntaxKind.FunctionDefinitionNode:
+            {
+                var functionDefinitionNode = (FunctionDefinitionNode)node;
+                textSpan = functionDefinitionNode.FunctionIdentifierToken.TextSpan;
+                absolutePathString = functionDefinitionNode.ResourceUri.Value;
+                break;
+            }
+            case SyntaxKind.FunctionInvocationNode:
+            {
+                var functionInvocationNode = (FunctionInvocationNode)node;
+                textSpan = functionInvocationNode.FunctionInvocationIdentifierToken.TextSpan;
+                absolutePathString = functionInvocationNode.ResourceUri.Value;
+                break;
+            }
+            case SyntaxKind.VariableDeclarationNode:
+            {
+                var variableDeclarationNode = (VariableDeclarationNode)node;
+                textSpan = variableDeclarationNode.IdentifierToken.TextSpan;
+                absolutePathString = variableDeclarationNode.ResourceUri.Value;
+                break;
+            }
+            case SyntaxKind.VariableReferenceNode:
+            {
+                textSpan = ((VariableReferenceNode)node).VariableIdentifierToken.TextSpan;
+                absolutePathString = ResourceUri.Value;
+                break;
+            }
+            case SyntaxKind.LabelDeclarationNode:
+            {
+                textSpan = ((LabelDeclarationNode)node).IdentifierToken.TextSpan;
+                absolutePathString = ResourceUri.Value;
+                break;
+            }
+            case SyntaxKind.LabelReferenceNode:
+            {
+                textSpan = ((LabelReferenceNode)node).IdentifierToken.TextSpan;
+                absolutePathString = ResourceUri.Value;
+                break;
+            }
+            default:
+            {
+                return false;
+            }
+        }
+        
+        return Binder.CSharpCompilerService.SafeCompareText(
+            absolutePathString,
+            identifierText,
+            textSpan);
+    }
+    
     public readonly TextEditorTextSpan GetIdentifierTextSpan(ISyntaxNode node)
     {
         switch (node.SyntaxKind)
@@ -1855,6 +1931,11 @@ public ref struct CSharpParserModel
     public readonly string GetTextSpanText(TextEditorTextSpan textSpan)
     {
         return Binder.CSharpCompilerService.SafeGetText(ResourceUri.Value, textSpan) ?? string.Empty;
+    }
+    
+    public readonly bool CompareTextSpanText(string value, TextEditorTextSpan textSpan)
+    {
+        return Binder.CSharpCompilerService.SafeCompareText(ResourceUri.Value, value, textSpan);
     }
     
     public readonly TypeClauseNode ToTypeClause(TypeDefinitionNode typeDefinitionNode)

@@ -244,14 +244,13 @@ public sealed class CSharpCompilerService : IExtendedCompilerService
             }
 
             StreamReaderTupleCache.Add(absolutePathString, sr);
+            
+            // I presume this is needed so the StreamReader can get the encoding.
+            sr.Read();
         }
-
-        // I presume this is needed so the StreamReader can get the encoding.
-        sr.Read();
 
         // TODO: What happens if I split a multibyte word?
         sr.BaseStream.Seek(textSpan.ByteIndex, SeekOrigin.Begin);
-        // sr.BaseStream.Seek(textSpan.ByteIndex, SeekOrigin.Begin);
         sr.DiscardBufferedData();
 
         _safeGetTextStringBuilder.Clear();
@@ -263,6 +262,87 @@ public sealed class CSharpCompilerService : IExtendedCompilerService
         }
 
         return _safeGetTextStringBuilder.ToString();
+    }
+    
+    public bool SafeCompareText(string absolutePathString, string value, TextEditorTextSpan textSpan)
+    {
+        if (value.Length != textSpan.Length)
+            return false;
+    
+        StreamReader sr;
+
+        if (absolutePathString == string.Empty)
+        {
+            return value == textSpan.GetText(EmptyFileHackForLanguagePrimitiveText, _textEditorService);
+        }
+        else if (absolutePathString == _currentFileBeingParsedTuple.AbsolutePathString)
+        {
+            return value == textSpan.GetText(_currentFileBeingParsedTuple.Content, _textEditorService);
+        }
+        else if (absolutePathString == FastParseTuple.AbsolutePathString)
+        {
+            // TODO: What happens if I split a multibyte word?
+            FastParseTuple.Sr.BaseStream.Seek(textSpan.ByteIndex, SeekOrigin.Begin);
+            FastParseTuple.Sr.DiscardBufferedData();
+
+            for (int i = 0; i < textSpan.Length; i++)
+            {
+                FastParseTuple.Sr.Read(_safeGetTextBuffer, 0, 1);
+                if (value[i] != _safeGetTextBuffer[0])
+                    return false;
+            }
+
+            return true;
+        }
+        
+        if (!StreamReaderTupleCache.TryGetValue(absolutePathString, out sr))
+        {
+            if (!File.Exists(absolutePathString))
+                return false;
+        
+            sr = new StreamReader(absolutePathString);
+            // Solution wide parse on Walk.sln
+            //
+            // 350 -> _countCacheClear: 15
+            // 450 -> _countCacheClear: 9
+            // 500 -> _countCacheClear: 7
+            // 800 -> _countCacheClear: 2
+            // 1000 -> _countCacheClear: 0
+            //
+            // 512 is c library limit?
+            // 1024 is linux DEFAULT soft limit?
+            // The reality is that you can go FAR higher when not limited?
+            // But how do I know the limit of each user?
+            // So I guess 500 is a safe bet for now?
+            //
+            // CSharpCompilerService at ~2k lines of text needed `StreamReaderTupleCache.Count: 214`.
+            // ParseExpressions at ~4k lines of text needed `StreamReaderTupleCache.Count: 139`.
+            //
+            // This isn't just used for single file parsing though, it is also used for solution wide.
+            if (StreamReaderTupleCache.Count >= 500)
+            {
+                ClearStreamReaderTupleCache();
+            }
+
+            StreamReaderTupleCache.Add(absolutePathString, sr);
+            
+            // I presume this is needed so the StreamReader can get the encoding.
+            sr.Read();
+        }
+
+        // TODO: What happens if I split a multibyte word?
+        sr.BaseStream.Seek(textSpan.ByteIndex, SeekOrigin.Begin);
+        // sr.BaseStream.Seek(textSpan.ByteIndex, SeekOrigin.Begin);
+        sr.DiscardBufferedData();
+
+        for (int i = 0; i < textSpan.Length; i++)
+        {
+            sr.Read(_safeGetTextBuffer, 0, 1);
+            if (value[i] != _safeGetTextBuffer[0])
+                return false;
+        }
+
+        return true;
     }
 
     private MenuRecord? GetAutocompleteMenuPart(TextEditorVirtualizationResult virtualizationResult, AutocompleteMenu autocompleteMenu, int positionIndex)

@@ -303,7 +303,7 @@ public class ParseDefaultKeywords
         
         if (enumerable.ResultTypeReference.IndexGenericParameterEntryList != -1 &&
             variableDeclarationNode is not null &&
-            parserModel.GetTextSpanText(variableDeclarationNode.TypeReference.TypeIdentifierToken.TextSpan) == "var")
+            parserModel.CompareTextSpanText("var", variableDeclarationNode.TypeReference.TypeIdentifierToken.TextSpan))
         {
             if (enumerable.ResultTypeReference.CountGenericParameterEntryList == 1)
                 variableDeclarationNode.SetImplicitTypeReference(
