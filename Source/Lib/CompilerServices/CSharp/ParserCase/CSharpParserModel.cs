@@ -1041,7 +1041,7 @@ public ref struct CSharpParserModel
                     // It was validated that neither CharIntSum is 0 here so removing the checks
                     if (otherTextSpan.CharIntSum == typeIdentifierTextSpan.CharIntSum)
                     {
-                        if (GetIdentifierText(x, resourceUri, compilationUnit) == typeIdentifierText)
+                        if (CompareIdentifierText(x, resourceUri, compilationUnit, typeIdentifierText))
                         {
                             typeDefinitionNode = (TypeDefinitionNode)x;
                             break;
@@ -1063,7 +1063,7 @@ public ref struct CSharpParserModel
                         // It was validated that neither CharIntSum is 0 here so removing the checks
                         if (otherTextSpan.CharIntSum == typeIdentifierTextSpan.CharIntSum)
                         {
-                            if (GetIdentifierText(x, resourceUri, compilationUnit) == typeIdentifierText)
+                            if (CompareIdentifierText(x, resourceUri, compilationUnit, typeIdentifierText))
                             {
                                 typeDefinitionNode = (TypeDefinitionNode)x;
                                 break;
@@ -1106,7 +1106,7 @@ public ref struct CSharpParserModel
                     // It was validated that neither CharIntSum is 0 here so removing the checks
                     if (otherTextSpan.CharIntSum == typeDefinitionNode.TypeIdentifierToken.TextSpan.CharIntSum)
                     {
-                        if (GetIdentifierText(x, resourceUri, compilationUnit) == typeIdentifierText)
+                        if (CompareIdentifierText(x, resourceUri, compilationUnit, typeIdentifierText))
                         {
                             matchNode = (TypeDefinitionNode)x;
                             break;
@@ -1208,7 +1208,7 @@ public ref struct CSharpParserModel
                     // It was validated that neither CharIntSum is 0 here so removing the checks
                     if (otherTextSpan.CharIntSum == functionIdentifierTextSpan.CharIntSum)
                     {
-                        if (GetIdentifierText(x, resourceUri, compilationUnit) == functionIdentifierText)
+                        if (CompareIdentifierText(x, resourceUri, compilationUnit, functionIdentifierText))
                         {
                             functionDefinitionNode = (FunctionDefinitionNode)x;
                             break;
@@ -1825,6 +1825,18 @@ public ref struct CSharpParserModel
                 return string.Empty;
             }
         }
+    }
+    
+    public readonly bool CompareIdentifierText(
+        ISyntaxNode node,
+        ResourceUri resourceUri,
+        CSharpCompilationUnit compilationUnit,
+        string identifierText)
+    {
+        return Binder.CSharpCompilerService.SafeCompareText(
+            resourceUri.Value,
+            identifierText,
+            GetIdentifierTextSpan(node));
     }
     
     public readonly TextEditorTextSpan GetIdentifierTextSpan(ISyntaxNode node)
