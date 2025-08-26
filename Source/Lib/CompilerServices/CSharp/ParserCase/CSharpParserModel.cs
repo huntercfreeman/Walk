@@ -1370,7 +1370,7 @@ public ref struct CSharpParserModel
                     // It was validated that neither CharIntSum is 0 here so removing the checks
                     if (otherTextSpan.CharIntSum == variableIdentifierTextSpan.CharIntSum)
                     {
-                        if (GetIdentifierText(x, resourceUri, compilationUnit) == variableIdentifierText)
+                        if (CompareIdentifierText(x, resourceUri, compilationUnit, variableIdentifierText))
                         {
                             variableDeclarationNode = (VariableDeclarationNode)x;
                             break;
@@ -1491,7 +1491,7 @@ public ref struct CSharpParserModel
                     // It was validated that neither CharIntSum is 0 here so removing the checks
                     if (otherTextSpan.CharIntSum == variableDeclarationNode.IdentifierToken.TextSpan.CharIntSum)
                     {
-                        if (GetIdentifierText(x, ResourceUri, Compilation) == variableIdentifierText)
+                        if (CompareIdentifierText(x, ResourceUri, Compilation, variableIdentifierText))
                         {
                             matchNode = (VariableDeclarationNode)x;
                             break;
@@ -1539,7 +1539,7 @@ public ref struct CSharpParserModel
                     // It was validated that neither CharIntSum is 0 here so removing the checks
                     if (otherTextSpan.CharIntSum == variableDeclarationNode.IdentifierToken.TextSpan.CharIntSum)
                     {
-                        if (GetIdentifierText(x, ResourceUri, Compilation) == variableIdentifierText)
+                        if (CompareIdentifierText(x, ResourceUri, Compilation, variableIdentifierText))
                         {
                             matchNode = (VariableDeclarationNode)x;
                             break;
@@ -1606,7 +1606,7 @@ public ref struct CSharpParserModel
                     // It was validated that neither CharIntSum is 0 here so removing the checks
                     if (otherTextSpan.CharIntSum == labelIdentifierTextSpan.CharIntSum)
                     {
-                        if (GetIdentifierText(x, ResourceUri, Compilation) == labelIdentifierText)
+                        if (CompareIdentifierText(x, ResourceUri, Compilation, labelIdentifierText))
                         {
                             labelDeclarationNode = (LabelDeclarationNode)x;
                             break;
@@ -1642,7 +1642,7 @@ public ref struct CSharpParserModel
                     // It was validated that neither CharIntSum is 0 here so removing the checks
                     if (otherTextSpan.CharIntSum == labelIdentifierTextSpan.CharIntSum)
                     {
-                        if (GetIdentifierText(x, ResourceUri, Compilation) == labelIdentifierText)
+                        if (CompareIdentifierText(x, ResourceUri, Compilation, labelIdentifierText))
                         {
                             matchNode = (LabelDeclarationNode)x;
                             break;
@@ -1689,7 +1689,7 @@ public ref struct CSharpParserModel
                     // It was validated that neither CharIntSum is 0 here so removing the checks
                     if (otherTextSpan.CharIntSum == labelDeclarationNode.IdentifierToken.TextSpan.CharIntSum)
                     {
-                        if (GetIdentifierText(x, ResourceUri, Compilation) == labelIdentifierText)
+                        if (CompareIdentifierText(x, ResourceUri, Compilation, labelIdentifierText))
                         {
                             matchNode = (LabelDeclarationNode)x;
                             break;
