@@ -1833,10 +1833,74 @@ public ref struct CSharpParserModel
         CSharpCompilationUnit compilationUnit,
         string identifierText)
     {
+        string absolutePathString = resourceUri.Value;
+        TextEditorTextSpan textSpan;
+        
+        switch (node.SyntaxKind)
+        {
+            case SyntaxKind.TypeDefinitionNode:
+            {
+                var typeDefinitionNode = (TypeDefinitionNode)node;
+                textSpan = typeDefinitionNode.TypeIdentifierToken.TextSpan;
+                absolutePathString = typeDefinitionNode.ResourceUri.Value;
+                break;
+            }
+            case SyntaxKind.TypeClauseNode:
+            {
+                var typeClauseNode = (TypeClauseNode)node;
+                textSpan = typeClauseNode.TypeIdentifierToken.TextSpan;
+                absolutePathString = typeClauseNode.ExplicitDefinitionResourceUri.Value;
+                break;
+            }
+            case SyntaxKind.FunctionDefinitionNode:
+            {
+                var functionDefinitionNode = (FunctionDefinitionNode)node;
+                textSpan = functionDefinitionNode.FunctionIdentifierToken.TextSpan;
+                absolutePathString = functionDefinitionNode.ResourceUri.Value;
+                break;
+            }
+            case SyntaxKind.FunctionInvocationNode:
+            {
+                var functionInvocationNode = (FunctionInvocationNode)node;
+                textSpan = functionInvocationNode.FunctionInvocationIdentifierToken.TextSpan;
+                absolutePathString = functionInvocationNode.ResourceUri.Value;
+                break;
+            }
+            case SyntaxKind.VariableDeclarationNode:
+            {
+                var variableDeclarationNode = (VariableDeclarationNode)node;
+                textSpan = variableDeclarationNode.IdentifierToken.TextSpan;
+                absolutePathString = variableDeclarationNode.ResourceUri.Value;
+                break;
+            }
+            case SyntaxKind.VariableReferenceNode:
+            {
+                textSpan = ((VariableReferenceNode)node).VariableIdentifierToken.TextSpan;
+                absolutePathString = ResourceUri.Value;
+                break;
+            }
+            case SyntaxKind.LabelDeclarationNode:
+            {
+                textSpan = ((LabelDeclarationNode)node).IdentifierToken.TextSpan;
+                absolutePathString = ResourceUri.Value;
+                break;
+            }
+            case SyntaxKind.LabelReferenceNode:
+            {
+                textSpan = ((LabelReferenceNode)node).IdentifierToken.TextSpan;
+                absolutePathString = ResourceUri.Value;
+                break;
+            }
+            default:
+            {
+                return false;
+            }
+        }
+        
         return Binder.CSharpCompilerService.SafeCompareText(
-            resourceUri.Value,
+            absolutePathString,
             identifierText,
-            GetIdentifierTextSpan(node));
+            textSpan);
     }
     
     public readonly TextEditorTextSpan GetIdentifierTextSpan(ISyntaxNode node)
