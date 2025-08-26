@@ -3361,7 +3361,7 @@ public static class ParseExpressions
                         resourceUriValue = innerResourceUri.Value;
                     }
                     
-                    if (parserModel.Binder.CSharpCompilerService.SafeGetText(resourceUriValue, variableDeclarationNode.IdentifierToken.TextSpan) == memberIdentifierText)
+                    if (parserModel.Binder.CSharpCompilerService.SafeCompareText(resourceUriValue, memberIdentifierText, variableDeclarationNode.IdentifierToken.TextSpan))
                     {
                         foundDefinitionNode = variableDeclarationNode;
                         break;
@@ -3389,7 +3389,7 @@ public static class ParseExpressions
                         resourceUriValue = innerResourceUri.Value;
                     }
                     
-                    if (parserModel.Binder.CSharpCompilerService.SafeGetText(resourceUriValue, functionDefinitionNode.FunctionIdentifierToken.TextSpan) == memberIdentifierText)
+                    if (parserModel.Binder.CSharpCompilerService.SafeCompareText(resourceUriValue, memberIdentifierText, functionDefinitionNode.FunctionIdentifierToken.TextSpan))
                     {
                         foundDefinitionNode = functionDefinitionNode;
                         break;
