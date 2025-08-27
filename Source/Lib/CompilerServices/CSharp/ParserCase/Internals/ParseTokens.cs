@@ -18,6 +18,7 @@ public static class ParseTokens
                     parserModel.ResourceUri,
                     parserModel.Compilation,
                     parserModel.CurrentCodeBlockOwner.Unsafe_SelfIndexKey,
+                    parserModel.ResourceUri,
                     parserModel.TokenWalker.Current.TextSpan,
                     out _))
             {
