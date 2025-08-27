@@ -471,7 +471,7 @@ public sealed class CSharpCompilerService : IExtendedCompilerService
         return true;
     }
 
-    private StreamReader GetOtherStreamReader(string otherAbsolutePathString, TextEditorTextSpan otherTextSpan)
+    private StreamReader? GetOtherStreamReader(string otherAbsolutePathString, TextEditorTextSpan otherTextSpan)
     {
         if (!TryGetCachedStreamReader(otherAbsolutePathString, out var otherSr))
             return null;
