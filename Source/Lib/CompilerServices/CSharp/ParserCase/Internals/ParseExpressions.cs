@@ -976,7 +976,6 @@ public static class ParseExpressions
                 parserModel.ResourceUri,
                 parserModel.Compilation,
                 parserModel.CurrentCodeBlockOwner.Unsafe_SelfIndexKey,
-                parserModel.GetTextSpanText(token.TextSpan),
                 token.TextSpan,
                 out var typeDefinitionNode);
         
@@ -1045,9 +1044,7 @@ public static class ParseExpressions
                 parserModel.ParserContextKind = CSharpParserContextKind.ForceParseNextIdentifierAsTypeClauseNode;
             }
         }
-        
-        
-    
+
         if (parserModel.ParserContextKind != CSharpParserContextKind.ForceParseNextIdentifierAsTypeClauseNode &&
             UtilityApi.IsConvertibleToIdentifierToken(ambiguousIdentifierExpressionNode.Token.SyntaxKind))
         {
@@ -1077,15 +1074,12 @@ public static class ParseExpressions
             }
         }
 
-        var ambiguousIdentifierTokenText = parserModel.GetTextSpanText(ambiguousIdentifierExpressionNode.Token.TextSpan);
-
         if (!forceVariableReferenceNode && UtilityApi.IsConvertibleToTypeClauseNode(ambiguousIdentifierExpressionNode.Token.SyntaxKind))
         {
             if (parserModel.TryGetTypeDefinitionHierarchically(
                     parserModel.ResourceUri,
                     parserModel.Compilation,
                     parserModel.CurrentCodeBlockOwner.Unsafe_SelfIndexKey,
-                    ambiguousIdentifierTokenText,
                     ambiguousIdentifierExpressionNode.Token.TextSpan,
                     out var typeDefinitionNode))
             {
@@ -1128,17 +1122,11 @@ public static class ParseExpressions
                 goto finalize;
             }
         }
-        
+
         if (ambiguousIdentifierExpressionNode.Token.SyntaxKind == SyntaxKind.IdentifierToken &&
             ambiguousIdentifierExpressionNode.Token.TextSpan.Length == 1 &&
-            // ParseTokens.cs checks for 'CharIntSum' of '95' since that is the ASCII code for '_'
-            //
-            // Here, it could be done but in particular it is so impactful for ParseTokens.cs
-            // since you didn't already create a variable which contained the text.
-            //
-            // TODO: Decide on checking 'CharIntSum' of '95' here or the text.
-            //
-            ambiguousIdentifierTokenText == "_")
+            // 95 is ASCII code for '_'
+            parserModel.TokenWalker.Current.TextSpan.CharIntSum == 95)
         {
             if (!parserModel.TryGetVariableDeclarationHierarchically(
                     parserModel.ResourceUri,
@@ -1152,7 +1140,9 @@ public static class ParseExpressions
                 goto finalize;
             }
         }
-        
+
+        var ambiguousIdentifierTokenText = parserModel.GetTextSpanText(ambiguousIdentifierExpressionNode.Token.TextSpan);
+
         if (!forceVariableReferenceNode &&
             parserModel.ParserContextKind != CSharpParserContextKind.ForceParseNextIdentifierAsTypeClauseNode &&
             UtilityApi.IsConvertibleToIdentifierToken(ambiguousIdentifierExpressionNode.Token.SyntaxKind))
@@ -3252,7 +3242,6 @@ public static class ParseExpressions
                                 innerResourceUri,
                                 innerCompilationUnit,
                                 scope.Unsafe_SelfIndexKey,
-                                parserModel.Binder.CSharpCompilerService.SafeGetText(typeReference.ExplicitDefinitionResourceUri.Value, typeReference.ExplicitDefinitionTextSpan) ?? string.Empty,
                                 typeReference.ExplicitDefinitionTextSpan,
                                 out var innerTypeDefinitionNode) &&
                             innerTypeDefinitionNode is not null)
@@ -3294,7 +3283,6 @@ public static class ParseExpressions
                             parserModel.ResourceUri,
                             parserModel.Compilation,
                             scope.Unsafe_SelfIndexKey,
-                            parserModel.Binder.CSharpCompilerService.SafeGetText(parserModel.ResourceUri.Value, typeReference.TypeIdentifierToken.TextSpan) ?? string.Empty,
                             typeReference.TypeIdentifierToken.TextSpan,
                             out var innerTypeDefinitionNode) &&
                         innerTypeDefinitionNode is not null)

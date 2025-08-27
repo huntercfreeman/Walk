@@ -930,7 +930,6 @@ public class ParseDefaultKeywords
                     parserModel.ResourceUri,
                     parserModel.Compilation,
                     parserModel.CurrentCodeBlockOwner.Unsafe_SelfIndexKey,
-                    parserModel.GetTextSpanText(identifierToken.TextSpan),
                     identifierToken.TextSpan,
                     out TypeDefinitionNode innerTypeDefinitionNode))
             {

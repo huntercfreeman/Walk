@@ -986,7 +986,6 @@ public ref struct CSharpParserModel
         ResourceUri resourceUri,
         CSharpCompilationUnit compilationUnit,
         int initialScopeIndexKey,
-        string identifierText,
         TextEditorTextSpan typeIdentifierTextSpan,
         out TypeDefinitionNode? typeDefinitionNode)
     {
@@ -998,7 +997,6 @@ public ref struct CSharpParserModel
                     resourceUri,
                     compilationUnit,
                     localScope.Unsafe_SelfIndexKey,
-                    identifierText,
                     typeIdentifierTextSpan,
                     out typeDefinitionNode))
             {
@@ -1021,7 +1019,6 @@ public ref struct CSharpParserModel
         ResourceUri resourceUri,
         CSharpCompilationUnit compilationUnit,
         int scopeIndexKey,
-        string typeIdentifierText,
         TextEditorTextSpan typeIdentifierTextSpan,
         out TypeDefinitionNode? typeDefinitionNode)
     {
@@ -1034,12 +1031,12 @@ public ref struct CSharpParserModel
                 x.SyntaxKind == SyntaxKind.TypeDefinitionNode)
             {
                 var otherTextSpan = GetIdentifierTextSpan(x);
-                if (otherTextSpan.Length == typeIdentifierText.Length)
+                if (otherTextSpan.Length == typeIdentifierTextSpan.Length)
                 {
                     // It was validated that neither CharIntSum is 0 here so removing the checks
                     if (otherTextSpan.CharIntSum == typeIdentifierTextSpan.CharIntSum)
                     {
-                        if (CompareIdentifierText(x, resourceUri, compilationUnit, typeIdentifierText))
+                        if (CompareTextSpans(x, resourceUri, compilationUnit, typeIdentifierTextSpan))
                         {
                             typeDefinitionNode = (TypeDefinitionNode)x;
                             break;
@@ -1056,12 +1053,12 @@ public ref struct CSharpParserModel
                 foreach (var x in ExternalTypeDefinitionList)
                 {
                     var otherTextSpan = GetIdentifierTextSpan(x);
-                    if (otherTextSpan.Length == typeIdentifierText.Length)
+                    if (otherTextSpan.Length == typeIdentifierTextSpan.Length)
                     {
                         // It was validated that neither CharIntSum is 0 here so removing the checks
                         if (otherTextSpan.CharIntSum == typeIdentifierTextSpan.CharIntSum)
                         {
-                            if (CompareIdentifierText(x, resourceUri, compilationUnit, typeIdentifierText))
+                            if (CompareTextSpans(x, resourceUri, compilationUnit, typeIdentifierTextSpan))
                             {
                                 typeDefinitionNode = (TypeDefinitionNode)x;
                                 break;
@@ -1434,7 +1431,6 @@ public ref struct CSharpParserModel
                                 resourceUri,
                                 compilationUnit,
                                 scopeIndexKey,
-                                identifierText,
                                 identifierTextSpan,
                                 out var inheritedTypeDefinitionNode))
                         {
