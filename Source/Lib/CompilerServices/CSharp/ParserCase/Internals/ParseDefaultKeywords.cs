@@ -926,14 +926,21 @@ public class ParseDefaultKeywords
         
         if (typeDefinitionNode.HasPartialModifier)
         {
-            if (parserModel.TryGetTypeDefinitionHierarchically(
-                    parserModel.ResourceUri,
-                    parserModel.Compilation,
-                    parserModel.CurrentCodeBlockOwner.Unsafe_SelfIndexKey,
-                    identifierToken.TextSpan,
-                    out TypeDefinitionNode innerTypeDefinitionNode))
+            // This compilation has not been written to the __CompilationUnitMap yet,
+            // so this will read the previous compilation of this file.
+            if (parserModel.Binder.__CompilationUnitMap.TryGetValue(parserModel.ResourceUri, out var previousCompilationUnit))
             {
-                typeDefinitionNode.IndexPartialTypeDefinition = innerTypeDefinitionNode.IndexPartialTypeDefinition;
+                if (parserModel.TryGetTypeDefinitionHierarchically(
+                        parserModel.ResourceUri,
+                        previousCompilationUnit,
+                        parserModel.CurrentCodeBlockOwner.Unsafe_SelfIndexKey,
+                        parserModel.ResourceUri,
+                        identifierToken.TextSpan,
+                        out TypeDefinitionNode? previousTypeDefinitionNode))
+                {
+                    if (previousTypeDefinitionNode is not null)
+                        typeDefinitionNode.IndexPartialTypeDefinition = previousTypeDefinitionNode.IndexPartialTypeDefinition;
+                }
             }
         }
         

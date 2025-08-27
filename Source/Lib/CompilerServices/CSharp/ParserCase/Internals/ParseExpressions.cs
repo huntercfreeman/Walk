@@ -976,6 +976,7 @@ public static class ParseExpressions
                 parserModel.ResourceUri,
                 parserModel.Compilation,
                 parserModel.CurrentCodeBlockOwner.Unsafe_SelfIndexKey,
+                parserModel.ResourceUri,
                 token.TextSpan,
                 out var typeDefinitionNode);
         
@@ -1080,6 +1081,7 @@ public static class ParseExpressions
                     parserModel.ResourceUri,
                     parserModel.Compilation,
                     parserModel.CurrentCodeBlockOwner.Unsafe_SelfIndexKey,
+                    parserModel.ResourceUri,
                     ambiguousIdentifierExpressionNode.Token.TextSpan,
                     out var typeDefinitionNode))
             {
@@ -3239,7 +3241,7 @@ public static class ParseExpressions
                 if (parserModel.Binder.__CompilationUnitMap.TryGetValue(typeReference.ExplicitDefinitionResourceUri, out innerCompilationUnit))
                 {
                     innerResourceUri = typeReference.ExplicitDefinitionResourceUri;
-                    var scope = parserModel.Binder.GetScope(innerCompilationUnit, typeReference.TypeIdentifierToken.TextSpan);
+                    var scope = parserModel.Binder.GetScope(innerCompilationUnit, typeReference.ExplicitDefinitionTextSpan);
 
                     if (scope is not null)
                     {
@@ -3247,6 +3249,7 @@ public static class ParseExpressions
                                 innerResourceUri,
                                 innerCompilationUnit,
                                 scope.Unsafe_SelfIndexKey,
+                                innerResourceUri,
                                 typeReference.ExplicitDefinitionTextSpan,
                                 out var innerTypeDefinitionNode) &&
                             innerTypeDefinitionNode is not null)
@@ -3288,6 +3291,7 @@ public static class ParseExpressions
                             parserModel.ResourceUri,
                             parserModel.Compilation,
                             scope.Unsafe_SelfIndexKey,
+                            parserModel.ResourceUri,
                             typeReference.TypeIdentifierToken.TextSpan,
                             out var innerTypeDefinitionNode) &&
                         innerTypeDefinitionNode is not null)
@@ -3337,7 +3341,6 @@ public static class ParseExpressions
                     if (!variableDeclarationNode.IdentifierToken.ConstructorWasInvoked)
                         continue;
                     
-                    string sourceText;
                     string resourceUriValue;
                     
                     if (variableDeclarationNode.ResourceUri != parserModel.ResourceUri)
