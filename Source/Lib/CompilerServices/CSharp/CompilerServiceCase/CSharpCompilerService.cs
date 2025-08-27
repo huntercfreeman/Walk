@@ -88,6 +88,14 @@ public sealed class CSharpCompilerService : IExtendedCompilerService
     public (string AbsolutePathString, StreamReader Sr) FastParseTuple;
 
     public Dictionary<string, StreamReader> StreamReaderTupleCache = new();
+    /// <summary>
+    /// When you have two text spans that exist in the same file,
+    /// and this file is not currently being parsed.
+    /// 
+    /// You must open 1 additional StreamReader, that reads from the same file
+    /// as the existing cached one.
+    /// </summary>
+    public Dictionary<string, StreamReader> StreamReaderTupleCacheBackup = new();
 
     public void ClearStreamReaderTupleCache()
     {
@@ -96,6 +104,11 @@ public sealed class CSharpCompilerService : IExtendedCompilerService
             streamReader.Dispose();
         }
         StreamReaderTupleCache.Clear();
+        foreach (var streamReader in StreamReaderTupleCacheBackup.Values)
+        {
+            streamReader.Dispose();
+        }
+        StreamReaderTupleCacheBackup.Clear();
     }
 
     public IReadOnlyList<ICompilerServiceResource> CompilerServiceResources { get; }
@@ -465,7 +478,21 @@ public sealed class CSharpCompilerService : IExtendedCompilerService
         }
         else
         {
-            return false;
+            var sourceSr = GetOtherStreamReader(sourceAbsolutePathString, sourceTextSpan);
+            if (sourceSr is null)
+                return false;
+
+            var otherSr = GetBackupStreamReader(otherAbsolutePathString, otherTextSpan);
+            if (otherSr is null)
+                return false;
+
+            for (int i = 0; i < length; i++)
+            {
+                sourceSr.Read(_safeGetTextBufferOne, 0, 1);
+                otherSr.Read(_safeGetTextBufferTwo, 0, 1);
+                if (_safeGetTextBufferOne[0] != _safeGetTextBufferTwo[0])
+                    return false;
+            }
         }
 
         return true;
@@ -506,7 +533,7 @@ public sealed class CSharpCompilerService : IExtendedCompilerService
             // ParseExpressions at ~4k lines of text needed `StreamReaderTupleCache.Count: 139`.
             //
             // This isn't just used for single file parsing though, it is also used for solution wide.
-            if (StreamReaderTupleCache.Count >= 500)
+            if (StreamReaderTupleCache.Count >= 360)
             {
                 ClearStreamReaderTupleCache();
             }
@@ -518,6 +545,55 @@ public sealed class CSharpCompilerService : IExtendedCompilerService
         }
 
         return true;
+    }
+    
+    private bool BACKUP_TryGetCachedStreamReader(string absolutePathString, out StreamReader sr)
+    {
+        if (!StreamReaderTupleCacheBackup.TryGetValue(absolutePathString, out sr))
+        {
+            if (!File.Exists(absolutePathString))
+                return false;
+
+            sr = new StreamReader(absolutePathString, _safeOnlyUTF8Encoding);
+            // Solution wide parse on Walk.sln
+            //
+            // 350 -> _countCacheClear: 15
+            // 450 -> _countCacheClear: 9
+            // 500 -> _countCacheClear: 7
+            // 800 -> _countCacheClear: 2
+            // 1000 -> _countCacheClear: 0
+            //
+            // 512 is c library limit?
+            // 1024 is linux DEFAULT soft limit?
+            // The reality is that you can go FAR higher when not limited?
+            // But how do I know the limit of each user?
+            // So I guess 500 is a safe bet for now?
+            //
+            // CSharpCompilerService at ~2k lines of text needed `StreamReaderTupleCacheBackup.Count: 214`.
+            // ParseExpressions at ~4k lines of text needed `StreamReaderTupleCacheBackup.Count: 139`.
+            //
+            // This isn't just used for single file parsing though, it is also used for solution wide.
+            if (StreamReaderTupleCacheBackup.Count >= 140)
+            {
+                ClearStreamReaderTupleCache();
+            }
+
+            StreamReaderTupleCacheBackup.Add(absolutePathString, sr);
+
+            // I presume this is needed so the StreamReader can get the encoding.
+            sr.Read();
+        }
+
+        return true;
+    }
+
+    private StreamReader? GetBackupStreamReader(string otherAbsolutePathString, TextEditorTextSpan otherTextSpan)
+    {
+        if (!BACKUP_TryGetCachedStreamReader(otherAbsolutePathString, out var otherSr))
+            return null;
+        otherSr.BaseStream.Seek(otherTextSpan.ByteIndex, SeekOrigin.Begin);
+        otherSr.DiscardBufferedData();
+        return otherSr;
     }
 
     private MenuRecord? GetAutocompleteMenuPart(TextEditorVirtualizationResult virtualizationResult, AutocompleteMenu autocompleteMenu, int positionIndex)
