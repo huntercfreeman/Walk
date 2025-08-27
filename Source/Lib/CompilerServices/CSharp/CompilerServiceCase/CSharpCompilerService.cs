@@ -274,10 +274,41 @@ public sealed class CSharpCompilerService : IExtendedCompilerService
         if (absolutePathString == string.Empty)
         {
             return value == textSpan.GetText(EmptyFileHackForLanguagePrimitiveText, _textEditorService);
+            // The object allocation counts are nearly identical when I swap to using this code that compares
+            // each character.
+            //
+            // Even odder, the counts actually end up on the slightly larger side (although incredibly minorly so).
+            //
+            // It seems there are a lot of SafeGetText(...) invocations that I'm still making, and that the majority
+            // of string allocations are coming from those, not these sub cases?
+            //
+            /*for (int i = 0; i < textSpan.Length; i++)
+            {
+                
+                if (value[i] != EmptyFileHackForLanguagePrimitiveText[textSpan.StartInclusiveIndex + i])
+                    return false;
+            }
+            return true;*/
         }
         else if (absolutePathString == _currentFileBeingParsedTuple.AbsolutePathString)
         {
             return value == textSpan.GetText(_currentFileBeingParsedTuple.Content, _textEditorService);
+            // The object allocation counts are nearly identical when I swap to using this code that compares
+            // each character.
+            //
+            // Even odder, the counts actually end up on the slightly larger side (although incredibly minorly so).
+            //
+            // It seems there are a lot of SafeGetText(...) invocations that I'm still making, and that the majority
+            // of string allocations are coming from those, not these sub cases?
+            //
+            /*
+            for (int i = 0; i < textSpan.Length; i++)
+            {
+
+                if (value[i] != _currentFileBeingParsedTuple.Content[textSpan.StartInclusiveIndex + i])
+                    return false;
+            }
+            return true;*/
         }
         else if (absolutePathString == FastParseTuple.AbsolutePathString)
         {
