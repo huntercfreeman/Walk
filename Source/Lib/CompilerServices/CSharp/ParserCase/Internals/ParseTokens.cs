@@ -171,7 +171,7 @@ public static class ParseTokens
                 parserModel.ForceParseExpressionInitialPrimaryExpression = EmptyExpressionNode.Empty;
                 
                 if (expression.SyntaxKind == SyntaxKind.BinaryExpressionNode &&
-                    parserModel.CompareTextSpanText("var", variableDeclarationNode.TypeReference.TypeIdentifierToken.TextSpan))
+                    parserModel.Binder.CSharpCompilerService.SafeCompareText(parserModel.ResourceUri.Value, "var", variableDeclarationNode.TypeReference.TypeIdentifierToken.TextSpan))
                 {
                     var binaryExpressionNode = (BinaryExpressionNode)expression;
                     variableDeclarationNode.SetImplicitTypeReference(binaryExpressionNode.RightExpressionResultTypeReference);

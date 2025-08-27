@@ -407,8 +407,6 @@ public sealed class CSharpCompilerService : IExtendedCompilerService
                         return false;
                     }
                 }
-
-                return true;
             }
             else
             {
@@ -424,8 +422,6 @@ public sealed class CSharpCompilerService : IExtendedCompilerService
                     if (_safeGetTextBufferOne[0] != _safeGetTextBufferTwo[0])
                         return false;
                 }
-
-                return true;
             }
         }
         else if (sourceAbsolutePathString == _currentFileBeingParsedTuple.AbsolutePathString)
@@ -441,8 +437,6 @@ public sealed class CSharpCompilerService : IExtendedCompilerService
                         return false;
                     }
                 }
-
-                return true;
             }
             else if (otherAbsolutePathString == _currentFileBeingParsedTuple.AbsolutePathString)
             {
@@ -454,8 +448,6 @@ public sealed class CSharpCompilerService : IExtendedCompilerService
                         return false;
                     }
                 }
-
-                return true;
             }
             else
             {
@@ -469,8 +461,6 @@ public sealed class CSharpCompilerService : IExtendedCompilerService
                     if (_currentFileBeingParsedTuple.Content[sourceTextSpan.StartInclusiveIndex + i] != _safeGetTextBufferTwo[0])
                         return false;
                 }
-
-                return true;
             }
         }
         else

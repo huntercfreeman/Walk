@@ -3329,8 +3329,6 @@ public static class ParseExpressions
             var memberList = parserModel.Binder.Internal_GetMemberList_TypeDefinitionNode(typeDefinitionNode);
             ISyntaxNode? foundDefinitionNode = null;
             
-            var memberIdentifierText = parserModel.GetTextSpanText(memberIdentifierToken.TextSpan);
-            
             foreach (var node in memberList)
             {
                 if (node.SyntaxKind == SyntaxKind.VariableDeclarationNode)
@@ -3354,7 +3352,7 @@ public static class ParseExpressions
                         resourceUriValue = innerResourceUri.Value;
                     }
                     
-                    if (parserModel.Binder.CSharpCompilerService.SafeCompareText(resourceUriValue, memberIdentifierText, variableDeclarationNode.IdentifierToken.TextSpan))
+                    if (parserModel.Binder.CSharpCompilerService.SafeCompareTextSpans(parserModel.ResourceUri.Value, memberIdentifierToken.TextSpan, resourceUriValue, variableDeclarationNode.IdentifierToken.TextSpan))
                     {
                         foundDefinitionNode = variableDeclarationNode;
                         break;
@@ -3382,7 +3380,7 @@ public static class ParseExpressions
                         resourceUriValue = innerResourceUri.Value;
                     }
                     
-                    if (parserModel.Binder.CSharpCompilerService.SafeCompareText(resourceUriValue, memberIdentifierText, functionDefinitionNode.FunctionIdentifierToken.TextSpan))
+                    if (parserModel.Binder.CSharpCompilerService.SafeCompareTextSpans(parserModel.ResourceUri.Value, memberIdentifierToken.TextSpan, resourceUriValue, functionDefinitionNode.FunctionIdentifierToken.TextSpan))
                     {
                         foundDefinitionNode = functionDefinitionNode;
                         break;
@@ -3572,7 +3570,7 @@ public static class ParseExpressions
                                 continue;
                         }
 
-                        if (parserModel.Binder.CSharpCompilerService.SafeCompareText(typeDefinitionNode.ResourceUri.Value, memberIdentifierText, typeDefinitionNode.TypeIdentifierToken.TextSpan))
+                        if (parserModel.Binder.CSharpCompilerService.SafeCompareTextSpans(parserModel.ResourceUri.Value, memberIdentifierToken.TextSpan, typeDefinitionNode.ResourceUri.Value, typeDefinitionNode.TypeIdentifierToken.TextSpan))
                         {
                             var typeClauseNode = parserModel.Rent_TypeClauseNode();
                             typeClauseNode.TypeIdentifierToken = memberIdentifierToken;
