@@ -1141,7 +1141,7 @@ public static class ParseExpressions
             }
         }
 
-        var ambiguousIdentifierTokenText = parserModel.GetTextSpanText(ambiguousIdentifierExpressionNode.Token.TextSpan);
+        string ambiguousIdentifierTokenText;
 
         if (!forceVariableReferenceNode &&
             parserModel.ParserContextKind != CSharpParserContextKind.ForceParseNextIdentifierAsTypeClauseNode &&
@@ -1151,7 +1151,6 @@ public static class ParseExpressions
                     parserModel.ResourceUri,
                     parserModel.Compilation,
                     parserModel.CurrentCodeBlockOwner.Unsafe_SelfIndexKey,
-                    ambiguousIdentifierTokenText,
                     ambiguousIdentifierExpressionNode.Token.TextSpan,
                     out var functionDefinitionNode))
             {
@@ -1178,7 +1177,9 @@ public static class ParseExpressions
                 result = functionInvocationNode;
                 goto finalize;
             }
-            
+
+            ambiguousIdentifierTokenText = parserModel.GetTextSpanText(ambiguousIdentifierExpressionNode.Token.TextSpan);
+
             if (parserModel.Binder.NamespacePrefixTree.__Root.Children.TryGetValue(
                 ambiguousIdentifierTokenText,
                 out var namespacePrefixNode))
@@ -1214,7 +1215,11 @@ public static class ParseExpressions
                 goto finalize;
             }
         }
-        
+        else
+        {
+            ambiguousIdentifierTokenText = parserModel.GetTextSpanText(ambiguousIdentifierExpressionNode.Token.TextSpan);
+        }
+
         if (allowFabricatedUndefinedNode)
         {
             // Bind an undefined-TypeClauseNode
@@ -1222,26 +1227,26 @@ public static class ParseExpressions
                 UtilityApi.IsConvertibleToTypeClauseNode(ambiguousIdentifierExpressionNode.Token.SyntaxKind))
             {
                 var token = ambiguousIdentifierExpressionNode.Token;
-                
+
                 TypeClauseNode typeClauseNode = UtilityApi.ConvertTokenToTypeClauseNode(ref token, ref parserModel);
-                
+
                 typeClauseNode.ExplicitDefinitionTextSpan = ambiguousIdentifierExpressionNode.Token.TextSpan;
                 typeClauseNode.ExplicitDefinitionResourceUri = parserModel.ResourceUri;
-                
+
                 typeClauseNode.HasQuestionMark = ambiguousIdentifierExpressionNode.HasQuestionMark;
                 parserModel.BindTypeClauseNode(typeClauseNode);
                 result = typeClauseNode;
                 goto finalize;
             }
-            
+
             // Bind an undefined-variable
             if (UtilityApi.IsConvertibleToIdentifierToken(ambiguousIdentifierExpressionNode.Token.SyntaxKind))
             {
                 var token = ambiguousIdentifierExpressionNode.Token;
                 var identifierToken = UtilityApi.ConvertToIdentifierToken(ref token, ref parserModel);
-                
+
                 var variableReferenceNode = parserModel.ConstructAndBindVariableReferenceNode(identifierToken);
-                
+
                 result = variableReferenceNode;
                 goto finalize;
             }

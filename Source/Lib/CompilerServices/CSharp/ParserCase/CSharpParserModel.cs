@@ -595,11 +595,9 @@ public ref struct CSharpParserModel
         SyntaxToken variableIdentifierToken,
         bool shouldCreateSymbol = true)
     {
-        var text = Binder.CSharpCompilerService.SafeGetText(ResourceUri.Value, variableIdentifierToken.TextSpan);
-        
         VariableReferenceNode? variableReferenceNode;
 
-        if (text is not null && TryGetVariableDeclarationHierarchically(
+        if (TryGetVariableDeclarationHierarchically(
                 ResourceUri,
                 Compilation,
                 CurrentCodeBlockOwner.Unsafe_SelfIndexKey,
@@ -664,10 +662,6 @@ public ref struct CSharpParserModel
 
     public void BindFunctionInvocationNode(FunctionInvocationNode functionInvocationNode)
     {
-        var functionInvocationIdentifierText = Binder.CSharpCompilerService.SafeGetText(ResourceUri.Value, functionInvocationNode.FunctionInvocationIdentifierToken.TextSpan);
-        if (functionInvocationIdentifierText is null)
-            return;
-
         Binder.SymbolList.Insert(
             Compilation.IndexSymbolList + Compilation.CountSymbolList,
             new Symbol(
@@ -683,7 +677,6 @@ public ref struct CSharpParserModel
                 ResourceUri,
                 Compilation,
                 CurrentCodeBlockOwner.Unsafe_SelfIndexKey,
-                functionInvocationIdentifierText,
                 functionInvocationNode.FunctionInvocationIdentifierToken.TextSpan,
                 out var functionDefinitionNode) &&
             functionDefinitionNode is not null)
@@ -1151,7 +1144,6 @@ public ref struct CSharpParserModel
         ResourceUri resourceUri,
         CSharpCompilationUnit compilationUnit,
         int initialScopeIndexKey,
-        string identifierText,
         TextEditorTextSpan identifierTextSpan,
         out FunctionDefinitionNode? functionDefinitionNode)
     {
@@ -1163,7 +1155,6 @@ public ref struct CSharpParserModel
                     resourceUri,
                     compilationUnit,
                     localScope.Unsafe_SelfIndexKey,
-                    identifierText,
                     identifierTextSpan,
                     out functionDefinitionNode))
             {
@@ -1184,7 +1175,6 @@ public ref struct CSharpParserModel
         ResourceUri resourceUri,
         CSharpCompilationUnit compilationUnit,
         int scopeIndexKey,
-        string functionIdentifierText,
         TextEditorTextSpan functionIdentifierTextSpan,
         out FunctionDefinitionNode functionDefinitionNode)
     {
@@ -1198,12 +1188,12 @@ public ref struct CSharpParserModel
                 x.SyntaxKind == SyntaxKind.FunctionDefinitionNode)
             {
                 var otherTextSpan = GetIdentifierTextSpan(x);
-                if (otherTextSpan.Length == functionIdentifierText.Length)
+                if (otherTextSpan.Length == functionIdentifierTextSpan.Length)
                 {
                     // It was validated that neither CharIntSum is 0 here so removing the checks
                     if (otherTextSpan.CharIntSum == functionIdentifierTextSpan.CharIntSum)
                     {
-                        if (CompareIdentifierText(x, resourceUri, compilationUnit, functionIdentifierText))
+                        if (CompareTextSpans(x, resourceUri, compilationUnit, functionIdentifierTextSpan))
                         {
                             functionDefinitionNode = (FunctionDefinitionNode)x;
                             break;
