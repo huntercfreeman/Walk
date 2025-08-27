@@ -1,27 +1,28 @@
+using System.Reflection;
 using System.Text;
-using Walk.Common.RazorLib.Menus.Models;
-using Walk.Common.RazorLib.Menus.Displays;
-using Walk.Common.RazorLib.Keys.Models;
-using Walk.Common.RazorLib.FileSystems.Models;
 using Walk.Common.RazorLib.Dropdowns.Models;
+using Walk.Common.RazorLib.FileSystems.Models;
 using Walk.Common.RazorLib.JavaScriptObjects.Models;
-using Walk.TextEditor.RazorLib;
-using Walk.TextEditor.RazorLib.Autocompletes.Models;
-using Walk.TextEditor.RazorLib.CompilerServices;
-using Walk.TextEditor.RazorLib.TextEditors.Models;
-using Walk.TextEditor.RazorLib.TextEditors.Models.Internals;
-using Walk.TextEditor.RazorLib.TextEditors.Displays.Internals;
-using Walk.TextEditor.RazorLib.Lexers.Models;
-using Walk.TextEditor.RazorLib.Events.Models;
-using Walk.TextEditor.RazorLib.Keymaps.Models.Defaults;
-using Walk.Extensions.CompilerServices;
-using Walk.Extensions.CompilerServices.Syntax;
-using Walk.Extensions.CompilerServices.Syntax.Nodes;
-using Walk.Extensions.CompilerServices.Syntax.Nodes.Interfaces;
-using Walk.Extensions.CompilerServices.Displays;
+using Walk.Common.RazorLib.Keys.Models;
+using Walk.Common.RazorLib.Menus.Displays;
+using Walk.Common.RazorLib.Menus.Models;
 using Walk.CompilerServices.CSharp.BinderCase;
 using Walk.CompilerServices.CSharp.LexerCase;
 using Walk.CompilerServices.CSharp.ParserCase;
+using Walk.Extensions.CompilerServices;
+using Walk.Extensions.CompilerServices.Displays;
+using Walk.Extensions.CompilerServices.Syntax;
+using Walk.Extensions.CompilerServices.Syntax.Nodes;
+using Walk.Extensions.CompilerServices.Syntax.Nodes.Interfaces;
+using Walk.TextEditor.RazorLib;
+using Walk.TextEditor.RazorLib.Autocompletes.Models;
+using Walk.TextEditor.RazorLib.CompilerServices;
+using Walk.TextEditor.RazorLib.Events.Models;
+using Walk.TextEditor.RazorLib.Keymaps.Models.Defaults;
+using Walk.TextEditor.RazorLib.Lexers.Models;
+using Walk.TextEditor.RazorLib.TextEditors.Displays.Internals;
+using Walk.TextEditor.RazorLib.TextEditors.Models;
+using Walk.TextEditor.RazorLib.TextEditors.Models.Internals;
 
 namespace Walk.CompilerServices.CSharp.CompilerServiceCase;
 
@@ -63,7 +64,8 @@ public sealed class CSharpCompilerService : IExtendedCompilerService
     /// Safe implies the "TextEditorEditContext"
     /// </summary>
     private readonly StringBuilder _safeGetTextStringBuilder = new();
-    private readonly char[] _safeGetTextBuffer = new char[1];
+    private readonly char[] _safeGetTextBufferOne = new char[1];
+    private readonly char[] _safeGetTextBufferTwo = new char[1];
 
     /// <summary>
     /// The currently being parsed file should reflect the TextEditorModel NOT the file system.
@@ -80,18 +82,37 @@ public sealed class CSharpCompilerService : IExtendedCompilerService
     /// In order to avoid a try-catch-finally per file being parsed,
     /// this is being made public so the DotNetBackgroundTaskApi can guarantee this is cleared
     /// by wrapping the solution wide parse as a whole in a try-catch-finally.
+    /// 
+    /// The StreamReaderTupleCache does NOT contain this StreamReader.
     /// </summary>
     public (string AbsolutePathString, StreamReader Sr) FastParseTuple;
 
     public Dictionary<string, StreamReader> StreamReaderTupleCache = new();
+    /// <summary>
+    /// When you have two text spans that exist in the same file,
+    /// and this file is not currently being parsed.
+    /// 
+    /// You must open 1 additional StreamReader, that reads from the same file
+    /// as the existing cached one.
+    /// </summary>
+    public Dictionary<string, StreamReader> StreamReaderTupleCacheBackup = new();
 
-    public void ClearStreamReaderTupleCache()
+    public void Clear_MAIN_StreamReaderTupleCache()
     {
         foreach (var streamReader in StreamReaderTupleCache.Values)
         {
             streamReader.Dispose();
         }
         StreamReaderTupleCache.Clear();
+    }
+    
+    public void Clear_BACKUP_StreamReaderTupleCache()
+    {
+        foreach (var streamReader in StreamReaderTupleCacheBackup.Values)
+        {
+            streamReader.Dispose();
+        }
+        StreamReaderTupleCacheBackup.Clear();
     }
 
     public IReadOnlyList<ICompilerServiceResource> CompilerServiceResources { get; }
@@ -209,8 +230,8 @@ public sealed class CSharpCompilerService : IExtendedCompilerService
 
             for (int i = 0; i < textSpan.Length; i++)
             {
-                FastParseTuple.Sr.Read(_safeGetTextBuffer, 0, 1);
-                _safeGetTextStringBuilder.Append(_safeGetTextBuffer[0]);
+                FastParseTuple.Sr.Read(_safeGetTextBufferOne, 0, 1);
+                _safeGetTextStringBuilder.Append(_safeGetTextBufferOne[0]);
             }
 
             return _safeGetTextStringBuilder.ToString();
@@ -240,9 +261,9 @@ public sealed class CSharpCompilerService : IExtendedCompilerService
             // ParseExpressions at ~4k lines of text needed `StreamReaderTupleCache.Count: 139`.
             //
             // This isn't just used for single file parsing though, it is also used for solution wide.
-            if (StreamReaderTupleCache.Count >= 500)
+            if (StreamReaderTupleCache.Count >= 360)
             {
-                ClearStreamReaderTupleCache();
+                Clear_MAIN_StreamReaderTupleCache();
             }
 
             StreamReaderTupleCache.Add(absolutePathString, sr);
@@ -259,8 +280,8 @@ public sealed class CSharpCompilerService : IExtendedCompilerService
 
         for (int i = 0; i < textSpan.Length; i++)
         {
-            sr.Read(_safeGetTextBuffer, 0, 1);
-            _safeGetTextStringBuilder.Append(_safeGetTextBuffer[0]);
+            sr.Read(_safeGetTextBufferOne, 0, 1);
+            _safeGetTextStringBuilder.Append(_safeGetTextBufferOne[0]);
         }
 
         return _safeGetTextStringBuilder.ToString();
@@ -320,8 +341,8 @@ public sealed class CSharpCompilerService : IExtendedCompilerService
 
             for (int i = 0; i < textSpan.Length; i++)
             {
-                FastParseTuple.Sr.Read(_safeGetTextBuffer, 0, 1);
-                if (value[i] != _safeGetTextBuffer[0])
+                FastParseTuple.Sr.Read(_safeGetTextBufferOne, 0, 1);
+                if (value[i] != _safeGetTextBufferOne[0])
                     return false;
             }
 
@@ -352,9 +373,9 @@ public sealed class CSharpCompilerService : IExtendedCompilerService
             // ParseExpressions at ~4k lines of text needed `StreamReaderTupleCache.Count: 139`.
             //
             // This isn't just used for single file parsing though, it is also used for solution wide.
-            if (StreamReaderTupleCache.Count >= 500)
+            if (StreamReaderTupleCache.Count >= 360)
             {
-                ClearStreamReaderTupleCache();
+                Clear_MAIN_StreamReaderTupleCache();
             }
 
             StreamReaderTupleCache.Add(absolutePathString, sr);
@@ -370,12 +391,213 @@ public sealed class CSharpCompilerService : IExtendedCompilerService
 
         for (int i = 0; i < textSpan.Length; i++)
         {
-            sr.Read(_safeGetTextBuffer, 0, 1);
-            if (value[i] != _safeGetTextBuffer[0])
+            sr.Read(_safeGetTextBufferOne, 0, 1);
+            if (value[i] != _safeGetTextBufferOne[0])
                 return false;
         }
 
         return true;
+    }
+    
+    public bool SafeCompareTextSpans(string sourceAbsolutePathString, TextEditorTextSpan sourceTextSpan, string otherAbsolutePathString, TextEditorTextSpan otherTextSpan)
+    {
+        if (sourceTextSpan.Length != otherTextSpan.Length)
+            return false;
+
+        var length = otherTextSpan.Length;
+
+        if (sourceAbsolutePathString == FastParseTuple.AbsolutePathString)
+        {
+            FastParseTuple.Sr.BaseStream.Seek(sourceTextSpan.ByteIndex, SeekOrigin.Begin);
+            FastParseTuple.Sr.DiscardBufferedData();
+
+            // string.Empty as file path is primitive keywords hack.
+            if (otherAbsolutePathString == string.Empty)
+            {
+                for (int i = 0; i < length; i++)
+                {
+                    FastParseTuple.Sr.Read(_safeGetTextBufferOne, 0, 1);
+
+                    if (_safeGetTextBufferOne[0] !=
+                        EmptyFileHackForLanguagePrimitiveText[otherTextSpan.StartInclusiveIndex + i])
+                    {
+                        return false;
+                    }
+                }
+            }
+            else
+            {
+                // StreamReader cache does not contain the FastParseTuple.Sr
+                var otherSr = GetOtherStreamReader(otherAbsolutePathString, otherTextSpan);
+                if (otherSr is null)
+                    return false;
+
+                for (int i = 0; i < length; i++)
+                {
+                    FastParseTuple.Sr.Read(_safeGetTextBufferOne, 0, 1);
+                    otherSr.Read(_safeGetTextBufferTwo, 0, 1);
+                    if (_safeGetTextBufferOne[0] != _safeGetTextBufferTwo[0])
+                        return false;
+                }
+            }
+        }
+        else if (sourceAbsolutePathString == _currentFileBeingParsedTuple.AbsolutePathString)
+        {
+            // string.Empty as file path is primitive keywords hack.
+            if (otherAbsolutePathString == string.Empty)
+            {
+                for (int i = 0; i < length; i++)
+                {
+                    if (_currentFileBeingParsedTuple.Content[sourceTextSpan.StartInclusiveIndex + i] !=
+                        EmptyFileHackForLanguagePrimitiveText[otherTextSpan.StartInclusiveIndex + i])
+                    {
+                        return false;
+                    }
+                }
+            }
+            else if (otherAbsolutePathString == _currentFileBeingParsedTuple.AbsolutePathString)
+            {
+                for (int i = 0; i < length; i++)
+                {
+                    if (_currentFileBeingParsedTuple.Content[sourceTextSpan.StartInclusiveIndex + i] !=
+                        _currentFileBeingParsedTuple.Content[otherTextSpan.StartInclusiveIndex + i])
+                    {
+                        return false;
+                    }
+                }
+            }
+            else
+            {
+                var otherSr = GetOtherStreamReader(otherAbsolutePathString, otherTextSpan);
+                if (otherSr is null)
+                    return false;
+
+                for (int i = 0; i < length; i++)
+                {
+                    otherSr.Read(_safeGetTextBufferTwo, 0, 1);
+                    if (_currentFileBeingParsedTuple.Content[sourceTextSpan.StartInclusiveIndex + i] != _safeGetTextBufferTwo[0])
+                        return false;
+                }
+            }
+        }
+        else
+        {
+            var sourceSr = GetOtherStreamReader(sourceAbsolutePathString, sourceTextSpan);
+            if (sourceSr is null)
+                return false;
+
+            var otherSr = GetBackupStreamReader(otherAbsolutePathString, otherTextSpan);
+            if (otherSr is null)
+                return false;
+
+            for (int i = 0; i < length; i++)
+            {
+                sourceSr.Read(_safeGetTextBufferOne, 0, 1);
+                otherSr.Read(_safeGetTextBufferTwo, 0, 1);
+                if (_safeGetTextBufferOne[0] != _safeGetTextBufferTwo[0])
+                    return false;
+            }
+        }
+
+        return true;
+    }
+
+    private StreamReader? GetOtherStreamReader(string otherAbsolutePathString, TextEditorTextSpan otherTextSpan)
+    {
+        if (!TryGetCachedStreamReader(otherAbsolutePathString, out var otherSr))
+            return null;
+        otherSr.BaseStream.Seek(otherTextSpan.ByteIndex, SeekOrigin.Begin);
+        otherSr.DiscardBufferedData();
+        return otherSr;
+    }
+
+    private bool TryGetCachedStreamReader(string absolutePathString, out StreamReader sr)
+    {
+        if (!StreamReaderTupleCache.TryGetValue(absolutePathString, out sr))
+        {
+            if (!File.Exists(absolutePathString))
+                return false;
+
+            sr = new StreamReader(absolutePathString, _safeOnlyUTF8Encoding);
+            // Solution wide parse on Walk.sln
+            //
+            // 350 -> _countCacheClear: 15
+            // 450 -> _countCacheClear: 9
+            // 500 -> _countCacheClear: 7
+            // 800 -> _countCacheClear: 2
+            // 1000 -> _countCacheClear: 0
+            //
+            // 512 is c library limit?
+            // 1024 is linux DEFAULT soft limit?
+            // The reality is that you can go FAR higher when not limited?
+            // But how do I know the limit of each user?
+            // So I guess 500 is a safe bet for now?
+            //
+            // CSharpCompilerService at ~2k lines of text needed `StreamReaderTupleCache.Count: 214`.
+            // ParseExpressions at ~4k lines of text needed `StreamReaderTupleCache.Count: 139`.
+            //
+            // This isn't just used for single file parsing though, it is also used for solution wide.
+            if (StreamReaderTupleCache.Count >= 360)
+            {
+                Clear_MAIN_StreamReaderTupleCache();
+            }
+
+            StreamReaderTupleCache.Add(absolutePathString, sr);
+
+            // I presume this is needed so the StreamReader can get the encoding.
+            sr.Read();
+        }
+
+        return true;
+    }
+    
+    private bool BACKUP_TryGetCachedStreamReader(string absolutePathString, out StreamReader sr)
+    {
+        if (!StreamReaderTupleCacheBackup.TryGetValue(absolutePathString, out sr))
+        {
+            if (!File.Exists(absolutePathString))
+                return false;
+
+            sr = new StreamReader(absolutePathString, _safeOnlyUTF8Encoding);
+            // Solution wide parse on Walk.sln
+            //
+            // 350 -> _countCacheClear: 15
+            // 450 -> _countCacheClear: 9
+            // 500 -> _countCacheClear: 7
+            // 800 -> _countCacheClear: 2
+            // 1000 -> _countCacheClear: 0
+            //
+            // 512 is c library limit?
+            // 1024 is linux DEFAULT soft limit?
+            // The reality is that you can go FAR higher when not limited?
+            // But how do I know the limit of each user?
+            // So I guess 500 is a safe bet for now?
+            //
+            // CSharpCompilerService at ~2k lines of text needed `StreamReaderTupleCacheBackup.Count: 214`.
+            // ParseExpressions at ~4k lines of text needed `StreamReaderTupleCacheBackup.Count: 139`.
+            //
+            // This isn't just used for single file parsing though, it is also used for solution wide.
+            if (StreamReaderTupleCacheBackup.Count >= 140)
+            {
+                Clear_BACKUP_StreamReaderTupleCache();
+            }
+
+            StreamReaderTupleCacheBackup.Add(absolutePathString, sr);
+
+            // I presume this is needed so the StreamReader can get the encoding.
+            sr.Read();
+        }
+
+        return true;
+    }
+
+    private StreamReader? GetBackupStreamReader(string otherAbsolutePathString, TextEditorTextSpan otherTextSpan)
+    {
+        if (!BACKUP_TryGetCachedStreamReader(otherAbsolutePathString, out var otherSr))
+            return null;
+        otherSr.BaseStream.Seek(otherTextSpan.ByteIndex, SeekOrigin.Begin);
+        otherSr.DiscardBufferedData();
+        return otherSr;
     }
 
     private MenuRecord? GetAutocompleteMenuPart(TextEditorVirtualizationResult virtualizationResult, AutocompleteMenu autocompleteMenu, int positionIndex)
@@ -1584,7 +1806,8 @@ public sealed class CSharpCompilerService : IExtendedCompilerService
 
             _currentFileBeingParsedTuple = (null, null);
 
-            ClearStreamReaderTupleCache();
+            Clear_MAIN_StreamReaderTupleCache();
+            Clear_BACKUP_StreamReaderTupleCache();
         }
         
         return ValueTask.CompletedTask;

@@ -399,7 +399,8 @@ public partial class DotNetService
                     {
                         cSharpCompilerService.FastParseTuple = (null, null);
 
-                        cSharpCompilerService.ClearStreamReaderTupleCache();
+                        cSharpCompilerService.Clear_MAIN_StreamReaderTupleCache();
+                        cSharpCompilerService.Clear_BACKUP_StreamReaderTupleCache();
                     }
                 }
                 return ValueTask.CompletedTask;

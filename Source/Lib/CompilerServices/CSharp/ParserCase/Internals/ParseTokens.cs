@@ -18,7 +18,7 @@ public static class ParseTokens
                     parserModel.ResourceUri,
                     parserModel.Compilation,
                     parserModel.CurrentCodeBlockOwner.Unsafe_SelfIndexKey,
-                    parserModel.GetTextSpanText(parserModel.TokenWalker.Current.TextSpan),
+                    parserModel.ResourceUri,
                     parserModel.TokenWalker.Current.TextSpan,
                     out _))
             {
@@ -172,7 +172,7 @@ public static class ParseTokens
                 parserModel.ForceParseExpressionInitialPrimaryExpression = EmptyExpressionNode.Empty;
                 
                 if (expression.SyntaxKind == SyntaxKind.BinaryExpressionNode &&
-                    parserModel.CompareTextSpanText("var", variableDeclarationNode.TypeReference.TypeIdentifierToken.TextSpan))
+                    parserModel.Binder.CSharpCompilerService.SafeCompareText(parserModel.ResourceUri.Value, "var", variableDeclarationNode.TypeReference.TypeIdentifierToken.TextSpan))
                 {
                     var binaryExpressionNode = (BinaryExpressionNode)expression;
                     variableDeclarationNode.SetImplicitTypeReference(binaryExpressionNode.RightExpressionResultTypeReference);

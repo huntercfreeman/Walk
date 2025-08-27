@@ -504,11 +504,11 @@ public ref struct CSharpParserModel
                 ResourceUri,
                 Compilation,
                 CurrentCodeBlockOwner.Unsafe_SelfIndexKey,
-                text,
+                ResourceUri,
                 variableDeclarationNode.IdentifierToken.TextSpan,
                 out var existingVariableDeclarationNode))
         {
-            if (existingVariableDeclarationNode.IsFabricated)
+            if (existingVariableDeclarationNode is null || existingVariableDeclarationNode.IsFabricated)
             {
                 // Overwrite the fabricated definition with a real one
                 //
@@ -596,15 +596,13 @@ public ref struct CSharpParserModel
         SyntaxToken variableIdentifierToken,
         bool shouldCreateSymbol = true)
     {
-        var text = Binder.CSharpCompilerService.SafeGetText(ResourceUri.Value, variableIdentifierToken.TextSpan);
-        
         VariableReferenceNode? variableReferenceNode;
 
-        if (text is not null && TryGetVariableDeclarationHierarchically(
+        if (TryGetVariableDeclarationHierarchically(
                 ResourceUri,
                 Compilation,
                 CurrentCodeBlockOwner.Unsafe_SelfIndexKey,
-                text,
+                ResourceUri,
                 variableIdentifierToken.TextSpan,
                 out var variableDeclarationNode)
             && variableDeclarationNode is not null)
@@ -666,10 +664,6 @@ public ref struct CSharpParserModel
 
     public void BindFunctionInvocationNode(FunctionInvocationNode functionInvocationNode)
     {
-        var functionInvocationIdentifierText = Binder.CSharpCompilerService.SafeGetText(ResourceUri.Value, functionInvocationNode.FunctionInvocationIdentifierToken.TextSpan);
-        if (functionInvocationIdentifierText is null)
-            return;
-
         Binder.SymbolList.Insert(
             Compilation.IndexSymbolList + Compilation.CountSymbolList,
             new Symbol(
@@ -685,7 +679,7 @@ public ref struct CSharpParserModel
                 ResourceUri,
                 Compilation,
                 CurrentCodeBlockOwner.Unsafe_SelfIndexKey,
-                functionInvocationIdentifierText,
+                ResourceUri,
                 functionInvocationNode.FunctionInvocationIdentifierToken.TextSpan,
                 out var functionDefinitionNode) &&
             functionDefinitionNode is not null)
@@ -980,28 +974,40 @@ public ref struct CSharpParserModel
     }
     
     /// <summary>
+    /// 'definition...' argument name pattern:
+    /// This implies the "presumed" value. The invoker must provide a
+    /// place to search. This isn't the invoker saying they know where the definition is.
+    /// Instead, the invoker is saying, I think the definition is somewhere
+    /// in this 'definitionResourceUri', 'defintionCompilationUnit' 'definitionInitialScopeIndexKey'.
+    /// 
+    /// 'reference...' argument name pattern:
+    /// This implies the resourceUri and textSpan combo that prompted you to try getting the respective
+    /// TypeDefinitionNode.
+    /// These arguments are used to compare character by character the definition's
+    /// textSpan to see if they are equal.
+    /// 
     /// Search hierarchically through all the scopes, starting at the <see cref="initialScope"/>.<br/><br/>
     /// If a match is found, then set the out parameter to it and return true.<br/><br/>
     /// If none of the searched scopes contained a match then set the out parameter to null and return false.
     /// </summary>
     public readonly bool TryGetTypeDefinitionHierarchically(
-        ResourceUri resourceUri,
-        CSharpCompilationUnit compilationUnit,
-        int initialScopeIndexKey,
-        string identifierText,
-        TextEditorTextSpan typeIdentifierTextSpan,
+        ResourceUri definitionResourceUri,
+        CSharpCompilationUnit definitionCompilationUnit,
+        int definitionInitialScopeIndexKey,
+        ResourceUri referenceResourceUri,
+        TextEditorTextSpan referenceTextSpan,
         out TypeDefinitionNode? typeDefinitionNode)
     {
-        var localScope = Binder.GetScopeByScopeIndexKey(compilationUnit, initialScopeIndexKey);
+        var localScope = Binder.GetScopeByScopeIndexKey(definitionCompilationUnit, definitionInitialScopeIndexKey);
 
         while (localScope is not null)
         {
             if (TryGetTypeDefinitionNodeByScope(
-                    resourceUri,
-                    compilationUnit,
+                    definitionResourceUri,
+                    definitionCompilationUnit,
                     localScope.Unsafe_SelfIndexKey,
-                    identifierText,
-                    typeIdentifierTextSpan,
+                    referenceResourceUri,
+                    referenceTextSpan,
                     out typeDefinitionNode))
             {
                 return true;
@@ -1011,7 +1017,7 @@ public ref struct CSharpParserModel
                 localScope = default;
             else
             {
-                localScope = Binder.GetScopeByScopeIndexKey(compilationUnit, localScope.Unsafe_ParentIndexKey);
+                localScope = Binder.GetScopeByScopeIndexKey(definitionCompilationUnit, localScope.Unsafe_ParentIndexKey);
             }
         }
 
@@ -1020,28 +1026,29 @@ public ref struct CSharpParserModel
     }
     
     public readonly bool TryGetTypeDefinitionNodeByScope(
-        ResourceUri resourceUri,
-        CSharpCompilationUnit compilationUnit,
-        int scopeIndexKey,
-        string typeIdentifierText,
-        TextEditorTextSpan typeIdentifierTextSpan,
+        ResourceUri definitionResourceUri,
+        CSharpCompilationUnit definitionCompilationUnit,
+        int definitionScopeIndexKey,
+        ResourceUri referenceResourceUri,
+        TextEditorTextSpan referenceTextSpan,
         out TypeDefinitionNode? typeDefinitionNode)
     {
         typeDefinitionNode = null;
         
-        for (int i = compilationUnit.IndexCodeBlockOwnerList; i < compilationUnit.IndexCodeBlockOwnerList + compilationUnit.CountCodeBlockOwnerList; i++)
+        for (int i = definitionCompilationUnit.IndexCodeBlockOwnerList; i < definitionCompilationUnit.IndexCodeBlockOwnerList + definitionCompilationUnit.CountCodeBlockOwnerList; i++)
         {
             var x = Binder.CodeBlockOwnerList[i];
-            if (x.Unsafe_ParentIndexKey == scopeIndexKey &&
+            if (x.Unsafe_ParentIndexKey == definitionScopeIndexKey &&
                 x.SyntaxKind == SyntaxKind.TypeDefinitionNode)
             {
-                var otherTextSpan = GetIdentifierTextSpan(x);
-                if (otherTextSpan.Length == typeIdentifierText.Length)
+                var definitionTextSpan = GetIdentifierTextSpan(x);
+                if (definitionTextSpan.Length == referenceTextSpan.Length)
                 {
                     // It was validated that neither CharIntSum is 0 here so removing the checks
-                    if (otherTextSpan.CharIntSum == typeIdentifierTextSpan.CharIntSum)
+                    if (definitionTextSpan.CharIntSum == referenceTextSpan.CharIntSum)
                     {
-                        if (CompareIdentifierText(x, resourceUri, compilationUnit, typeIdentifierText))
+                        if (Binder.CSharpCompilerService.SafeCompareTextSpans(
+                                referenceResourceUri.Value, referenceTextSpan, definitionResourceUri.Value, definitionTextSpan))
                         {
                             typeDefinitionNode = (TypeDefinitionNode)x;
                             break;
@@ -1053,19 +1060,20 @@ public ref struct CSharpParserModel
         
         if (typeDefinitionNode is null)
         {
-            if (scopeIndexKey == 0)
+            if (definitionScopeIndexKey == 0)
             {
-                foreach (var x in ExternalTypeDefinitionList)
+                foreach (var externalDefinitionNode in ExternalTypeDefinitionList)
                 {
-                    var otherTextSpan = GetIdentifierTextSpan(x);
-                    if (otherTextSpan.Length == typeIdentifierText.Length)
+                    var externalDefinitionTextSpan = GetIdentifierTextSpan(externalDefinitionNode);
+                    if (externalDefinitionTextSpan.Length == referenceTextSpan.Length)
                     {
                         // It was validated that neither CharIntSum is 0 here so removing the checks
-                        if (otherTextSpan.CharIntSum == typeIdentifierTextSpan.CharIntSum)
+                        if (externalDefinitionTextSpan.CharIntSum == referenceTextSpan.CharIntSum)
                         {
-                            if (CompareIdentifierText(x, resourceUri, compilationUnit, typeIdentifierText))
+                            if (Binder.CSharpCompilerService.SafeCompareTextSpans(
+                                    referenceResourceUri.Value, referenceTextSpan, externalDefinitionNode.ResourceUri.Value, externalDefinitionTextSpan))
                             {
-                                typeDefinitionNode = (TypeDefinitionNode)x;
+                                typeDefinitionNode = externalDefinitionNode;
                                 break;
                             }
                         }
@@ -1146,30 +1154,42 @@ public ref struct CSharpParserModel
         
         return functionDefinitionNodeList.ToArray();
     }
-    
+
     /// <summary>
+    /// 'definition...' argument name pattern:
+    /// This implies the "presumed" value. The invoker must provide a
+    /// place to search. This isn't the invoker saying they know where the definition is.
+    /// Instead, the invoker is saying, I think the definition is somewhere
+    /// in this 'definitionResourceUri', 'defintionCompilationUnit' 'definitionInitialScopeIndexKey'.
+    /// 
+    /// 'reference...' argument name pattern:
+    /// This implies the resourceUri and textSpan combo that prompted you to try getting the respective
+    /// TypeDefinitionNode.
+    /// These arguments are used to compare character by character the definition's
+    /// textSpan to see if they are equal.
+    /// 
     /// Search hierarchically through all the scopes, starting at the <see cref="initialScope"/>.<br/><br/>
     /// If a match is found, then set the out parameter to it and return true.<br/><br/>
     /// If none of the searched scopes contained a match then set the out parameter to null and return false.
     /// </summary>
     public readonly bool TryGetFunctionHierarchically(
-        ResourceUri resourceUri,
-        CSharpCompilationUnit compilationUnit,
-        int initialScopeIndexKey,
-        string identifierText,
-        TextEditorTextSpan identifierTextSpan,
+        ResourceUri definitionResourceUri,
+        CSharpCompilationUnit definitionCompilationUnit,
+        int definitionInitialScopeIndexKey,
+        ResourceUri referenceResourceUri,
+        TextEditorTextSpan referenceTextSpan,
         out FunctionDefinitionNode? functionDefinitionNode)
     {
-        var localScope = Binder.GetScopeByScopeIndexKey(compilationUnit, initialScopeIndexKey);
+        var localScope = Binder.GetScopeByScopeIndexKey(definitionCompilationUnit, definitionInitialScopeIndexKey);
 
         while (localScope is not null)
         {
             if (TryGetFunctionDefinitionNodeByScope(
-                    resourceUri,
-                    compilationUnit,
+                    definitionResourceUri,
+                    definitionCompilationUnit,
                     localScope.Unsafe_SelfIndexKey,
-                    identifierText,
-                    identifierTextSpan,
+                    referenceResourceUri,
+                    referenceTextSpan,
                     out functionDefinitionNode))
             {
                 return true;
@@ -1178,7 +1198,7 @@ public ref struct CSharpParserModel
             if (localScope.Unsafe_ParentIndexKey == -1)
                 localScope = default;
             else
-                localScope = Binder.GetScopeByScopeIndexKey(compilationUnit, localScope.Unsafe_ParentIndexKey);
+                localScope = Binder.GetScopeByScopeIndexKey(definitionCompilationUnit, localScope.Unsafe_ParentIndexKey);
         }
 
         functionDefinitionNode = null;
@@ -1186,29 +1206,29 @@ public ref struct CSharpParserModel
     }
     
     public readonly bool TryGetFunctionDefinitionNodeByScope(
-        ResourceUri resourceUri,
-        CSharpCompilationUnit compilationUnit,
-        int scopeIndexKey,
-        string functionIdentifierText,
-        TextEditorTextSpan functionIdentifierTextSpan,
+        ResourceUri definitionResourceUri,
+        CSharpCompilationUnit definitionCompilationUnit,
+        int definitionScopeIndexKey,
+        ResourceUri referenceResourceUri,
+        TextEditorTextSpan referenceTextSpan,
         out FunctionDefinitionNode functionDefinitionNode)
     {
         functionDefinitionNode = null;
         
-        for (int i = compilationUnit.IndexCodeBlockOwnerList; i < compilationUnit.IndexCodeBlockOwnerList + compilationUnit.CountCodeBlockOwnerList; i++)
+        for (int i = definitionCompilationUnit.IndexCodeBlockOwnerList; i < definitionCompilationUnit.IndexCodeBlockOwnerList + definitionCompilationUnit.CountCodeBlockOwnerList; i++)
         {
             var x = Binder.CodeBlockOwnerList[i];
             
-            if (x.Unsafe_ParentIndexKey == scopeIndexKey &&
+            if (x.Unsafe_ParentIndexKey == definitionScopeIndexKey &&
                 x.SyntaxKind == SyntaxKind.FunctionDefinitionNode)
             {
-                var otherTextSpan = GetIdentifierTextSpan(x);
-                if (otherTextSpan.Length == functionIdentifierText.Length)
+                var definitionTextSpan = GetIdentifierTextSpan(x);
+                if (definitionTextSpan.Length == referenceTextSpan.Length)
                 {
                     // It was validated that neither CharIntSum is 0 here so removing the checks
-                    if (otherTextSpan.CharIntSum == functionIdentifierTextSpan.CharIntSum)
+                    if (definitionTextSpan.CharIntSum == referenceTextSpan.CharIntSum)
                     {
-                        if (CompareIdentifierText(x, resourceUri, compilationUnit, functionIdentifierText))
+                        if (Binder.CSharpCompilerService.SafeCompareTextSpans(referenceResourceUri.Value, referenceTextSpan, definitionResourceUri.Value, definitionTextSpan))
                         {
                             functionDefinitionNode = (FunctionDefinitionNode)x;
                             break;
@@ -1240,30 +1260,42 @@ public ref struct CSharpParserModel
         
         return variableDeclarationNodeList.ToArray();
     }
-    
+
     /// <summary>
+    /// 'definition...' argument name pattern:
+    /// This implies the "presumed" value. The invoker must provide a
+    /// place to search. This isn't the invoker saying they know where the definition is.
+    /// Instead, the invoker is saying, I think the definition is somewhere
+    /// in this 'definitionResourceUri', 'defintionCompilationUnit' 'definitionInitialScopeIndexKey'.
+    /// 
+    /// 'reference...' argument name pattern:
+    /// This implies the resourceUri and textSpan combo that prompted you to try getting the respective
+    /// TypeDefinitionNode.
+    /// These arguments are used to compare character by character the definition's
+    /// textSpan to see if they are equal.
+    /// 
     /// Search hierarchically through all the scopes, starting at the <see cref="_currentScope"/>.<br/><br/>
     /// If a match is found, then set the out parameter to it and return true.<br/><br/>
     /// If none of the searched scopes contained a match then set the out parameter to null and return false.
     /// </summary>
     public bool TryGetVariableDeclarationHierarchically(
-        ResourceUri resourceUri,
-        CSharpCompilationUnit compilationUnit,
-        int initialScopeIndexKey,
-        string identifierText,
-        TextEditorTextSpan identifierTextSpan,
+        ResourceUri declarationResourceUri,
+        CSharpCompilationUnit declarationCompilationUnit,
+        int declarationInitialScopeIndexKey,
+        ResourceUri referenceResourceUri,
+        TextEditorTextSpan referenceTextSpan,
         out VariableDeclarationNode? variableDeclarationStatementNode)
     {
-        var localScope = Binder.GetScopeByScopeIndexKey(compilationUnit, initialScopeIndexKey);
+        var localScope = Binder.GetScopeByScopeIndexKey(declarationCompilationUnit, declarationInitialScopeIndexKey);
 
         while (localScope is not null)
         {
             if (TryGetVariableDeclarationNodeByScope(
-                    resourceUri,
-                    compilationUnit,
+                    declarationResourceUri,
+                    declarationCompilationUnit,
                     localScope.Unsafe_SelfIndexKey,
-                    identifierText,
-                    identifierTextSpan,
+                    referenceResourceUri,
+                    referenceTextSpan,
                     out variableDeclarationStatementNode))
             {
                 return true;
@@ -1272,7 +1304,7 @@ public ref struct CSharpParserModel
             if (localScope.Unsafe_ParentIndexKey == -1)
                 localScope = default;
             else
-                localScope = Binder.GetScopeByScopeIndexKey(compilationUnit, localScope.Unsafe_ParentIndexKey);
+                localScope = Binder.GetScopeByScopeIndexKey(declarationCompilationUnit, localScope.Unsafe_ParentIndexKey);
         }
         
         variableDeclarationStatementNode = null;
@@ -1280,13 +1312,13 @@ public ref struct CSharpParserModel
     }
     
     public bool TryGetVariableDeclarationByPartialType(
-        ResourceUri resourceUri,
-        CSharpCompilationUnit compilationUnit,
-        int scopeIndexKey,
-        string variableIdentifierText,
-        TextEditorTextSpan identifierTextSpan,
+        ResourceUri declarationResourceUri,
+        CSharpCompilationUnit declarationCompilationUnit,
+        int declarationScopeIndexKey,
+        ResourceUri referenceResourceUri,
+        TextEditorTextSpan referenceTextSpan,
         TypeDefinitionNode typeDefinitionNode,
-        out VariableDeclarationNode variableDeclarationNode)
+        out VariableDeclarationNode? variableDeclarationNode)
     {
         int positionExclusive = typeDefinitionNode.IndexPartialTypeDefinition;
         while (positionExclusive < Binder.PartialTypeDefinitionList.Count)
@@ -1298,7 +1330,7 @@ public ref struct CSharpParserModel
                 
                 if (Binder.PartialTypeDefinitionList[positionExclusive].ScopeIndexKey != -1)
                 {
-                    if (Binder.PartialTypeDefinitionList[positionExclusive].ResourceUri != resourceUri)
+                    if (Binder.PartialTypeDefinitionList[positionExclusive].ResourceUri != declarationResourceUri)
                     {
                         if (Binder.__CompilationUnitMap.TryGetValue(Binder.PartialTypeDefinitionList[positionExclusive].ResourceUri, out var temporaryCompilationUnit))
                         {
@@ -1313,8 +1345,8 @@ public ref struct CSharpParserModel
                     }
                     else
                     {
-                        innerCompilationUnit = compilationUnit;
-                        innerResourceUri = resourceUri;
+                        innerCompilationUnit = declarationCompilationUnit;
+                        innerResourceUri = declarationResourceUri;
                     }
                     
                     if (!innerCompilationUnit.IsDefault())
@@ -1325,8 +1357,8 @@ public ref struct CSharpParserModel
                                 innerResourceUri,
                                 innerCompilationUnit,
                                 innerScopeIndexKey,
-                                variableIdentifierText,
-                                identifierTextSpan,
+                                referenceResourceUri,
+                                referenceTextSpan,
                                 out variableDeclarationNode,
                                 isRecursive: true))
                         {
@@ -1348,31 +1380,32 @@ public ref struct CSharpParserModel
     }
     
     public bool TryGetVariableDeclarationNodeByScope(
-        ResourceUri resourceUri,
-        CSharpCompilationUnit compilationUnit,
-        int scopeIndexKey,
-        string variableIdentifierText,
-        TextEditorTextSpan variableIdentifierTextSpan,
+        ResourceUri declarationResourceUri,
+        CSharpCompilationUnit declarationCompilationUnit,
+        int declarationScopeIndexKey,
+        ResourceUri referenceResourceUri,
+        TextEditorTextSpan referenceTextSpan,
         out VariableDeclarationNode? variableDeclarationNode,
         bool isRecursive = false)
     {
         variableDeclarationNode = null;
-        for (int i = compilationUnit.IndexNodeList; i < compilationUnit.IndexNodeList + compilationUnit.CountNodeList; i++)
+        for (int i = declarationCompilationUnit.IndexNodeList; i < declarationCompilationUnit.IndexNodeList + declarationCompilationUnit.CountNodeList; i++)
         {
-            var x = Binder.NodeList[i];
+            var node = Binder.NodeList[i];
             
-            if (x.Unsafe_ParentIndexKey == scopeIndexKey &&
-                x.SyntaxKind == SyntaxKind.VariableDeclarationNode)
+            if (node.Unsafe_ParentIndexKey == declarationScopeIndexKey &&
+                node.SyntaxKind == SyntaxKind.VariableDeclarationNode)
             {
-                var otherTextSpan = GetIdentifierTextSpan(x);
-                if (otherTextSpan.Length == variableIdentifierText.Length)
+                var declarationTextSpan = GetIdentifierTextSpan(node);
+                if (declarationTextSpan.Length == referenceTextSpan.Length)
                 {
                     // It was validated that neither CharIntSum is 0 here so removing the checks
-                    if (otherTextSpan.CharIntSum == variableIdentifierTextSpan.CharIntSum)
+                    if (declarationTextSpan.CharIntSum == referenceTextSpan.CharIntSum)
                     {
-                        if (CompareIdentifierText(x, resourceUri, compilationUnit, variableIdentifierText))
+                        if (Binder.CSharpCompilerService.SafeCompareTextSpans(
+                                referenceResourceUri.Value, referenceTextSpan, declarationResourceUri.Value, declarationTextSpan))
                         {
-                            variableDeclarationNode = (VariableDeclarationNode)x;
+                            variableDeclarationNode = (VariableDeclarationNode)node;
                             break;
                         }
                     }
@@ -1382,7 +1415,7 @@ public ref struct CSharpParserModel
         
         if (variableDeclarationNode is null)
         {
-            var codeBlockOwner = Binder.CodeBlockOwnerList[compilationUnit.IndexCodeBlockOwnerList + scopeIndexKey];
+            var codeBlockOwner = Binder.CodeBlockOwnerList[declarationCompilationUnit.IndexCodeBlockOwnerList + declarationScopeIndexKey];
             
             if (!isRecursive && codeBlockOwner.SyntaxKind == SyntaxKind.TypeDefinitionNode)
             {
@@ -1390,13 +1423,13 @@ public ref struct CSharpParserModel
                 if (typeDefinitionNode.IndexPartialTypeDefinition != -1)
                 {
                     if (TryGetVariableDeclarationByPartialType(
-                        resourceUri,
-                        compilationUnit,
-                        scopeIndexKey,
-                        variableIdentifierText,
-                        variableIdentifierTextSpan,
-                        typeDefinitionNode,
-                        out variableDeclarationNode))
+                            declarationResourceUri,
+                            declarationCompilationUnit,
+                            declarationScopeIndexKey,
+                            referenceResourceUri,
+                            referenceTextSpan,
+                            typeDefinitionNode,
+                            out variableDeclarationNode))
                     {
                         return true;
                     }
@@ -1404,60 +1437,57 @@ public ref struct CSharpParserModel
                 
                 if (typeDefinitionNode.InheritedTypeReference != default)
                 {
-                    string? identifierText;
-                    TextEditorTextSpan identifierTextSpan;
-                    CSharpCompilationUnit innerCompilationUnit;
-                    ResourceUri innerResourceUri;
+                    TextEditorTextSpan typeDefinitionTextSpan;
+                    CSharpCompilationUnit typeDefinitionCompilationUnit;
+                    ResourceUri typeDefinitionResourceUri;
                     
-                    if (typeDefinitionNode.InheritedTypeReference.ExplicitDefinitionResourceUri == resourceUri)
+                    if (typeDefinitionNode.InheritedTypeReference.ExplicitDefinitionResourceUri == referenceResourceUri)
                     {
-                        innerCompilationUnit = Compilation;
-                        innerResourceUri = resourceUri;
-                        identifierTextSpan = typeDefinitionNode.InheritedTypeReference.TypeIdentifierToken.TextSpan;
-                        identifierText = Binder.CSharpCompilerService.SafeGetText(
-                            innerResourceUri.Value,
-                            typeDefinitionNode.InheritedTypeReference.TypeIdentifierToken.TextSpan);
+                        typeDefinitionCompilationUnit = Compilation;
+                        typeDefinitionResourceUri = referenceResourceUri;
+                        typeDefinitionTextSpan = typeDefinitionNode.InheritedTypeReference.TypeIdentifierToken.TextSpan;
                     }
                     else
                     {
-                        if (Binder.__CompilationUnitMap.TryGetValue(typeDefinitionNode.InheritedTypeReference.ExplicitDefinitionResourceUri, out innerCompilationUnit))
+                        if (Binder.__CompilationUnitMap.TryGetValue(typeDefinitionNode.InheritedTypeReference.ExplicitDefinitionResourceUri, out typeDefinitionCompilationUnit))
                         {
-                            identifierTextSpan = typeDefinitionNode.InheritedTypeReference.TypeIdentifierToken.TextSpan;
-                            identifierText = Binder.CSharpCompilerService.SafeGetText(
-                                typeDefinitionNode.InheritedTypeReference.ExplicitDefinitionResourceUri.Value,
-                                typeDefinitionNode.InheritedTypeReference.TypeIdentifierToken.TextSpan);
-                            innerResourceUri = typeDefinitionNode.InheritedTypeReference.ExplicitDefinitionResourceUri;
+                            typeDefinitionTextSpan = typeDefinitionNode.InheritedTypeReference.TypeIdentifierToken.TextSpan;
+                            typeDefinitionResourceUri = typeDefinitionNode.InheritedTypeReference.ExplicitDefinitionResourceUri;
                         }
                         else
                         {
-                            identifierTextSpan = default;
-                            identifierText = null;
-                            innerResourceUri = default;
+                            typeDefinitionTextSpan = default;
+                            typeDefinitionResourceUri = default;
                         }
                     }
-                
-                    if (identifierText is not null)
+
+                    var typeDefinitionScopeIndexKey = Binder.GetScopeByPositionIndex(typeDefinitionCompilationUnit, typeDefinitionTextSpan.StartInclusiveIndex);
+
+                    if (typeDefinitionScopeIndexKey is not null)
                     {
                         if (TryGetTypeDefinitionHierarchically(
-                                resourceUri,
-                                compilationUnit,
-                                scopeIndexKey,
-                                identifierText,
-                                identifierTextSpan,
+                                typeDefinitionResourceUri,
+                                typeDefinitionCompilationUnit,
+                                typeDefinitionScopeIndexKey.Unsafe_SelfIndexKey,
+                                typeDefinitionResourceUri,
+                                typeDefinitionTextSpan,
                                 out var inheritedTypeDefinitionNode))
                         {
-                            var innerScopeIndexKey = inheritedTypeDefinitionNode.Unsafe_SelfIndexKey;
-                    
-                            if (TryGetVariableDeclarationNodeByScope(
-                                    innerResourceUri,
-                                    innerCompilationUnit,
-                                    innerScopeIndexKey,
-                                    variableIdentifierText,
-                                    identifierTextSpan,
-                                    out variableDeclarationNode,
-                                    isRecursive: true))
+                            if (inheritedTypeDefinitionNode is not null)
                             {
-                                return true;
+                                var innerScopeIndexKey = inheritedTypeDefinitionNode.Unsafe_SelfIndexKey;
+
+                                if (TryGetVariableDeclarationNodeByScope(
+                                        typeDefinitionResourceUri,
+                                        typeDefinitionCompilationUnit,
+                                        innerScopeIndexKey,
+                                        referenceResourceUri,
+                                        referenceTextSpan,
+                                        out variableDeclarationNode,
+                                        isRecursive: true))
+                                {
+                                    return true;
+                                }
                             }
                         }
                     }
@@ -1902,6 +1932,83 @@ public ref struct CSharpParserModel
             identifierText,
             textSpan);
     }
+
+    public readonly bool CompareTextSpans(
+        ISyntaxNode node,
+        ResourceUri resourceUri,
+        CSharpCompilationUnit compilationUnit,
+        TextEditorTextSpan identifierTextSpan)
+    {
+        string absolutePathString = resourceUri.Value;
+        TextEditorTextSpan textSpan;
+        
+        switch (node.SyntaxKind)
+        {
+            case SyntaxKind.TypeDefinitionNode:
+            {
+                var typeDefinitionNode = (TypeDefinitionNode)node;
+                textSpan = typeDefinitionNode.TypeIdentifierToken.TextSpan;
+                absolutePathString = typeDefinitionNode.ResourceUri.Value;
+                break;
+            }
+            case SyntaxKind.TypeClauseNode:
+            {
+                var typeClauseNode = (TypeClauseNode)node;
+                textSpan = typeClauseNode.TypeIdentifierToken.TextSpan;
+                absolutePathString = typeClauseNode.ExplicitDefinitionResourceUri.Value;
+                break;
+            }
+            case SyntaxKind.FunctionDefinitionNode:
+            {
+                var functionDefinitionNode = (FunctionDefinitionNode)node;
+                textSpan = functionDefinitionNode.FunctionIdentifierToken.TextSpan;
+                absolutePathString = functionDefinitionNode.ResourceUri.Value;
+                break;
+            }
+            case SyntaxKind.FunctionInvocationNode:
+            {
+                var functionInvocationNode = (FunctionInvocationNode)node;
+                textSpan = functionInvocationNode.FunctionInvocationIdentifierToken.TextSpan;
+                absolutePathString = functionInvocationNode.ResourceUri.Value;
+                break;
+            }
+            case SyntaxKind.VariableDeclarationNode:
+            {
+                var variableDeclarationNode = (VariableDeclarationNode)node;
+                textSpan = variableDeclarationNode.IdentifierToken.TextSpan;
+                absolutePathString = variableDeclarationNode.ResourceUri.Value;
+                break;
+            }
+            case SyntaxKind.VariableReferenceNode:
+            {
+                textSpan = ((VariableReferenceNode)node).VariableIdentifierToken.TextSpan;
+                absolutePathString = ResourceUri.Value;
+                break;
+            }
+            case SyntaxKind.LabelDeclarationNode:
+            {
+                textSpan = ((LabelDeclarationNode)node).IdentifierToken.TextSpan;
+                absolutePathString = ResourceUri.Value;
+                break;
+            }
+            case SyntaxKind.LabelReferenceNode:
+            {
+                textSpan = ((LabelReferenceNode)node).IdentifierToken.TextSpan;
+                absolutePathString = ResourceUri.Value;
+                break;
+            }
+            default:
+            {
+                return false;
+            }
+        }
+        
+        return Binder.CSharpCompilerService.SafeCompareTextSpans(
+            ResourceUri.Value,
+            identifierTextSpan,
+            absolutePathString,
+            textSpan);
+    }
     
     public readonly TextEditorTextSpan GetIdentifierTextSpan(ISyntaxNode node)
     {
@@ -1932,12 +2039,7 @@ public ref struct CSharpParserModel
     {
         return Binder.CSharpCompilerService.SafeGetText(ResourceUri.Value, textSpan) ?? string.Empty;
     }
-    
-    public readonly bool CompareTextSpanText(string value, TextEditorTextSpan textSpan)
-    {
-        return Binder.CSharpCompilerService.SafeCompareText(ResourceUri.Value, value, textSpan);
-    }
-    
+
     public readonly TypeClauseNode ToTypeClause(TypeDefinitionNode typeDefinitionNode)
     {
         var typeClauseNode = Rent_TypeClauseNode();

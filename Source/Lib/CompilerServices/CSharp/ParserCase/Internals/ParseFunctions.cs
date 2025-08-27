@@ -30,12 +30,14 @@ public class ParseFunctions
         parserModel.BindFunctionDefinitionNode(functionDefinitionNode);
         
         bool isFunctionOverloadCase;
-        
+
+        // This compilation has not been written to the __CompilationUnitMap yet,
+        // so this will read the previous compilation of this file.
         if (parserModel.TryGetFunctionDefinitionNodeByScope(
                 parserModel.ResourceUri,
                 parserModel.Compilation,
                 parserModel.CurrentCodeBlockOwner.Unsafe_SelfIndexKey,
-                parserModel.GetTextSpanText(consumedIdentifierToken.TextSpan),
+                parserModel.ResourceUri,
                 consumedIdentifierToken.TextSpan,
                 out var existingFunctionDefinitionNode))
         {
@@ -45,7 +47,7 @@ public class ParseFunctions
         {
             isFunctionOverloadCase = false;
         }
-        
+
         parserModel.NewScopeAndBuilderFromOwner(
             functionDefinitionNode,
             parserModel.TokenWalker.Current.TextSpan);

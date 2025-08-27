@@ -976,7 +976,7 @@ public static class ParseExpressions
                 parserModel.ResourceUri,
                 parserModel.Compilation,
                 parserModel.CurrentCodeBlockOwner.Unsafe_SelfIndexKey,
-                parserModel.GetTextSpanText(token.TextSpan),
+                parserModel.ResourceUri,
                 token.TextSpan,
                 out var typeDefinitionNode);
         
@@ -1045,9 +1045,7 @@ public static class ParseExpressions
                 parserModel.ParserContextKind = CSharpParserContextKind.ForceParseNextIdentifierAsTypeClauseNode;
             }
         }
-        
-        var ambiguousIdentifierTokenText = parserModel.GetTextSpanText(ambiguousIdentifierExpressionNode.Token.TextSpan);
-    
+
         if (parserModel.ParserContextKind != CSharpParserContextKind.ForceParseNextIdentifierAsTypeClauseNode &&
             UtilityApi.IsConvertibleToIdentifierToken(ambiguousIdentifierExpressionNode.Token.SyntaxKind))
         {
@@ -1055,7 +1053,7 @@ public static class ParseExpressions
                     parserModel.ResourceUri,
                     parserModel.Compilation,
                     parserModel.CurrentCodeBlockOwner.Unsafe_SelfIndexKey,
-                    ambiguousIdentifierTokenText,
+                    parserModel.ResourceUri,
                     ambiguousIdentifierExpressionNode.Token.TextSpan,
                     out var existingVariableDeclarationNode))
             {
@@ -1077,14 +1075,14 @@ public static class ParseExpressions
                 goto finalize;
             }
         }
-        
+
         if (!forceVariableReferenceNode && UtilityApi.IsConvertibleToTypeClauseNode(ambiguousIdentifierExpressionNode.Token.SyntaxKind))
         {
             if (parserModel.TryGetTypeDefinitionHierarchically(
                     parserModel.ResourceUri,
                     parserModel.Compilation,
                     parserModel.CurrentCodeBlockOwner.Unsafe_SelfIndexKey,
-                    ambiguousIdentifierTokenText,
+                    parserModel.ResourceUri,
                     ambiguousIdentifierExpressionNode.Token.TextSpan,
                     out var typeDefinitionNode))
             {
@@ -1127,23 +1125,17 @@ public static class ParseExpressions
                 goto finalize;
             }
         }
-        
+
         if (ambiguousIdentifierExpressionNode.Token.SyntaxKind == SyntaxKind.IdentifierToken &&
             ambiguousIdentifierExpressionNode.Token.TextSpan.Length == 1 &&
-            // ParseTokens.cs checks for 'CharIntSum' of '95' since that is the ASCII code for '_'
-            //
-            // Here, it could be done but in particular it is so impactful for ParseTokens.cs
-            // since you didn't already create a variable which contained the text.
-            //
-            // TODO: Decide on checking 'CharIntSum' of '95' here or the text.
-            //
-            ambiguousIdentifierTokenText == "_")
+            // 95 is ASCII code for '_'
+            parserModel.TokenWalker.Current.TextSpan.CharIntSum == 95)
         {
             if (!parserModel.TryGetVariableDeclarationHierarchically(
                     parserModel.ResourceUri,
                     parserModel.Compilation,
                     parserModel.CurrentCodeBlockOwner.Unsafe_SelfIndexKey,
-                    ambiguousIdentifierTokenText,
+                    parserModel.ResourceUri,
                     ambiguousIdentifierExpressionNode.Token.TextSpan,
                     out _))
             {
@@ -1152,7 +1144,9 @@ public static class ParseExpressions
                 goto finalize;
             }
         }
-        
+
+        string ambiguousIdentifierTokenText;
+
         if (!forceVariableReferenceNode &&
             parserModel.ParserContextKind != CSharpParserContextKind.ForceParseNextIdentifierAsTypeClauseNode &&
             UtilityApi.IsConvertibleToIdentifierToken(ambiguousIdentifierExpressionNode.Token.SyntaxKind))
@@ -1161,7 +1155,7 @@ public static class ParseExpressions
                     parserModel.ResourceUri,
                     parserModel.Compilation,
                     parserModel.CurrentCodeBlockOwner.Unsafe_SelfIndexKey,
-                    ambiguousIdentifierTokenText,
+                    parserModel.ResourceUri,
                     ambiguousIdentifierExpressionNode.Token.TextSpan,
                     out var functionDefinitionNode))
             {
@@ -1188,7 +1182,9 @@ public static class ParseExpressions
                 result = functionInvocationNode;
                 goto finalize;
             }
-            
+
+            ambiguousIdentifierTokenText = parserModel.GetTextSpanText(ambiguousIdentifierExpressionNode.Token.TextSpan);
+
             if (parserModel.Binder.NamespacePrefixTree.__Root.Children.TryGetValue(
                 ambiguousIdentifierTokenText,
                 out var namespacePrefixNode))
@@ -1224,7 +1220,11 @@ public static class ParseExpressions
                 goto finalize;
             }
         }
-        
+        else
+        {
+            ambiguousIdentifierTokenText = parserModel.GetTextSpanText(ambiguousIdentifierExpressionNode.Token.TextSpan);
+        }
+
         if (allowFabricatedUndefinedNode)
         {
             // Bind an undefined-TypeClauseNode
@@ -1232,26 +1232,26 @@ public static class ParseExpressions
                 UtilityApi.IsConvertibleToTypeClauseNode(ambiguousIdentifierExpressionNode.Token.SyntaxKind))
             {
                 var token = ambiguousIdentifierExpressionNode.Token;
-                
+
                 TypeClauseNode typeClauseNode = UtilityApi.ConvertTokenToTypeClauseNode(ref token, ref parserModel);
-                
+
                 typeClauseNode.ExplicitDefinitionTextSpan = ambiguousIdentifierExpressionNode.Token.TextSpan;
                 typeClauseNode.ExplicitDefinitionResourceUri = parserModel.ResourceUri;
-                
+
                 typeClauseNode.HasQuestionMark = ambiguousIdentifierExpressionNode.HasQuestionMark;
                 parserModel.BindTypeClauseNode(typeClauseNode);
                 result = typeClauseNode;
                 goto finalize;
             }
-            
+
             // Bind an undefined-variable
             if (UtilityApi.IsConvertibleToIdentifierToken(ambiguousIdentifierExpressionNode.Token.SyntaxKind))
             {
                 var token = ambiguousIdentifierExpressionNode.Token;
                 var identifierToken = UtilityApi.ConvertToIdentifierToken(ref token, ref parserModel);
-                
+
                 var variableReferenceNode = parserModel.ConstructAndBindVariableReferenceNode(identifierToken);
-                
+
                 result = variableReferenceNode;
                 goto finalize;
             }
@@ -3244,7 +3244,7 @@ public static class ParseExpressions
                 if (parserModel.Binder.__CompilationUnitMap.TryGetValue(typeReference.ExplicitDefinitionResourceUri, out innerCompilationUnit))
                 {
                     innerResourceUri = typeReference.ExplicitDefinitionResourceUri;
-                    var scope = parserModel.Binder.GetScope(innerCompilationUnit, typeReference.TypeIdentifierToken.TextSpan);
+                    var scope = parserModel.Binder.GetScope(innerCompilationUnit, typeReference.ExplicitDefinitionTextSpan);
 
                     if (scope is not null)
                     {
@@ -3252,7 +3252,7 @@ public static class ParseExpressions
                                 innerResourceUri,
                                 innerCompilationUnit,
                                 scope.Unsafe_SelfIndexKey,
-                                parserModel.Binder.CSharpCompilerService.SafeGetText(typeReference.ExplicitDefinitionResourceUri.Value, typeReference.ExplicitDefinitionTextSpan) ?? string.Empty,
+                                innerResourceUri,
                                 typeReference.ExplicitDefinitionTextSpan,
                                 out var innerTypeDefinitionNode) &&
                             innerTypeDefinitionNode is not null)
@@ -3294,7 +3294,7 @@ public static class ParseExpressions
                             parserModel.ResourceUri,
                             parserModel.Compilation,
                             scope.Unsafe_SelfIndexKey,
-                            parserModel.Binder.CSharpCompilerService.SafeGetText(parserModel.ResourceUri.Value, typeReference.TypeIdentifierToken.TextSpan) ?? string.Empty,
+                            parserModel.ResourceUri,
                             typeReference.TypeIdentifierToken.TextSpan,
                             out var innerTypeDefinitionNode) &&
                         innerTypeDefinitionNode is not null)
@@ -3336,8 +3336,6 @@ public static class ParseExpressions
             var memberList = parserModel.Binder.Internal_GetMemberList_TypeDefinitionNode(typeDefinitionNode);
             ISyntaxNode? foundDefinitionNode = null;
             
-            var memberIdentifierText = parserModel.GetTextSpanText(memberIdentifierToken.TextSpan);
-            
             foreach (var node in memberList)
             {
                 if (node.SyntaxKind == SyntaxKind.VariableDeclarationNode)
@@ -3346,7 +3344,6 @@ public static class ParseExpressions
                     if (!variableDeclarationNode.IdentifierToken.ConstructorWasInvoked)
                         continue;
                     
-                    string sourceText;
                     string resourceUriValue;
                     
                     if (variableDeclarationNode.ResourceUri != parserModel.ResourceUri)
@@ -3361,7 +3358,7 @@ public static class ParseExpressions
                         resourceUriValue = innerResourceUri.Value;
                     }
                     
-                    if (parserModel.Binder.CSharpCompilerService.SafeCompareText(resourceUriValue, memberIdentifierText, variableDeclarationNode.IdentifierToken.TextSpan))
+                    if (parserModel.Binder.CSharpCompilerService.SafeCompareTextSpans(parserModel.ResourceUri.Value, memberIdentifierToken.TextSpan, resourceUriValue, variableDeclarationNode.IdentifierToken.TextSpan))
                     {
                         foundDefinitionNode = variableDeclarationNode;
                         break;
@@ -3389,7 +3386,7 @@ public static class ParseExpressions
                         resourceUriValue = innerResourceUri.Value;
                     }
                     
-                    if (parserModel.Binder.CSharpCompilerService.SafeCompareText(resourceUriValue, memberIdentifierText, functionDefinitionNode.FunctionIdentifierToken.TextSpan))
+                    if (parserModel.Binder.CSharpCompilerService.SafeCompareTextSpans(parserModel.ResourceUri.Value, memberIdentifierToken.TextSpan, resourceUriValue, functionDefinitionNode.FunctionIdentifierToken.TextSpan))
                     {
                         foundDefinitionNode = functionDefinitionNode;
                         break;
@@ -3579,7 +3576,7 @@ public static class ParseExpressions
                                 continue;
                         }
 
-                        if (parserModel.Binder.CSharpCompilerService.SafeCompareText(typeDefinitionNode.ResourceUri.Value, memberIdentifierText, typeDefinitionNode.TypeIdentifierToken.TextSpan))
+                        if (parserModel.Binder.CSharpCompilerService.SafeCompareTextSpans(parserModel.ResourceUri.Value, memberIdentifierToken.TextSpan, typeDefinitionNode.ResourceUri.Value, typeDefinitionNode.TypeIdentifierToken.TextSpan))
                         {
                             var typeClauseNode = parserModel.Rent_TypeClauseNode();
                             typeClauseNode.TypeIdentifierToken = memberIdentifierToken;
