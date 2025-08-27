@@ -45,6 +45,8 @@ public sealed class CSharpCompilerService : IExtendedCompilerService
         var primitiveKeywordsTextFile = new CSharpCompilationUnit(CompilationUnitKind.IndividualFile_AllData);
         
         __CSharpBinder.UpsertCompilationUnit(new ResourceUri(string.Empty), primitiveKeywordsTextFile);
+
+        _safeOnlyUTF8Encoding = new SafeOnlyUTF8Encoding();
     }
     
     public TextEditorService TextEditorService => _textEditorService;
@@ -219,7 +221,7 @@ public sealed class CSharpCompilerService : IExtendedCompilerService
             if (!File.Exists(absolutePathString))
                 return null;
         
-            sr = new StreamReader(absolutePathString);
+            sr = new StreamReader(absolutePathString, _safeOnlyUTF8Encoding);
             // Solution wide parse on Walk.sln
             //
             // 350 -> _countCacheClear: 15
@@ -331,7 +333,7 @@ public sealed class CSharpCompilerService : IExtendedCompilerService
             if (!File.Exists(absolutePathString))
                 return false;
         
-            sr = new StreamReader(absolutePathString);
+            sr = new StreamReader(absolutePathString, _safeOnlyUTF8Encoding);
             // Solution wide parse on Walk.sln
             //
             // 350 -> _countCacheClear: 15
@@ -1589,7 +1591,8 @@ public sealed class CSharpCompilerService : IExtendedCompilerService
     }
     
     private readonly List<TextEditorTextSpan> _emptyDiagnosticTextSpans = new();
-    
+    private readonly SafeOnlyUTF8Encoding _safeOnlyUTF8Encoding;
+
     public async ValueTask FastParseAsync(TextEditorEditContext editContext, ResourceUri resourceUri, IFileSystemProvider fileSystemProvider, CompilationUnitKind compilationUnitKind)
     {
         var content = await fileSystemProvider.File
@@ -1622,7 +1625,7 @@ public sealed class CSharpCompilerService : IExtendedCompilerService
 
         CSharpLexerOutput lexerOutput;
 
-        using (StreamReader sr = new StreamReader(resourceUri.Value))
+        using (StreamReader sr = new StreamReader(resourceUri.Value, _safeOnlyUTF8Encoding))
         {
             _streamReaderWrap.ReInitialize(sr);
             
