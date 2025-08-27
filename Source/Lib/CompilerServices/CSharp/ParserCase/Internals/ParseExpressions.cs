@@ -1155,6 +1155,7 @@ public static class ParseExpressions
                     parserModel.ResourceUri,
                     parserModel.Compilation,
                     parserModel.CurrentCodeBlockOwner.Unsafe_SelfIndexKey,
+                    parserModel.ResourceUri,
                     ambiguousIdentifierExpressionNode.Token.TextSpan,
                     out var functionDefinitionNode))
             {

@@ -679,6 +679,7 @@ public ref struct CSharpParserModel
                 ResourceUri,
                 Compilation,
                 CurrentCodeBlockOwner.Unsafe_SelfIndexKey,
+                ResourceUri,
                 functionInvocationNode.FunctionInvocationIdentifierToken.TextSpan,
                 out var functionDefinitionNode) &&
             functionDefinitionNode is not null)
@@ -1153,28 +1154,42 @@ public ref struct CSharpParserModel
         
         return functionDefinitionNodeList.ToArray();
     }
-    
+
     /// <summary>
+    /// 'definition...' argument name pattern:
+    /// This implies the "presumed" value. The invoker must provide a
+    /// place to search. This isn't the invoker saying they know where the definition is.
+    /// Instead, the invoker is saying, I think the definition is somewhere
+    /// in this 'definitionResourceUri', 'defintionCompilationUnit' 'definitionInitialScopeIndexKey'.
+    /// 
+    /// 'reference...' argument name pattern:
+    /// This implies the resourceUri and textSpan combo that prompted you to try getting the respective
+    /// TypeDefinitionNode.
+    /// These arguments are used to compare character by character the definition's
+    /// textSpan to see if they are equal.
+    /// 
     /// Search hierarchically through all the scopes, starting at the <see cref="initialScope"/>.<br/><br/>
     /// If a match is found, then set the out parameter to it and return true.<br/><br/>
     /// If none of the searched scopes contained a match then set the out parameter to null and return false.
     /// </summary>
     public readonly bool TryGetFunctionHierarchically(
-        ResourceUri resourceUri,
-        CSharpCompilationUnit compilationUnit,
-        int initialScopeIndexKey,
-        TextEditorTextSpan identifierTextSpan,
+        ResourceUri definitionResourceUri,
+        CSharpCompilationUnit definitionCompilationUnit,
+        int definitionInitialScopeIndexKey,
+        ResourceUri referenceResourceUri,
+        TextEditorTextSpan referenceTextSpan,
         out FunctionDefinitionNode? functionDefinitionNode)
     {
-        var localScope = Binder.GetScopeByScopeIndexKey(compilationUnit, initialScopeIndexKey);
+        var localScope = Binder.GetScopeByScopeIndexKey(definitionCompilationUnit, definitionInitialScopeIndexKey);
 
         while (localScope is not null)
         {
             if (TryGetFunctionDefinitionNodeByScope(
-                    resourceUri,
-                    compilationUnit,
+                    definitionResourceUri,
+                    definitionCompilationUnit,
                     localScope.Unsafe_SelfIndexKey,
-                    identifierTextSpan,
+                    referenceResourceUri,
+                    referenceTextSpan,
                     out functionDefinitionNode))
             {
                 return true;
@@ -1183,7 +1198,7 @@ public ref struct CSharpParserModel
             if (localScope.Unsafe_ParentIndexKey == -1)
                 localScope = default;
             else
-                localScope = Binder.GetScopeByScopeIndexKey(compilationUnit, localScope.Unsafe_ParentIndexKey);
+                localScope = Binder.GetScopeByScopeIndexKey(definitionCompilationUnit, localScope.Unsafe_ParentIndexKey);
         }
 
         functionDefinitionNode = null;
@@ -1191,28 +1206,29 @@ public ref struct CSharpParserModel
     }
     
     public readonly bool TryGetFunctionDefinitionNodeByScope(
-        ResourceUri resourceUri,
-        CSharpCompilationUnit compilationUnit,
-        int scopeIndexKey,
-        TextEditorTextSpan functionIdentifierTextSpan,
+        ResourceUri definitionResourceUri,
+        CSharpCompilationUnit definitionCompilationUnit,
+        int definitionScopeIndexKey,
+        ResourceUri referenceResourceUri,
+        TextEditorTextSpan referenceTextSpan,
         out FunctionDefinitionNode functionDefinitionNode)
     {
         functionDefinitionNode = null;
         
-        for (int i = compilationUnit.IndexCodeBlockOwnerList; i < compilationUnit.IndexCodeBlockOwnerList + compilationUnit.CountCodeBlockOwnerList; i++)
+        for (int i = definitionCompilationUnit.IndexCodeBlockOwnerList; i < definitionCompilationUnit.IndexCodeBlockOwnerList + definitionCompilationUnit.CountCodeBlockOwnerList; i++)
         {
             var x = Binder.CodeBlockOwnerList[i];
             
-            if (x.Unsafe_ParentIndexKey == scopeIndexKey &&
+            if (x.Unsafe_ParentIndexKey == definitionScopeIndexKey &&
                 x.SyntaxKind == SyntaxKind.FunctionDefinitionNode)
             {
-                var otherTextSpan = GetIdentifierTextSpan(x);
-                if (otherTextSpan.Length == functionIdentifierTextSpan.Length)
+                var definitionTextSpan = GetIdentifierTextSpan(x);
+                if (definitionTextSpan.Length == referenceTextSpan.Length)
                 {
                     // It was validated that neither CharIntSum is 0 here so removing the checks
-                    if (otherTextSpan.CharIntSum == functionIdentifierTextSpan.CharIntSum)
+                    if (definitionTextSpan.CharIntSum == referenceTextSpan.CharIntSum)
                     {
-                        if (CompareTextSpans(x, resourceUri, compilationUnit, functionIdentifierTextSpan))
+                        if (Binder.CSharpCompilerService.SafeCompareTextSpans(referenceResourceUri.Value, referenceTextSpan, definitionResourceUri.Value, definitionTextSpan))
                         {
                             functionDefinitionNode = (FunctionDefinitionNode)x;
                             break;
