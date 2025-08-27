@@ -82,6 +82,8 @@ public sealed class CSharpCompilerService : IExtendedCompilerService
     /// In order to avoid a try-catch-finally per file being parsed,
     /// this is being made public so the DotNetBackgroundTaskApi can guarantee this is cleared
     /// by wrapping the solution wide parse as a whole in a try-catch-finally.
+    /// 
+    /// The StreamReaderTupleCache does NOT contain this StreamReader.
     /// </summary>
     public (string AbsolutePathString, StreamReader Sr) FastParseTuple;
 
@@ -385,31 +387,107 @@ public sealed class CSharpCompilerService : IExtendedCompilerService
         if (sourceTextSpan.Length != otherTextSpan.Length)
             return false;
 
-        if (sourceAbsolutePathString != FastParseTuple.AbsolutePathString)
+        var length = otherTextSpan.Length;
+
+        if (sourceAbsolutePathString == FastParseTuple.AbsolutePathString)
         {
-            var sourceText = SafeGetText(sourceAbsolutePathString, sourceTextSpan) ?? string.Empty;
-            var otherText = SafeGetText(otherAbsolutePathString, otherTextSpan) ?? string.Empty;
-            return sourceText == otherText;
+            FastParseTuple.Sr.BaseStream.Seek(sourceTextSpan.ByteIndex, SeekOrigin.Begin);
+            FastParseTuple.Sr.DiscardBufferedData();
+
+            // string.Empty as file path is primitive keywords hack.
+            if (otherAbsolutePathString == string.Empty)
+            {
+                for (int i = 0; i < length; i++)
+                {
+                    FastParseTuple.Sr.Read(_safeGetTextBufferOne, 0, 1);
+
+                    if (_safeGetTextBufferOne[0] !=
+                        EmptyFileHackForLanguagePrimitiveText[otherTextSpan.StartInclusiveIndex + i])
+                    {
+                        return false;
+                    }
+                }
+
+                return true;
+            }
+            else
+            {
+                // StreamReader cache does not contain the FastParseTuple.Sr
+                var otherSr = GetOtherStreamReader(otherAbsolutePathString, otherTextSpan);
+                if (otherSr is null)
+                    return false;
+
+                for (int i = 0; i < length; i++)
+                {
+                    FastParseTuple.Sr.Read(_safeGetTextBufferOne, 0, 1);
+                    otherSr.Read(_safeGetTextBufferTwo, 0, 1);
+                    if (_safeGetTextBufferOne[0] != _safeGetTextBufferTwo[0])
+                        return false;
+                }
+
+                return true;
+            }
         }
-
-        if (!TryGetCachedStreamReader(otherAbsolutePathString, out var otherSr))
-            return false;
-
-        otherSr.BaseStream.Seek(otherTextSpan.ByteIndex, SeekOrigin.Begin);
-        otherSr.DiscardBufferedData();
-
-        FastParseTuple.Sr.BaseStream.Seek(otherTextSpan.ByteIndex, SeekOrigin.Begin);
-        FastParseTuple.Sr.DiscardBufferedData();
-
-        for (int i = 0; i < otherTextSpan.Length; i++)
+        else if (sourceAbsolutePathString == _currentFileBeingParsedTuple.AbsolutePathString)
         {
-            FastParseTuple.Sr.Read(_safeGetTextBufferOne, 0, 1);
-            otherSr.Read(_safeGetTextBufferTwo, 0, 1);
-            if (_safeGetTextBufferOne[0] != _safeGetTextBufferTwo[0])
-                return false;
+            // string.Empty as file path is primitive keywords hack.
+            if (otherAbsolutePathString == string.Empty)
+            {
+                for (int i = 0; i < length; i++)
+                {
+                    if (_currentFileBeingParsedTuple.Content[sourceTextSpan.StartInclusiveIndex + i] !=
+                        EmptyFileHackForLanguagePrimitiveText[otherTextSpan.StartInclusiveIndex + i])
+                    {
+                        return false;
+                    }
+                }
+
+                return true;
+            }
+            else if (otherAbsolutePathString == _currentFileBeingParsedTuple.AbsolutePathString)
+            {
+                for (int i = 0; i < length; i++)
+                {
+                    if (_currentFileBeingParsedTuple.Content[sourceTextSpan.StartInclusiveIndex + i] !=
+                        _currentFileBeingParsedTuple.Content[otherTextSpan.StartInclusiveIndex + i])
+                    {
+                        return false;
+                    }
+                }
+
+                return true;
+            }
+            else
+            {
+                var otherSr = GetOtherStreamReader(otherAbsolutePathString, otherTextSpan);
+                if (otherSr is null)
+                    return false;
+
+                for (int i = 0; i < length; i++)
+                {
+                    otherSr.Read(_safeGetTextBufferTwo, 0, 1);
+                    if (_currentFileBeingParsedTuple.Content[sourceTextSpan.StartInclusiveIndex + i] != _safeGetTextBufferTwo[0])
+                        return false;
+                }
+
+                return true;
+            }
+        }
+        else
+        {
+            return false;
         }
 
         return true;
+    }
+
+    private StreamReader GetOtherStreamReader(string otherAbsolutePathString, TextEditorTextSpan otherTextSpan)
+    {
+        if (!TryGetCachedStreamReader(otherAbsolutePathString, out var otherSr))
+            return null;
+        otherSr.BaseStream.Seek(otherTextSpan.ByteIndex, SeekOrigin.Begin);
+        otherSr.DiscardBufferedData();
+        return otherSr;
     }
 
     private bool TryGetCachedStreamReader(string absolutePathString, out StreamReader sr)
