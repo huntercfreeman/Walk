@@ -97,13 +97,17 @@ public sealed class CSharpCompilerService : IExtendedCompilerService
     /// </summary>
     public Dictionary<string, StreamReader> StreamReaderTupleCacheBackup = new();
 
-    public void ClearStreamReaderTupleCache()
+    public void Clear_MAIN_StreamReaderTupleCache()
     {
         foreach (var streamReader in StreamReaderTupleCache.Values)
         {
             streamReader.Dispose();
         }
         StreamReaderTupleCache.Clear();
+    }
+    
+    public void Clear_BACKUP_StreamReaderTupleCache()
+    {
         foreach (var streamReader in StreamReaderTupleCacheBackup.Values)
         {
             streamReader.Dispose();
@@ -257,9 +261,9 @@ public sealed class CSharpCompilerService : IExtendedCompilerService
             // ParseExpressions at ~4k lines of text needed `StreamReaderTupleCache.Count: 139`.
             //
             // This isn't just used for single file parsing though, it is also used for solution wide.
-            if (StreamReaderTupleCache.Count >= 500)
+            if (StreamReaderTupleCache.Count >= 360)
             {
-                ClearStreamReaderTupleCache();
+                Clear_MAIN_StreamReaderTupleCache();
             }
 
             StreamReaderTupleCache.Add(absolutePathString, sr);
@@ -369,9 +373,9 @@ public sealed class CSharpCompilerService : IExtendedCompilerService
             // ParseExpressions at ~4k lines of text needed `StreamReaderTupleCache.Count: 139`.
             //
             // This isn't just used for single file parsing though, it is also used for solution wide.
-            if (StreamReaderTupleCache.Count >= 500)
+            if (StreamReaderTupleCache.Count >= 360)
             {
-                ClearStreamReaderTupleCache();
+                Clear_MAIN_StreamReaderTupleCache();
             }
 
             StreamReaderTupleCache.Add(absolutePathString, sr);
@@ -535,7 +539,7 @@ public sealed class CSharpCompilerService : IExtendedCompilerService
             // This isn't just used for single file parsing though, it is also used for solution wide.
             if (StreamReaderTupleCache.Count >= 360)
             {
-                ClearStreamReaderTupleCache();
+                Clear_MAIN_StreamReaderTupleCache();
             }
 
             StreamReaderTupleCache.Add(absolutePathString, sr);
@@ -575,7 +579,7 @@ public sealed class CSharpCompilerService : IExtendedCompilerService
             // This isn't just used for single file parsing though, it is also used for solution wide.
             if (StreamReaderTupleCacheBackup.Count >= 140)
             {
-                ClearStreamReaderTupleCache();
+                Clear_BACKUP_StreamReaderTupleCache();
             }
 
             StreamReaderTupleCacheBackup.Add(absolutePathString, sr);
@@ -1802,7 +1806,8 @@ public sealed class CSharpCompilerService : IExtendedCompilerService
 
             _currentFileBeingParsedTuple = (null, null);
 
-            ClearStreamReaderTupleCache();
+            Clear_MAIN_StreamReaderTupleCache();
+            Clear_BACKUP_StreamReaderTupleCache();
         }
         
         return ValueTask.CompletedTask;
