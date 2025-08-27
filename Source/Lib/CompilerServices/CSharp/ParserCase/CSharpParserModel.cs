@@ -504,7 +504,6 @@ public ref struct CSharpParserModel
                 ResourceUri,
                 Compilation,
                 CurrentCodeBlockOwner.Unsafe_SelfIndexKey,
-                text,
                 variableDeclarationNode.IdentifierToken.TextSpan,
                 out var existingVariableDeclarationNode))
         {
@@ -604,7 +603,6 @@ public ref struct CSharpParserModel
                 ResourceUri,
                 Compilation,
                 CurrentCodeBlockOwner.Unsafe_SelfIndexKey,
-                text,
                 variableIdentifierToken.TextSpan,
                 out var variableDeclarationNode)
             && variableDeclarationNode is not null)
@@ -1250,7 +1248,6 @@ public ref struct CSharpParserModel
         ResourceUri resourceUri,
         CSharpCompilationUnit compilationUnit,
         int initialScopeIndexKey,
-        string identifierText,
         TextEditorTextSpan identifierTextSpan,
         out VariableDeclarationNode? variableDeclarationStatementNode)
     {
@@ -1262,7 +1259,6 @@ public ref struct CSharpParserModel
                     resourceUri,
                     compilationUnit,
                     localScope.Unsafe_SelfIndexKey,
-                    identifierText,
                     identifierTextSpan,
                     out variableDeclarationStatementNode))
             {
@@ -1283,7 +1279,6 @@ public ref struct CSharpParserModel
         ResourceUri resourceUri,
         CSharpCompilationUnit compilationUnit,
         int scopeIndexKey,
-        string variableIdentifierText,
         TextEditorTextSpan identifierTextSpan,
         TypeDefinitionNode typeDefinitionNode,
         out VariableDeclarationNode variableDeclarationNode)
@@ -1325,7 +1320,6 @@ public ref struct CSharpParserModel
                                 innerResourceUri,
                                 innerCompilationUnit,
                                 innerScopeIndexKey,
-                                variableIdentifierText,
                                 identifierTextSpan,
                                 out variableDeclarationNode,
                                 isRecursive: true))
@@ -1351,7 +1345,6 @@ public ref struct CSharpParserModel
         ResourceUri resourceUri,
         CSharpCompilationUnit compilationUnit,
         int scopeIndexKey,
-        string variableIdentifierText,
         TextEditorTextSpan variableIdentifierTextSpan,
         out VariableDeclarationNode? variableDeclarationNode,
         bool isRecursive = false)
@@ -1365,12 +1358,12 @@ public ref struct CSharpParserModel
                 x.SyntaxKind == SyntaxKind.VariableDeclarationNode)
             {
                 var otherTextSpan = GetIdentifierTextSpan(x);
-                if (otherTextSpan.Length == variableIdentifierText.Length)
+                if (otherTextSpan.Length == variableIdentifierTextSpan.Length)
                 {
                     // It was validated that neither CharIntSum is 0 here so removing the checks
                     if (otherTextSpan.CharIntSum == variableIdentifierTextSpan.CharIntSum)
                     {
-                        if (CompareIdentifierText(x, resourceUri, compilationUnit, variableIdentifierText))
+                        if (CompareTextSpans(x, resourceUri, compilationUnit, variableIdentifierTextSpan))
                         {
                             variableDeclarationNode = (VariableDeclarationNode)x;
                             break;
@@ -1393,7 +1386,6 @@ public ref struct CSharpParserModel
                         resourceUri,
                         compilationUnit,
                         scopeIndexKey,
-                        variableIdentifierText,
                         variableIdentifierTextSpan,
                         typeDefinitionNode,
                         out variableDeclarationNode))
@@ -1452,7 +1444,6 @@ public ref struct CSharpParserModel
                                     innerResourceUri,
                                     innerCompilationUnit,
                                     innerScopeIndexKey,
-                                    variableIdentifierText,
                                     identifierTextSpan,
                                     out variableDeclarationNode,
                                     isRecursive: true))
@@ -1900,6 +1891,83 @@ public ref struct CSharpParserModel
         return Binder.CSharpCompilerService.SafeCompareText(
             absolutePathString,
             identifierText,
+            textSpan);
+    }
+
+    public readonly bool CompareTextSpans(
+        ISyntaxNode node,
+        ResourceUri resourceUri,
+        CSharpCompilationUnit compilationUnit,
+        TextEditorTextSpan identifierTextSpan)
+    {
+        string absolutePathString = resourceUri.Value;
+        TextEditorTextSpan textSpan;
+        
+        switch (node.SyntaxKind)
+        {
+            case SyntaxKind.TypeDefinitionNode:
+            {
+                var typeDefinitionNode = (TypeDefinitionNode)node;
+                textSpan = typeDefinitionNode.TypeIdentifierToken.TextSpan;
+                absolutePathString = typeDefinitionNode.ResourceUri.Value;
+                break;
+            }
+            case SyntaxKind.TypeClauseNode:
+            {
+                var typeClauseNode = (TypeClauseNode)node;
+                textSpan = typeClauseNode.TypeIdentifierToken.TextSpan;
+                absolutePathString = typeClauseNode.ExplicitDefinitionResourceUri.Value;
+                break;
+            }
+            case SyntaxKind.FunctionDefinitionNode:
+            {
+                var functionDefinitionNode = (FunctionDefinitionNode)node;
+                textSpan = functionDefinitionNode.FunctionIdentifierToken.TextSpan;
+                absolutePathString = functionDefinitionNode.ResourceUri.Value;
+                break;
+            }
+            case SyntaxKind.FunctionInvocationNode:
+            {
+                var functionInvocationNode = (FunctionInvocationNode)node;
+                textSpan = functionInvocationNode.FunctionInvocationIdentifierToken.TextSpan;
+                absolutePathString = functionInvocationNode.ResourceUri.Value;
+                break;
+            }
+            case SyntaxKind.VariableDeclarationNode:
+            {
+                var variableDeclarationNode = (VariableDeclarationNode)node;
+                textSpan = variableDeclarationNode.IdentifierToken.TextSpan;
+                absolutePathString = variableDeclarationNode.ResourceUri.Value;
+                break;
+            }
+            case SyntaxKind.VariableReferenceNode:
+            {
+                textSpan = ((VariableReferenceNode)node).VariableIdentifierToken.TextSpan;
+                absolutePathString = ResourceUri.Value;
+                break;
+            }
+            case SyntaxKind.LabelDeclarationNode:
+            {
+                textSpan = ((LabelDeclarationNode)node).IdentifierToken.TextSpan;
+                absolutePathString = ResourceUri.Value;
+                break;
+            }
+            case SyntaxKind.LabelReferenceNode:
+            {
+                textSpan = ((LabelReferenceNode)node).IdentifierToken.TextSpan;
+                absolutePathString = ResourceUri.Value;
+                break;
+            }
+            default:
+            {
+                return false;
+            }
+        }
+        
+        return Binder.CSharpCompilerService.SafeCompareTextSpans(
+            ResourceUri.Value,
+            identifierTextSpan,
+            absolutePathString,
             textSpan);
     }
     

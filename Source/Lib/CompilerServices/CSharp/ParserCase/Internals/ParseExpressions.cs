@@ -1046,7 +1046,7 @@ public static class ParseExpressions
             }
         }
         
-        var ambiguousIdentifierTokenText = parserModel.GetTextSpanText(ambiguousIdentifierExpressionNode.Token.TextSpan);
+        
     
         if (parserModel.ParserContextKind != CSharpParserContextKind.ForceParseNextIdentifierAsTypeClauseNode &&
             UtilityApi.IsConvertibleToIdentifierToken(ambiguousIdentifierExpressionNode.Token.SyntaxKind))
@@ -1055,7 +1055,6 @@ public static class ParseExpressions
                     parserModel.ResourceUri,
                     parserModel.Compilation,
                     parserModel.CurrentCodeBlockOwner.Unsafe_SelfIndexKey,
-                    ambiguousIdentifierTokenText,
                     ambiguousIdentifierExpressionNode.Token.TextSpan,
                     out var existingVariableDeclarationNode))
             {
@@ -1077,7 +1076,9 @@ public static class ParseExpressions
                 goto finalize;
             }
         }
-        
+
+        var ambiguousIdentifierTokenText = parserModel.GetTextSpanText(ambiguousIdentifierExpressionNode.Token.TextSpan);
+
         if (!forceVariableReferenceNode && UtilityApi.IsConvertibleToTypeClauseNode(ambiguousIdentifierExpressionNode.Token.SyntaxKind))
         {
             if (parserModel.TryGetTypeDefinitionHierarchically(
@@ -1143,7 +1144,6 @@ public static class ParseExpressions
                     parserModel.ResourceUri,
                     parserModel.Compilation,
                     parserModel.CurrentCodeBlockOwner.Unsafe_SelfIndexKey,
-                    ambiguousIdentifierTokenText,
                     ambiguousIdentifierExpressionNode.Token.TextSpan,
                     out _))
             {
