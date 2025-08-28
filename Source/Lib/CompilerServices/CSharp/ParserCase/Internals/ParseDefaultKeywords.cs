@@ -926,21 +926,15 @@ public class ParseDefaultKeywords
         
         if (typeDefinitionNode.HasPartialModifier)
         {
-            // This compilation has not been written to the __CompilationUnitMap yet,
-            // so this will read the previous compilation of this file.
-            if (parserModel.Binder.__CompilationUnitMap.TryGetValue(parserModel.ResourceUri, out var previousCompilationUnit))
+            if (parserModel.TryGetTypeDefinitionHierarchically(
+                    parserModel.ResourceUri,
+                    parserModel.Compilation,
+                    parserModel.CurrentCodeBlockOwner.Unsafe_SelfIndexKey,
+                    parserModel.ResourceUri,
+                    identifierToken.TextSpan,
+                    out TypeDefinitionNode? previousTypeDefinitionNode))
             {
-                if (parserModel.TryGetTypeDefinitionHierarchically(
-                        parserModel.ResourceUri,
-                        previousCompilationUnit,
-                        parserModel.CurrentCodeBlockOwner.Unsafe_SelfIndexKey,
-                        parserModel.ResourceUri,
-                        identifierToken.TextSpan,
-                        out TypeDefinitionNode? previousTypeDefinitionNode))
-                {
-                    if (previousTypeDefinitionNode is not null)
-                        typeDefinitionNode.IndexPartialTypeDefinition = previousTypeDefinitionNode.IndexPartialTypeDefinition;
-                }
+                typeDefinitionNode.IndexPartialTypeDefinition = previousTypeDefinitionNode.IndexPartialTypeDefinition;
             }
         }
         
@@ -976,7 +970,7 @@ public class ParseDefaultKeywords
                                 // All the existing entires will be "emptied"
                                 // so don't both with checking whether the arguments are the same here.
                                 //
-                                // All that matters is that they're put in the same "method group".
+                                // All that matters is that they're put in the same "group".
                                 //
                                 var binder = parserModel.Binder;
                                 
