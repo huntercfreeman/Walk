@@ -926,6 +926,8 @@ public class ParseDefaultKeywords
         
         if (typeDefinitionNode.HasPartialModifier)
         {
+            // NOTE: You do indeed use the current compilation unit here...
+            // ...there is a different step that checks the previous.
             if (parserModel.TryGetTypeDefinitionHierarchically(
                     parserModel.ResourceUri,
                     parserModel.Compilation,
