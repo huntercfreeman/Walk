@@ -401,8 +401,11 @@ public sealed class CSharpCompilerService : IExtendedCompilerService
     
     public bool SafeCompareTextSpans(string sourceAbsolutePathString, TextEditorTextSpan sourceTextSpan, string otherAbsolutePathString, TextEditorTextSpan otherTextSpan)
     {
-        if (sourceTextSpan.Length != otherTextSpan.Length)
+        if (sourceTextSpan.Length != otherTextSpan.Length ||
+            sourceTextSpan.CharIntSum != otherTextSpan.CharIntSum)
+        {
             return false;
+        }
 
         var length = otherTextSpan.Length;
 

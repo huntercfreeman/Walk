@@ -1041,19 +1041,11 @@ public ref struct CSharpParserModel
             if (x.Unsafe_ParentIndexKey == definitionScopeIndexKey &&
                 x.SyntaxKind == SyntaxKind.TypeDefinitionNode)
             {
-                var definitionTextSpan = GetIdentifierTextSpan(x);
-                if (definitionTextSpan.Length == referenceTextSpan.Length)
+                if (Binder.CSharpCompilerService.SafeCompareTextSpans(
+                        referenceResourceUri.Value, referenceTextSpan, definitionResourceUri.Value, GetIdentifierTextSpan(x)))
                 {
-                    // It was validated that neither CharIntSum is 0 here so removing the checks
-                    if (definitionTextSpan.CharIntSum == referenceTextSpan.CharIntSum)
-                    {
-                        if (Binder.CSharpCompilerService.SafeCompareTextSpans(
-                                referenceResourceUri.Value, referenceTextSpan, definitionResourceUri.Value, definitionTextSpan))
-                        {
-                            typeDefinitionNode = (TypeDefinitionNode)x;
-                            break;
-                        }
-                    }
+                    typeDefinitionNode = (TypeDefinitionNode)x;
+                    break;
                 }
             }
         }
@@ -1064,19 +1056,11 @@ public ref struct CSharpParserModel
             {
                 foreach (var externalDefinitionNode in ExternalTypeDefinitionList)
                 {
-                    var externalDefinitionTextSpan = GetIdentifierTextSpan(externalDefinitionNode);
-                    if (externalDefinitionTextSpan.Length == referenceTextSpan.Length)
+                    if (Binder.CSharpCompilerService.SafeCompareTextSpans(
+                            referenceResourceUri.Value, referenceTextSpan, externalDefinitionNode.ResourceUri.Value, GetIdentifierTextSpan(externalDefinitionNode)))
                     {
-                        // It was validated that neither CharIntSum is 0 here so removing the checks
-                        if (externalDefinitionTextSpan.CharIntSum == referenceTextSpan.CharIntSum)
-                        {
-                            if (Binder.CSharpCompilerService.SafeCompareTextSpans(
-                                    referenceResourceUri.Value, referenceTextSpan, externalDefinitionNode.ResourceUri.Value, externalDefinitionTextSpan))
-                            {
-                                typeDefinitionNode = externalDefinitionNode;
-                                break;
-                            }
-                        }
+                        typeDefinitionNode = externalDefinitionNode;
+                        break;
                     }
                 }
                 if (typeDefinitionNode is not null)
@@ -1090,51 +1074,6 @@ public ref struct CSharpParserModel
         else
         {
             return true;
-        }
-    }
-    
-    public readonly bool TryAddTypeDefinitionNodeByScope(
-        ResourceUri resourceUri,
-        CSharpCompilationUnit compilationUnit,
-        int scopeIndexKey,
-        string typeIdentifierText,
-        TypeDefinitionNode typeDefinitionNode)
-    {
-        TypeDefinitionNode? matchNode = null;
-        
-        for (int i = compilationUnit.IndexCodeBlockOwnerList; i < compilationUnit.IndexCodeBlockOwnerList + compilationUnit.CountCodeBlockOwnerList; i++)
-        {
-            var x = Binder.CodeBlockOwnerList[i];
-            if (x.Unsafe_ParentIndexKey == scopeIndexKey &&
-                x.SyntaxKind == SyntaxKind.TypeDefinitionNode)
-            {
-                var otherTextSpan = GetIdentifierTextSpan(x);
-                if (otherTextSpan.Length == typeIdentifierText.Length)
-                {
-                    // It was validated that neither CharIntSum is 0 here so removing the checks
-                    if (otherTextSpan.CharIntSum == typeDefinitionNode.TypeIdentifierToken.TextSpan.CharIntSum)
-                    {
-                        if (CompareIdentifierText(x, resourceUri, compilationUnit, typeIdentifierText))
-                        {
-                            matchNode = (TypeDefinitionNode)x;
-                            break;
-                        }
-                    }
-                }
-            }
-        }
-        
-        if (matchNode is null)
-        {
-            Binder.CodeBlockOwnerList.Insert(
-                compilationUnit.IndexCodeBlockOwnerList + compilationUnit.CountCodeBlockOwnerList,
-                typeDefinitionNode);
-            ++compilationUnit.CountCodeBlockOwnerList;
-            return true;
-        }
-        else
-        {
-            return false;
         }
     }
     
@@ -1222,18 +1161,10 @@ public ref struct CSharpParserModel
             if (x.Unsafe_ParentIndexKey == definitionScopeIndexKey &&
                 x.SyntaxKind == SyntaxKind.FunctionDefinitionNode)
             {
-                var definitionTextSpan = GetIdentifierTextSpan(x);
-                if (definitionTextSpan.Length == referenceTextSpan.Length)
+                if (Binder.CSharpCompilerService.SafeCompareTextSpans(referenceResourceUri.Value, referenceTextSpan, definitionResourceUri.Value, GetIdentifierTextSpan(x)))
                 {
-                    // It was validated that neither CharIntSum is 0 here so removing the checks
-                    if (definitionTextSpan.CharIntSum == referenceTextSpan.CharIntSum)
-                    {
-                        if (Binder.CSharpCompilerService.SafeCompareTextSpans(referenceResourceUri.Value, referenceTextSpan, definitionResourceUri.Value, definitionTextSpan))
-                        {
-                            functionDefinitionNode = (FunctionDefinitionNode)x;
-                            break;
-                        }
-                    }
+                    functionDefinitionNode = (FunctionDefinitionNode)x;
+                    break;
                 }
             }
         }
@@ -1396,19 +1327,11 @@ public ref struct CSharpParserModel
             if (node.Unsafe_ParentIndexKey == declarationScopeIndexKey &&
                 node.SyntaxKind == SyntaxKind.VariableDeclarationNode)
             {
-                var declarationTextSpan = GetIdentifierTextSpan(node);
-                if (declarationTextSpan.Length == referenceTextSpan.Length)
+                if (Binder.CSharpCompilerService.SafeCompareTextSpans(
+                        referenceResourceUri.Value, referenceTextSpan, declarationResourceUri.Value, GetIdentifierTextSpan(node)))
                 {
-                    // It was validated that neither CharIntSum is 0 here so removing the checks
-                    if (declarationTextSpan.CharIntSum == referenceTextSpan.CharIntSum)
-                    {
-                        if (Binder.CSharpCompilerService.SafeCompareTextSpans(
-                                referenceResourceUri.Value, referenceTextSpan, declarationResourceUri.Value, declarationTextSpan))
-                        {
-                            variableDeclarationNode = (VariableDeclarationNode)node;
-                            break;
-                        }
-                    }
+                    variableDeclarationNode = (VariableDeclarationNode)node;
+                    break;
                 }
             }
         }
