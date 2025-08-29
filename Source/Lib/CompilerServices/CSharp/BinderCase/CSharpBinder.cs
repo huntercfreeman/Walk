@@ -226,6 +226,32 @@ public class CSharpBinder
                 countFunctionParameterEntryList: 0,
                 closeParenthesisToken: default));
         }
+
+        _ = Task.Run(async () =>
+        {
+            await Task.Delay(6_000);
+
+            Console.WriteLine("apple");
+            WriteNamespacePrefixTree(NamespacePrefixTree);
+        });
+    }
+
+    public void WriteNamespacePrefixTree(NamespacePrefixTree namespacePrefixTree)
+    {
+        WriteNamespacePrefixNode(namespacePrefixTree.__Root, depth: 0);
+    }
+
+    public void WriteNamespacePrefixNode(NamespacePrefixNode namespacePrefixNode, int depth)
+    {
+        Console.WriteLine(depth);
+        var indentation = new string(' ', depth);
+
+        foreach (var child in namespacePrefixNode.Children)
+        {
+            var text = CSharpCompilerService.SafeGetText(child.ResourceUri.Value, child.TextSpan);
+            Console.WriteLine($"{indentation} {text} ({child.Links})");
+            WriteNamespacePrefixNode(child, depth + 1);
+        }
     }
 
     /// <summary>(inclusive, exclusive, this is the index at which you'd insert the text span)</summary>
@@ -1103,16 +1129,21 @@ public class CSharpBinder
             }
             case SyntaxKind.NamespaceSymbol:
             {
-                /*var text = CSharpCompilerService.UnsafeGetText(resourceUri.Value, textSpan);
-                
-                if (text is not null && NamespacePrefixTree.__Root.Children.TryGetValue(
-                    text,
-                    out var namespacePrefixNode))
+                var findTuple = NamespacePrefixTree.FindRange(NamespacePrefixTree.__Root, textSpan.CharIntSum);
+
+                for (int i = findTuple.StartIndex; i < findTuple.EndIndex; i++)
                 {
-                    return new NamespaceClauseNode(new SyntaxToken(SyntaxKind.IdentifierToken, textSpan));
+                    if (CSharpCompilerService.SafeCompareTextSpans(
+                            resourceUri.Value,
+                            textSpan,
+                            NamespacePrefixTree.__Root.Children[i].ResourceUri.Value,
+                            NamespacePrefixTree.__Root.Children[i].TextSpan))
+                    {
+                        return new NamespaceClauseNode(new SyntaxToken(SyntaxKind.IdentifierToken, textSpan));
+                    }
                 }
-                
-                if (symbol is not null)
+
+                /*if (symbol is not null)
                 {
                     var fullNamespaceName = CSharpCompilerService.UnsafeGetText(resourceUri.Value, symbol.Value.TextSpan);
                     if (fullNamespaceName is not null)

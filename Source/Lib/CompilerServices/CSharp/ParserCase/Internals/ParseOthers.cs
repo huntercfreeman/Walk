@@ -42,6 +42,34 @@ public static class ParseOthers
                 }
 
                 charIntSum += matchedToken.TextSpan.CharIntSum;
+                
+                if (isNamespaceStatement)
+                {
+                    var findTuple = parserModel.Binder.NamespacePrefixTree.FindRange(namespacePrefixNode, matchedToken.TextSpan.CharIntSum);
+                    var nodeWasFound = false;
+
+                    for (int i = findTuple.StartIndex; i < findTuple.EndIndex; i++)
+                    {
+                        var targetNode = namespacePrefixNode.Children[i];
+                        if (parserModel.Binder.CSharpCompilerService.SafeCompareTextSpans(
+                            parserModel.ResourceUri.Value,
+                            matchedToken.TextSpan,
+                            targetNode.ResourceUri.Value,
+                            targetNode.TextSpan))
+                        {
+                            namespacePrefixNode = targetNode;
+                            nodeWasFound = true;
+                            break;
+                        }
+                    }
+
+                    if (!nodeWasFound)
+                    {
+                        var newNode = new NamespacePrefixNode(parserModel.ResourceUri, matchedToken.TextSpan);
+                        namespacePrefixNode.Children.Insert(findTuple.InsertionIndex, newNode);
+                        namespacePrefixNode = newNode;
+                    }
+                }
 
                 if (parserModel.TokenWalker.Next.SyntaxKind != SyntaxKind.StatementDelimiterToken)
                 {
