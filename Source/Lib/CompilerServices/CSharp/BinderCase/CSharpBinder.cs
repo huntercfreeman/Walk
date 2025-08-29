@@ -226,32 +226,6 @@ public class CSharpBinder
                 countFunctionParameterEntryList: 0,
                 closeParenthesisToken: default));
         }
-
-        _ = Task.Run(async () =>
-        {
-            await Task.Delay(6_000);
-
-            Console.WriteLine("apple");
-            WriteNamespacePrefixTree(NamespacePrefixTree);
-        });
-    }
-
-    public void WriteNamespacePrefixTree(NamespacePrefixTree namespacePrefixTree)
-    {
-        WriteNamespacePrefixNode(namespacePrefixTree.__Root, depth: 0);
-    }
-
-    public void WriteNamespacePrefixNode(NamespacePrefixNode namespacePrefixNode, int depth)
-    {
-        Console.WriteLine(depth);
-        var indentation = new string(' ', depth);
-
-        foreach (var child in namespacePrefixNode.Children)
-        {
-            var text = CSharpCompilerService.SafeGetText(child.ResourceUri.Value, child.TextSpan);
-            Console.WriteLine($"{indentation} {text} ({child.Links})");
-            WriteNamespacePrefixNode(child, depth + 1);
-        }
     }
 
     /// <summary>(inclusive, exclusive, this is the index at which you'd insert the text span)</summary>
