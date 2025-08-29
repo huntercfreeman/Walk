@@ -854,17 +854,13 @@ public class ParseDefaultKeywords
                     {
                         _ = parserModel.StatementBuilder.Pop();
 
-                        if ((firstOutput.ToString().ToLower() == "protected" &&
-                                secondOutput.ToString().ToLower() == "internal") ||
-                            (firstOutput.ToString().ToLower() == "internal" &&
-                                secondOutput.ToString().ToLower() == "protected"))
+                        if ((firstOutput == AccessModifierKind.Protected && secondOutput == AccessModifierKind.Internal) ||
+                            (firstOutput == AccessModifierKind.Internal && secondOutput == AccessModifierKind.Protected))
                         {
                             accessModifierKind = AccessModifierKind.ProtectedInternal;
                         }
-                        else if ((firstOutput.ToString().ToLower() == "private" &&
-                                    secondOutput.ToString().ToLower() == "protected") ||
-                                (firstOutput.ToString().ToLower() == "protected" &&
-                                    secondOutput.ToString().ToLower() == "private"))
+                        else if ((firstOutput == AccessModifierKind.Private && secondOutput == AccessModifierKind.Protected) ||
+                                (firstOutput == AccessModifierKind.Protected && secondOutput == AccessModifierKind.Private))
                         {
                             accessModifierKind = AccessModifierKind.PrivateProtected;
                         }
