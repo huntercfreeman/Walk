@@ -749,11 +749,7 @@ public ref struct CSharpParserModel
 
     public readonly void BindUsingStatementTuple(SyntaxToken usingKeywordToken, SyntaxToken namespaceIdentifierToken)
     {
-        var text = Binder.CSharpCompilerService.SafeGetText(ResourceUri.Value, namespaceIdentifierToken.TextSpan);
-        if (text is null)
-            return;
-    
-        AddNamespaceToCurrentScope(text);
+        AddNamespaceToCurrentScope(namespaceIdentifierToken.TextSpan);
     }
     
     public readonly void BindTypeDefinitionNode(TypeDefinitionNode typeDefinitionNode, bool shouldOverwrite = false)
@@ -969,11 +965,7 @@ public ref struct CSharpParserModel
         {
             case SyntaxKind.NamespaceStatementNode:
                 var namespaceStatementNode = (NamespaceStatementNode)codeBlockOwner;
-                var namespaceString = Binder.CSharpCompilerService.SafeGetText(ResourceUri.Value, namespaceStatementNode.IdentifierToken.TextSpan);
-                if (namespaceString is null)
-                    return;
-                    
-                AddNamespaceToCurrentScope(namespaceString);
+                AddNamespaceToCurrentScope(namespaceStatementNode.IdentifierToken.TextSpan);
 
                 BindNamespaceStatementNode((NamespaceStatementNode)codeBlockOwner);
                 return;
