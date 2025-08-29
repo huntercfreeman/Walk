@@ -229,7 +229,7 @@ public class CSharpBinder
     }
 
     /// <summary>(inclusive, exclusive, this is the index at which you'd insert the text span)</summary>
-    public (int StartIndex, int EndIndex, int InsertionIndex) NamespaceContribution_FindRange(NamespaceContributionEntry namespaceContributionEntry)
+    public (int StartIndex, int EndIndex, int InsertionIndex) NamespaceGroup_FindRange(NamespaceContributionEntry namespaceContributionEntry)
     {
         var startIndex = -1;
         var endIndex = -1;
@@ -266,7 +266,7 @@ public class CSharpBinder
             for (int i = previousCompilationUnit.IndexNamespaceContributionList + previousCompilationUnit.CountNamespaceContributionList - 1; i >= previousCompilationUnit.IndexNamespaceContributionList; i--)
             {
                 var namespaceContributionEntry = NamespaceContributionList[i];
-                var findTuple = NamespaceContribution_FindRange(namespaceContributionEntry);
+                var findTuple = NamespaceGroup_FindRange(namespaceContributionEntry);
 
                 for (int groupIndex = findTuple.EndIndex - 1; groupIndex >= findTuple.StartIndex; groupIndex--)
                 {
