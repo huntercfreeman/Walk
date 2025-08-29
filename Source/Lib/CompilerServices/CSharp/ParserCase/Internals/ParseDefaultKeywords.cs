@@ -874,11 +874,18 @@ public class ParseDefaultKeywords
         var storageModifierKind = UtilityApi.GetStorageModifierKindFromToken(storageModifierToken);
         if (storageModifierKind == StorageModifierKind.None)
             return;
-        if (storageModifierKind == StorageModifierKind.Record &&
-            parserModel.TokenWalker.Current.SyntaxKind == SyntaxKind.StructTokenKeyword)
+        if (storageModifierKind == StorageModifierKind.Record)
         {
-            var structKeywordToken = parserModel.TokenWalker.Consume();
-            storageModifierKind = StorageModifierKind.RecordStruct;
+            if (parserModel.TokenWalker.Current.SyntaxKind == SyntaxKind.ClassTokenKeyword)
+            {
+                var classKeywordToken = parserModel.TokenWalker.Consume();
+                storageModifierKind = StorageModifierKind.RecordClass;
+            }
+            else if (parserModel.TokenWalker.Current.SyntaxKind == SyntaxKind.StructTokenKeyword)
+            {
+                var structKeywordToken = parserModel.TokenWalker.Consume();
+                storageModifierKind = StorageModifierKind.RecordStruct;
+            }
         }
     
         // Given: public class MyClass<T> { }
