@@ -1117,7 +1117,7 @@ public class CSharpBinder
                     }
                 }
 
-                /*if (symbol is not null)
+                if (symbol is not null)
                 {
                     var fullNamespaceName = CSharpCompilerService.UnsafeGetText(resourceUri.Value, symbol.Value.TextSpan);
                     if (fullNamespaceName is not null)
@@ -1126,13 +1126,40 @@ public class CSharpBinder
                         
                         int position = 0;
                         
-                        namespacePrefixNode = NamespacePrefixTree.__Root;
+                        
+                        var namespacePrefixNode = NamespacePrefixTree.__Root;
                         
                         var success = true;
                         
                         while (position < splitResult.Length)
                         {
-                            if (!namespacePrefixNode.Children.TryGetValue(splitResult[position++], out namespacePrefixNode))
+                            int charIntSum = 0;
+                            foreach (var character in splitResult[position])
+                            {
+                                charIntSum += (int)character;
+                            }
+                            
+                            findTuple = NamespacePrefixTree.FindRange(namespacePrefixNode, charIntSum);
+                            
+                            var innerSuccess = false;
+                            
+                            int i = 0;
+                            
+                            for (i = findTuple.StartIndex; i < findTuple.EndIndex; i++)
+                            {
+                                if (CSharpCompilerService.SafeCompareTextSpans(
+                                        resourceUri.Value,
+                                        textSpan,
+                                        namespacePrefixNode.Children[i].ResourceUri.Value,
+                                        namespacePrefixNode.Children[i].TextSpan))
+                                {
+                                    innerSuccess = true;
+                                    namespacePrefixNode = namespacePrefixNode.Children[i];
+                                    break;
+                                }
+                            }
+                            
+                            if (!innerSuccess)
                             {
                                 success = false;
                                 break;
@@ -1147,7 +1174,7 @@ public class CSharpBinder
                                 startOfMemberAccessChainPositionIndex: textSpan.StartInclusiveIndex);
                         }
                     }
-                }*/
+                }
                 break;
             }
         }
