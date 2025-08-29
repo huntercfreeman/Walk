@@ -1185,7 +1185,7 @@ public static class ParseExpressions
 
             ambiguousIdentifierTokenText = parserModel.GetTextSpanText(ambiguousIdentifierExpressionNode.Token.TextSpan);
 
-            if (parserModel.Binder.NamespacePrefixTree.__Root.Children.TryGetValue(
+            /*if (parserModel.Binder.NamespacePrefixTree.__Root.Children.TryGetValue(
                 ambiguousIdentifierTokenText,
                 out var namespacePrefixNode))
             {
@@ -1202,7 +1202,7 @@ public static class ParseExpressions
                 ++parserModel.Compilation.CountSymbolList;
                     
                 goto finalize;
-            }
+            }*/
             
             if (parserModel.TryGetLabelDeclarationHierarchically(
                     ambiguousIdentifierTokenText,
@@ -3524,20 +3524,20 @@ public static class ParseExpressions
                 
                 if (firstNamespacePrefixNode is null)
                 {
-                    if(parserModel.Binder.NamespacePrefixTree.__Root.Children.TryGetValue(
+                    /*if(parserModel.Binder.NamespacePrefixTree.__Root.Children.TryGetValue(
                         parserModel.Binder.CSharpCompilerService.SafeGetText(parserModel.ResourceUri.Value, firstNamespaceClauseNode.IdentifierToken.TextSpan) ?? string.Empty,
                         out firstNamespacePrefixNode))
                     {
                         firstNamespaceClauseNode.NamespacePrefixNode = firstNamespacePrefixNode;
                         firstNamespaceClauseNode.StartOfMemberAccessChainPositionIndex = firstNamespaceClauseNode.IdentifierToken.TextSpan.StartInclusiveIndex;
-                    }
+                    }*/
                 }
                 
                 var memberIdentifierText = parserModel.Binder.CSharpCompilerService.SafeGetText(parserModel.ResourceUri.Value, memberIdentifierToken.TextSpan) ?? string.Empty;
                 
                 if (firstNamespacePrefixNode is not null)
                 {
-                    if (firstNamespacePrefixNode.Children.TryGetValue(
+                    /*if (firstNamespacePrefixNode.Children.TryGetValue(
                             memberIdentifierText,
                             out var secondNamespacePrefixNode))
                     {
@@ -3560,7 +3560,7 @@ public static class ParseExpressions
                         namespaceClauseNode.PreviousNamespaceClauseNode = firstNamespaceClauseNode;
                         namespaceClauseNode.StartOfMemberAccessChainPositionIndex = firstNamespaceClauseNode.StartOfMemberAccessChainPositionIndex;
                         return namespaceClauseNode;
-                    }
+                    }*/
                 }
                 
                 if (parserModel.Binder.NamespaceGroupMap.TryGetValue(parserModel.Binder.CSharpCompilerService.SafeGetText(parserModel.ResourceUri.Value, firstNamespaceClauseNode.IdentifierToken.TextSpan) ?? string.Empty, out var namespaceGroup))

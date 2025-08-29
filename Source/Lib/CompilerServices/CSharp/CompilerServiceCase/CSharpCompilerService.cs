@@ -74,7 +74,7 @@ public sealed class CSharpCompilerService : IExtendedCompilerService
     /// This is a bit of misnomer because the solution wide parse doesn't set this.
     /// It is specifically a TextEditor based event having led to a parse that sets this.
     /// </summary>
-    private (string AbsolutePathString, string Content) _currentFileBeingParsedTuple;
+    public (string AbsolutePathString, string Content) _currentFileBeingParsedTuple;
 
     /// <summary>
     /// This needs to be ensured to be cleared after the solution wide parse.
@@ -867,7 +867,7 @@ public sealed class CSharpCompilerService : IExtendedCompilerService
                 
                 if (definitionNode is not null)
                 {
-                    if (definitionNode.SyntaxKind == SyntaxKind.NamespaceClauseNode)
+                    /*if (definitionNode.SyntaxKind == SyntaxKind.NamespaceClauseNode)
                     {
                         var namespaceClauseNode = (NamespaceClauseNode)definitionNode;
                     
@@ -930,7 +930,7 @@ public sealed class CSharpCompilerService : IExtendedCompilerService
                         }
                         
                         return null;
-                    }
+                    }*/
                 
                     TypeReference typeReference = default;
                     
@@ -2141,13 +2141,13 @@ public sealed class CSharpCompilerService : IExtendedCompilerService
                 }));
         }
         
-        foreach (var namespaceGroupKvp in __CSharpBinder.NamespacePrefixTree.__Root.Children.Where(x => x.Key.Contains(word)).Take(5))
+        /*foreach (var namespaceGroupKvp in __CSharpBinder.NamespacePrefixTree.__Root.Children.Where(x => x.Key.Contains(word)).Take(5))
         {
             autocompleteEntryList.Add(new AutocompleteEntry(
                 namespaceGroupKvp.Key,
                 AutocompleteEntryKind.Namespace,
                 () => Task.CompletedTask));
-        }
+        }*/
             
         AddSnippets(autocompleteEntryList, word, textSpan, virtualizationResult.Model.PersistentState.ResourceUri);
 

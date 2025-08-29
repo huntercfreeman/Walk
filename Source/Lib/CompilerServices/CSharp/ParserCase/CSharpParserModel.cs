@@ -466,28 +466,19 @@ public ref struct CSharpParserModel
     
     public readonly void BindNamespaceStatementNode(NamespaceStatementNode namespaceStatementNode)
     {
-        var namespaceString = Binder.CSharpCompilerService.SafeGetText(ResourceUri.Value, namespaceStatementNode.IdentifierToken.TextSpan);
-        if (namespaceString is null)
-            return;
+        Binder.NamespaceContributionList.Add(new NamespaceContributionEntry(namespaceStatementNode.IdentifierToken.TextSpan));
+        ++Compilation.CountNamespaceContributionList;
         
-        if (Binder._namespaceGroupMap.TryGetValue(namespaceString, out var inNamespaceGroupNode))
+
+        if (Binder._namespaceGroupList.TryGetValue(namespaceString, out var inNamespaceGroupNode))
         {
             inNamespaceGroupNode.NamespaceStatementNodeList.Add(namespaceStatementNode);
         }
         else
         {
-            Binder._namespaceGroupMap.Add(namespaceString, new NamespaceGroup(
+            Binder._namespaceGroupList.Add(namespaceString, new NamespaceGroup(
                 namespaceString,
                 new List<NamespaceStatementNode> { namespaceStatementNode }));
-            
-            var splitResult = namespaceString.Split('.');
-            
-            NamespacePrefixNode? namespacePrefixNode = null;
-            
-            foreach (var namespacePrefix in splitResult)
-            {
-                namespacePrefixNode = Binder.NamespacePrefixTree.AddNamespacePrefix(namespacePrefix, namespacePrefixNode);
-            }
         }
     }
     
@@ -797,12 +788,12 @@ public ref struct CSharpParserModel
         OnBoundScopeCreatedAndSetAsCurrent(codeBlockOwner, Compilation);
     }
 
-    public readonly void AddNamespaceToCurrentScope(string namespaceString)
+    public readonly void AddNamespaceToCurrentScope(int charIntSum)
     {
         if (!Binder.CSharpParserModel_AddedNamespaceHashSet.Add(namespaceString))
             return;
     
-        if (Binder._namespaceGroupMap.TryGetValue(namespaceString, out var namespaceGroup) &&
+        if (Binder._namespaceGroupList.TryGetValue(namespaceString, out var namespaceGroup) &&
             namespaceGroup.ConstructorWasInvoked)
         {
             var typeDefinitionNodeList = Binder.Internal_GetTopLevelTypeDefinitionNodes_NamespaceGroup(namespaceGroup);

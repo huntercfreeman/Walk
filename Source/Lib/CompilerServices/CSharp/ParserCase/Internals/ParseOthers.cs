@@ -1,7 +1,8 @@
-using Walk.TextEditor.RazorLib.Lexers.Models;
-using Walk.TextEditor.RazorLib.CompilerServices;
+using System.Reflection;
 using Walk.Extensions.CompilerServices.Syntax;
 using Walk.Extensions.CompilerServices.Syntax.Nodes;
+using Walk.TextEditor.RazorLib.CompilerServices;
+using Walk.TextEditor.RazorLib.Lexers.Models;
 
 namespace Walk.CompilerServices.CSharp.ParserCase.Internals;
 
@@ -14,8 +15,12 @@ public static class ParseOthers
     /// </summary>
     public static SyntaxToken HandleNamespaceIdentifier(ref CSharpParserModel parserModel, bool isNamespaceStatement)
     {
+        NamespacePrefixNode? namespacePrefixNode = parserModel.Binder.NamespacePrefixTree.__Root;
+
         TextEditorTextSpan textSpan = default;
         int count = 0;
+
+        var charIntSum = 0;
 
         while (!parserModel.TokenWalker.IsEof)
         {
@@ -35,9 +40,9 @@ public static class ParseOthers
                         EndExclusiveIndex = matchedToken.TextSpan.EndExclusiveIndex
                     };
                 }
-                
-                // NamespaceStatements will add the final symbol themselves.
-                
+
+                charIntSum += matchedToken.TextSpan.CharIntSum;
+
                 if (parserModel.TokenWalker.Next.SyntaxKind != SyntaxKind.StatementDelimiterToken)
                 {
                     if (parserModel.Compilation.CompilationUnitKind == CompilationUnitKind.IndividualFile_AllData)
@@ -53,12 +58,7 @@ public static class ParseOthers
                 
                     if (isNamespaceStatement)
                     {
-                        // !StatementDelimiterToken because presumably the final namespace is already being handled.
-                        //
-                        // (I don't think the above statement is true... the final namespace gets handled only after the codeblock is parsed.
-                        //  so you should probably bring the other contributors of the namespace into scope immediately).
-                        // 
-                        parserModel.AddNamespaceToCurrentScope(parserModel.GetTextSpanText(textSpan));
+                        parserModel.AddNamespaceToCurrentScope(charIntSum);
                     }
                 }
                 
@@ -69,6 +69,7 @@ public static class ParseOthers
             {
                 if (SyntaxKind.MemberAccessToken == parserModel.TokenWalker.Current.SyntaxKind)
                 {
+                    charIntSum += (int)'.';
                     _ = parserModel.TokenWalker.Consume();
                     count++;
                 }

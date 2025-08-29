@@ -5,14 +5,14 @@ namespace Walk.Extensions.CompilerServices.Syntax;
 public record struct NamespaceGroup
 {
     public NamespaceGroup(
-        string namespaceString,
+        int charIntSum,
         List<NamespaceStatementNode> namespaceStatementNodeList)
     {
-        NamespaceString = namespaceString;
+        CharIntSum = charIntSum;
         NamespaceStatementNodeList = namespaceStatementNodeList;
     }
 
-    public string NamespaceString { get; }
+    public int CharIntSum { get; }
     public List<NamespaceStatementNode> NamespaceStatementNodeList { get; }
 
     public bool ConstructorWasInvoked => NamespaceStatementNodeList is not null;

@@ -13,7 +13,8 @@ public static class CSharpParser
     {
         compilationUnit.IndexCodeBlockOwnerList = binder.CodeBlockOwnerList.Count;
         compilationUnit.IndexNodeList = binder.NodeList.Count;
-        
+        compilationUnit.IndexNamespaceContributionList = binder.NamespaceContributionList.Count;
+
         binder.CodeBlockOwnerList.Insert(
             compilationUnit.IndexCodeBlockOwnerList + compilationUnit.CountCodeBlockOwnerList,
             binder.GlobalCodeBlockNode);
@@ -185,22 +186,7 @@ public static class CSharpParser
         }
 
         if (parserModel.GetParent(parserModel.CurrentCodeBlockOwner, compilationUnit) is not null)
-            parserModel.CloseScope(parserModel.TokenWalker.Current.TextSpan); // The current token here would be the EOF token.        /*Console.WriteLine();        Console.WriteLine();        Console.WriteLine($"compilationUnit.IndexDiagnosticList: {compilationUnit.IndexDiagnosticList}");
-        Console.WriteLine($"compilationUnit.CountDiagnosticList: {compilationUnit.CountDiagnosticList}");
-    
-        Console.WriteLine($"compilationUnit.IndexSymbolList: {compilationUnit.IndexSymbolList}");
-        Console.WriteLine($"compilationUnit.CountSymbolList: {compilationUnit.CountSymbolList}");
-    
-        Console.WriteLine($"compilationUnit.IndexFunctionInvocationParameterMetadataList: {compilationUnit.IndexFunctionInvocationParameterMetadataList}");
-        Console.WriteLine($"compilationUnit.CountFunctionInvocationParameterMetadataList: {compilationUnit.CountFunctionInvocationParameterMetadataList}");
-    
-        Console.WriteLine($"compilationUnit.IndexCodeBlockOwnerList: {compilationUnit.IndexCodeBlockOwnerList}");
-        Console.WriteLine($"compilationUnit.CountCodeBlockOwnerList: {compilationUnit.CountCodeBlockOwnerList}");
-    
-        Console.WriteLine($"compilationUnit.IndexNodeList: {compilationUnit.IndexNodeList}");
-        Console.WriteLine($"compilationUnit.CountNodeList: {compilationUnit.CountNodeList}");
-
-        Console.WriteLine();        Console.WriteLine();*/
+            parserModel.CloseScope(parserModel.TokenWalker.Current.TextSpan); // The current token here would be the EOF token.
 
         parserModel.Binder.FinalizeCompilationUnit(parserModel.ResourceUri, compilationUnit);
     }
