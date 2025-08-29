@@ -18,12 +18,12 @@ public class CSharpBinder
     ///
     /// TODO: Don't have this be public
     /// </summary>
-    public readonly Dictionary<string, NamespaceGroup> _namespaceGroupMap = CSharpFacts.Namespaces.GetInitialBoundNamespaceStatementNodes();
+    public readonly List<NamespaceGroup> _namespaceGroupList = new();
     /// <summary>
     /// TODO: Don't have this be public
     /// </summary>
     public readonly Dictionary<string, TypeDefinitionNode> _allTypeDefinitions = new();
-    private readonly NamespaceStatementNode _topLevelNamespaceStatementNode = CSharpFacts.Namespaces.GetTopLevelNamespaceStatementNode();
+    private readonly NamespaceStatementNode _topLevelNamespaceStatementNode;
     
     public List<PartialTypeDefinitionEntry> PartialTypeDefinitionList { get; } = new();
     public List<MethodOverloadDefinitionEntry> MethodOverloadDefinitionList { get; } = new();
@@ -32,7 +32,7 @@ public class CSharpBinder
     /// <summary>
     /// This is not thread safe to access because 'BindNamespaceStatementNode(...)' will directly modify the NamespaceGroup's List.
     /// </summary>
-    public IReadOnlyDictionary<string, NamespaceGroup> NamespaceGroupMap => _namespaceGroupMap;
+    public List<NamespaceGroup> NamespaceGroupMap => _namespaceGroupList;
     public IReadOnlyDictionary<string, TypeDefinitionNode> AllTypeDefinitions => _allTypeDefinitions;
     
     /// <summary>
@@ -57,7 +57,7 @@ public class CSharpBinder
     /// <summary>
     /// This is cleared at the start of a new parse, inside the CSharpParserModel constructor.
     /// </summary>
-    public HashSet<string> CSharpParserModel_AddedNamespaceHashSet { get; } = new();
+    public List<TextEditorTextSpan> CSharpParserModel_AddedNamespaceList { get; } = new();
     
     public List<GenericParameterEntry> GenericParameterEntryList { get; } = new();
     public List<FunctionParameterEntry> FunctionParameterEntryList { get; } = new();
@@ -65,6 +65,7 @@ public class CSharpBinder
     public List<ISyntaxNode> AmbiguousParenthesizedExpressionNodeChildList { get; } = new();
     public List<VariableDeclarationNode> LambdaExpressionNodeChildList { get; } = new();
     public List<FunctionInvocationParameterMetadata> FunctionInvocationParameterMetadataList { get; } = new();
+    public List<NamespaceContributionEntry> NamespaceContributionList { get; } = new();
     public Dictionary<string, Dictionary<int, (ResourceUri ResourceUri, int StartInclusiveIndex)>> SymbolIdToExternalTextSpanMap { get; } = new();
     public List<Walk.TextEditor.RazorLib.CompilerServices.TextEditorDiagnostic> DiagnosticList { get; } = new();
     public List<Symbol> SymbolList { get; } = new();
@@ -141,6 +142,20 @@ public class CSharpBinder
     
     public CSharpBinder(TextEditorService textEditorService, CSharpCompilerService cSharpCompilerService)
     {
+        _topLevelNamespaceStatementNode = new NamespaceStatementNode(
+            new(SyntaxKind.UnrecognizedTokenKeyword, new(0, 0, 0)),
+            new(SyntaxKind.IdentifierToken, new(0, 0, 0)),
+            new CodeBlock(Array.Empty<ISyntax>()),
+            ResourceUri.Empty);
+
+        _namespaceGroupList.Add(
+            new NamespaceGroup(
+                charIntSum: 0,
+                new List<NamespaceStatementNode>
+                {
+                    _topLevelNamespaceStatementNode
+                }));
+
         TextEditorService = textEditorService;
         CSharpCompilerService = cSharpCompilerService;
         
@@ -212,16 +227,75 @@ public class CSharpBinder
                 closeParenthesisToken: default));
         }
     }
-    
+
+    /// <summary>(inclusive, exclusive, this is the index at which you'd insert the text span)</summary>
+    public (int StartIndex, int EndIndex, int InsertionIndex) NamespaceGroup_FindRange(NamespaceContributionEntry namespaceContributionEntry)
+    {
+        var startIndex = -1;
+        var endIndex = -1;
+        var insertionIndex = _namespaceGroupList.Count;
+
+        for (int i = 0; i < _namespaceGroupList.Count; i++)
+        {
+            var node = _namespaceGroupList[i];
+
+            if (node.CharIntSum == namespaceContributionEntry.TextSpan.CharIntSum)
+            {
+                if (startIndex == -1)
+                    startIndex = i;
+            }
+            else if (startIndex != -1)
+            {
+                endIndex = i;
+                insertionIndex = i;
+                break;
+            }
+        }
+
+        if (startIndex != -1 && endIndex == -1)
+            endIndex = _namespaceGroupList.Count;
+
+        return (startIndex, endIndex, insertionIndex);
+    }
+
     /// <summary><see cref="FinalizeCompilationUnit"/></summary>
     public void StartCompilationUnit(ResourceUri resourceUri)
     {
-        foreach (var namespaceGroupNodeKvp in _namespaceGroupMap)
+        if (__CompilationUnitMap.TryGetValue(resourceUri, out var previousCompilationUnit))
         {
-            for (int i = namespaceGroupNodeKvp.Value.NamespaceStatementNodeList.Count - 1; i >= 0; i--)
+            for (int i = previousCompilationUnit.IndexNamespaceContributionList + previousCompilationUnit.CountNamespaceContributionList - 1; i >= previousCompilationUnit.IndexNamespaceContributionList; i--)
             {
-                if (namespaceGroupNodeKvp.Value.NamespaceStatementNodeList[i].ResourceUri == resourceUri)
-                    namespaceGroupNodeKvp.Value.NamespaceStatementNodeList.RemoveAt(i);
+                var namespaceContributionEntry = NamespaceContributionList[i];
+                var findTuple = NamespaceGroup_FindRange(namespaceContributionEntry);
+
+                for (int groupIndex = findTuple.EndIndex - 1; groupIndex >= findTuple.StartIndex; groupIndex--)
+                {
+                    var targetGroup = _namespaceGroupList[groupIndex];
+                    if (targetGroup.NamespaceStatementNodeList.Count != 0)
+                    {
+                        var sampleNamespaceStatementNode = targetGroup.NamespaceStatementNodeList[0];
+                        if (CSharpCompilerService.SafeCompareTextSpans(
+                            resourceUri.Value,
+                            namespaceContributionEntry.TextSpan,
+                            sampleNamespaceStatementNode.ResourceUri.Value,
+                            sampleNamespaceStatementNode.IdentifierToken.TextSpan))
+                        {
+                            for (int removeIndex = targetGroup.NamespaceStatementNodeList.Count - 1; removeIndex >= 0; removeIndex--)
+                            {
+                                if (targetGroup.NamespaceStatementNodeList[removeIndex].ResourceUri == resourceUri)
+                                {
+                                    targetGroup.NamespaceStatementNodeList.RemoveAt(removeIndex);
+                                    if (targetGroup.NamespaceStatementNodeList.Count == 0)
+                                    {
+                                        _namespaceGroupList.RemoveAt(groupIndex);
+                                    }
+                                    break;
+                                }
+                            }
+                            break;
+                        }
+                    }
+                }
             }
         }
     }
@@ -297,16 +371,7 @@ public class CSharpBinder
     /// </summary>
     public void ClearStateByResourceUri(ResourceUri resourceUri)
     {
-        foreach (var namespaceGroupNodeKvp in _namespaceGroupMap)
-        {
-            for (int i = namespaceGroupNodeKvp.Value.NamespaceStatementNodeList.Count - 1; i >= 0; i--)
-            {
-                if (namespaceGroupNodeKvp.Value.NamespaceStatementNodeList[i].ResourceUri == resourceUri)
-                    namespaceGroupNodeKvp.Value.NamespaceStatementNodeList.RemoveAt(i);
-            }
-        }
-
-        __CompilationUnitMap.Remove(resourceUri);
+        throw new NotImplementedException();
     }
 
     public ICodeBlockOwner? GetScope(CSharpCompilationUnit compilationUnit, TextEditorTextSpan textSpan)
@@ -1038,16 +1103,21 @@ public class CSharpBinder
             }
             case SyntaxKind.NamespaceSymbol:
             {
-                var text = CSharpCompilerService.UnsafeGetText(resourceUri.Value, textSpan);
-                
-                if (text is not null && NamespacePrefixTree.__Root.Children.TryGetValue(
-                    text,
-                    out var namespacePrefixNode))
+                var findTuple = NamespacePrefixTree.FindRange(NamespacePrefixTree.__Root, textSpan.CharIntSum);
+
+                for (int i = findTuple.StartIndex; i < findTuple.EndIndex; i++)
                 {
-                    return new NamespaceClauseNode(new SyntaxToken(SyntaxKind.IdentifierToken, textSpan));
+                    if (CSharpCompilerService.SafeCompareTextSpans(
+                            resourceUri.Value,
+                            textSpan,
+                            NamespacePrefixTree.__Root.Children[i].ResourceUri.Value,
+                            NamespacePrefixTree.__Root.Children[i].TextSpan))
+                    {
+                        return new NamespaceClauseNode(new SyntaxToken(SyntaxKind.IdentifierToken, textSpan));
+                    }
                 }
-                
-                if (symbol is not null)
+
+                /*if (symbol is not null)
                 {
                     var fullNamespaceName = CSharpCompilerService.UnsafeGetText(resourceUri.Value, symbol.Value.TextSpan);
                     if (fullNamespaceName is not null)
@@ -1077,7 +1147,7 @@ public class CSharpBinder
                                 startOfMemberAccessChainPositionIndex: textSpan.StartInclusiveIndex);
                         }
                     }
-                }
+                }*/
                 break;
             }
         }

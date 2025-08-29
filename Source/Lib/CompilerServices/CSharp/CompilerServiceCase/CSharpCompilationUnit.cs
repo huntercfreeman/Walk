@@ -42,6 +42,9 @@ public struct CSharpCompilationUnit : IExtendedCompilationUnit, ICompilerService
     /// <summary>Set this index in the CSharpParserModel constructor</summary>
     public int IndexNodeList { get; set; }
     public int CountNodeList { get; set; }
+
+    public int IndexNamespaceContributionList { get; set; }
+    public int CountNamespaceContributionList { get; set; }
     
     public bool IsDefault() => CompilationUnitKind == CompilationUnitKind.None;
 }

@@ -74,7 +74,7 @@ public sealed class CSharpCompilerService : IExtendedCompilerService
     /// This is a bit of misnomer because the solution wide parse doesn't set this.
     /// It is specifically a TextEditor based event having led to a parse that sets this.
     /// </summary>
-    private (string AbsolutePathString, string Content) _currentFileBeingParsedTuple;
+    public (string AbsolutePathString, string Content) _currentFileBeingParsedTuple;
 
     /// <summary>
     /// This needs to be ensured to be cleared after the solution wide parse.
@@ -168,6 +168,8 @@ public sealed class CSharpCompilerService : IExtendedCompilerService
     {
         if (absolutePathString == string.Empty)
         {
+            if (textSpan.EndExclusiveIndex > EmptyFileHackForLanguagePrimitiveText.Length)
+                return null;
             return textSpan.GetText(EmptyFileHackForLanguagePrimitiveText, _textEditorService);
         }
 
@@ -175,6 +177,8 @@ public sealed class CSharpCompilerService : IExtendedCompilerService
 
         if (model is not null)
         {
+            if (textSpan.EndExclusiveIndex > model.AllText.Length)
+                return null;
             return textSpan.GetText(model.AllText, _textEditorService);
         }
         else if (File.Exists(absolutePathString))
@@ -213,10 +217,14 @@ public sealed class CSharpCompilerService : IExtendedCompilerService
 
         if (absolutePathString == string.Empty)
         {
+            if (textSpan.EndExclusiveIndex > EmptyFileHackForLanguagePrimitiveText.Length)
+                return null;
             return textSpan.GetText(EmptyFileHackForLanguagePrimitiveText, _textEditorService);
         }
         else if (absolutePathString == _currentFileBeingParsedTuple.AbsolutePathString)
         {
+            if (textSpan.EndExclusiveIndex > _currentFileBeingParsedTuple.Content.Length)
+                return null;
             return textSpan.GetText(_currentFileBeingParsedTuple.Content, _textEditorService);
         }
         else if (absolutePathString == FastParseTuple.AbsolutePathString)
@@ -296,6 +304,8 @@ public sealed class CSharpCompilerService : IExtendedCompilerService
 
         if (absolutePathString == string.Empty)
         {
+            if (textSpan.EndExclusiveIndex > EmptyFileHackForLanguagePrimitiveText.Length)
+                return false;
             return value == textSpan.GetText(EmptyFileHackForLanguagePrimitiveText, _textEditorService);
             // The object allocation counts are nearly identical when I swap to using this code that compares
             // each character.
@@ -315,6 +325,8 @@ public sealed class CSharpCompilerService : IExtendedCompilerService
         }
         else if (absolutePathString == _currentFileBeingParsedTuple.AbsolutePathString)
         {
+            if (textSpan.EndExclusiveIndex > _currentFileBeingParsedTuple.Content.Length)
+                return false;
             return value == textSpan.GetText(_currentFileBeingParsedTuple.Content, _textEditorService);
             // The object allocation counts are nearly identical when I swap to using this code that compares
             // each character.
@@ -417,6 +429,9 @@ public sealed class CSharpCompilerService : IExtendedCompilerService
             // string.Empty as file path is primitive keywords hack.
             if (otherAbsolutePathString == string.Empty)
             {
+                if (otherTextSpan.StartInclusiveIndex + (length - 1) >= EmptyFileHackForLanguagePrimitiveText.Length)
+                    return false;
+            
                 for (int i = 0; i < length; i++)
                 {
                     FastParseTuple.Sr.Read(_safeGetTextBufferOne, 0, 1);
@@ -449,6 +464,11 @@ public sealed class CSharpCompilerService : IExtendedCompilerService
             // string.Empty as file path is primitive keywords hack.
             if (otherAbsolutePathString == string.Empty)
             {
+                if (sourceTextSpan.StartInclusiveIndex + (length - 1) >= _currentFileBeingParsedTuple.Content.Length)
+                    return false;
+                if (otherTextSpan.StartInclusiveIndex + (length - 1) >= EmptyFileHackForLanguagePrimitiveText.Length)
+                    return false;
+                    
                 for (int i = 0; i < length; i++)
                 {
                     if (_currentFileBeingParsedTuple.Content[sourceTextSpan.StartInclusiveIndex + i] !=
@@ -460,6 +480,11 @@ public sealed class CSharpCompilerService : IExtendedCompilerService
             }
             else if (otherAbsolutePathString == _currentFileBeingParsedTuple.AbsolutePathString)
             {
+                if (sourceTextSpan.StartInclusiveIndex + (length - 1) >= _currentFileBeingParsedTuple.Content.Length)
+                    return false;
+                if (otherTextSpan.StartInclusiveIndex + (length - 1) >= _currentFileBeingParsedTuple.Content.Length)
+                    return false;
+            
                 for (int i = 0; i < length; i++)
                 {
                     if (_currentFileBeingParsedTuple.Content[sourceTextSpan.StartInclusiveIndex + i] !=
@@ -471,10 +496,13 @@ public sealed class CSharpCompilerService : IExtendedCompilerService
             }
             else
             {
+                if (sourceTextSpan.StartInclusiveIndex + (length - 1) >= _currentFileBeingParsedTuple.Content.Length)
+                    return false;
+                    
                 var otherSr = GetOtherStreamReader(otherAbsolutePathString, otherTextSpan);
                 if (otherSr is null)
                     return false;
-
+                
                 for (int i = 0; i < length; i++)
                 {
                     otherSr.Read(_safeGetTextBufferTwo, 0, 1);
@@ -867,7 +895,7 @@ public sealed class CSharpCompilerService : IExtendedCompilerService
                 
                 if (definitionNode is not null)
                 {
-                    if (definitionNode.SyntaxKind == SyntaxKind.NamespaceClauseNode)
+                    /*if (definitionNode.SyntaxKind == SyntaxKind.NamespaceClauseNode)
                     {
                         var namespaceClauseNode = (NamespaceClauseNode)definitionNode;
                     
@@ -930,7 +958,7 @@ public sealed class CSharpCompilerService : IExtendedCompilerService
                         }
                         
                         return null;
-                    }
+                    }*/
                 
                     TypeReference typeReference = default;
                     
@@ -2141,13 +2169,13 @@ public sealed class CSharpCompilerService : IExtendedCompilerService
                 }));
         }
         
-        foreach (var namespaceGroupKvp in __CSharpBinder.NamespacePrefixTree.__Root.Children.Where(x => x.Key.Contains(word)).Take(5))
+        /*foreach (var namespaceGroupKvp in __CSharpBinder.NamespacePrefixTree.__Root.Children.Where(x => x.Key.Contains(word)).Take(5))
         {
             autocompleteEntryList.Add(new AutocompleteEntry(
                 namespaceGroupKvp.Key,
                 AutocompleteEntryKind.Namespace,
                 () => Task.CompletedTask));
-        }
+        }*/
             
         AddSnippets(autocompleteEntryList, word, textSpan, virtualizationResult.Model.PersistentState.ResourceUri);
 

@@ -583,8 +583,7 @@ public static class ParseTokens
             
             namespaceStatementNode.CodeBlock_EndExclusiveIndex = statementDelimiterToken.TextSpan.EndExclusiveIndex;
 
-            parserModel.AddNamespaceToCurrentScope(
-                parserModel.GetTextSpanText(namespaceStatementNode.IdentifierToken.TextSpan));
+            parserModel.AddNamespaceToCurrentScope(namespaceStatementNode.IdentifierToken.TextSpan);
         }
         else 
         {

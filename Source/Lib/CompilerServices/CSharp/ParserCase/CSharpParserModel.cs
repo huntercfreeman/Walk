@@ -63,7 +63,7 @@ public ref struct CSharpParserModel
         
         Binder.MethodOverload_ResourceUri_WasCleared = false;
         
-        Binder.CSharpParserModel_AddedNamespaceHashSet.Clear();
+        Binder.CSharpParserModel_AddedNamespaceList.Clear();
         
         ExternalTypeDefinitionList = Binder.CSharpParserModel_ExternalTypeDefinitionList;
         ExternalTypeDefinitionList.Clear();
@@ -466,28 +466,39 @@ public ref struct CSharpParserModel
     
     public readonly void BindNamespaceStatementNode(NamespaceStatementNode namespaceStatementNode)
     {
-        var namespaceString = Binder.CSharpCompilerService.SafeGetText(ResourceUri.Value, namespaceStatementNode.IdentifierToken.TextSpan);
-        if (namespaceString is null)
-            return;
-        
-        if (Binder._namespaceGroupMap.TryGetValue(namespaceString, out var inNamespaceGroupNode))
+        var namespaceContributionEntry = new NamespaceContributionEntry(namespaceStatementNode.IdentifierToken.TextSpan);
+        Binder.NamespaceContributionList.Add(namespaceContributionEntry);
+        ++Compilation.CountNamespaceContributionList;
+
+        var findTuple = Binder.NamespaceGroup_FindRange(namespaceContributionEntry);
+
+        var foundGroup = false;
+
+        for (int i = findTuple.StartIndex; i < findTuple.EndIndex; i++)
         {
-            inNamespaceGroupNode.NamespaceStatementNodeList.Add(namespaceStatementNode);
-        }
-        else
-        {
-            Binder._namespaceGroupMap.Add(namespaceString, new NamespaceGroup(
-                namespaceString,
-                new List<NamespaceStatementNode> { namespaceStatementNode }));
-            
-            var splitResult = namespaceString.Split('.');
-            
-            NamespacePrefixNode? namespacePrefixNode = null;
-            
-            foreach (var namespacePrefix in splitResult)
+            var targetGroup = Binder._namespaceGroupList[i];
+
+            if (targetGroup.NamespaceStatementNodeList.Count > 0)
             {
-                namespacePrefixNode = Binder.NamespacePrefixTree.AddNamespacePrefix(namespacePrefix, namespacePrefixNode);
+                var sampleNamespaceStatementNode = targetGroup.NamespaceStatementNodeList[0];
+                
+                if (Binder.CSharpCompilerService.SafeCompareTextSpans(
+                    ResourceUri.Value,
+                    namespaceStatementNode.IdentifierToken.TextSpan,
+                    sampleNamespaceStatementNode.ResourceUri.Value,
+                    sampleNamespaceStatementNode.IdentifierToken.TextSpan))
+                {
+                    targetGroup.NamespaceStatementNodeList.Add(namespaceStatementNode);
+                    foundGroup = true;
+                }
             }
+        }
+
+        if (!foundGroup)
+        {
+            Binder._namespaceGroupList.Add(new NamespaceGroup(
+                namespaceStatementNode.IdentifierToken.TextSpan.CharIntSum,
+                new List<NamespaceStatementNode> { namespaceStatementNode }));
         }
     }
     
@@ -496,10 +507,6 @@ public ref struct CSharpParserModel
         if (shouldCreateVariableSymbol)
             CreateVariableSymbol(variableDeclarationNode.IdentifierToken, variableDeclarationNode.VariableKind);
         
-        var text = Binder.CSharpCompilerService.SafeGetText(ResourceUri.Value, variableDeclarationNode.IdentifierToken.TextSpan);
-        if (text is null)
-            return;
-            
         if (TryGetVariableDeclarationNodeByScope(
                 ResourceUri,
                 Compilation,
@@ -515,7 +522,7 @@ public ref struct CSharpParserModel
                 // TODO: Track one or many declarations?...
                 // (if there is an error where something is defined twice for example)
                 SetVariableDeclarationNodeByScope(
-                    text,
+                    variableDeclarationNode.IdentifierToken.TextSpan,
                     variableDeclarationNode);
             }
 
@@ -532,7 +539,7 @@ public ref struct CSharpParserModel
         else
         {
             _ = TryAddVariableDeclarationNodeByScope(
-                text,
+                variableDeclarationNode.IdentifierToken.TextSpan,
                 variableDeclarationNode);
         }
     }
@@ -550,13 +557,11 @@ public ref struct CSharpParserModel
                 }));
         ++Compilation.CountSymbolList;
     
-        var text = Binder.CSharpCompilerService.SafeGetText(ResourceUri.Value, labelDeclarationNode.IdentifierToken.TextSpan);
-        if (text is null)
-            return;
-        
         if (TryGetLabelDeclarationNodeByScope(
+                ResourceUri,
+                Compilation,
                 CurrentCodeBlockOwner.Unsafe_SelfIndexKey,
-                text,
+                ResourceUri,
                 labelDeclarationNode.IdentifierToken.TextSpan,
                 out var existingLabelDeclarationNode))
         {
@@ -568,7 +573,7 @@ public ref struct CSharpParserModel
                 // (if there is an error where something is defined twice for example)
                 SetLabelDeclarationNodeByScope(
                     CurrentCodeBlockOwner.Unsafe_SelfIndexKey,
-                    text,
+                    labelDeclarationNode.IdentifierToken.TextSpan,
                     labelDeclarationNode);
             }
 
@@ -586,7 +591,6 @@ public ref struct CSharpParserModel
         {
             _ = TryAddLabelDeclarationNodeByScope(
                 CurrentCodeBlockOwner.Unsafe_SelfIndexKey,
-                text,
                 labelDeclarationNode.IdentifierToken.TextSpan,
                 labelDeclarationNode);
         }
@@ -738,11 +742,7 @@ public ref struct CSharpParserModel
 
     public readonly void BindUsingStatementTuple(SyntaxToken usingKeywordToken, SyntaxToken namespaceIdentifierToken)
     {
-        var text = Binder.CSharpCompilerService.SafeGetText(ResourceUri.Value, namespaceIdentifierToken.TextSpan);
-        if (text is null)
-            return;
-    
-        AddNamespaceToCurrentScope(text);
+        AddNamespaceToCurrentScope(namespaceIdentifierToken.TextSpan);
     }
     
     public readonly void BindTypeDefinitionNode(TypeDefinitionNode typeDefinitionNode, bool shouldOverwrite = false)
@@ -797,19 +797,80 @@ public ref struct CSharpParserModel
         OnBoundScopeCreatedAndSetAsCurrent(codeBlockOwner, Compilation);
     }
 
-    public readonly void AddNamespaceToCurrentScope(string namespaceString)
+    /// <summary>(inclusive, exclusive, this is the index at which you'd insert the text span)</summary>
+    public readonly (int StartIndex, int EndIndex, int InsertionIndex) AddedNamespaceList_FindRange(NamespaceContributionEntry namespaceContributionEntry)
     {
-        if (!Binder.CSharpParserModel_AddedNamespaceHashSet.Add(namespaceString))
-            return;
-    
-        if (Binder._namespaceGroupMap.TryGetValue(namespaceString, out var namespaceGroup) &&
-            namespaceGroup.ConstructorWasInvoked)
+        var startIndex = -1;
+        var endIndex = -1;
+        var insertionIndex = Binder.CSharpParserModel_AddedNamespaceList.Count;
+
+        for (int i = 0; i < Binder.CSharpParserModel_AddedNamespaceList.Count; i++)
         {
-            var typeDefinitionNodeList = Binder.Internal_GetTopLevelTypeDefinitionNodes_NamespaceGroup(namespaceGroup);
-            
-            foreach (var typeDefinitionNode in typeDefinitionNodeList)
+            var node = Binder.CSharpParserModel_AddedNamespaceList[i];
+
+            if (node.CharIntSum == namespaceContributionEntry.TextSpan.CharIntSum)
             {
-                ExternalTypeDefinitionList.Add(typeDefinitionNode);
+                if (startIndex == -1)
+                    startIndex = i;
+            }
+            else if (startIndex != -1)
+            {
+                endIndex = i;
+                insertionIndex = i;
+                break;
+            }
+        }
+
+        if (startIndex != -1 && endIndex == -1)
+            endIndex = Binder.CSharpParserModel_AddedNamespaceList.Count;
+
+        return (startIndex, endIndex, insertionIndex);
+    }
+
+    public readonly void AddNamespaceToCurrentScope(TextEditorTextSpan textSpan)
+    {
+        var namespaceContributionEntry = new NamespaceContributionEntry(textSpan);
+
+        var findTuple = AddedNamespaceList_FindRange(namespaceContributionEntry);
+
+        for (int i = findTuple.StartIndex; i < findTuple.EndIndex; i++)
+        {
+            var target = Binder.CSharpParserModel_AddedNamespaceList[i];
+            if (Binder.CSharpCompilerService.SafeCompareTextSpans(
+                    ResourceUri.Value,
+                    textSpan,
+                    ResourceUri.Value,
+                    target))
+            {
+                return;
+            }
+        }
+        
+        findTuple = Binder.NamespaceGroup_FindRange(namespaceContributionEntry);
+
+        // Absolutely be certain to double check that you did the SafeCompareTextSpans at every step
+        // you missed one here.
+        for (int i = findTuple.StartIndex; i < findTuple.EndIndex; i++)
+        {
+            var targetGroup = Binder._namespaceGroupList[i];
+
+            if (targetGroup.NamespaceStatementNodeList.Count > 0)
+            {
+                var sampleNamespaceStatementNode = targetGroup.NamespaceStatementNodeList[0];
+                
+                if (Binder.CSharpCompilerService.SafeCompareTextSpans(
+                        ResourceUri.Value,
+                        textSpan,
+                        sampleNamespaceStatementNode.ResourceUri.Value,
+                        sampleNamespaceStatementNode.IdentifierToken.TextSpan))
+                {
+                    var typeDefinitionNodeList = Binder.Internal_GetTopLevelTypeDefinitionNodes_NamespaceGroup(targetGroup);
+                    foreach (var typeDefinitionNode in typeDefinitionNodeList)
+                    {
+                        ExternalTypeDefinitionList.Add(typeDefinitionNode);
+                    }
+                    break;
+                }
             }
         }
     }
@@ -913,11 +974,7 @@ public ref struct CSharpParserModel
         {
             case SyntaxKind.NamespaceStatementNode:
                 var namespaceStatementNode = (NamespaceStatementNode)codeBlockOwner;
-                var namespaceString = Binder.CSharpCompilerService.SafeGetText(ResourceUri.Value, namespaceStatementNode.IdentifierToken.TextSpan);
-                if (namespaceString is null)
-                    return;
-                    
-                AddNamespaceToCurrentScope(namespaceString);
+                AddNamespaceToCurrentScope(namespaceStatementNode.IdentifierToken.TextSpan);
 
                 BindNamespaceStatementNode((NamespaceStatementNode)codeBlockOwner);
                 return;
@@ -1426,7 +1483,7 @@ public ref struct CSharpParserModel
     }
     
     public bool TryAddVariableDeclarationNodeByScope(
-        string variableIdentifierText,
+        TextEditorTextSpan variableIdentifierTextSpan,
         VariableDeclarationNode variableDeclarationNode)
     {
         var scopeIndexKey = CurrentCodeBlockOwner.Unsafe_SelfIndexKey;
@@ -1438,18 +1495,11 @@ public ref struct CSharpParserModel
             if (x.Unsafe_ParentIndexKey == scopeIndexKey &&
                 x.SyntaxKind == SyntaxKind.VariableDeclarationNode)
             {
-                var otherTextSpan = GetIdentifierTextSpan(x);
-                if (otherTextSpan.Length == variableIdentifierText.Length)
+                if (Binder.CSharpCompilerService.SafeCompareTextSpans(
+                        ResourceUri.Value, variableIdentifierTextSpan, ResourceUri.Value, GetIdentifierTextSpan(x)))
                 {
-                    // It was validated that neither CharIntSum is 0 here so removing the checks
-                    if (otherTextSpan.CharIntSum == variableDeclarationNode.IdentifierToken.TextSpan.CharIntSum)
-                    {
-                        if (CompareIdentifierText(x, ResourceUri, Compilation, variableIdentifierText))
-                        {
-                            matchNode = (VariableDeclarationNode)x;
-                            break;
-                        }
-                    }
+                    matchNode = (VariableDeclarationNode)x;
+                    break;
                 }
             }
         }
@@ -1472,7 +1522,7 @@ public ref struct CSharpParserModel
     }
     
     public readonly void SetVariableDeclarationNodeByScope(
-        string variableIdentifierText,
+        TextEditorTextSpan variableIdentifierTextSpan,
         VariableDeclarationNode variableDeclarationNode)
     {
         int scopeIndexKey = CurrentCodeBlockOwner.Unsafe_SelfIndexKey;
@@ -1486,18 +1536,11 @@ public ref struct CSharpParserModel
             if (x.Unsafe_ParentIndexKey == scopeIndexKey &&
                 x.SyntaxKind == SyntaxKind.VariableDeclarationNode)
             {
-                var otherTextSpan = GetIdentifierTextSpan(x);
-                if (otherTextSpan.Length == variableIdentifierText.Length)
+                if (Binder.CSharpCompilerService.SafeCompareTextSpans(
+                        ResourceUri.Value, variableIdentifierTextSpan, ResourceUri.Value, GetIdentifierTextSpan(x)))
                 {
-                    // It was validated that neither CharIntSum is 0 here so removing the checks
-                    if (otherTextSpan.CharIntSum == variableDeclarationNode.IdentifierToken.TextSpan.CharIntSum)
-                    {
-                        if (CompareIdentifierText(x, ResourceUri, Compilation, variableIdentifierText))
-                        {
-                            matchNode = (VariableDeclarationNode)x;
-                            break;
-                        }
-                    }
+                    matchNode = (VariableDeclarationNode)x;
+                    break;
                 }
             }
         }
@@ -1510,8 +1553,11 @@ public ref struct CSharpParserModel
     }
     
     public readonly bool TryGetLabelDeclarationHierarchically(
-        string identifierText,
-        TextEditorTextSpan identifierTextSpan,
+        ResourceUri declarationResourceUri,
+        CSharpCompilationUnit declarationCompilationUnit,
+        int declarationScopeIndexKey,
+        ResourceUri referenceResourceUri,
+        TextEditorTextSpan referenceTextSpan,
         out LabelDeclarationNode? labelDeclarationNode)
     {
         int initialScopeIndexKey = CurrentCodeBlockOwner.Unsafe_SelfIndexKey;
@@ -1521,9 +1567,11 @@ public ref struct CSharpParserModel
         while (localScope is not null)
         {
             if (TryGetLabelDeclarationNodeByScope(
+                    declarationResourceUri,
+                    declarationCompilationUnit,
                     localScope.Unsafe_SelfIndexKey,
-                    identifierText,
-                    identifierTextSpan,
+                    referenceResourceUri,
+                    referenceTextSpan,
                     out labelDeclarationNode))
             {
                 return true;
@@ -1540,9 +1588,11 @@ public ref struct CSharpParserModel
     }
     
     public readonly bool TryGetLabelDeclarationNodeByScope(
-        int scopeIndexKey,
-        string labelIdentifierText,
-        TextEditorTextSpan labelIdentifierTextSpan,
+        ResourceUri declarationResourceUri,
+        CSharpCompilationUnit declarationCompilationUnit,
+        int declarationScopeIndexKey,
+        ResourceUri referenceResourceUri,
+        TextEditorTextSpan referenceTextSpan,
         out LabelDeclarationNode labelDeclarationNode)
     {
         labelDeclarationNode = null;
@@ -1550,21 +1600,13 @@ public ref struct CSharpParserModel
         {
             var x = Binder.NodeList[i];
             
-            if (x.Unsafe_ParentIndexKey == scopeIndexKey &&
+            if (x.Unsafe_ParentIndexKey == declarationScopeIndexKey &&
                 x.SyntaxKind == SyntaxKind.LabelDeclarationNode)
             {
-                var otherTextSpan = GetIdentifierTextSpan(x);
-                if (otherTextSpan.Length == labelIdentifierText.Length)
+                if (Binder.CSharpCompilerService.SafeCompareTextSpans(referenceResourceUri.Value, referenceTextSpan, declarationResourceUri.Value, GetIdentifierTextSpan(x)))
                 {
-                    // It was validated that neither CharIntSum is 0 here so removing the checks
-                    if (otherTextSpan.CharIntSum == labelIdentifierTextSpan.CharIntSum)
-                    {
-                        if (CompareIdentifierText(x, ResourceUri, Compilation, labelIdentifierText))
-                        {
-                            labelDeclarationNode = (LabelDeclarationNode)x;
-                            break;
-                        }
-                    }
+                    labelDeclarationNode = (LabelDeclarationNode)x;
+                    break;
                 }
             }
         }
@@ -1577,7 +1619,6 @@ public ref struct CSharpParserModel
     
     public bool TryAddLabelDeclarationNodeByScope(
         int scopeIndexKey,
-        string labelIdentifierText,
         TextEditorTextSpan labelIdentifierTextSpan,
         LabelDeclarationNode labelDeclarationNode)
     {
@@ -1589,18 +1630,10 @@ public ref struct CSharpParserModel
             if (x.Unsafe_ParentIndexKey == scopeIndexKey &&
                 x.SyntaxKind == SyntaxKind.LabelDeclarationNode)
             {
-                var otherTextSpan = GetIdentifierTextSpan(x);
-                if (otherTextSpan.Length == labelIdentifierText.Length)
+                if (Binder.CSharpCompilerService.SafeCompareTextSpans(ResourceUri.Value, labelIdentifierTextSpan, ResourceUri.Value, GetIdentifierTextSpan(x)))
                 {
-                    // It was validated that neither CharIntSum is 0 here so removing the checks
-                    if (otherTextSpan.CharIntSum == labelIdentifierTextSpan.CharIntSum)
-                    {
-                        if (CompareIdentifierText(x, ResourceUri, Compilation, labelIdentifierText))
-                        {
-                            matchNode = (LabelDeclarationNode)x;
-                            break;
-                        }
-                    }
+                    matchNode = (LabelDeclarationNode)x;
+                    break;
                 }
             }
         }
@@ -1624,7 +1657,7 @@ public ref struct CSharpParserModel
     
     public readonly void SetLabelDeclarationNodeByScope(
         int scopeIndexKey,
-        string labelIdentifierText,
+        TextEditorTextSpan referenceTextSpan,
         LabelDeclarationNode labelDeclarationNode)
     {
         LabelDeclarationNode? matchNode = null;
@@ -1636,18 +1669,10 @@ public ref struct CSharpParserModel
             if (x.Unsafe_ParentIndexKey == scopeIndexKey &&
                 x.SyntaxKind == SyntaxKind.LabelDeclarationNode)
             {
-                var otherTextSpan = GetIdentifierTextSpan(x);
-                if (otherTextSpan.Length == labelIdentifierText.Length)
+                if (Binder.CSharpCompilerService.SafeCompareTextSpans(ResourceUri.Value, referenceTextSpan, ResourceUri.Value, GetIdentifierTextSpan(x)))
                 {
-                    // It was validated that neither CharIntSum is 0 here so removing the checks
-                    if (otherTextSpan.CharIntSum == labelDeclarationNode.IdentifierToken.TextSpan.CharIntSum)
-                    {
-                        if (CompareIdentifierText(x, ResourceUri, Compilation, labelIdentifierText))
-                        {
-                            matchNode = (LabelDeclarationNode)x;
-                            break;
-                        }
-                    }
+                    matchNode = (LabelDeclarationNode)x;
+                    break;
                 }
             }
         }

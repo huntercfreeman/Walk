@@ -1,3 +1,4 @@
+using System.Reflection;
 using Walk.CompilerServices.CSharp.CompilerServiceCase;
 using Walk.CompilerServices.CSharp.Facts;
 using Walk.Extensions.CompilerServices;
@@ -1145,8 +1146,6 @@ public static class ParseExpressions
             }
         }
 
-        string ambiguousIdentifierTokenText;
-
         if (!forceVariableReferenceNode &&
             parserModel.ParserContextKind != CSharpParserContextKind.ForceParseNextIdentifierAsTypeClauseNode &&
             UtilityApi.IsConvertibleToIdentifierToken(ambiguousIdentifierExpressionNode.Token.SyntaxKind))
@@ -1183,29 +1182,41 @@ public static class ParseExpressions
                 goto finalize;
             }
 
-            ambiguousIdentifierTokenText = parserModel.GetTextSpanText(ambiguousIdentifierExpressionNode.Token.TextSpan);
+            var findTuple = parserModel.Binder.NamespacePrefixTree.FindRange(
+                parserModel.Binder.NamespacePrefixTree.__Root,
+                charIntSum: ambiguousIdentifierExpressionNode.Token.TextSpan.CharIntSum);
 
-            if (parserModel.Binder.NamespacePrefixTree.__Root.Children.TryGetValue(
-                ambiguousIdentifierTokenText,
-                out var namespacePrefixNode))
+            for (int i = findTuple.StartIndex; i < findTuple.EndIndex; i++)
             {
-                var namespaceClauseNode = parserModel.Rent_NamespaceClauseNode();
-                namespaceClauseNode.IdentifierToken = ambiguousIdentifierExpressionNode.Token;
-                result = namespaceClauseNode;
+                var node = parserModel.Binder.NamespacePrefixTree.__Root;
                 
-                parserModel.Binder.SymbolList.Insert(
-                    parserModel.Compilation.IndexSymbolList + parserModel.Compilation.CountSymbolList,
-                    new Symbol(
-                        SyntaxKind.NamespaceSymbol,
-                        parserModel.GetNextSymbolId(),
-                        ambiguousIdentifierExpressionNode.Token.TextSpan));
-                ++parserModel.Compilation.CountSymbolList;
+                if (parserModel.Binder.CSharpCompilerService.SafeCompareTextSpans(
+                        parserModel.ResourceUri.Value,
+                        ambiguousIdentifierExpressionNode.Token.TextSpan,
+                        node.ResourceUri.Value,
+                        node.TextSpan))
+                {
+                    var namespaceClauseNode = parserModel.Rent_NamespaceClauseNode();
+                    namespaceClauseNode.IdentifierToken = ambiguousIdentifierExpressionNode.Token;
+                    result = namespaceClauseNode;
                     
-                goto finalize;
+                    parserModel.Binder.SymbolList.Insert(
+                        parserModel.Compilation.IndexSymbolList + parserModel.Compilation.CountSymbolList,
+                        new Symbol(
+                            SyntaxKind.NamespaceSymbol,
+                            parserModel.GetNextSymbolId(),
+                            ambiguousIdentifierExpressionNode.Token.TextSpan));
+                    ++parserModel.Compilation.CountSymbolList;
+                        
+                    goto finalize;
+                }
             }
             
             if (parserModel.TryGetLabelDeclarationHierarchically(
-                    ambiguousIdentifierTokenText,
+                    parserModel.ResourceUri,
+                    parserModel.Compilation,
+                    parserModel.CurrentCodeBlockOwner.Unsafe_SelfIndexKey,
+                    parserModel.ResourceUri,
                     ambiguousIdentifierExpressionNode.Token.TextSpan,
                     out var labelDefinitionNode))
             {
@@ -1220,27 +1231,41 @@ public static class ParseExpressions
                 goto finalize;
             }
         }
-        else
-        {
-            ambiguousIdentifierTokenText = parserModel.GetTextSpanText(ambiguousIdentifierExpressionNode.Token.TextSpan);
-        }
-
+        
         if (allowFabricatedUndefinedNode)
         {
-            // Bind an undefined-TypeClauseNode
+            // Bind an undefined-(TypeClauseNode or NamespaceClauseNode)
             if (!forceVariableReferenceNode ||
                 UtilityApi.IsConvertibleToTypeClauseNode(ambiguousIdentifierExpressionNode.Token.SyntaxKind))
             {
                 var token = ambiguousIdentifierExpressionNode.Token;
+                
+                if (parserModel.TokenWalker.Next.SyntaxKind == SyntaxKind.MemberAccessToken)
+                {
+                    var namespaceClauseNode = parserModel.Rent_NamespaceClauseNode();
+                    namespaceClauseNode.IdentifierToken = token;
+                    result = namespaceClauseNode;
+                    parserModel.Binder.SymbolList.Insert(
+                        parserModel.Compilation.IndexSymbolList + parserModel.Compilation.CountSymbolList,
+                        new Symbol(
+                            SyntaxKind.NamespaceSymbol,
+                            parserModel.GetNextSymbolId(),
+                            ambiguousIdentifierExpressionNode.Token.TextSpan));
+                    ++parserModel.Compilation.CountSymbolList;
+                }
+                else
+                {
+                    TypeClauseNode typeClauseNode = UtilityApi.ConvertTokenToTypeClauseNode(ref token, ref parserModel);
 
-                TypeClauseNode typeClauseNode = UtilityApi.ConvertTokenToTypeClauseNode(ref token, ref parserModel);
+                    typeClauseNode.ExplicitDefinitionTextSpan = ambiguousIdentifierExpressionNode.Token.TextSpan;
+                    typeClauseNode.ExplicitDefinitionResourceUri = parserModel.ResourceUri;
+    
+                    typeClauseNode.HasQuestionMark = ambiguousIdentifierExpressionNode.HasQuestionMark;
+                    parserModel.BindTypeClauseNode(typeClauseNode);
+                    result = typeClauseNode;
+                }
 
-                typeClauseNode.ExplicitDefinitionTextSpan = ambiguousIdentifierExpressionNode.Token.TextSpan;
-                typeClauseNode.ExplicitDefinitionResourceUri = parserModel.ResourceUri;
-
-                typeClauseNode.HasQuestionMark = ambiguousIdentifierExpressionNode.HasQuestionMark;
-                parserModel.BindTypeClauseNode(typeClauseNode);
-                result = typeClauseNode;
+                
                 goto finalize;
             }
 
@@ -3499,21 +3524,9 @@ public static class ParseExpressions
         if (parserModel.TokenWalker.Current.SyntaxKind == SyntaxKind.OpenParenthesisToken ||
             parserModel.TokenWalker.Current.SyntaxKind == SyntaxKind.OpenAngleBracketToken)
         {
-            var functionInvocationNode = parserModel.Rent_FunctionInvocationNode();
-            functionInvocationNode.FunctionInvocationIdentifierToken = memberIdentifierToken;
-            functionInvocationNode.ResultTypeReference = TypeFacts.Empty.ToTypeReference();
-                
-            parserModel.Binder.SymbolList.Insert(
-                parserModel.Compilation.IndexSymbolList + parserModel.Compilation.CountSymbolList,
-                new Symbol(
-                    SyntaxKind.FunctionSymbol,
-                    parserModel.GetNextSymbolId(),
-                    functionInvocationNode.FunctionInvocationIdentifierToken.TextSpan with
-                    {
-                        DecorationByte = (byte)GenericDecorationKind.Function
-                    }));
-            ++parserModel.Compilation.CountSymbolList;
-            return functionInvocationNode;
+            var ambiguousIdentifier = parserModel.Rent_AmbiguousIdentifierExpressionNode();
+            ambiguousIdentifier.Token = memberIdentifierToken;
+            return ambiguousIdentifier;
         }
         else
         {
@@ -3524,20 +3537,20 @@ public static class ParseExpressions
                 
                 if (firstNamespacePrefixNode is null)
                 {
-                    if(parserModel.Binder.NamespacePrefixTree.__Root.Children.TryGetValue(
+                    /*if(parserModel.Binder.NamespacePrefixTree.__Root.Children.TryGetValue(
                         parserModel.Binder.CSharpCompilerService.SafeGetText(parserModel.ResourceUri.Value, firstNamespaceClauseNode.IdentifierToken.TextSpan) ?? string.Empty,
                         out firstNamespacePrefixNode))
                     {
                         firstNamespaceClauseNode.NamespacePrefixNode = firstNamespacePrefixNode;
                         firstNamespaceClauseNode.StartOfMemberAccessChainPositionIndex = firstNamespaceClauseNode.IdentifierToken.TextSpan.StartInclusiveIndex;
-                    }
+                    }*/
                 }
                 
                 var memberIdentifierText = parserModel.Binder.CSharpCompilerService.SafeGetText(parserModel.ResourceUri.Value, memberIdentifierToken.TextSpan) ?? string.Empty;
                 
                 if (firstNamespacePrefixNode is not null)
                 {
-                    if (firstNamespacePrefixNode.Children.TryGetValue(
+                    /*if (firstNamespacePrefixNode.Children.TryGetValue(
                             memberIdentifierText,
                             out var secondNamespacePrefixNode))
                     {
@@ -3560,10 +3573,34 @@ public static class ParseExpressions
                         namespaceClauseNode.PreviousNamespaceClauseNode = firstNamespaceClauseNode;
                         namespaceClauseNode.StartOfMemberAccessChainPositionIndex = firstNamespaceClauseNode.StartOfMemberAccessChainPositionIndex;
                         return namespaceClauseNode;
+                    }*/
+                }
+
+                NamespaceGroup namespaceGroup = default;
+
+                var findTuple = parserModel.Binder.NamespaceGroup_FindRange(new NamespaceContributionEntry(firstNamespaceClauseNode.IdentifierToken.TextSpan));
+
+                for (int i = findTuple.StartIndex; i < findTuple.EndIndex; i++)
+                {
+                    var targetGroup = parserModel.Binder._namespaceGroupList[i];
+
+                    if (targetGroup.NamespaceStatementNodeList.Count > 0)
+                    {
+                        var sampleNamespaceStatementNode = targetGroup.NamespaceStatementNodeList[0];
+
+                        if (parserModel.Binder.CSharpCompilerService.SafeCompareTextSpans(
+                                parserModel.ResourceUri.Value,
+                                firstNamespaceClauseNode.IdentifierToken.TextSpan,
+                                sampleNamespaceStatementNode.ResourceUri.Value,
+                                sampleNamespaceStatementNode.IdentifierToken.TextSpan))
+                        {
+                            namespaceGroup = targetGroup;
+                            break;
+                        }
                     }
                 }
-                
-                if (parserModel.Binder.NamespaceGroupMap.TryGetValue(parserModel.Binder.CSharpCompilerService.SafeGetText(parserModel.ResourceUri.Value, firstNamespaceClauseNode.IdentifierToken.TextSpan) ?? string.Empty, out var namespaceGroup))
+
+                if (namespaceGroup.ConstructorWasInvoked)
                 {
                     var innerCompilationUnit = parserModel.Compilation;
                     var innerResourceUri = parserModel.ResourceUri;
@@ -3630,11 +3667,35 @@ public static class ParseExpressions
                 }
             }
             
-            var variableReferenceNode = parserModel.Rent_VariableReferenceNode();
-            variableReferenceNode.VariableIdentifierToken = memberIdentifierToken;
-            variableReferenceNode.VariableDeclarationNode = null;
-            _ = parserModel.CreateVariableSymbol(variableReferenceNode.VariableIdentifierToken, VariableKind.Property);
-            return variableReferenceNode;
+            if (UtilityApi.IsConvertibleToIdentifierToken(parserModel.TokenWalker.Current.SyntaxKind))
+            {
+                var ambiguousIdentifier = parserModel.Rent_AmbiguousIdentifierExpressionNode();
+                ambiguousIdentifier.Token = memberIdentifierToken;
+                return ambiguousIdentifier;
+            
+                /*TypeClauseNode typeClauseNode = UtilityApi.ConvertTokenToTypeClauseNode(ref memberIdentifierToken, ref parserModel);
+                typeClauseNode.ExplicitDefinitionTextSpan = memberIdentifierToken.TextSpan;
+                typeClauseNode.ExplicitDefinitionResourceUri = parserModel.ResourceUri;
+                parserModel.Binder.SymbolList.Insert(
+                    parserModel.Compilation.IndexSymbolList + parserModel.Compilation.CountSymbolList,
+                    new Symbol(
+                        SyntaxKind.TypeSymbol,
+                        parserModel.GetNextSymbolId(),
+                        typeClauseNode.TypeIdentifierToken.TextSpan with
+                        {
+                            DecorationByte = (byte)GenericDecorationKind.Type
+                        }));
+                ++parserModel.Compilation.CountSymbolList;
+                return typeClauseNode;*/
+            }
+            else
+            {
+                var variableReferenceNode = parserModel.Rent_VariableReferenceNode();
+                variableReferenceNode.VariableIdentifierToken = memberIdentifierToken;
+                variableReferenceNode.VariableDeclarationNode = null;
+                _ = parserModel.CreateVariableSymbol(variableReferenceNode.VariableIdentifierToken, VariableKind.Property);
+                return variableReferenceNode;
+            }
         }
     }
     
@@ -4255,6 +4316,7 @@ public static class ParseExpressions
         parserModel.TryParseExpressionSyntaxKindList.Add(SyntaxKind.TypeClauseNode);
         parserModel.TryParseExpressionSyntaxKindList.Add(SyntaxKind.VariableDeclarationNode);
         parserModel.TryParseExpressionSyntaxKindList.Add(SyntaxKind.AmbiguousParenthesizedExpressionNode);
+        parserModel.TryParseExpressionSyntaxKindList.Add(SyntaxKind.AmbiguousIdentifierExpressionNode);
         parserModel.ParserContextKind = CSharpParserContextKind.ForceStatementExpression;
         var successParse = ParseExpressions.TryParseExpression(ref parserModel, out var expressionNode);
         
