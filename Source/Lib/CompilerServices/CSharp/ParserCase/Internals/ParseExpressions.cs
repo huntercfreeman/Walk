@@ -3537,22 +3537,50 @@ public static class ParseExpressions
                 
                 if (firstNamespacePrefixNode is null)
                 {
-                    /*if(parserModel.Binder.NamespacePrefixTree.__Root.Children.TryGetValue(
-                        parserModel.Binder.CSharpCompilerService.SafeGetText(parserModel.ResourceUri.Value, firstNamespaceClauseNode.IdentifierToken.TextSpan) ?? string.Empty,
-                        out firstNamespacePrefixNode))
+                    var findTuple = parserModel.Binder.NamespacePrefixTree.FindRange(
+                        parserModel.Binder.NamespacePrefixTree.__Root,
+                        firstNamespaceClauseNode.IdentifierToken.TextSpan.CharIntSum);
+                        
+                    for (int i = findTuple.StartIndex; i < findTuple.EndIndex; i++)
                     {
-                        firstNamespaceClauseNode.NamespacePrefixNode = firstNamespacePrefixNode;
-                        firstNamespaceClauseNode.StartOfMemberAccessChainPositionIndex = firstNamespaceClauseNode.IdentifierToken.TextSpan.StartInclusiveIndex;
-                    }*/
+                        var node = parserModel.Binder.NamespacePrefixTree.__Root.Children[i];
+                        if (parserModel.Binder.CSharpCompilerService.SafeCompareTextSpans(
+                                parserModel.ResourceUri.Value,
+                                firstNamespaceClauseNode.IdentifierToken.TextSpan,
+                                node.ResourceUri,
+                                node.TextSpan))
+                        {
+                            firstNamespacePrefixNode = node;
+                            firstNamespaceClauseNode.NamespacePrefixNode = firstNamespacePrefixNode;
+                            firstNamespaceClauseNode.StartOfMemberAccessChainPositionIndex = firstNamespaceClauseNode.IdentifierToken.TextSpan.StartInclusiveIndex;
+                            break;
+                        }
+                    }
                 }
-                
-                var memberIdentifierText = parserModel.Binder.CSharpCompilerService.SafeGetText(parserModel.ResourceUri.Value, memberIdentifierToken.TextSpan) ?? string.Empty;
                 
                 if (firstNamespacePrefixNode is not null)
                 {
-                    /*if (firstNamespacePrefixNode.Children.TryGetValue(
-                            memberIdentifierText,
-                            out var secondNamespacePrefixNode))
+                    var findTuple = parserModel.Binder.NamespacePrefixTree.FindRange(
+                        firstNamespacePrefixNode,
+                        memberIdentifierToken.TextSpan);
+                    
+                    NamespacePrefixNode? secondNamespacePrefixNode = null;
+                
+                    for (int i = findTuple.StartIndex; i < findTuple.EndIndex; i++)
+                    {
+                        var node = parserModel.Binder.NamespacePrefixTree.__Root.Children[i];
+                        if (parserModel.Binder.CSharpCompilerService.SafeCompareTextSpans(
+                                parserModel.ResourceUri.Value,
+                                memberIdentifierToken.TextSpan,
+                                node.ResourceUri,
+                                node.TextSpan))
+                        {
+                            secondNamespacePrefixNode = node;
+                            break;
+                        }
+                    }
+                
+                    if (secondNamespacePrefixNode is not null)
                     {
                         memberIdentifierToken.TextSpan = memberIdentifierToken.TextSpan with
                         {
@@ -3573,7 +3601,7 @@ public static class ParseExpressions
                         namespaceClauseNode.PreviousNamespaceClauseNode = firstNamespaceClauseNode;
                         namespaceClauseNode.StartOfMemberAccessChainPositionIndex = firstNamespaceClauseNode.StartOfMemberAccessChainPositionIndex;
                         return namespaceClauseNode;
-                    }*/
+                    }
                 }
 
                 NamespaceGroup namespaceGroup = default;
@@ -3672,21 +3700,6 @@ public static class ParseExpressions
                 var ambiguousIdentifier = parserModel.Rent_AmbiguousIdentifierExpressionNode();
                 ambiguousIdentifier.Token = memberIdentifierToken;
                 return ambiguousIdentifier;
-            
-                /*TypeClauseNode typeClauseNode = UtilityApi.ConvertTokenToTypeClauseNode(ref memberIdentifierToken, ref parserModel);
-                typeClauseNode.ExplicitDefinitionTextSpan = memberIdentifierToken.TextSpan;
-                typeClauseNode.ExplicitDefinitionResourceUri = parserModel.ResourceUri;
-                parserModel.Binder.SymbolList.Insert(
-                    parserModel.Compilation.IndexSymbolList + parserModel.Compilation.CountSymbolList,
-                    new Symbol(
-                        SyntaxKind.TypeSymbol,
-                        parserModel.GetNextSymbolId(),
-                        typeClauseNode.TypeIdentifierToken.TextSpan with
-                        {
-                            DecorationByte = (byte)GenericDecorationKind.Type
-                        }));
-                ++parserModel.Compilation.CountSymbolList;
-                return typeClauseNode;*/
             }
             else
             {
