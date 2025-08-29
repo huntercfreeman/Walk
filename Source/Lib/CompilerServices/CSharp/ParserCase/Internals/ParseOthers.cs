@@ -58,7 +58,7 @@ public static class ParseOthers
                 
                     if (isNamespaceStatement)
                     {
-                        parserModel.AddNamespaceToCurrentScope(charIntSum);
+                        parserModel.AddNamespaceToCurrentScope(textSpan);
                     }
                 }
                 
