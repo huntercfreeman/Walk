@@ -854,17 +854,13 @@ public class ParseDefaultKeywords
                     {
                         _ = parserModel.StatementBuilder.Pop();
 
-                        if ((firstOutput.ToString().ToLower() == "protected" &&
-                                secondOutput.ToString().ToLower() == "internal") ||
-                            (firstOutput.ToString().ToLower() == "internal" &&
-                                secondOutput.ToString().ToLower() == "protected"))
+                        if ((firstOutput == AccessModifierKind.Protected && secondOutput == AccessModifierKind.Internal) ||
+                            (firstOutput == AccessModifierKind.Internal && secondOutput == AccessModifierKind.Protected))
                         {
                             accessModifierKind = AccessModifierKind.ProtectedInternal;
                         }
-                        else if ((firstOutput.ToString().ToLower() == "private" &&
-                                    secondOutput.ToString().ToLower() == "protected") ||
-                                (firstOutput.ToString().ToLower() == "protected" &&
-                                    secondOutput.ToString().ToLower() == "private"))
+                        else if ((firstOutput == AccessModifierKind.Private && secondOutput == AccessModifierKind.Protected) ||
+                                (firstOutput == AccessModifierKind.Protected && secondOutput == AccessModifierKind.Private))
                         {
                             accessModifierKind = AccessModifierKind.PrivateProtected;
                         }
@@ -878,11 +874,18 @@ public class ParseDefaultKeywords
         var storageModifierKind = UtilityApi.GetStorageModifierKindFromToken(storageModifierToken);
         if (storageModifierKind == StorageModifierKind.None)
             return;
-        if (storageModifierKind == StorageModifierKind.Record &&
-            parserModel.TokenWalker.Current.SyntaxKind == SyntaxKind.StructTokenKeyword)
+        if (storageModifierKind == StorageModifierKind.Record)
         {
-            var structKeywordToken = parserModel.TokenWalker.Consume();
-            storageModifierKind = StorageModifierKind.RecordStruct;
+            if (parserModel.TokenWalker.Current.SyntaxKind == SyntaxKind.ClassTokenKeyword)
+            {
+                var classKeywordToken = parserModel.TokenWalker.Consume();
+                storageModifierKind = StorageModifierKind.RecordClass;
+            }
+            else if (parserModel.TokenWalker.Current.SyntaxKind == SyntaxKind.StructTokenKeyword)
+            {
+                var structKeywordToken = parserModel.TokenWalker.Consume();
+                storageModifierKind = StorageModifierKind.RecordStruct;
+            }
         }
     
         // Given: public class MyClass<T> { }
@@ -926,6 +929,8 @@ public class ParseDefaultKeywords
         
         if (typeDefinitionNode.HasPartialModifier)
         {
+            // NOTE: You do indeed use the current compilation unit here...
+            // ...there is a different step that checks the previous.
             if (parserModel.TryGetTypeDefinitionHierarchically(
                     parserModel.ResourceUri,
                     parserModel.Compilation,

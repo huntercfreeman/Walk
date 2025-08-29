@@ -1,6 +1,6 @@
 namespace Walk.Common.RazorLib.JavaScriptObjects.Models;
 
-public record RelativeCoordinates(
+public record class RelativeCoordinates(
     double RelativeX,
     double RelativeY,
     double RelativeScrollLeft,

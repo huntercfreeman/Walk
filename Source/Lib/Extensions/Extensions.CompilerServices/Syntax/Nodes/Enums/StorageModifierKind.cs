@@ -9,4 +9,5 @@ public enum StorageModifierKind
     Enum,
     Record,
     RecordStruct,
+    RecordClass,
 }
