@@ -1,3 +1,4 @@
+using System.Reflection;
 using Walk.CompilerServices.CSharp.CompilerServiceCase;
 using Walk.CompilerServices.CSharp.Facts;
 using Walk.Extensions.CompilerServices;
@@ -3563,15 +3564,31 @@ public static class ParseExpressions
                     }*/
                 }
 
+                NamespaceGroup namespaceGroup = default;
+
                 var findTuple = parserModel.Binder.NamespaceGroup_FindRange(new NamespaceContributionEntry(firstNamespaceClauseNode.IdentifierToken.TextSpan));
 
-                for ()
+                for (int i = findTuple.StartIndex; i < findTuple.EndIndex; i++)
                 {
+                    var targetGroup = parserModel.Binder._namespaceGroupList[i];
+
+                    if (targetGroup.NamespaceStatementNodeList.Count > 0)
+                    {
+                        var sampleNamespaceStatementNode = targetGroup.NamespaceStatementNodeList[0];
+
+                        if (parserModel.Binder.CSharpCompilerService.SafeCompareTextSpans(
+                                parserModel.ResourceUri.Value,
+                                firstNamespaceClauseNode.IdentifierToken.TextSpan,
+                                sampleNamespaceStatementNode.ResourceUri.Value,
+                                sampleNamespaceStatementNode.IdentifierToken.TextSpan))
+                        {
+                            namespaceGroup = targetGroup;
+                            break;
+                        }
+                    }
                 }
 
-
-
-                if (parserModel.Binder.NamespaceGroupMap.TryGetValue(parserModel.Binder.CSharpCompilerService.SafeGetText(parserModel.ResourceUri.Value, ) ?? string.Empty, out var namespaceGroup))
+                if (namespaceGroup.ConstructorWasInvoked)
                 {
                     var innerCompilationUnit = parserModel.Compilation;
                     var innerResourceUri = parserModel.ResourceUri;
