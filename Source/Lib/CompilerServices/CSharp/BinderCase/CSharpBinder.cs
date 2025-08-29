@@ -150,7 +150,7 @@ public class CSharpBinder
 
         _namespaceGroupList.Add(
             new NamespaceGroup(
-                string.Empty,
+                charIntSum: 0,
                 new List<NamespaceStatementNode>
                 {
                     _topLevelNamespaceStatementNode
@@ -263,7 +263,7 @@ public class CSharpBinder
     {
         if (__CompilationUnitMap.TryGetValue(resourceUri, out var previousCompilationUnit))
         {
-            for (int i = previousCompilationUnit.IndexNamespaceContributionList; i < previousCompilationUnit.IndexNamespaceContributionList + previousCompilationUnit.CountNamespaceContributionList; i++)
+            for (int i = previousCompilationUnit.IndexNamespaceContributionList + previousCompilationUnit.CountNamespaceContributionList - 1; i >= previousCompilationUnit.IndexNamespaceContributionList; i--)
             {
                 var namespaceContributionEntry = NamespaceContributionList[i];
                 var findTuple = NamespaceContribution_FindRange(namespaceContributionEntry);
@@ -285,6 +285,10 @@ public class CSharpBinder
                                 if (targetGroup.NamespaceStatementNodeList[removeIndex].ResourceUri == resourceUri)
                                 {
                                     targetGroup.NamespaceStatementNodeList.RemoveAt(removeIndex);
+                                    if (targetGroup.NamespaceStatementNodeList.Count == 0)
+                                    {
+                                        _namespaceGroupList.RemoveAt(groupIndex);
+                                    }
                                     break;
                                 }
                             }
@@ -367,16 +371,7 @@ public class CSharpBinder
     /// </summary>
     public void ClearStateByResourceUri(ResourceUri resourceUri)
     {
-        foreach (var namespaceGroupNodeKvp in _namespaceGroupList)
-        {
-            for (int i = namespaceGroupNodeKvp.Value.NamespaceStatementNodeList.Count - 1; i >= 0; i--)
-            {
-                if (namespaceGroupNodeKvp.Value.NamespaceStatementNodeList[i].ResourceUri == resourceUri)
-                    namespaceGroupNodeKvp.Value.NamespaceStatementNodeList.RemoveAt(i);
-            }
-        }
-
-        __CompilationUnitMap.Remove(resourceUri);
+        throw new NotImplementedException();
     }
 
     public ICodeBlockOwner? GetScope(CSharpCompilationUnit compilationUnit, TextEditorTextSpan textSpan)

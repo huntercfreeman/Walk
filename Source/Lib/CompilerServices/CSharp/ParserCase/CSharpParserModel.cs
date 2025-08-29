@@ -63,7 +63,7 @@ public ref struct CSharpParserModel
         
         Binder.MethodOverload_ResourceUri_WasCleared = false;
         
-        Binder.CSharpParserModel_AddedNamespaceHashSet.Clear();
+        Binder.CSharpParserModel_AddedNamespaceList.Clear();
         
         ExternalTypeDefinitionList = Binder.CSharpParserModel_ExternalTypeDefinitionList;
         ExternalTypeDefinitionList.Clear();
@@ -466,18 +466,38 @@ public ref struct CSharpParserModel
     
     public readonly void BindNamespaceStatementNode(NamespaceStatementNode namespaceStatementNode)
     {
-        Binder.NamespaceContributionList.Add(new NamespaceContributionEntry(namespaceStatementNode.IdentifierToken.TextSpan));
+        var namespaceContributionEntry = new NamespaceContributionEntry(namespaceStatementNode.IdentifierToken.TextSpan);
+        Binder.NamespaceContributionList.Add(namespaceContributionEntry);
         ++Compilation.CountNamespaceContributionList;
-        
 
-        if (Binder._namespaceGroupList.TryGetValue(namespaceString, out var inNamespaceGroupNode))
+        var findTuple = Binder.NamespaceContribution_FindRange(namespaceContributionEntry);
+
+        var foundGroup = false;
+
+        for (int i = findTuple.StartIndex; i < findTuple.EndIndex; i++)
         {
-            inNamespaceGroupNode.NamespaceStatementNodeList.Add(namespaceStatementNode);
+            var targetGroup = Binder._namespaceGroupList[i];
+
+            if (targetGroup.NamespaceStatementNodeList.Count > 0)
+            {
+                var sampleNamespaceStatementNode = targetGroup.NamespaceStatementNodeList[0];
+                
+                if (Binder.CSharpCompilerService.SafeCompareTextSpans(
+                    ResourceUri.Value,
+                    namespaceStatementNode.IdentifierToken.TextSpan,
+                    sampleNamespaceStatementNode.ResourceUri.Value,
+                    sampleNamespaceStatementNode.IdentifierToken.TextSpan))
+                {
+                    targetGroup.NamespaceStatementNodeList.Add(namespaceStatementNode);
+                    foundGroup = true;
+                }
+            }
         }
-        else
+
+        if (!foundGroup)
         {
-            Binder._namespaceGroupList.Add(namespaceString, new NamespaceGroup(
-                namespaceString,
+            Binder._namespaceGroupList.Add(new NamespaceGroup(
+                namespaceStatementNode.IdentifierToken.TextSpan.CharIntSum,
                 new List<NamespaceStatementNode> { namespaceStatementNode }));
         }
     }
