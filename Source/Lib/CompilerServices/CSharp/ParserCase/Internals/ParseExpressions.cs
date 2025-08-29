@@ -1232,8 +1232,6 @@ public static class ParseExpressions
             }
         }
         
-        var ambiguousIdentifierTokenText = parserModel.GetTextSpanText(ambiguousIdentifierExpressionNode.Token.TextSpan);
-
         if (allowFabricatedUndefinedNode)
         {
             // Bind an undefined-(TypeClauseNode or NamespaceClauseNode)
