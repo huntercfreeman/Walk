@@ -561,13 +561,11 @@ public ref struct CSharpParserModel
                 }));
         ++Compilation.CountSymbolList;
     
-        var text = Binder.CSharpCompilerService.SafeGetText(ResourceUri.Value, labelDeclarationNode.IdentifierToken.TextSpan);
-        if (text is null)
-            return;
-        
         if (TryGetLabelDeclarationNodeByScope(
+                ResourceUri,
+                Compilation,
                 CurrentCodeBlockOwner.Unsafe_SelfIndexKey,
-                text,
+                ResourceUri,
                 labelDeclarationNode.IdentifierToken.TextSpan,
                 out var existingLabelDeclarationNode))
         {
@@ -579,7 +577,7 @@ public ref struct CSharpParserModel
                 // (if there is an error where something is defined twice for example)
                 SetLabelDeclarationNodeByScope(
                     CurrentCodeBlockOwner.Unsafe_SelfIndexKey,
-                    text,
+                    labelDeclarationNode.IdentifierToken.TextSpan,
                     labelDeclarationNode);
             }
 
@@ -597,7 +595,6 @@ public ref struct CSharpParserModel
         {
             _ = TryAddLabelDeclarationNodeByScope(
                 CurrentCodeBlockOwner.Unsafe_SelfIndexKey,
-                text,
                 labelDeclarationNode.IdentifierToken.TextSpan,
                 labelDeclarationNode);
         }
@@ -1574,8 +1571,11 @@ public ref struct CSharpParserModel
     }
     
     public readonly bool TryGetLabelDeclarationHierarchically(
-        string identifierText,
-        TextEditorTextSpan identifierTextSpan,
+        ResourceUri declarationResourceUri,
+        CSharpCompilationUnit declarationCompilationUnit,
+        int declarationScopeIndexKey,
+        ResourceUri referenceResourceUri,
+        TextEditorTextSpan referenceTextSpan,
         out LabelDeclarationNode? labelDeclarationNode)
     {
         int initialScopeIndexKey = CurrentCodeBlockOwner.Unsafe_SelfIndexKey;
@@ -1585,9 +1585,11 @@ public ref struct CSharpParserModel
         while (localScope is not null)
         {
             if (TryGetLabelDeclarationNodeByScope(
+                    declarationResourceUri,
+                    declarationCompilationUnit,
                     localScope.Unsafe_SelfIndexKey,
-                    identifierText,
-                    identifierTextSpan,
+                    referenceResourceUri,
+                    referenceTextSpan,
                     out labelDeclarationNode))
             {
                 return true;
@@ -1604,9 +1606,11 @@ public ref struct CSharpParserModel
     }
     
     public readonly bool TryGetLabelDeclarationNodeByScope(
-        int scopeIndexKey,
-        string labelIdentifierText,
-        TextEditorTextSpan labelIdentifierTextSpan,
+        ResourceUri declarationResourceUri,
+        CSharpCompilationUnit declarationCompilationUnit,
+        int declarationScopeIndexKey,
+        ResourceUri referenceResourceUri,
+        TextEditorTextSpan referenceTextSpan,
         out LabelDeclarationNode labelDeclarationNode)
     {
         labelDeclarationNode = null;
@@ -1614,21 +1618,13 @@ public ref struct CSharpParserModel
         {
             var x = Binder.NodeList[i];
             
-            if (x.Unsafe_ParentIndexKey == scopeIndexKey &&
+            if (x.Unsafe_ParentIndexKey == declarationScopeIndexKey &&
                 x.SyntaxKind == SyntaxKind.LabelDeclarationNode)
             {
-                var otherTextSpan = GetIdentifierTextSpan(x);
-                if (otherTextSpan.Length == labelIdentifierText.Length)
+                if (Binder.CSharpCompilerService.SafeCompareTextSpans(referenceResourceUri.Value, referenceTextSpan, declarationResourceUri.Value, GetIdentifierTextSpan(x)))
                 {
-                    // It was validated that neither CharIntSum is 0 here so removing the checks
-                    if (otherTextSpan.CharIntSum == labelIdentifierTextSpan.CharIntSum)
-                    {
-                        if (CompareIdentifierText(x, ResourceUri, Compilation, labelIdentifierText))
-                        {
-                            labelDeclarationNode = (LabelDeclarationNode)x;
-                            break;
-                        }
-                    }
+                    labelDeclarationNode = (LabelDeclarationNode)x;
+                    break;
                 }
             }
         }
@@ -1641,7 +1637,6 @@ public ref struct CSharpParserModel
     
     public bool TryAddLabelDeclarationNodeByScope(
         int scopeIndexKey,
-        string labelIdentifierText,
         TextEditorTextSpan labelIdentifierTextSpan,
         LabelDeclarationNode labelDeclarationNode)
     {
@@ -1654,17 +1649,10 @@ public ref struct CSharpParserModel
                 x.SyntaxKind == SyntaxKind.LabelDeclarationNode)
             {
                 var otherTextSpan = GetIdentifierTextSpan(x);
-                if (otherTextSpan.Length == labelIdentifierText.Length)
+                if (Binder.CSharpCompilerService.SafeCompareTextSpans(ResourceUri.Value, labelIdentifierTextSpan, ResourceUri.Value, GetIdentifierTextSpan(x)))
                 {
-                    // It was validated that neither CharIntSum is 0 here so removing the checks
-                    if (otherTextSpan.CharIntSum == labelIdentifierTextSpan.CharIntSum)
-                    {
-                        if (CompareIdentifierText(x, ResourceUri, Compilation, labelIdentifierText))
-                        {
-                            matchNode = (LabelDeclarationNode)x;
-                            break;
-                        }
-                    }
+                    matchNode = (LabelDeclarationNode)x;
+                    break;
                 }
             }
         }
@@ -1688,7 +1676,7 @@ public ref struct CSharpParserModel
     
     public readonly void SetLabelDeclarationNodeByScope(
         int scopeIndexKey,
-        string labelIdentifierText,
+        TextEditorTextSpan referenceTextSpan,
         LabelDeclarationNode labelDeclarationNode)
     {
         LabelDeclarationNode? matchNode = null;
@@ -1701,17 +1689,10 @@ public ref struct CSharpParserModel
                 x.SyntaxKind == SyntaxKind.LabelDeclarationNode)
             {
                 var otherTextSpan = GetIdentifierTextSpan(x);
-                if (otherTextSpan.Length == labelIdentifierText.Length)
+                if (Binder.CSharpCompilerService.SafeCompareTextSpans(ResourceUri.Value, referenceTextSpan, ResourceUri.Value, GetIdentifierTextSpan(x)))
                 {
-                    // It was validated that neither CharIntSum is 0 here so removing the checks
-                    if (otherTextSpan.CharIntSum == labelDeclarationNode.IdentifierToken.TextSpan.CharIntSum)
-                    {
-                        if (CompareIdentifierText(x, ResourceUri, Compilation, labelIdentifierText))
-                        {
-                            matchNode = (LabelDeclarationNode)x;
-                            break;
-                        }
-                    }
+                    matchNode = (LabelDeclarationNode)x;
+                    break;
                 }
             }
         }

@@ -1146,8 +1146,6 @@ public static class ParseExpressions
             }
         }
 
-        string ambiguousIdentifierTokenText;
-
         if (!forceVariableReferenceNode &&
             parserModel.ParserContextKind != CSharpParserContextKind.ForceParseNextIdentifierAsTypeClauseNode &&
             UtilityApi.IsConvertibleToIdentifierToken(ambiguousIdentifierExpressionNode.Token.SyntaxKind))
@@ -1214,10 +1212,11 @@ public static class ParseExpressions
                 }
             }
             
-            ambiguousIdentifierTokenText = parserModel.GetTextSpanText(ambiguousIdentifierExpressionNode.Token.TextSpan);
-            
             if (parserModel.TryGetLabelDeclarationHierarchically(
-                    ambiguousIdentifierTokenText,
+                    parserModel.ResourceUri,
+                    parserModel.Compilation,
+                    parserModel.CurrentCodeBlockOwner.Unsafe_SelfIndexKey,
+                    parserModel.ResourceUri,
                     ambiguousIdentifierExpressionNode.Token.TextSpan,
                     out var labelDefinitionNode))
             {
@@ -1232,10 +1231,8 @@ public static class ParseExpressions
                 goto finalize;
             }
         }
-        else
-        {
-            ambiguousIdentifierTokenText = parserModel.GetTextSpanText(ambiguousIdentifierExpressionNode.Token.TextSpan);
-        }
+        
+        var ambiguousIdentifierTokenText = parserModel.GetTextSpanText(ambiguousIdentifierExpressionNode.Token.TextSpan);
 
         if (allowFabricatedUndefinedNode)
         {
