@@ -855,13 +855,29 @@ public ref struct CSharpParserModel
         
         findTuple = Binder.NamespaceGroup_FindRange(namespaceContributionEntry);
 
+        // Absolutely be certain to double check that you did the SafeCompareTextSpans at every step
+        // you missed one here.
         for (int i = findTuple.StartIndex; i < findTuple.EndIndex; i++)
         {
             var targetGroup = Binder._namespaceGroupList[i];
-            var typeDefinitionNodeList = Binder.Internal_GetTopLevelTypeDefinitionNodes_NamespaceGroup(targetGroup);
-            foreach (var typeDefinitionNode in typeDefinitionNodeList)
+
+            if (targetGroup.NamespaceStatementNodeList.Count > 0)
             {
-                ExternalTypeDefinitionList.Add(typeDefinitionNode);
+                var sampleNamespaceStatementNode = targetGroup.NamespaceStatementNodeList[0];
+                
+                if (Binder.CSharpCompilerService.SafeCompareTextSpans(
+                        ResourceUri.Value,
+                        textSpan,
+                        sampleNamespaceStatementNode.ResourceUri.Value,
+                        sampleNamespaceStatementNode.IdentifierToken.TextSpan))
+                {
+                    var typeDefinitionNodeList = Binder.Internal_GetTopLevelTypeDefinitionNodes_NamespaceGroup(targetGroup);
+                    foreach (var typeDefinitionNode in typeDefinitionNodeList)
+                    {
+                        ExternalTypeDefinitionList.Add(typeDefinitionNode);
+                    }
+                    break;
+                }
             }
         }
     }

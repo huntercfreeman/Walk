@@ -3562,8 +3562,16 @@ public static class ParseExpressions
                         return namespaceClauseNode;
                     }*/
                 }
-                
-                if (parserModel.Binder.NamespaceGroupMap.TryGetValue(parserModel.Binder.CSharpCompilerService.SafeGetText(parserModel.ResourceUri.Value, firstNamespaceClauseNode.IdentifierToken.TextSpan) ?? string.Empty, out var namespaceGroup))
+
+                var findTuple = parserModel.Binder.NamespaceGroup_FindRange(new NamespaceContributionEntry(firstNamespaceClauseNode.IdentifierToken.TextSpan));
+
+                for ()
+                {
+                }
+
+
+
+                if (parserModel.Binder.NamespaceGroupMap.TryGetValue(parserModel.Binder.CSharpCompilerService.SafeGetText(parserModel.ResourceUri.Value, ) ?? string.Empty, out var namespaceGroup))
                 {
                     var innerCompilationUnit = parserModel.Compilation;
                     var innerResourceUri = parserModel.ResourceUri;
