@@ -507,10 +507,6 @@ public ref struct CSharpParserModel
         if (shouldCreateVariableSymbol)
             CreateVariableSymbol(variableDeclarationNode.IdentifierToken, variableDeclarationNode.VariableKind);
         
-        var text = Binder.CSharpCompilerService.SafeGetText(ResourceUri.Value, variableDeclarationNode.IdentifierToken.TextSpan);
-        if (text is null)
-            return;
-            
         if (TryGetVariableDeclarationNodeByScope(
                 ResourceUri,
                 Compilation,
@@ -526,7 +522,7 @@ public ref struct CSharpParserModel
                 // TODO: Track one or many declarations?...
                 // (if there is an error where something is defined twice for example)
                 SetVariableDeclarationNodeByScope(
-                    text,
+                    variableDeclarationNode.IdentifierToken.TextSpan,
                     variableDeclarationNode);
             }
 
@@ -543,7 +539,7 @@ public ref struct CSharpParserModel
         else
         {
             _ = TryAddVariableDeclarationNodeByScope(
-                text,
+                variableDeclarationNode.IdentifierToken.TextSpan,
                 variableDeclarationNode);
         }
     }
@@ -1487,7 +1483,7 @@ public ref struct CSharpParserModel
     }
     
     public bool TryAddVariableDeclarationNodeByScope(
-        string variableIdentifierText,
+        TextEditorTextSpan variableIdentifierTextSpan,
         VariableDeclarationNode variableDeclarationNode)
     {
         var scopeIndexKey = CurrentCodeBlockOwner.Unsafe_SelfIndexKey;
@@ -1499,18 +1495,11 @@ public ref struct CSharpParserModel
             if (x.Unsafe_ParentIndexKey == scopeIndexKey &&
                 x.SyntaxKind == SyntaxKind.VariableDeclarationNode)
             {
-                var otherTextSpan = GetIdentifierTextSpan(x);
-                if (otherTextSpan.Length == variableIdentifierText.Length)
+                if (Binder.CSharpCompilerService.SafeCompareTextSpans(
+                        ResourceUri.Value, variableIdentifierTextSpan, ResourceUri.Value, GetIdentifierTextSpan(x)))
                 {
-                    // It was validated that neither CharIntSum is 0 here so removing the checks
-                    if (otherTextSpan.CharIntSum == variableDeclarationNode.IdentifierToken.TextSpan.CharIntSum)
-                    {
-                        if (CompareIdentifierText(x, ResourceUri, Compilation, variableIdentifierText))
-                        {
-                            matchNode = (VariableDeclarationNode)x;
-                            break;
-                        }
-                    }
+                    matchNode = (VariableDeclarationNode)x;
+                    break;
                 }
             }
         }
@@ -1533,7 +1522,7 @@ public ref struct CSharpParserModel
     }
     
     public readonly void SetVariableDeclarationNodeByScope(
-        string variableIdentifierText,
+        TextEditorTextSpan variableIdentifierTextSpan,
         VariableDeclarationNode variableDeclarationNode)
     {
         int scopeIndexKey = CurrentCodeBlockOwner.Unsafe_SelfIndexKey;
@@ -1547,18 +1536,11 @@ public ref struct CSharpParserModel
             if (x.Unsafe_ParentIndexKey == scopeIndexKey &&
                 x.SyntaxKind == SyntaxKind.VariableDeclarationNode)
             {
-                var otherTextSpan = GetIdentifierTextSpan(x);
-                if (otherTextSpan.Length == variableIdentifierText.Length)
+                if (Binder.CSharpCompilerService.SafeCompareTextSpans(
+                        ResourceUri.Value, variableIdentifierTextSpan, ResourceUri.Value, GetIdentifierTextSpan(x)))
                 {
-                    // It was validated that neither CharIntSum is 0 here so removing the checks
-                    if (otherTextSpan.CharIntSum == variableDeclarationNode.IdentifierToken.TextSpan.CharIntSum)
-                    {
-                        if (CompareIdentifierText(x, ResourceUri, Compilation, variableIdentifierText))
-                        {
-                            matchNode = (VariableDeclarationNode)x;
-                            break;
-                        }
-                    }
+                    matchNode = (VariableDeclarationNode)x;
+                    break;
                 }
             }
         }
@@ -1648,7 +1630,6 @@ public ref struct CSharpParserModel
             if (x.Unsafe_ParentIndexKey == scopeIndexKey &&
                 x.SyntaxKind == SyntaxKind.LabelDeclarationNode)
             {
-                var otherTextSpan = GetIdentifierTextSpan(x);
                 if (Binder.CSharpCompilerService.SafeCompareTextSpans(ResourceUri.Value, labelIdentifierTextSpan, ResourceUri.Value, GetIdentifierTextSpan(x)))
                 {
                     matchNode = (LabelDeclarationNode)x;
@@ -1688,7 +1669,6 @@ public ref struct CSharpParserModel
             if (x.Unsafe_ParentIndexKey == scopeIndexKey &&
                 x.SyntaxKind == SyntaxKind.LabelDeclarationNode)
             {
-                var otherTextSpan = GetIdentifierTextSpan(x);
                 if (Binder.CSharpCompilerService.SafeCompareTextSpans(ResourceUri.Value, referenceTextSpan, ResourceUri.Value, GetIdentifierTextSpan(x)))
                 {
                     matchNode = (LabelDeclarationNode)x;
