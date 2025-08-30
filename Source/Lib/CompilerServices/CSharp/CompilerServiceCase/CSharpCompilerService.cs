@@ -938,29 +938,10 @@ public sealed class CSharpCompilerService : IExtendedCompilerService
                                 }
                             }
                             
-                            findTuple = __CSharpBinder.NamespaceGroup_FindRange(foundSymbol.TextSpan);
-                            
-                            NamespaceGroup namespaceGroup = default;
-                            
-                            for (int namespaceGroupIndex = findTuple.StartIndex; namespaceGroupIndex < findTuple.EndIndex; namespaceGroupIndex++)
-                            {
-                                var possibleNamespaceGroup = __CSharpBinder.NamespaceGroupMap[namespaceGroupIndex];
-                                
-                                if (possibleNamespaceGroup.NamespaceStatementNodeList.Count > 0)
-                                {
-                                    var sampleNamespaceStatementNode = possibleNamespaceGroup.NamespaceStatementNodeList[0];
-                                    
-                                    if (SafeCompareTextSpans(
-                                            virtualizationResult.Model.PersistentState.ResourceUri.Value,
-                                            foundSymbol.TextSpan,
-                                            sampleNamespaceStatementNode.ResourceUri.Value,
-                                            sampleNamespaceStatementNode.IdentifierToken.TextSpan))
-                                    {
-                                        namespaceGroup = possibleNamespaceGroup;
-                                        break;
-                                    }
-                                }
-                            }
+                            var namespaceGroup = __CSharpBinder.FindNamespaceGroup_Reversed_WithMatchedIndex(
+                                    virtualizationResult.Model.PersistentState.ResourceUri,
+                                    foundSymbol.TextSpan)
+                                .TargetGroup;
                             
                             if (namespaceGroup.ConstructorWasInvoked)
                             {
