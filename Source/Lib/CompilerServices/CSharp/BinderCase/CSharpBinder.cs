@@ -1138,7 +1138,6 @@ public class CSharpBinder
                         
                         int position = 0;
                         
-                        
                         var namespacePrefixNode = NamespacePrefixTree.__Root;
                         
                         var success = true;
@@ -1151,30 +1150,16 @@ public class CSharpBinder
                                 charIntSum += (int)character;
                             }
                             
-                            var findTuple = NamespacePrefixTree.FindRange(namespacePrefixNode, charIntSum);
-                            
-                            var innerSuccess = false;
-                            
-                            int i = 0;
-                            
-                            for (i = findTuple.StartIndex; i < findTuple.EndIndex; i++)
-                            {
-                                if (CSharpCompilerService.SafeCompareTextSpans(
-                                        resourceUri.Value,
-                                        textSpan,
-                                        namespacePrefixNode.Children[i].ResourceUri.Value,
-                                        namespacePrefixNode.Children[i].TextSpan))
-                                {
-                                    innerSuccess = true;
-                                    namespacePrefixNode = namespacePrefixNode.Children[i];
-                                    break;
-                                }
-                            }
-                            
-                            if (!innerSuccess)
+                            // TODO: This doesn't work because of the textSpan not being the split but the whole.
+                            var node = FindPrefix(namespacePrefixNode, textSpan, resourceUri.Value);
+                            if (node is null)
                             {
                                 success = false;
                                 break;
+                            }
+                            else
+                            {
+                                namespacePrefixNode = node;
                             }
                         }
                         
