@@ -1713,7 +1713,7 @@ public static class ParseExpressions
             return ParseFunctionParameterListing_Token(constructorInvocationExpressionNode, ref token, ref parserModel);
         }
         
-        if (constructorInvocationExpressionNode.ResultTypeReference == default &&
+        if (constructorInvocationExpressionNode.ResultTypeReference.IsDefault() &&
             parserModel.TokenWalker.Current.SyntaxKind != SyntaxKind.OpenParenthesisToken)
         {
             constructorInvocationExpressionNode.ConstructorInvocationStageKind = ConstructorInvocationStageKind.Type;
@@ -1883,7 +1883,7 @@ public static class ParseExpressions
                 isVoidType = true;
         }
         
-        if (constructorInvocationExpressionNode.ResultTypeReference == default || isVoidType)
+        if (constructorInvocationExpressionNode.ResultTypeReference.IsDefault() || isVoidType)
             constructorInvocationExpressionNode.ResultTypeReference = parserModel.MostRecentLeftHandSideAssignmentExpressionTypeClauseNode;
         
         if (UtilityApi.IsConvertibleToIdentifierToken(parserModel.TokenWalker.Current.SyntaxKind) &&
@@ -3235,7 +3235,7 @@ public static class ParseExpressions
                 typeReference = ((TypeDefinitionNode)expressionPrimary).ToTypeReference();
             }
                 
-            if (typeReference == default)
+            if (typeReference.IsDefault())
             {
                 if (expressionPrimary.SyntaxKind == SyntaxKind.VariableReferenceNode)
                 {

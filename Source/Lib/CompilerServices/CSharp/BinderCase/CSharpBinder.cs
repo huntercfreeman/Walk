@@ -761,7 +761,7 @@ public class CSharpBinder
                     }
                 }
                 
-                if (typeDefinitionNode.InheritedTypeReference != default)
+                if (!typeDefinitionNode.InheritedTypeReference.IsDefault())
                 {
                     string? identifierText;
                     CSharpCompilationUnit innerCompilationUnit;

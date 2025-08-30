@@ -24,7 +24,7 @@
 	int arrayRank;
 	TypeKind typeKind = TypeKind.ArrayJagged;
 	
-	if (syntaxViewModelLocal.DefinitionNode is null && syntaxViewModelLocal.TargetNode is null && syntaxViewModelLocal.TargetSymbol is null && TypeReference == default(TypeReference))
+	if (syntaxViewModelLocal.DefinitionNode is null && syntaxViewModelLocal.TargetNode is null && syntaxViewModelLocal.TargetSymbol is null && TypeReference.IsDefault())
 	{
 		prefixText = "(null)";
 		prefixTextCssClass = null;
@@ -79,7 +79,7 @@
 		hasQuestionMark = null;
 		arrayRank = 0;
 	}
-	else if (TypeReference != default(TypeReference))
+	else if (!TypeReference.IsDefault())
 	{
 		prefixText = "(reference)";
 		prefixTextCssClass = null;
@@ -139,7 +139,7 @@
     	
     	@if (hasGenericParameterListing)
     	{
-    		if (TypeReference != default)
+			if (!TypeReference.IsDefault())
     		{
     			var syntaxViewModel = new SyntaxViewModel(
         		    SyntaxViewModel.ExtendedCompilerService,

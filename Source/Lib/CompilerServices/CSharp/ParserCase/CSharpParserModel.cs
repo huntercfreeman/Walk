@@ -1348,7 +1348,7 @@ public ref struct CSharpParserModel
                     }
                 }
                 
-                if (typeDefinitionNode.InheritedTypeReference != default)
+                if (!typeDefinitionNode.InheritedTypeReference.IsDefault())
                 {
                     TextEditorTextSpan typeDefinitionTextSpan;
                     CSharpCompilationUnit typeDefinitionCompilationUnit;

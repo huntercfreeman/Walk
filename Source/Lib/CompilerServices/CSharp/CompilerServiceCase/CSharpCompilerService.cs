@@ -1008,7 +1008,7 @@ public sealed class CSharpCompilerService : IExtendedCompilerService
                         typeReference = typeDefinitionNode.ToTypeReference();
                     }
                     
-                    if (typeReference != default)
+                    if (!typeReference.IsDefault())
                     {
                         Symbol innerFoundSymbol = default;
                         var innerCompilationUnit = compilationUnitLocal;
@@ -2021,7 +2021,7 @@ public sealed class CSharpCompilerService : IExtendedCompilerService
                 typeReference = ((ConstructorDefinitionNode)targetNode).ReturnTypeReference;
             }
             
-            if (typeReference == default)
+            if (typeReference.IsDefault())
                 return autocompleteEntryList.DistinctBy(x => x.DisplayName).ToList();
             
             var maybeTypeDefinitionNode = __CSharpBinder.GetDefinitionNode(virtualizationResult.Model.PersistentState.ResourceUri, (CSharpCompilationUnit)compilerServiceResource.CompilationUnit, typeReference.TypeIdentifierToken.TextSpan, SyntaxKind.TypeClauseNode);
