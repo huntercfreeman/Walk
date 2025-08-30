@@ -3661,7 +3661,8 @@ public static class ParseExpressions
                 }
             }
             
-            if (UtilityApi.IsConvertibleToIdentifierToken(parserModel.TokenWalker.Current.SyntaxKind))
+            if (UtilityApi.IsConvertibleToIdentifierToken(parserModel.TokenWalker.Current.SyntaxKind) &&
+                parserModel.TokenWalker.Current.SyntaxKind != SyntaxKind.WithTokenContextualKeyword)
             {
                 var ambiguousIdentifier = parserModel.Rent_AmbiguousIdentifierExpressionNode();
                 ambiguousIdentifier.Token = memberIdentifierToken;
