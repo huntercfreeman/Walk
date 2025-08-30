@@ -329,7 +329,7 @@ public class CSharpBinder
     }
     
     /// <summary>(inclusive, exclusive, this is the index at which you'd insert the text span)</summary>
-    public readonly (int StartIndex, int EndIndex, int InsertionIndex) AddedNamespaceList_FindRange(NamespaceContributionEntry namespaceContributionEntry)
+    public (int StartIndex, int EndIndex, int InsertionIndex) AddedNamespaceList_FindRange(TextEditorTextSpan textSpan)
     {
         var startIndex = -1;
         var endIndex = -1;
@@ -339,7 +339,7 @@ public class CSharpBinder
         {
             var node = CSharpParserModel_AddedNamespaceList[i];
 
-            if (node.CharIntSum == namespaceContributionEntry.TextSpan.CharIntSum)
+            if (node.CharIntSum == textSpan.CharIntSum)
             {
                 if (startIndex == -1)
                     startIndex = i;
@@ -360,16 +360,16 @@ public class CSharpBinder
     
     public bool CheckAlreadyAddedNamespace(
         ResourceUri resourceUri,
-        NamespaceContributionEntry namespaceContributionEntry)
+        TextEditorTextSpan textSpan)
     {
-        var findTuple = AddedNamespaceList_FindRange(namespaceContributionEntry);
+        var findTuple = AddedNamespaceList_FindRange(textSpan);
 
         for (int i = findTuple.StartIndex; i < findTuple.EndIndex; i++)
         {
             var target = CSharpParserModel_AddedNamespaceList[i];
             if (CSharpCompilerService.SafeCompareTextSpans(
                     resourceUri.Value,
-                    namespaceContributionEntry.TextSpan,
+                    textSpan,
                     resourceUri.Value,
                     target))
             {

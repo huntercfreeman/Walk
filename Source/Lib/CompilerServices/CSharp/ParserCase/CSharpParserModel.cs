@@ -786,7 +786,7 @@ public ref struct CSharpParserModel
         var namespaceContributionEntry = new NamespaceContributionEntry(textSpan);
 
         if (Binder.CheckAlreadyAddedNamespace(
-                ResourceUri.Value,
+                ResourceUri,
                 textSpan))
         {
             return;
