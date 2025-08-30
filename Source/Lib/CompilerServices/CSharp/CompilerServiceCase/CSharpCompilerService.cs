@@ -895,11 +895,11 @@ public sealed class CSharpCompilerService : IExtendedCompilerService
                 
                 if (definitionNode is not null)
                 {
-                    /*if (definitionNode.SyntaxKind == SyntaxKind.NamespaceClauseNode)
+                    if (definitionNode.SyntaxKind == SyntaxKind.NamespaceClauseNode)
                     {
                         var namespaceClauseNode = (NamespaceClauseNode)definitionNode;
                     
-                        NamespacePrefixNode? namespacePrefixNode;
+                        NamespacePrefixNode? namespacePrefixNode = null;
                         
                         if (namespaceClauseNode.NamespacePrefixNode is not null)
                         {
@@ -907,22 +907,72 @@ public sealed class CSharpCompilerService : IExtendedCompilerService
                         }
                         else
                         {
-                            _ = __CSharpBinder.NamespacePrefixTree.__Root.Children.TryGetValue(
-                                foundSymbol.TextSpan.GetText(virtualizationResult.Model.GetAllText(), _textEditorService), // This is the same value as the definition's TextSpan.
-                                out namespacePrefixNode);
+                            var findTuple = __CSharpBinder.NamespacePrefixTree.FindRange(
+                                __CSharpBinder.NamespacePrefixTree.__Root,
+                                foundSymbol.TextSpan.CharIntSum);
+                            
+                            for (int prefixIndex = findTuple.StartIndex; prefixIndex < findTuple.EndIndex; prefixIndex++)
+                            {
+                                var prefix = __CSharpBinder.NamespacePrefixTree.__Root.Children[prefixIndex];
+                                if (SafeCompareTextSpans(
+                                        textEditorModel.PersistentState.ResourceUri.Value,
+                                        foundSymbol.TextSpan,
+                                        prefix.ResourceUri.Value,
+                                        prefix.TextSpan))
+                                {
+                                    namespacePrefixNode = prefix;
+                                    break;
+                                }
+                            }
                         }
 
-                        if (namespaceClauseNode is not null)
+                        if (namespacePrefixNode is not null)
                         {
-                            foreach (var kvp in namespacePrefixNode.Children.Where(kvp => kvp.Key.Contains(filteringWord)).Take(5))
+                            var filteringWordCharIntSum = 0;
+                            foreach (var c in filteringWord)
                             {
+                                filteringWordCharIntSum += (int)c;
+                            }
+                        
+                            var findTuple = __CSharpBinder.NamespacePrefixTree.FindRange(
+                                namespacePrefixNode,
+                                filteringWordCharIntSum);
+                        
+                            for (int prefixIndex = findTuple.StartIndex; prefixIndex < findTuple.EndIndex; prefixIndex++)
+                            {
+                                var prefix = namespacePrefixNode.Children[prefixIndex];
+                                var prefixText = SafeGetText(prefix.ResourceUri.Value, prefix.TextSpan);
                                 autocompleteEntryList.Add(new AutocompleteEntry(
-                                    kvp.Key,
+                                    prefixText,
                                     AutocompleteEntryKind.Namespace,
-                                    () => MemberAutocomplete(kvp.Key, filteringWord, virtualizationResult.Model.PersistentState.ResourceUri, virtualizationResult.ViewModel.PersistentState.ViewModelKey)));
+                                    () => MemberAutocomplete(prefixText, filteringWord, virtualizationResult.Model.PersistentState.ResourceUri, virtualizationResult.ViewModel.PersistentState.ViewModelKey)));
                             }
                             
-                            if (__CSharpBinder.NamespaceGroupMap.TryGetValue(foundSymbol.TextSpan.GetText(virtualizationResult.Model.GetAllText(), _textEditorService), out var namespaceGroup))
+                            findTuple = __CSharpBinder.NamespaceGroup_FindRange(new NamespaceContributionEntry(foundSymbol.TextSpan));
+                            
+                            NamespaceGroup namespaceGroup = default;
+                            
+                            for (int namespaceGroupIndex = findTuple.StartIndex; namespaceGroupIndex < findTuple.EndIndex; namespaceGroupIndex++)
+                            {
+                                var possibleNamespaceGroup = __CSharpBinder.NamespaceGroupMap[namespaceGroupIndex];
+                                
+                                if (possibleNamespaceGroup.NamespaceStatementNodeList.Count > 0)
+                                {
+                                    var sampleNamespaceStatementNode = possibleNamespaceGroup.NamespaceStatementNodeList[0];
+                                    
+                                    if (SafeCompareTextSpans(
+                                            virtualizationResult.Model.PersistentState.ResourceUri.Value,
+                                            foundSymbol.TextSpan,
+                                            sampleNamespaceStatementNode.ResourceUri.Value,
+                                            sampleNamespaceStatementNode.IdentifierToken.TextSpan))
+                                    {
+                                        namespaceGroup = possibleNamespaceGroup;
+                                        break;
+                                    }
+                                }
+                            }
+                            
+                            if (namespaceGroup.ConstructorWasInvoked)
                             {
                                 foreach (var typeDefinitionNode in __CSharpBinder.GetTopLevelTypeDefinitionNodes_NamespaceGroup(namespaceGroup).Where(x => x.TypeIdentifierToken.TextSpan.GetText(virtualizationResult.Model.GetAllText(), _textEditorService).Contains(filteringWord)).Take(5))
                                 {
@@ -958,7 +1008,7 @@ public sealed class CSharpCompilerService : IExtendedCompilerService
                         }
                         
                         return null;
-                    }*/
+                    }
                 
                     TypeReference typeReference = default;
                     

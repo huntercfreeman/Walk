@@ -3537,17 +3537,17 @@ public static class ParseExpressions
                 
                 if (firstNamespacePrefixNode is null)
                 {
-                    var findTuple = parserModel.Binder.NamespacePrefixTree.FindRange(
+                    var thisFindTuple = parserModel.Binder.NamespacePrefixTree.FindRange(
                         parserModel.Binder.NamespacePrefixTree.__Root,
                         firstNamespaceClauseNode.IdentifierToken.TextSpan.CharIntSum);
                         
-                    for (int i = findTuple.StartIndex; i < findTuple.EndIndex; i++)
+                    for (int i = thisFindTuple.StartIndex; i < thisFindTuple.EndIndex; i++)
                     {
                         var node = parserModel.Binder.NamespacePrefixTree.__Root.Children[i];
                         if (parserModel.Binder.CSharpCompilerService.SafeCompareTextSpans(
                                 parserModel.ResourceUri.Value,
                                 firstNamespaceClauseNode.IdentifierToken.TextSpan,
-                                node.ResourceUri,
+                                node.ResourceUri.Value,
                                 node.TextSpan))
                         {
                             firstNamespacePrefixNode = node;
@@ -3560,19 +3560,19 @@ public static class ParseExpressions
                 
                 if (firstNamespacePrefixNode is not null)
                 {
-                    var findTuple = parserModel.Binder.NamespacePrefixTree.FindRange(
+                    var otherFindTuple = parserModel.Binder.NamespacePrefixTree.FindRange(
                         firstNamespacePrefixNode,
-                        memberIdentifierToken.TextSpan);
+                        memberIdentifierToken.TextSpan.CharIntSum);
                     
                     NamespacePrefixNode? secondNamespacePrefixNode = null;
                 
-                    for (int i = findTuple.StartIndex; i < findTuple.EndIndex; i++)
+                    for (int i = otherFindTuple.StartIndex; i < otherFindTuple.EndIndex; i++)
                     {
                         var node = parserModel.Binder.NamespacePrefixTree.__Root.Children[i];
                         if (parserModel.Binder.CSharpCompilerService.SafeCompareTextSpans(
                                 parserModel.ResourceUri.Value,
                                 memberIdentifierToken.TextSpan,
-                                node.ResourceUri,
+                                node.ResourceUri.Value,
                                 node.TextSpan))
                         {
                             secondNamespacePrefixNode = node;
