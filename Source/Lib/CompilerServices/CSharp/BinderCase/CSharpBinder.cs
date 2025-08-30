@@ -327,6 +327,58 @@ public class CSharpBinder
 
         return (startIndex, endIndex, insertionIndex);
     }
+    
+    /// <summary>(inclusive, exclusive, this is the index at which you'd insert the text span)</summary>
+    public readonly (int StartIndex, int EndIndex, int InsertionIndex) AddedNamespaceList_FindRange(NamespaceContributionEntry namespaceContributionEntry)
+    {
+        var startIndex = -1;
+        var endIndex = -1;
+        var insertionIndex = CSharpParserModel_AddedNamespaceList.Count;
+
+        for (int i = 0; i < CSharpParserModel_AddedNamespaceList.Count; i++)
+        {
+            var node = CSharpParserModel_AddedNamespaceList[i];
+
+            if (node.CharIntSum == namespaceContributionEntry.TextSpan.CharIntSum)
+            {
+                if (startIndex == -1)
+                    startIndex = i;
+            }
+            else if (startIndex != -1)
+            {
+                endIndex = i;
+                insertionIndex = i;
+                break;
+            }
+        }
+
+        if (startIndex != -1 && endIndex == -1)
+            endIndex = CSharpParserModel_AddedNamespaceList.Count;
+
+        return (startIndex, endIndex, insertionIndex);
+    }
+    
+    public bool CheckAlreadyAddedNamespace(
+        ResourceUri resourceUri,
+        NamespaceContributionEntry namespaceContributionEntry)
+    {
+        var findTuple = AddedNamespaceList_FindRange(namespaceContributionEntry);
+
+        for (int i = findTuple.StartIndex; i < findTuple.EndIndex; i++)
+        {
+            var target = CSharpParserModel_AddedNamespaceList[i];
+            if (CSharpCompilerService.SafeCompareTextSpans(
+                    resourceUri.Value,
+                    namespaceContributionEntry.TextSpan,
+                    resourceUri.Value,
+                    target))
+            {
+                return true;
+            }
+        }
+        
+        return false;
+    }
 
     /// <summary><see cref="FinalizeCompilationUnit"/></summary>
     public void StartCompilationUnit(ResourceUri resourceUri)
