@@ -155,6 +155,53 @@ public ref struct CSharpParserModel
     public IExpressionNode ExpressionPrimary { get; set; }
     
     /// <summary>
+    /// It is expected that any invoker of this method will immediately set the returned BinaryExpressionNode instance's:
+    /// - TypeIdentifierToken
+    /// Thus, the Return_BinaryExpressionNode(...) method will NOT clear that property's state.
+    /// </summary>
+    public readonly BinaryExpressionNode Rent_BinaryExpressionNode()
+    {
+        if (Binder.Pool_BinaryExpressionNode_Queue.TryDequeue(out var binaryExpressionNode))
+        {
+            ++POOL_BinaryExpressionNode_HIT;
+            return binaryExpressionNode;
+        }
+        
+        ++POOL_BinaryExpressionNode_MISS;
+        return new BinaryExpressionNode(
+            leftOperandTypeReference: default,
+            operatorToken: default,
+            rightOperandTypeReference: default,
+            resultTypeReference: default);
+    }
+    
+    public static int POOL_BinaryExpressionNode_HIT { get; set; }
+    public static int POOL_BinaryExpressionNode_MISS { get; set; }
+    public static int POOL_BinaryExpressionNode_RETURN { get; set; }
+    
+    /// <summary>
+    /// It is expected that any invoker of this method will immediately set the returned BinaryExpressionNode instance's:
+    /// - TypeIdentifierToken
+    /// Thus, the Return_BinaryExpressionNode(...) method will NOT clear that property's state.
+    /// </summary>
+    public readonly void Return_BinaryExpressionNode(BinaryExpressionNode binaryExpressionNode)
+    {
+        ++POOL_BinaryExpressionNode_RETURN;
+        binaryExpressionNode._isFabricated = false;
+    
+        binaryExpressionNode.LeftOperandTypeReference = default;
+        binaryExpressionNode.OperatorToken = default;
+        binaryExpressionNode.RightOperandTypeReference = default;
+        binaryExpressionNode.ResultTypeReference = default;
+        
+        binaryExpressionNode._rightExpressionResultTypeReference = default;
+        binaryExpressionNode.RightExpressionNodeWasSet = false;
+        binaryExpressionNode.Unsafe_ParentIndexKey = 0;
+    
+        Binder.Pool_BinaryExpressionNode_Queue.Enqueue(binaryExpressionNode);
+    }
+    
+    /// <summary>
     /// It is expected that any invoker of this method will immediately set the returned TypeClauseNode instance's:
     /// - TypeIdentifierToken
     /// Thus, the Return_TypeClauseNode(...) method will NOT clear that property's state.

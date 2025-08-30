@@ -86,6 +86,12 @@ public class CSharpStatementBuilder
                     (Walk.Extensions.CompilerServices.Syntax.Nodes.ConstructorInvocationExpressionNode)MostRecentNode);
                 break;
             }
+            case SyntaxKind.BinaryExpressionNode:
+            {
+                parserModel.Return_BinaryExpressionNode(
+                    (Walk.Extensions.CompilerServices.Syntax.Nodes.BinaryExpressionNode)MostRecentNode);
+                break;
+            }
         }
     
         MostRecentNode = Walk.Extensions.CompilerServices.Syntax.Nodes.EmptyExpressionNode.Empty;
