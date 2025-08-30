@@ -1999,26 +1999,4 @@ public ref struct CSharpParserModel
         
         return typeClauseNode;
     }
-    
-    public NamespacePrefixNode? FindPrefix(NamespacePrefixNode start, TextEditorTextSpan textSpan)
-    {
-        var findTuple = Binder.NamespacePrefixTree.FindRange(
-            start,
-            textSpan.CharIntSum);
-            
-        for (int i = findTuple.StartIndex; i < findTuple.EndIndex; i++)
-        {
-            var node = start.Children[i];
-            if (Binder.CSharpCompilerService.SafeCompareTextSpans(
-                    ResourceUri.Value,
-                    textSpan,
-                    node.ResourceUri.Value,
-                    node.TextSpan))
-            {
-                return node;
-            }
-        }
-        
-        return null;
-    }
 }

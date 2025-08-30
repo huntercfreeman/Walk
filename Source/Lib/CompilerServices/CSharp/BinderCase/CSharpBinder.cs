@@ -227,6 +227,28 @@ public class CSharpBinder
                 closeParenthesisToken: default));
         }
     }
+    
+    public NamespacePrefixNode? FindPrefix(NamespacePrefixNode start, TextEditorTextSpan textSpan, string absolutePathString)
+    {
+        var findTuple = NamespacePrefixTree.FindRange(
+            start,
+            textSpan.CharIntSum);
+            
+        for (int i = findTuple.StartIndex; i < findTuple.EndIndex; i++)
+        {
+            var node = start.Children[i];
+            if (CSharpCompilerService.SafeCompareTextSpans(
+                    absolutePathString,
+                    textSpan,
+                    node.ResourceUri.Value,
+                    node.TextSpan))
+            {
+                return node;
+            }
+        }
+        
+        return null;
+    }
 
     /// <summary>(inclusive, exclusive, this is the index at which you'd insert the text span)</summary>
     public (int StartIndex, int EndIndex, int InsertionIndex) NamespaceGroup_FindRange(NamespaceContributionEntry namespaceContributionEntry)
@@ -1103,19 +1125,9 @@ public class CSharpBinder
             }
             case SyntaxKind.NamespaceSymbol:
             {
-                var findTuple = NamespacePrefixTree.FindRange(NamespacePrefixTree.__Root, textSpan.CharIntSum);
-
-                for (int i = findTuple.StartIndex; i < findTuple.EndIndex; i++)
-                {
-                    if (CSharpCompilerService.SafeCompareTextSpans(
-                            resourceUri.Value,
-                            textSpan,
-                            NamespacePrefixTree.__Root.Children[i].ResourceUri.Value,
-                            NamespacePrefixTree.__Root.Children[i].TextSpan))
-                    {
-                        return new NamespaceClauseNode(new SyntaxToken(SyntaxKind.IdentifierToken, textSpan));
-                    }
-                }
+                var matchedPrefix = FindPrefix(NamespacePrefixTree.__Root, textSpan, resourceUri.Value);
+                if (matchedPrefix is not null)
+                    return new NamespaceClauseNode(new SyntaxToken(SyntaxKind.IdentifierToken, textSpan));
 
                 if (symbol is not null)
                 {
@@ -1139,7 +1151,7 @@ public class CSharpBinder
                                 charIntSum += (int)character;
                             }
                             
-                            findTuple = NamespacePrefixTree.FindRange(namespacePrefixNode, charIntSum);
+                            var findTuple = NamespacePrefixTree.FindRange(namespacePrefixNode, charIntSum);
                             
                             var innerSuccess = false;
                             
