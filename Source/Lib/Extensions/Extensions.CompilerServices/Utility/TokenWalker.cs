@@ -114,44 +114,10 @@ public class TokenWalker
     /// <summary>If the syntaxKind passed in does not match the current token, then a syntax token with that syntax kind will be fabricated and then returned instead.</summary>
     public SyntaxToken Match(SyntaxKind expectedSyntaxKind)
     {
-        var currentToken = Peek(0);
-
-        // TODO: Checking for the text 'args' is likely not a good solution. When parsing a main method, it might have the method arguments: 'string[] args'. The issue here is that 'args' comes up as a keyword while being the identifier for that method argument.
-        if (/*currentToken.TextSpan.Text == "args" && */expectedSyntaxKind == SyntaxKind.IdentifierToken)
-        {
-            _ = Consume();
-            return new SyntaxToken(SyntaxKind.IdentifierToken, currentToken.TextSpan);
-        }
-
-        if (currentToken.SyntaxKind == expectedSyntaxKind)
+        if (Current.SyntaxKind == expectedSyntaxKind)
             return Consume();
-
-        var fabricatedToken = this.FabricateToken(expectedSyntaxKind);
-
-        /*_diagnosticBag.ReportUnexpectedToken(
-            fabricatedToken.TextSpan,
-            currentToken.SyntaxKind.ToString(),
-            expectedSyntaxKind.ToString());*/
-
-        return fabricatedToken;
-    }
-
-    /// <summary>If the syntaxKind passed in does not match the current token, then a syntax token with that syntax kind will be fabricated and then returned instead.</summary>
-    public SyntaxToken MatchRange(IEnumerable<SyntaxKind> validSyntaxKinds, SyntaxKind fabricationKind)
-    {
-        var currentToken = Peek(0);
-
-        if (validSyntaxKinds.Contains(currentToken.SyntaxKind))
-            return Consume();
-
-        var fabricatedToken = this.FabricateToken(fabricationKind);
-
-        /*_diagnosticBag.ReportUnexpectedToken(
-            fabricatedToken.TextSpan,
-            currentToken.SyntaxKind.ToString(),
-            fabricationKind.ToString());*/
-
-        return fabricatedToken;
+        else
+            return this.FabricateToken(expectedSyntaxKind);
     }
 
     /// <summary>

@@ -261,9 +261,9 @@ public class ParseFunctions
             SyntaxToken keywordToken;
             
             if (parserModel.TokenWalker.Current.SyntaxKind == SyntaxKind.ThisTokenKeyword)
-                keywordToken = parserModel.TokenWalker.Match(SyntaxKind.ThisTokenKeyword);
+                keywordToken = parserModel.TokenWalker.Consume();
             else if (parserModel.TokenWalker.Current.SyntaxKind == SyntaxKind.BaseTokenKeyword)
-                keywordToken = parserModel.TokenWalker.Match(SyntaxKind.BaseTokenKeyword);
+                keywordToken = parserModel.TokenWalker.Consume();
             else
                 keywordToken = default;
             
