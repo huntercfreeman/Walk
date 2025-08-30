@@ -45,28 +45,27 @@ public static class ParseOthers
                 
                 if (isNamespaceStatement)
                 {
-                    var findTuple = parserModel.Binder.NamespacePrefixTree.FindRange(namespacePrefixNode, matchedToken.TextSpan.CharIntSum);
-                    var nodeWasFound = false;
-
-                    for (int i = findTuple.StartIndex; i < findTuple.EndIndex; i++)
+                    var tuple = parserModel.Binder.FindPrefix_WithInsertionIndex(
+                        namespacePrefixNode,
+                        matchedToken.TextSpan,
+                        parserModel.ResourceUri.Value);
+                    
+                    bool nodeWasFound;
+                    
+                    if (tuple.Node is null)
                     {
-                        var targetNode = namespacePrefixNode.Children[i];
-                        if (parserModel.Binder.CSharpCompilerService.SafeCompareTextSpans(
-                            parserModel.ResourceUri.Value,
-                            matchedToken.TextSpan,
-                            targetNode.ResourceUri.Value,
-                            targetNode.TextSpan))
-                        {
-                            namespacePrefixNode = targetNode;
-                            nodeWasFound = true;
-                            break;
-                        }
+                        nodeWasFound = false;
                     }
-
+                    else
+                    {
+                        nodeWasFound = true;
+                        namespacePrefixNode = tuple.Node;
+                    }
+                    
                     if (!nodeWasFound)
                     {
                         var newNode = new NamespacePrefixNode(parserModel.ResourceUri, matchedToken.TextSpan);
-                        namespacePrefixNode.Children.Insert(findTuple.InsertionIndex, newNode);
+                        namespacePrefixNode.Children.Insert(tuple.InsertionIndex, newNode);
                         namespacePrefixNode = newNode;
                     }
                 }

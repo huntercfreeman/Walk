@@ -1182,34 +1182,25 @@ public static class ParseExpressions
                 goto finalize;
             }
 
-            var findTuple = parserModel.Binder.NamespacePrefixTree.FindRange(
+            var node = parserModel.Binder.FindPrefix(
                 parserModel.Binder.NamespacePrefixTree.__Root,
-                charIntSum: ambiguousIdentifierExpressionNode.Token.TextSpan.CharIntSum);
-
-            for (int i = findTuple.StartIndex; i < findTuple.EndIndex; i++)
+                ambiguousIdentifierExpressionNode.Token.TextSpan,
+                parserModel.ResourceUri.Value);
+            if (node is not null)
             {
-                var node = parserModel.Binder.NamespacePrefixTree.__Root;
+                var namespaceClauseNode = parserModel.Rent_NamespaceClauseNode();
+                namespaceClauseNode.IdentifierToken = ambiguousIdentifierExpressionNode.Token;
+                result = namespaceClauseNode;
                 
-                if (parserModel.Binder.CSharpCompilerService.SafeCompareTextSpans(
-                        parserModel.ResourceUri.Value,
-                        ambiguousIdentifierExpressionNode.Token.TextSpan,
-                        node.ResourceUri.Value,
-                        node.TextSpan))
-                {
-                    var namespaceClauseNode = parserModel.Rent_NamespaceClauseNode();
-                    namespaceClauseNode.IdentifierToken = ambiguousIdentifierExpressionNode.Token;
-                    result = namespaceClauseNode;
+                parserModel.Binder.SymbolList.Insert(
+                    parserModel.Compilation.IndexSymbolList + parserModel.Compilation.CountSymbolList,
+                    new Symbol(
+                        SyntaxKind.NamespaceSymbol,
+                        parserModel.GetNextSymbolId(),
+                        ambiguousIdentifierExpressionNode.Token.TextSpan));
+                ++parserModel.Compilation.CountSymbolList;
                     
-                    parserModel.Binder.SymbolList.Insert(
-                        parserModel.Compilation.IndexSymbolList + parserModel.Compilation.CountSymbolList,
-                        new Symbol(
-                            SyntaxKind.NamespaceSymbol,
-                            parserModel.GetNextSymbolId(),
-                            ambiguousIdentifierExpressionNode.Token.TextSpan));
-                    ++parserModel.Compilation.CountSymbolList;
-                        
-                    goto finalize;
-                }
+                goto finalize;
             }
             
             if (parserModel.TryGetLabelDeclarationHierarchically(
@@ -3537,48 +3528,23 @@ public static class ParseExpressions
                 
                 if (firstNamespacePrefixNode is null)
                 {
-                    var thisFindTuple = parserModel.Binder.NamespacePrefixTree.FindRange(
+                    firstNamespacePrefixNode = parserModel.Binder.FindPrefix(
                         parserModel.Binder.NamespacePrefixTree.__Root,
-                        firstNamespaceClauseNode.IdentifierToken.TextSpan.CharIntSum);
-                        
-                    for (int i = thisFindTuple.StartIndex; i < thisFindTuple.EndIndex; i++)
+                        firstNamespaceClauseNode.IdentifierToken.TextSpan,
+                        parserModel.ResourceUri.Value);
+                    if (firstNamespacePrefixNode is not null)
                     {
-                        var node = parserModel.Binder.NamespacePrefixTree.__Root.Children[i];
-                        if (parserModel.Binder.CSharpCompilerService.SafeCompareTextSpans(
-                                parserModel.ResourceUri.Value,
-                                firstNamespaceClauseNode.IdentifierToken.TextSpan,
-                                node.ResourceUri.Value,
-                                node.TextSpan))
-                        {
-                            firstNamespacePrefixNode = node;
-                            firstNamespaceClauseNode.NamespacePrefixNode = firstNamespacePrefixNode;
-                            firstNamespaceClauseNode.StartOfMemberAccessChainPositionIndex = firstNamespaceClauseNode.IdentifierToken.TextSpan.StartInclusiveIndex;
-                            break;
-                        }
+                        firstNamespaceClauseNode.NamespacePrefixNode = firstNamespacePrefixNode;
+                        firstNamespaceClauseNode.StartOfMemberAccessChainPositionIndex = firstNamespaceClauseNode.IdentifierToken.TextSpan.StartInclusiveIndex;
                     }
                 }
                 
                 if (firstNamespacePrefixNode is not null)
                 {
-                    var otherFindTuple = parserModel.Binder.NamespacePrefixTree.FindRange(
+                    var secondNamespacePrefixNode = parserModel.Binder.FindPrefix(
                         firstNamespacePrefixNode,
-                        memberIdentifierToken.TextSpan.CharIntSum);
-                    
-                    NamespacePrefixNode? secondNamespacePrefixNode = null;
-                
-                    for (int i = otherFindTuple.StartIndex; i < otherFindTuple.EndIndex; i++)
-                    {
-                        var node = parserModel.Binder.NamespacePrefixTree.__Root.Children[i];
-                        if (parserModel.Binder.CSharpCompilerService.SafeCompareTextSpans(
-                                parserModel.ResourceUri.Value,
-                                memberIdentifierToken.TextSpan,
-                                node.ResourceUri.Value,
-                                node.TextSpan))
-                        {
-                            secondNamespacePrefixNode = node;
-                            break;
-                        }
-                    }
+                        memberIdentifierToken.TextSpan,
+                        parserModel.ResourceUri.Value);
                 
                     if (secondNamespacePrefixNode is not null)
                     {

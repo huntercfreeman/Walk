@@ -249,6 +249,28 @@ public class CSharpBinder
         
         return null;
     }
+    
+    public (NamespacePrefixNode? Node, int InsertionIndex) FindPrefix_WithInsertionIndex(NamespacePrefixNode start, TextEditorTextSpan textSpan, string absolutePathString)
+    {
+        var findTuple = NamespacePrefixTree.FindRange(
+            start,
+            textSpan.CharIntSum);
+            
+        for (int i = findTuple.StartIndex; i < findTuple.EndIndex; i++)
+        {
+            var node = start.Children[i];
+            if (CSharpCompilerService.SafeCompareTextSpans(
+                    absolutePathString,
+                    textSpan,
+                    node.ResourceUri.Value,
+                    node.TextSpan))
+            {
+                return (node, findTuple.InsertionIndex);
+            }
+        }
+        
+        return (null, findTuple.InsertionIndex);
+    }
 
     /// <summary>(inclusive, exclusive, this is the index at which you'd insert the text span)</summary>
     public (int StartIndex, int EndIndex, int InsertionIndex) NamespaceGroup_FindRange(NamespaceContributionEntry namespaceContributionEntry)

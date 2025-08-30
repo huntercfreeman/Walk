@@ -929,10 +929,13 @@ public sealed class CSharpCompilerService : IExtendedCompilerService
                             {
                                 var prefix = namespacePrefixNode.Children[prefixIndex];
                                 var prefixText = SafeGetText(prefix.ResourceUri.Value, prefix.TextSpan);
-                                autocompleteEntryList.Add(new AutocompleteEntry(
-                                    prefixText,
-                                    AutocompleteEntryKind.Namespace,
-                                    () => MemberAutocomplete(prefixText, filteringWord, virtualizationResult.Model.PersistentState.ResourceUri, virtualizationResult.ViewModel.PersistentState.ViewModelKey)));
+                                if (prefixText.Contains(filteringWord))
+                                {
+                                    autocompleteEntryList.Add(new AutocompleteEntry(
+                                        prefixText,
+                                        AutocompleteEntryKind.Namespace,
+                                        () => MemberAutocomplete(prefixText, filteringWord, virtualizationResult.Model.PersistentState.ResourceUri, virtualizationResult.ViewModel.PersistentState.ViewModelKey)));
+                                }
                             }
                             
                             findTuple = __CSharpBinder.NamespaceGroup_FindRange(new NamespaceContributionEntry(foundSymbol.TextSpan));
