@@ -938,7 +938,7 @@ public sealed class CSharpCompilerService : IExtendedCompilerService
                                 }
                             }
                             
-                            findTuple = __CSharpBinder.NamespaceGroup_FindRange(new NamespaceContributionEntry(foundSymbol.TextSpan));
+                            findTuple = __CSharpBinder.NamespaceGroup_FindRange(foundSymbol.TextSpan);
                             
                             NamespaceGroup namespaceGroup = default;
                             

@@ -271,9 +271,35 @@ public class CSharpBinder
         
         return (null, findTuple.InsertionIndex);
     }
+    
+    public (NamespaceGroup TargetGroup, int GroupIndex) FindNamespaceGroup_Reversed_WithMatchedIndex(
+        ResourceUri resourceUri,
+        TextEditorTextSpan textSpan)
+    {
+        var findTuple = NamespaceGroup_FindRange(textSpan);
+    
+        for (int groupIndex = findTuple.EndIndex - 1; groupIndex >= findTuple.StartIndex; groupIndex--)
+        {
+            var targetGroup = _namespaceGroupList[groupIndex];
+            if (targetGroup.NamespaceStatementNodeList.Count != 0)
+            {
+                var sampleNamespaceStatementNode = targetGroup.NamespaceStatementNodeList[0];
+                if (CSharpCompilerService.SafeCompareTextSpans(
+                    resourceUri.Value,
+                    textSpan,
+                    sampleNamespaceStatementNode.ResourceUri.Value,
+                    sampleNamespaceStatementNode.IdentifierToken.TextSpan))
+                {
+                    return (targetGroup, groupIndex);
+                }
+            }
+        }
+        
+        return (default, -1);
+    }
 
     /// <summary>(inclusive, exclusive, this is the index at which you'd insert the text span)</summary>
-    public (int StartIndex, int EndIndex, int InsertionIndex) NamespaceGroup_FindRange(NamespaceContributionEntry namespaceContributionEntry)
+    public (int StartIndex, int EndIndex, int InsertionIndex) NamespaceGroup_FindRange(TextEditorTextSpan textSpan)
     {
         var startIndex = -1;
         var endIndex = -1;
@@ -283,7 +309,7 @@ public class CSharpBinder
         {
             var node = _namespaceGroupList[i];
 
-            if (node.CharIntSum == namespaceContributionEntry.TextSpan.CharIntSum)
+            if (node.CharIntSum == textSpan.CharIntSum)
             {
                 if (startIndex == -1)
                     startIndex = i;
@@ -310,31 +336,21 @@ public class CSharpBinder
             for (int i = previousCompilationUnit.IndexNamespaceContributionList + previousCompilationUnit.CountNamespaceContributionList - 1; i >= previousCompilationUnit.IndexNamespaceContributionList; i--)
             {
                 var namespaceContributionEntry = NamespaceContributionList[i];
-                var findTuple = NamespaceGroup_FindRange(namespaceContributionEntry);
-
-                for (int groupIndex = findTuple.EndIndex - 1; groupIndex >= findTuple.StartIndex; groupIndex--)
+                
+                var tuple = FindNamespaceGroup_Reversed_WithMatchedIndex(
+                    resourceUri,
+                    namespaceContributionEntry.TextSpan);
+                
+                if (tuple.TargetGroup.ConstructorWasInvoked)
                 {
-                    var targetGroup = _namespaceGroupList[groupIndex];
-                    if (targetGroup.NamespaceStatementNodeList.Count != 0)
+                    for (int removeIndex = tuple.TargetGroup.NamespaceStatementNodeList.Count - 1; removeIndex >= 0; removeIndex--)
                     {
-                        var sampleNamespaceStatementNode = targetGroup.NamespaceStatementNodeList[0];
-                        if (CSharpCompilerService.SafeCompareTextSpans(
-                            resourceUri.Value,
-                            namespaceContributionEntry.TextSpan,
-                            sampleNamespaceStatementNode.ResourceUri.Value,
-                            sampleNamespaceStatementNode.IdentifierToken.TextSpan))
+                        if (tuple.TargetGroup.NamespaceStatementNodeList[removeIndex].ResourceUri == resourceUri)
                         {
-                            for (int removeIndex = targetGroup.NamespaceStatementNodeList.Count - 1; removeIndex >= 0; removeIndex--)
+                            tuple.TargetGroup.NamespaceStatementNodeList.RemoveAt(removeIndex);
+                            if (tuple.TargetGroup.NamespaceStatementNodeList.Count == 0)
                             {
-                                if (targetGroup.NamespaceStatementNodeList[removeIndex].ResourceUri == resourceUri)
-                                {
-                                    targetGroup.NamespaceStatementNodeList.RemoveAt(removeIndex);
-                                    if (targetGroup.NamespaceStatementNodeList.Count == 0)
-                                    {
-                                        _namespaceGroupList.RemoveAt(groupIndex);
-                                    }
-                                    break;
-                                }
+                                _namespaceGroupList.RemoveAt(tuple.GroupIndex);
                             }
                             break;
                         }

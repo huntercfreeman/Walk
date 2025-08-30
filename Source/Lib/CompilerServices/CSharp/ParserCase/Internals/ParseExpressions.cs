@@ -3572,7 +3572,7 @@ public static class ParseExpressions
 
                 NamespaceGroup namespaceGroup = default;
 
-                var findTuple = parserModel.Binder.NamespaceGroup_FindRange(new NamespaceContributionEntry(firstNamespaceClauseNode.IdentifierToken.TextSpan));
+                var findTuple = parserModel.Binder.NamespaceGroup_FindRange(firstNamespaceClauseNode.IdentifierToken.TextSpan);
 
                 for (int i = findTuple.StartIndex; i < findTuple.EndIndex; i++)
                 {

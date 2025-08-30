@@ -470,7 +470,7 @@ public ref struct CSharpParserModel
         Binder.NamespaceContributionList.Add(namespaceContributionEntry);
         ++Compilation.CountNamespaceContributionList;
 
-        var findTuple = Binder.NamespaceGroup_FindRange(namespaceContributionEntry);
+        var findTuple = Binder.NamespaceGroup_FindRange(namespaceContributionEntry.TextSpan);
 
         var foundGroup = false;
 
@@ -846,7 +846,7 @@ public ref struct CSharpParserModel
             }
         }
         
-        findTuple = Binder.NamespaceGroup_FindRange(namespaceContributionEntry);
+        findTuple = Binder.NamespaceGroup_FindRange(namespaceContributionEntry.TextSpan);
 
         // Absolutely be certain to double check that you did the SafeCompareTextSpans at every step
         // you missed one here.
