@@ -7,11 +7,6 @@ namespace Walk.CompilerServices.CSharp.ParserCase.Internals;
 
 internal static class TokenWalkerExtensionMethods
 {
-    public static TypeClauseNode MatchTypeClauseNode(this TokenWalker tokenWalker, ref CSharpParserModel parserModel)
-    {
-        return ParseTypes.MatchTypeClause(ref parserModel);
-    }
-
     public static void DeferParsingOfChildScope(
         this TokenWalker tokenWalker,
         ref CSharpParserModel parserModel)

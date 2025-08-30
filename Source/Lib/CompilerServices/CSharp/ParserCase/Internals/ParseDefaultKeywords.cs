@@ -1060,7 +1060,7 @@ public class ParseDefaultKeywords
         if (parserModel.TokenWalker.Current.SyntaxKind == SyntaxKind.ColonToken)
         {
             _ = parserModel.TokenWalker.Consume(); // Consume the ColonToken
-            var inheritedTypeClauseNode = parserModel.TokenWalker.MatchTypeClauseNode(ref parserModel);
+            var inheritedTypeClauseNode = ParseTypes.MatchTypeClause(ref parserModel);
             // parserModel.BindTypeClauseNode(inheritedTypeClauseNode);
             typeDefinitionNode.SetInheritedTypeReference(new TypeReference(inheritedTypeClauseNode));
             parserModel.Return_TypeClauseNode(inheritedTypeClauseNode);
@@ -1073,7 +1073,7 @@ public class ParseDefaultKeywords
                 
                     var consumeCounter = parserModel.TokenWalker.ConsumeCounter;
                     
-                    _ = parserModel.TokenWalker.MatchTypeClauseNode(ref parserModel);
+                    _ = ParseTypes.MatchTypeClause(ref parserModel);
                     // parserModel.BindTypeClauseNode();
                     
                     if (consumeCounter == parserModel.TokenWalker.ConsumeCounter)
