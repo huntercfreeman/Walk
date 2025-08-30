@@ -3570,36 +3570,16 @@ public static class ParseExpressions
                     }
                 }
 
-                NamespaceGroup namespaceGroup = default;
+                var tuple = parserModel.Binder.FindNamespaceGroup_Reversed_WithMatchedIndex(
+                    parserModel.ResourceUri,
+                    firstNamespaceClauseNode.IdentifierToken.TextSpan);
 
-                var findTuple = parserModel.Binder.NamespaceGroup_FindRange(firstNamespaceClauseNode.IdentifierToken.TextSpan);
-
-                for (int i = findTuple.StartIndex; i < findTuple.EndIndex; i++)
-                {
-                    var targetGroup = parserModel.Binder._namespaceGroupList[i];
-
-                    if (targetGroup.NamespaceStatementNodeList.Count > 0)
-                    {
-                        var sampleNamespaceStatementNode = targetGroup.NamespaceStatementNodeList[0];
-
-                        if (parserModel.Binder.CSharpCompilerService.SafeCompareTextSpans(
-                                parserModel.ResourceUri.Value,
-                                firstNamespaceClauseNode.IdentifierToken.TextSpan,
-                                sampleNamespaceStatementNode.ResourceUri.Value,
-                                sampleNamespaceStatementNode.IdentifierToken.TextSpan))
-                        {
-                            namespaceGroup = targetGroup;
-                            break;
-                        }
-                    }
-                }
-
-                if (namespaceGroup.ConstructorWasInvoked)
+                if (tuple.TargetGroup.ConstructorWasInvoked)
                 {
                     var innerCompilationUnit = parserModel.Compilation;
                     var innerResourceUri = parserModel.ResourceUri;
                 
-                    foreach (var typeDefinitionNode in parserModel.Binder.Internal_GetTopLevelTypeDefinitionNodes_NamespaceGroup(namespaceGroup))
+                    foreach (var typeDefinitionNode in parserModel.Binder.Internal_GetTopLevelTypeDefinitionNodes_NamespaceGroup(tuple.TargetGroup))
                     {
                         if (innerResourceUri != typeDefinitionNode.ResourceUri)
                         {
