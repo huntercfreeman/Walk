@@ -12,5 +12,5 @@ public struct GenericParameterEntry
 
     public TypeReference TypeReference { get; }
     
-    public bool ConstructorWasInvoked => TypeReference != default;
+    public bool ConstructorWasInvoked => !TypeReference.IsDefault();
 }

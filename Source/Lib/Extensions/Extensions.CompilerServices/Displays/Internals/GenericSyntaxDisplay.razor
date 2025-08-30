@@ -24,7 +24,7 @@
     }
     else
     {
-        if (TypeReference != default &&
+        if (!TypeReference.IsDefault() &&
             TypeReference.OpenAngleBracketToken.ConstructorWasInvoked)
         {
             indexGenericParameterEntryList = TypeReference.IndexGenericParameterEntryList;

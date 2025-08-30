@@ -227,9 +227,79 @@ public class CSharpBinder
                 closeParenthesisToken: default));
         }
     }
+    
+    public NamespacePrefixNode? FindPrefix(NamespacePrefixNode start, TextEditorTextSpan textSpan, string absolutePathString)
+    {
+        var findTuple = NamespacePrefixTree.FindRange(
+            start,
+            textSpan.CharIntSum);
+            
+        for (int i = findTuple.StartIndex; i < findTuple.EndIndex; i++)
+        {
+            var node = start.Children[i];
+            if (CSharpCompilerService.SafeCompareTextSpans(
+                    absolutePathString,
+                    textSpan,
+                    node.ResourceUri.Value,
+                    node.TextSpan))
+            {
+                return node;
+            }
+        }
+        
+        return null;
+    }
+    
+    public (NamespacePrefixNode? Node, int InsertionIndex) FindPrefix_WithInsertionIndex(NamespacePrefixNode start, TextEditorTextSpan textSpan, string absolutePathString)
+    {
+        var findTuple = NamespacePrefixTree.FindRange(
+            start,
+            textSpan.CharIntSum);
+            
+        for (int i = findTuple.StartIndex; i < findTuple.EndIndex; i++)
+        {
+            var node = start.Children[i];
+            if (CSharpCompilerService.SafeCompareTextSpans(
+                    absolutePathString,
+                    textSpan,
+                    node.ResourceUri.Value,
+                    node.TextSpan))
+            {
+                return (node, findTuple.InsertionIndex);
+            }
+        }
+        
+        return (null, findTuple.InsertionIndex);
+    }
+    
+    public (NamespaceGroup TargetGroup, int GroupIndex) FindNamespaceGroup_Reversed_WithMatchedIndex(
+        ResourceUri resourceUri,
+        TextEditorTextSpan textSpan)
+    {
+        var findTuple = NamespaceGroup_FindRange(textSpan);
+    
+        for (int groupIndex = findTuple.EndIndex - 1; groupIndex >= findTuple.StartIndex; groupIndex--)
+        {
+            var targetGroup = _namespaceGroupList[groupIndex];
+            if (targetGroup.NamespaceStatementNodeList.Count != 0)
+            {
+                var sampleNamespaceStatementNode = targetGroup.NamespaceStatementNodeList[0];
+                if (CSharpCompilerService.SafeCompareTextSpans(
+                    resourceUri.Value,
+                    textSpan,
+                    sampleNamespaceStatementNode.ResourceUri.Value,
+                    sampleNamespaceStatementNode.IdentifierToken.TextSpan))
+                {
+                    return (targetGroup, groupIndex);
+                }
+            }
+        }
+        
+        return (default, -1);
+    }
 
     /// <summary>(inclusive, exclusive, this is the index at which you'd insert the text span)</summary>
-    public (int StartIndex, int EndIndex, int InsertionIndex) NamespaceGroup_FindRange(NamespaceContributionEntry namespaceContributionEntry)
+    public (int StartIndex, int EndIndex, int InsertionIndex) NamespaceGroup_FindRange(TextEditorTextSpan textSpan)
     {
         var startIndex = -1;
         var endIndex = -1;
@@ -239,7 +309,7 @@ public class CSharpBinder
         {
             var node = _namespaceGroupList[i];
 
-            if (node.CharIntSum == namespaceContributionEntry.TextSpan.CharIntSum)
+            if (node.CharIntSum == textSpan.CharIntSum)
             {
                 if (startIndex == -1)
                     startIndex = i;
@@ -257,6 +327,58 @@ public class CSharpBinder
 
         return (startIndex, endIndex, insertionIndex);
     }
+    
+    /// <summary>(inclusive, exclusive, this is the index at which you'd insert the text span)</summary>
+    public (int StartIndex, int EndIndex, int InsertionIndex) AddedNamespaceList_FindRange(TextEditorTextSpan textSpan)
+    {
+        var startIndex = -1;
+        var endIndex = -1;
+        var insertionIndex = CSharpParserModel_AddedNamespaceList.Count;
+
+        for (int i = 0; i < CSharpParserModel_AddedNamespaceList.Count; i++)
+        {
+            var node = CSharpParserModel_AddedNamespaceList[i];
+
+            if (node.CharIntSum == textSpan.CharIntSum)
+            {
+                if (startIndex == -1)
+                    startIndex = i;
+            }
+            else if (startIndex != -1)
+            {
+                endIndex = i;
+                insertionIndex = i;
+                break;
+            }
+        }
+
+        if (startIndex != -1 && endIndex == -1)
+            endIndex = CSharpParserModel_AddedNamespaceList.Count;
+
+        return (startIndex, endIndex, insertionIndex);
+    }
+    
+    public bool CheckAlreadyAddedNamespace(
+        ResourceUri resourceUri,
+        TextEditorTextSpan textSpan)
+    {
+        var findTuple = AddedNamespaceList_FindRange(textSpan);
+
+        for (int i = findTuple.StartIndex; i < findTuple.EndIndex; i++)
+        {
+            var target = CSharpParserModel_AddedNamespaceList[i];
+            if (CSharpCompilerService.SafeCompareTextSpans(
+                    resourceUri.Value,
+                    textSpan,
+                    resourceUri.Value,
+                    target))
+            {
+                return true;
+            }
+        }
+        
+        return false;
+    }
 
     /// <summary><see cref="FinalizeCompilationUnit"/></summary>
     public void StartCompilationUnit(ResourceUri resourceUri)
@@ -266,31 +388,21 @@ public class CSharpBinder
             for (int i = previousCompilationUnit.IndexNamespaceContributionList + previousCompilationUnit.CountNamespaceContributionList - 1; i >= previousCompilationUnit.IndexNamespaceContributionList; i--)
             {
                 var namespaceContributionEntry = NamespaceContributionList[i];
-                var findTuple = NamespaceGroup_FindRange(namespaceContributionEntry);
-
-                for (int groupIndex = findTuple.EndIndex - 1; groupIndex >= findTuple.StartIndex; groupIndex--)
+                
+                var tuple = FindNamespaceGroup_Reversed_WithMatchedIndex(
+                    resourceUri,
+                    namespaceContributionEntry.TextSpan);
+                
+                if (tuple.TargetGroup.ConstructorWasInvoked)
                 {
-                    var targetGroup = _namespaceGroupList[groupIndex];
-                    if (targetGroup.NamespaceStatementNodeList.Count != 0)
+                    for (int removeIndex = tuple.TargetGroup.NamespaceStatementNodeList.Count - 1; removeIndex >= 0; removeIndex--)
                     {
-                        var sampleNamespaceStatementNode = targetGroup.NamespaceStatementNodeList[0];
-                        if (CSharpCompilerService.SafeCompareTextSpans(
-                            resourceUri.Value,
-                            namespaceContributionEntry.TextSpan,
-                            sampleNamespaceStatementNode.ResourceUri.Value,
-                            sampleNamespaceStatementNode.IdentifierToken.TextSpan))
+                        if (tuple.TargetGroup.NamespaceStatementNodeList[removeIndex].ResourceUri == resourceUri)
                         {
-                            for (int removeIndex = targetGroup.NamespaceStatementNodeList.Count - 1; removeIndex >= 0; removeIndex--)
+                            tuple.TargetGroup.NamespaceStatementNodeList.RemoveAt(removeIndex);
+                            if (tuple.TargetGroup.NamespaceStatementNodeList.Count == 0)
                             {
-                                if (targetGroup.NamespaceStatementNodeList[removeIndex].ResourceUri == resourceUri)
-                                {
-                                    targetGroup.NamespaceStatementNodeList.RemoveAt(removeIndex);
-                                    if (targetGroup.NamespaceStatementNodeList.Count == 0)
-                                    {
-                                        _namespaceGroupList.RemoveAt(groupIndex);
-                                    }
-                                    break;
-                                }
+                                _namespaceGroupList.RemoveAt(tuple.GroupIndex);
                             }
                             break;
                         }
@@ -649,7 +761,7 @@ public class CSharpBinder
                     }
                 }
                 
-                if (typeDefinitionNode.InheritedTypeReference != default)
+                if (!typeDefinitionNode.InheritedTypeReference.IsDefault())
                 {
                     string? identifierText;
                     CSharpCompilationUnit innerCompilationUnit;
@@ -1103,21 +1215,11 @@ public class CSharpBinder
             }
             case SyntaxKind.NamespaceSymbol:
             {
-                var findTuple = NamespacePrefixTree.FindRange(NamespacePrefixTree.__Root, textSpan.CharIntSum);
+                var matchedPrefix = FindPrefix(NamespacePrefixTree.__Root, textSpan, resourceUri.Value);
+                if (matchedPrefix is not null)
+                    return new NamespaceClauseNode(new SyntaxToken(SyntaxKind.IdentifierToken, textSpan));
 
-                for (int i = findTuple.StartIndex; i < findTuple.EndIndex; i++)
-                {
-                    if (CSharpCompilerService.SafeCompareTextSpans(
-                            resourceUri.Value,
-                            textSpan,
-                            NamespacePrefixTree.__Root.Children[i].ResourceUri.Value,
-                            NamespacePrefixTree.__Root.Children[i].TextSpan))
-                    {
-                        return new NamespaceClauseNode(new SyntaxToken(SyntaxKind.IdentifierToken, textSpan));
-                    }
-                }
-
-                /*if (symbol is not null)
+                if (symbol is not null)
                 {
                     var fullNamespaceName = CSharpCompilerService.UnsafeGetText(resourceUri.Value, symbol.Value.TextSpan);
                     if (fullNamespaceName is not null)
@@ -1126,16 +1228,28 @@ public class CSharpBinder
                         
                         int position = 0;
                         
-                        namespacePrefixNode = NamespacePrefixTree.__Root;
+                        var namespacePrefixNode = NamespacePrefixTree.__Root;
                         
                         var success = true;
                         
                         while (position < splitResult.Length)
                         {
-                            if (!namespacePrefixNode.Children.TryGetValue(splitResult[position++], out namespacePrefixNode))
+                            int charIntSum = 0;
+                            foreach (var character in splitResult[position])
+                            {
+                                charIntSum += (int)character;
+                            }
+                            
+                            // TODO: This doesn't work because of the textSpan not being the split but the whole.
+                            var node = FindPrefix(namespacePrefixNode, textSpan, resourceUri.Value);
+                            if (node is null)
                             {
                                 success = false;
                                 break;
+                            }
+                            else
+                            {
+                                namespacePrefixNode = node;
                             }
                         }
                         
@@ -1147,7 +1261,7 @@ public class CSharpBinder
                                 startOfMemberAccessChainPositionIndex: textSpan.StartInclusiveIndex);
                         }
                     }
-                }*/
+                }
                 break;
             }
         }

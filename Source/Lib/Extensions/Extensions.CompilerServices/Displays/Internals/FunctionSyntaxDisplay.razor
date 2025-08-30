@@ -161,8 +161,8 @@
     			@prefixText&nbsp;
     		</span>
     	}
-    	
-    	@if (returnTypeClauseNode != default(TypeReference))
+
+        @if (!returnTypeClauseNode.IsDefault())
     	{
     		var syntaxViewModel = new SyntaxViewModel(
     		    SyntaxViewModel.ExtendedCompilerService,

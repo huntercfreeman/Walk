@@ -895,11 +895,11 @@ public sealed class CSharpCompilerService : IExtendedCompilerService
                 
                 if (definitionNode is not null)
                 {
-                    /*if (definitionNode.SyntaxKind == SyntaxKind.NamespaceClauseNode)
+                    if (definitionNode.SyntaxKind == SyntaxKind.NamespaceClauseNode)
                     {
                         var namespaceClauseNode = (NamespaceClauseNode)definitionNode;
                     
-                        NamespacePrefixNode? namespacePrefixNode;
+                        NamespacePrefixNode? namespacePrefixNode = null;
                         
                         if (namespaceClauseNode.NamespacePrefixNode is not null)
                         {
@@ -907,22 +907,43 @@ public sealed class CSharpCompilerService : IExtendedCompilerService
                         }
                         else
                         {
-                            _ = __CSharpBinder.NamespacePrefixTree.__Root.Children.TryGetValue(
-                                foundSymbol.TextSpan.GetText(virtualizationResult.Model.GetAllText(), _textEditorService), // This is the same value as the definition's TextSpan.
-                                out namespacePrefixNode);
+                            namespacePrefixNode = __CSharpBinder.FindPrefix(
+                                __CSharpBinder.NamespacePrefixTree.__Root,
+                                foundSymbol.TextSpan,
+                                textEditorModel.PersistentState.ResourceUri.Value);
                         }
 
-                        if (namespaceClauseNode is not null)
+                        if (namespacePrefixNode is not null)
                         {
-                            foreach (var kvp in namespacePrefixNode.Children.Where(kvp => kvp.Key.Contains(filteringWord)).Take(5))
+                            var filteringWordCharIntSum = 0;
+                            foreach (var c in filteringWord)
                             {
-                                autocompleteEntryList.Add(new AutocompleteEntry(
-                                    kvp.Key,
-                                    AutocompleteEntryKind.Namespace,
-                                    () => MemberAutocomplete(kvp.Key, filteringWord, virtualizationResult.Model.PersistentState.ResourceUri, virtualizationResult.ViewModel.PersistentState.ViewModelKey)));
+                                filteringWordCharIntSum += (int)c;
+                            }
+                        
+                            var findTuple = __CSharpBinder.NamespacePrefixTree.FindRange(
+                                namespacePrefixNode,
+                                filteringWordCharIntSum);
+                        
+                            for (int prefixIndex = findTuple.StartIndex; prefixIndex < findTuple.EndIndex; prefixIndex++)
+                            {
+                                var prefix = namespacePrefixNode.Children[prefixIndex];
+                                var prefixText = SafeGetText(prefix.ResourceUri.Value, prefix.TextSpan);
+                                if (prefixText.Contains(filteringWord))
+                                {
+                                    autocompleteEntryList.Add(new AutocompleteEntry(
+                                        prefixText,
+                                        AutocompleteEntryKind.Namespace,
+                                        () => MemberAutocomplete(prefixText, filteringWord, virtualizationResult.Model.PersistentState.ResourceUri, virtualizationResult.ViewModel.PersistentState.ViewModelKey)));
+                                }
                             }
                             
-                            if (__CSharpBinder.NamespaceGroupMap.TryGetValue(foundSymbol.TextSpan.GetText(virtualizationResult.Model.GetAllText(), _textEditorService), out var namespaceGroup))
+                            var namespaceGroup = __CSharpBinder.FindNamespaceGroup_Reversed_WithMatchedIndex(
+                                    virtualizationResult.Model.PersistentState.ResourceUri,
+                                    foundSymbol.TextSpan)
+                                .TargetGroup;
+                            
+                            if (namespaceGroup.ConstructorWasInvoked)
                             {
                                 foreach (var typeDefinitionNode in __CSharpBinder.GetTopLevelTypeDefinitionNodes_NamespaceGroup(namespaceGroup).Where(x => x.TypeIdentifierToken.TextSpan.GetText(virtualizationResult.Model.GetAllText(), _textEditorService).Contains(filteringWord)).Take(5))
                                 {
@@ -958,7 +979,7 @@ public sealed class CSharpCompilerService : IExtendedCompilerService
                         }
                         
                         return null;
-                    }*/
+                    }
                 
                     TypeReference typeReference = default;
                     
@@ -987,7 +1008,7 @@ public sealed class CSharpCompilerService : IExtendedCompilerService
                         typeReference = typeDefinitionNode.ToTypeReference();
                     }
                     
-                    if (typeReference != default)
+                    if (!typeReference.IsDefault())
                     {
                         Symbol innerFoundSymbol = default;
                         var innerCompilationUnit = compilationUnitLocal;
@@ -2000,7 +2021,7 @@ public sealed class CSharpCompilerService : IExtendedCompilerService
                 typeReference = ((ConstructorDefinitionNode)targetNode).ReturnTypeReference;
             }
             
-            if (typeReference == default)
+            if (typeReference.IsDefault())
                 return autocompleteEntryList.DistinctBy(x => x.DisplayName).ToList();
             
             var maybeTypeDefinitionNode = __CSharpBinder.GetDefinitionNode(virtualizationResult.Model.PersistentState.ResourceUri, (CSharpCompilationUnit)compilerServiceResource.CompilationUnit, typeReference.TypeIdentifierToken.TextSpan, SyntaxKind.TypeClauseNode);

@@ -1182,34 +1182,25 @@ public static class ParseExpressions
                 goto finalize;
             }
 
-            var findTuple = parserModel.Binder.NamespacePrefixTree.FindRange(
+            var node = parserModel.Binder.FindPrefix(
                 parserModel.Binder.NamespacePrefixTree.__Root,
-                charIntSum: ambiguousIdentifierExpressionNode.Token.TextSpan.CharIntSum);
-
-            for (int i = findTuple.StartIndex; i < findTuple.EndIndex; i++)
+                ambiguousIdentifierExpressionNode.Token.TextSpan,
+                parserModel.ResourceUri.Value);
+            if (node is not null)
             {
-                var node = parserModel.Binder.NamespacePrefixTree.__Root;
+                var namespaceClauseNode = parserModel.Rent_NamespaceClauseNode();
+                namespaceClauseNode.IdentifierToken = ambiguousIdentifierExpressionNode.Token;
+                result = namespaceClauseNode;
                 
-                if (parserModel.Binder.CSharpCompilerService.SafeCompareTextSpans(
-                        parserModel.ResourceUri.Value,
-                        ambiguousIdentifierExpressionNode.Token.TextSpan,
-                        node.ResourceUri.Value,
-                        node.TextSpan))
-                {
-                    var namespaceClauseNode = parserModel.Rent_NamespaceClauseNode();
-                    namespaceClauseNode.IdentifierToken = ambiguousIdentifierExpressionNode.Token;
-                    result = namespaceClauseNode;
+                parserModel.Binder.SymbolList.Insert(
+                    parserModel.Compilation.IndexSymbolList + parserModel.Compilation.CountSymbolList,
+                    new Symbol(
+                        SyntaxKind.NamespaceSymbol,
+                        parserModel.GetNextSymbolId(),
+                        ambiguousIdentifierExpressionNode.Token.TextSpan));
+                ++parserModel.Compilation.CountSymbolList;
                     
-                    parserModel.Binder.SymbolList.Insert(
-                        parserModel.Compilation.IndexSymbolList + parserModel.Compilation.CountSymbolList,
-                        new Symbol(
-                            SyntaxKind.NamespaceSymbol,
-                            parserModel.GetNextSymbolId(),
-                            ambiguousIdentifierExpressionNode.Token.TextSpan));
-                    ++parserModel.Compilation.CountSymbolList;
-                        
-                    goto finalize;
-                }
+                goto finalize;
             }
             
             if (parserModel.TryGetLabelDeclarationHierarchically(
@@ -1722,7 +1713,7 @@ public static class ParseExpressions
             return ParseFunctionParameterListing_Token(constructorInvocationExpressionNode, ref token, ref parserModel);
         }
         
-        if (constructorInvocationExpressionNode.ResultTypeReference == default &&
+        if (constructorInvocationExpressionNode.ResultTypeReference.IsDefault() &&
             parserModel.TokenWalker.Current.SyntaxKind != SyntaxKind.OpenParenthesisToken)
         {
             constructorInvocationExpressionNode.ConstructorInvocationStageKind = ConstructorInvocationStageKind.Type;
@@ -1892,7 +1883,7 @@ public static class ParseExpressions
                 isVoidType = true;
         }
         
-        if (constructorInvocationExpressionNode.ResultTypeReference == default || isVoidType)
+        if (constructorInvocationExpressionNode.ResultTypeReference.IsDefault() || isVoidType)
             constructorInvocationExpressionNode.ResultTypeReference = parserModel.MostRecentLeftHandSideAssignmentExpressionTypeClauseNode;
         
         if (UtilityApi.IsConvertibleToIdentifierToken(parserModel.TokenWalker.Current.SyntaxKind) &&
@@ -3244,7 +3235,7 @@ public static class ParseExpressions
                 typeReference = ((TypeDefinitionNode)expressionPrimary).ToTypeReference();
             }
                 
-            if (typeReference == default)
+            if (typeReference.IsDefault())
             {
                 if (expressionPrimary.SyntaxKind == SyntaxKind.VariableReferenceNode)
                 {
@@ -3537,22 +3528,25 @@ public static class ParseExpressions
                 
                 if (firstNamespacePrefixNode is null)
                 {
-                    /*if(parserModel.Binder.NamespacePrefixTree.__Root.Children.TryGetValue(
-                        parserModel.Binder.CSharpCompilerService.SafeGetText(parserModel.ResourceUri.Value, firstNamespaceClauseNode.IdentifierToken.TextSpan) ?? string.Empty,
-                        out firstNamespacePrefixNode))
+                    firstNamespacePrefixNode = parserModel.Binder.FindPrefix(
+                        parserModel.Binder.NamespacePrefixTree.__Root,
+                        firstNamespaceClauseNode.IdentifierToken.TextSpan,
+                        parserModel.ResourceUri.Value);
+                    if (firstNamespacePrefixNode is not null)
                     {
                         firstNamespaceClauseNode.NamespacePrefixNode = firstNamespacePrefixNode;
                         firstNamespaceClauseNode.StartOfMemberAccessChainPositionIndex = firstNamespaceClauseNode.IdentifierToken.TextSpan.StartInclusiveIndex;
-                    }*/
+                    }
                 }
-                
-                var memberIdentifierText = parserModel.Binder.CSharpCompilerService.SafeGetText(parserModel.ResourceUri.Value, memberIdentifierToken.TextSpan) ?? string.Empty;
                 
                 if (firstNamespacePrefixNode is not null)
                 {
-                    /*if (firstNamespacePrefixNode.Children.TryGetValue(
-                            memberIdentifierText,
-                            out var secondNamespacePrefixNode))
+                    var secondNamespacePrefixNode = parserModel.Binder.FindPrefix(
+                        firstNamespacePrefixNode,
+                        memberIdentifierToken.TextSpan,
+                        parserModel.ResourceUri.Value);
+                
+                    if (secondNamespacePrefixNode is not null)
                     {
                         memberIdentifierToken.TextSpan = memberIdentifierToken.TextSpan with
                         {
@@ -3573,39 +3567,19 @@ public static class ParseExpressions
                         namespaceClauseNode.PreviousNamespaceClauseNode = firstNamespaceClauseNode;
                         namespaceClauseNode.StartOfMemberAccessChainPositionIndex = firstNamespaceClauseNode.StartOfMemberAccessChainPositionIndex;
                         return namespaceClauseNode;
-                    }*/
-                }
-
-                NamespaceGroup namespaceGroup = default;
-
-                var findTuple = parserModel.Binder.NamespaceGroup_FindRange(new NamespaceContributionEntry(firstNamespaceClauseNode.IdentifierToken.TextSpan));
-
-                for (int i = findTuple.StartIndex; i < findTuple.EndIndex; i++)
-                {
-                    var targetGroup = parserModel.Binder._namespaceGroupList[i];
-
-                    if (targetGroup.NamespaceStatementNodeList.Count > 0)
-                    {
-                        var sampleNamespaceStatementNode = targetGroup.NamespaceStatementNodeList[0];
-
-                        if (parserModel.Binder.CSharpCompilerService.SafeCompareTextSpans(
-                                parserModel.ResourceUri.Value,
-                                firstNamespaceClauseNode.IdentifierToken.TextSpan,
-                                sampleNamespaceStatementNode.ResourceUri.Value,
-                                sampleNamespaceStatementNode.IdentifierToken.TextSpan))
-                        {
-                            namespaceGroup = targetGroup;
-                            break;
-                        }
                     }
                 }
 
-                if (namespaceGroup.ConstructorWasInvoked)
+                var tuple = parserModel.Binder.FindNamespaceGroup_Reversed_WithMatchedIndex(
+                    parserModel.ResourceUri,
+                    firstNamespaceClauseNode.IdentifierToken.TextSpan);
+
+                if (tuple.TargetGroup.ConstructorWasInvoked)
                 {
                     var innerCompilationUnit = parserModel.Compilation;
                     var innerResourceUri = parserModel.ResourceUri;
                 
-                    foreach (var typeDefinitionNode in parserModel.Binder.Internal_GetTopLevelTypeDefinitionNodes_NamespaceGroup(namespaceGroup))
+                    foreach (var typeDefinitionNode in parserModel.Binder.Internal_GetTopLevelTypeDefinitionNodes_NamespaceGroup(tuple.TargetGroup))
                     {
                         if (innerResourceUri != typeDefinitionNode.ResourceUri)
                         {
@@ -3667,26 +3641,12 @@ public static class ParseExpressions
                 }
             }
             
-            if (UtilityApi.IsConvertibleToIdentifierToken(parserModel.TokenWalker.Current.SyntaxKind))
+            if (UtilityApi.IsConvertibleToIdentifierToken(parserModel.TokenWalker.Current.SyntaxKind) &&
+                parserModel.TokenWalker.Current.SyntaxKind != SyntaxKind.WithTokenContextualKeyword)
             {
                 var ambiguousIdentifier = parserModel.Rent_AmbiguousIdentifierExpressionNode();
                 ambiguousIdentifier.Token = memberIdentifierToken;
                 return ambiguousIdentifier;
-            
-                /*TypeClauseNode typeClauseNode = UtilityApi.ConvertTokenToTypeClauseNode(ref memberIdentifierToken, ref parserModel);
-                typeClauseNode.ExplicitDefinitionTextSpan = memberIdentifierToken.TextSpan;
-                typeClauseNode.ExplicitDefinitionResourceUri = parserModel.ResourceUri;
-                parserModel.Binder.SymbolList.Insert(
-                    parserModel.Compilation.IndexSymbolList + parserModel.Compilation.CountSymbolList,
-                    new Symbol(
-                        SyntaxKind.TypeSymbol,
-                        parserModel.GetNextSymbolId(),
-                        typeClauseNode.TypeIdentifierToken.TextSpan with
-                        {
-                            DecorationByte = (byte)GenericDecorationKind.Type
-                        }));
-                ++parserModel.Compilation.CountSymbolList;
-                return typeClauseNode;*/
             }
             else
             {

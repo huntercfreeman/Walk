@@ -82,4 +82,11 @@ public record struct TypeReference
     public ResourceUri ExplicitDefinitionResourceUri { get; set; }
     
     public bool IsImplicit { get; set; }
+
+    public readonly bool IsDefault()
+    {
+        return
+            TypeIdentifierToken.TextSpan.StartInclusiveIndex == 0 &&
+            TypeIdentifierToken.TextSpan.EndExclusiveIndex == 0;
+    }
 }
