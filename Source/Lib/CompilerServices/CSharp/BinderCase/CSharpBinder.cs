@@ -240,7 +240,7 @@ public class CSharpBinder
                 closeParenthesisToken: default));
         }
         
-        _ = Task.Run(async () =>
+        /*_ = Task.Run(async () =>
         {
             await Task.Delay(10_000);
             
@@ -248,7 +248,7 @@ public class CSharpBinder
             Console.WriteLine($"MISS: {CSharpParserModel.POOL_BinaryExpressionNode_MISS}");
             Console.WriteLine($"RETURN: {CSharpParserModel.POOL_BinaryExpressionNode_RETURN}");
             Console.WriteLine($"%: {((double)CSharpParserModel.POOL_BinaryExpressionNode_HIT / (CSharpParserModel.POOL_BinaryExpressionNode_HIT + CSharpParserModel.POOL_BinaryExpressionNode_MISS)):P2}");
-        });
+        });*/
     }
     
     public NamespacePrefixNode? FindPrefix(NamespacePrefixNode start, TextEditorTextSpan textSpan, string absolutePathString)

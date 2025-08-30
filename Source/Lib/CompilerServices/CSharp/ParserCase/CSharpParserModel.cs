@@ -154,24 +154,24 @@ public ref struct CSharpParserModel
     
     public IExpressionNode ExpressionPrimary { get; set; }
     
-    public static int POOL_BinaryExpressionNode_HIT { get; set; }
+    /*public static int POOL_BinaryExpressionNode_HIT { get; set; }
     public static int POOL_BinaryExpressionNode_MISS { get; set; }
-    public static int POOL_BinaryExpressionNode_RETURN { get; set; }
+    public static int POOL_BinaryExpressionNode_RETURN { get; set; }*/
     
     /// <summary>
     /// It is expected that any invoker of this method will immediately set the returned BinaryExpressionNode instance's:
-    /// - TypeIdentifierToken
+    /// - TODO
     /// Thus, the Return_BinaryExpressionNode(...) method will NOT clear that property's state.
     /// </summary>
     public readonly BinaryExpressionNode Rent_BinaryExpressionNode()
     {
         if (Binder.Pool_BinaryExpressionNode_Queue.TryDequeue(out var binaryExpressionNode))
         {
-            ++POOL_BinaryExpressionNode_HIT;
+            //++POOL_BinaryExpressionNode_HIT;
             return binaryExpressionNode;
         }
         
-        ++POOL_BinaryExpressionNode_MISS;
+        //++POOL_BinaryExpressionNode_MISS;
         return new BinaryExpressionNode(
             leftOperandTypeReference: default,
             operatorToken: default,
@@ -181,12 +181,12 @@ public ref struct CSharpParserModel
     
     /// <summary>
     /// It is expected that any invoker of this method will immediately set the returned BinaryExpressionNode instance's:
-    /// - TypeIdentifierToken
+    /// - TODO
     /// Thus, the Return_BinaryExpressionNode(...) method will NOT clear that property's state.
     /// </summary>
     public readonly void Return_BinaryExpressionNode(BinaryExpressionNode binaryExpressionNode)
     {
-        ++POOL_BinaryExpressionNode_RETURN;
+        //++POOL_BinaryExpressionNode_RETURN;
         binaryExpressionNode._isFabricated = false;
     
         binaryExpressionNode.LeftOperandTypeReference = default;
