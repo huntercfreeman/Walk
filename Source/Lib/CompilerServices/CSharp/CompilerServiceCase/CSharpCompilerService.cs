@@ -907,23 +907,10 @@ public sealed class CSharpCompilerService : IExtendedCompilerService
                         }
                         else
                         {
-                            var findTuple = __CSharpBinder.NamespacePrefixTree.FindRange(
+                            namespacePrefixNode = __CSharpBinder.FindPrefix(
                                 __CSharpBinder.NamespacePrefixTree.__Root,
-                                foundSymbol.TextSpan.CharIntSum);
-                            
-                            for (int prefixIndex = findTuple.StartIndex; prefixIndex < findTuple.EndIndex; prefixIndex++)
-                            {
-                                var prefix = __CSharpBinder.NamespacePrefixTree.__Root.Children[prefixIndex];
-                                if (SafeCompareTextSpans(
-                                        textEditorModel.PersistentState.ResourceUri.Value,
-                                        foundSymbol.TextSpan,
-                                        prefix.ResourceUri.Value,
-                                        prefix.TextSpan))
-                                {
-                                    namespacePrefixNode = prefix;
-                                    break;
-                                }
-                            }
+                                foundSymbol.TextSpan,
+                                textEditorModel.PersistentState.ResourceUri.Value);
                         }
 
                         if (namespacePrefixNode is not null)
