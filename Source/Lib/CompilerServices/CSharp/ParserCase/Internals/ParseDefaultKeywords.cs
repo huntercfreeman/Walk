@@ -261,6 +261,10 @@ public class ParseDefaultKeywords
             {
                 parserModel.Return_FunctionInvocationNode((FunctionInvocationNode)expression);
             }
+            else if (expression.SyntaxKind == SyntaxKind.BinaryExpressionNode)
+            {
+                parserModel.Return_BinaryExpressionNode((BinaryExpressionNode)expression);
+            }
             
             var statementDelimiterToken = parserModel.TokenWalker.Match(SyntaxKind.StatementDelimiterToken);
             
@@ -587,6 +591,10 @@ public class ParseDefaultKeywords
         {
             parserModel.Return_FunctionInvocationNode((FunctionInvocationNode)expression);
         }
+        else if (expression.SyntaxKind == SyntaxKind.BinaryExpressionNode)
+        {
+            parserModel.Return_BinaryExpressionNode((BinaryExpressionNode)expression);
+        }
         
         var closeParenthesisToken = parserModel.TokenWalker.Match(SyntaxKind.CloseParenthesisToken);
         
@@ -708,6 +716,10 @@ public class ParseDefaultKeywords
         else if (expression.SyntaxKind == SyntaxKind.FunctionInvocationNode)
         {
             parserModel.Return_FunctionInvocationNode((FunctionInvocationNode)expression);
+        }
+        else if (expression.SyntaxKind == SyntaxKind.BinaryExpressionNode)
+        {
+            parserModel.Return_BinaryExpressionNode((BinaryExpressionNode)expression);
         }
         
         var closeParenthesisToken = parserModel.TokenWalker.Match(SyntaxKind.CloseParenthesisToken);
@@ -1234,6 +1246,10 @@ public class ParseDefaultKeywords
         else if (expressionNode.SyntaxKind == SyntaxKind.ConstructorInvocationExpressionNode)
         {
             parserModel.Return_ConstructorInvocationExpressionNode((ConstructorInvocationExpressionNode)expressionNode);
+        }
+        else if (expressionNode.SyntaxKind == SyntaxKind.BinaryExpressionNode)
+        {
+            parserModel.Return_BinaryExpressionNode((BinaryExpressionNode)expressionNode);
         }
         
         // var returnStatementNode = new ReturnStatementNode(returnKeywordToken, expressionNode);
