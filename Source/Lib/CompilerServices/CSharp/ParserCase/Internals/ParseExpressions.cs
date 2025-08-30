@@ -466,7 +466,12 @@ public static class ParseExpressions
                     binaryExpressionAntecedent.RightExpressionResultTypeReference = expressionPrimary.ResultTypeReference;
                     
                     var typeClauseNode = expressionPrimary.ResultTypeReference;
-                    var binaryExpressionPrecedent = new BinaryExpressionNode(typeClauseNode, token, typeClauseNode, typeClauseNode);
+                    
+                    var binaryExpressionPrecedent = parserModel.Rent_BinaryExpressionNode();
+                    binaryExpressionPrecedent.LeftOperandTypeReference = typeClauseNode;
+                    binaryExpressionPrecedent.OperatorToken = token;
+                    binaryExpressionPrecedent.RightOperandTypeReference = typeClauseNode;
+                    binaryExpressionPrecedent.ResultTypeReference = typeClauseNode;
                     
                     // It is important that the primitive recursion does not
                     // set 'binaryExpressionAntecedent' as the primaryExpression in the future
@@ -484,6 +489,8 @@ public static class ParseExpressions
                         parserModel.Return_FunctionInvocationNode((FunctionInvocationNode)expressionPrimary);
                     }
                     
+                    parserModel.Return_BinaryExpressionNode(binaryExpressionAntecedent);
+                    
                     return EmptyExpressionNode.Empty;
                 }
                 else
@@ -491,7 +498,12 @@ public static class ParseExpressions
                     // Precedent takes 'primaryExpression' as its left node.
                     // Antecedent takes precedent as its right node.
                     var typeClauseNode = expressionPrimary.ResultTypeReference;
-                    var binaryExpressionNodePrecedent = new BinaryExpressionNode(typeClauseNode, token, typeClauseNode, typeClauseNode);
+                    
+                    var binaryExpressionNodePrecedent = parserModel.Rent_BinaryExpressionNode();
+                    binaryExpressionNodePrecedent.LeftOperandTypeReference = typeClauseNode;
+                    binaryExpressionNodePrecedent.OperatorToken = token;
+                    binaryExpressionNodePrecedent.RightOperandTypeReference = typeClauseNode;
+                    binaryExpressionNodePrecedent.ResultTypeReference = typeClauseNode;
                     
                     binaryExpressionAntecedent.RightExpressionResultTypeReference = binaryExpressionNodePrecedent.ResultTypeReference;
                     
@@ -533,6 +545,8 @@ public static class ParseExpressions
                 {
                     parserModel.Return_FunctionInvocationNode((FunctionInvocationNode)expressionPrimary);
                 }
+                    
+                parserModel.Return_BinaryExpressionNode(binaryExpressionAntecedent);
                 
                 return parserModel.Binder.Shared_BadExpressionNode;
             }
@@ -540,7 +554,12 @@ public static class ParseExpressions
         else
         {
             var typeClauseNode = expressionPrimary.ResultTypeReference;
-            var binaryExpressionNode = new BinaryExpressionNode(typeClauseNode, token, typeClauseNode, typeClauseNode);
+            
+            var binaryExpressionNode = parserModel.Rent_BinaryExpressionNode();
+            binaryExpressionNode.LeftOperandTypeReference = typeClauseNode;
+            binaryExpressionNode.OperatorToken = token;
+            binaryExpressionNode.RightOperandTypeReference = typeClauseNode;
+            binaryExpressionNode.ResultTypeReference = typeClauseNode;
             
             parserModel.ExpressionList.Add((SyntaxKind.EndOfFileToken, binaryExpressionNode));
             
@@ -1441,6 +1460,10 @@ public static class ParseExpressions
             {
                 parserModel.Return_FunctionInvocationNode((FunctionInvocationNode)expressionSecondary);
             }
+            else if (expressionSecondary.SyntaxKind == SyntaxKind.BinaryExpressionNode)
+            {
+                parserModel.Return_BinaryExpressionNode((BinaryExpressionNode)expressionSecondary);
+            }
             
             return variableReferenceNode;
         }
@@ -1531,6 +1554,10 @@ public static class ParseExpressions
         {
             parserModel.Return_FunctionInvocationNode((FunctionInvocationNode)expressionSecondary);
         }
+        else if (expressionSecondary.SyntaxKind == SyntaxKind.BinaryExpressionNode)
+        {
+            parserModel.Return_BinaryExpressionNode((BinaryExpressionNode)expressionSecondary);
+        }
         
         return badExpressionNode;
     }
@@ -1595,7 +1622,13 @@ public static class ParseExpressions
                 if (binaryExpressionNode.RightExpressionNodeWasSet)
                 {
                     var typeClauseNode = binaryExpressionNode.ResultTypeReference;
-                    return new BinaryExpressionNode(typeClauseNode, token, typeClauseNode, typeClauseNode);
+                    
+                    var newBinaryExpressionNode = parserModel.Rent_BinaryExpressionNode();
+                    newBinaryExpressionNode.LeftOperandTypeReference = typeClauseNode;
+                    newBinaryExpressionNode.OperatorToken = token;
+                    newBinaryExpressionNode.RightOperandTypeReference = typeClauseNode;
+                    newBinaryExpressionNode.ResultTypeReference = typeClauseNode;
+                    return newBinaryExpressionNode;
                 }
                 else
                 {
@@ -2432,6 +2465,10 @@ public static class ParseExpressions
         {
             parserModel.Return_FunctionInvocationNode((FunctionInvocationNode)expressionSecondary);
         }
+        else if (expressionSecondary.SyntaxKind == SyntaxKind.BinaryExpressionNode)
+        {
+            parserModel.Return_BinaryExpressionNode((BinaryExpressionNode)expressionSecondary);
+        }
     
         if (lambdaExpressionNode.CodeBlock_StartInclusiveIndex == -1)
             CloseLambdaExpressionScope(lambdaExpressionNode, ref parserModel);
@@ -2507,6 +2544,10 @@ public static class ParseExpressions
             else if (expressionSecondary.SyntaxKind == SyntaxKind.FunctionInvocationNode)
             {
                 parserModel.Return_FunctionInvocationNode((FunctionInvocationNode)expressionSecondary);
+            }
+            else if (expressionSecondary.SyntaxKind == SyntaxKind.BinaryExpressionNode)
+            {
+                parserModel.Return_BinaryExpressionNode((BinaryExpressionNode)expressionSecondary);
             }
             
             return interpolatedStringNode;
@@ -4004,6 +4045,10 @@ public static class ParseExpressions
         else if (expressionSecondary.SyntaxKind == SyntaxKind.ConstructorInvocationExpressionNode)
         {
             parserModel.Return_ConstructorInvocationExpressionNode((ConstructorInvocationExpressionNode)expressionSecondary);
+        }
+        else if (expressionSecondary.SyntaxKind == SyntaxKind.BinaryExpressionNode)
+        {
+            parserModel.Return_BinaryExpressionNode((BinaryExpressionNode)expressionSecondary);
         }
         
         // Just needs to be set to anything other than out, in, ref.

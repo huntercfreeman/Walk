@@ -30,12 +30,14 @@ public sealed class BinaryExpressionNode : IExpressionNode
         ResultTypeReference = resultTypeReference;
     }
 
-    private TypeReference _rightExpressionResultTypeReference;
+    public TypeReference _rightExpressionResultTypeReference;
+    
+    public bool _isFabricated;
 
-    public TypeReference LeftOperandTypeReference { get; }
-    public SyntaxToken OperatorToken { get; }
-    public TypeReference RightOperandTypeReference { get; }
-    public TypeReference ResultTypeReference { get; }
+    public TypeReference LeftOperandTypeReference { get; set; }
+    public SyntaxToken OperatorToken { get; set; }
+    public TypeReference RightOperandTypeReference { get; set; }
+    public TypeReference ResultTypeReference { get; set; }
     
     public TypeReference RightExpressionResultTypeReference
     {
@@ -49,6 +51,16 @@ public sealed class BinaryExpressionNode : IExpressionNode
     public bool RightExpressionNodeWasSet { get; set; }
 
     public int Unsafe_ParentIndexKey { get; set; }
-    public bool IsFabricated { get; init; }
+    public bool IsFabricated
+    {
+        get
+        {
+            return _isFabricated;
+        }
+        init
+        {
+            _isFabricated = value;
+        }
+    }
     public SyntaxKind SyntaxKind => SyntaxKind.BinaryExpressionNode;
 }

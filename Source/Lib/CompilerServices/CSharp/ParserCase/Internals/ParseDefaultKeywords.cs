@@ -261,6 +261,10 @@ public class ParseDefaultKeywords
             {
                 parserModel.Return_FunctionInvocationNode((FunctionInvocationNode)expression);
             }
+            else if (expression.SyntaxKind == SyntaxKind.BinaryExpressionNode)
+            {
+                parserModel.Return_BinaryExpressionNode((BinaryExpressionNode)expression);
+            }
             
             var statementDelimiterToken = parserModel.TokenWalker.Match(SyntaxKind.StatementDelimiterToken);
             
@@ -587,6 +591,10 @@ public class ParseDefaultKeywords
         {
             parserModel.Return_FunctionInvocationNode((FunctionInvocationNode)expression);
         }
+        else if (expression.SyntaxKind == SyntaxKind.BinaryExpressionNode)
+        {
+            parserModel.Return_BinaryExpressionNode((BinaryExpressionNode)expression);
+        }
         
         var closeParenthesisToken = parserModel.TokenWalker.Match(SyntaxKind.CloseParenthesisToken);
         
@@ -708,6 +716,10 @@ public class ParseDefaultKeywords
         else if (expression.SyntaxKind == SyntaxKind.FunctionInvocationNode)
         {
             parserModel.Return_FunctionInvocationNode((FunctionInvocationNode)expression);
+        }
+        else if (expression.SyntaxKind == SyntaxKind.BinaryExpressionNode)
+        {
+            parserModel.Return_BinaryExpressionNode((BinaryExpressionNode)expression);
         }
         
         var closeParenthesisToken = parserModel.TokenWalker.Match(SyntaxKind.CloseParenthesisToken);
@@ -1060,7 +1072,7 @@ public class ParseDefaultKeywords
         if (parserModel.TokenWalker.Current.SyntaxKind == SyntaxKind.ColonToken)
         {
             _ = parserModel.TokenWalker.Consume(); // Consume the ColonToken
-            var inheritedTypeClauseNode = parserModel.TokenWalker.MatchTypeClauseNode(ref parserModel);
+            var inheritedTypeClauseNode = ParseTypes.MatchTypeClause(ref parserModel);
             // parserModel.BindTypeClauseNode(inheritedTypeClauseNode);
             typeDefinitionNode.SetInheritedTypeReference(new TypeReference(inheritedTypeClauseNode));
             parserModel.Return_TypeClauseNode(inheritedTypeClauseNode);
@@ -1073,7 +1085,7 @@ public class ParseDefaultKeywords
                 
                     var consumeCounter = parserModel.TokenWalker.ConsumeCounter;
                     
-                    _ = parserModel.TokenWalker.MatchTypeClauseNode(ref parserModel);
+                    _ = ParseTypes.MatchTypeClause(ref parserModel);
                     // parserModel.BindTypeClauseNode();
                     
                     if (consumeCounter == parserModel.TokenWalker.ConsumeCounter)
@@ -1234,6 +1246,10 @@ public class ParseDefaultKeywords
         else if (expressionNode.SyntaxKind == SyntaxKind.ConstructorInvocationExpressionNode)
         {
             parserModel.Return_ConstructorInvocationExpressionNode((ConstructorInvocationExpressionNode)expressionNode);
+        }
+        else if (expressionNode.SyntaxKind == SyntaxKind.BinaryExpressionNode)
+        {
+            parserModel.Return_BinaryExpressionNode((BinaryExpressionNode)expressionNode);
         }
         
         // var returnStatementNode = new ReturnStatementNode(returnKeywordToken, expressionNode);

@@ -79,6 +79,10 @@ public class CSharpBinder
 
     public char[] KeywordCheckBuffer { get; } = new char[10];
     
+    internal const int POOL_BINARY_EXPRESSION_NODE_MAX_COUNT = 3;
+    /// <summary>This is only safe to use while parsing</summary>
+    internal readonly Queue<BinaryExpressionNode> Pool_BinaryExpressionNode_Queue = new();
+    
     internal const int POOL_TYPE_CLAUSE_NODE_MAX_COUNT = 3;
     /// <summary>This is only safe to use while parsing</summary>
     internal readonly Queue<TypeClauseNode> Pool_TypeClauseNode_Queue = new();
@@ -166,6 +170,15 @@ public class CSharpBinder
         _allTypeDefinitions.Add("bool", CSharpFacts.Types.Bool);
         _allTypeDefinitions.Add("var", CSharpFacts.Types.Var);
     
+        for (int i = 0; i < POOL_BINARY_EXPRESSION_NODE_MAX_COUNT; i++)
+        {
+            Pool_BinaryExpressionNode_Queue.Enqueue(new BinaryExpressionNode(
+                leftOperandTypeReference: default,
+                operatorToken: default,
+                rightOperandTypeReference: default,
+                resultTypeReference: default));
+        }
+    
         for (int i = 0; i < POOL_TYPE_CLAUSE_NODE_MAX_COUNT; i++)
         {
             Pool_TypeClauseNode_Queue.Enqueue(new TypeClauseNode(
@@ -226,6 +239,16 @@ public class CSharpBinder
                 countFunctionParameterEntryList: 0,
                 closeParenthesisToken: default));
         }
+        
+        /*_ = Task.Run(async () =>
+        {
+            await Task.Delay(10_000);
+            
+            Console.WriteLine($"HIT: {CSharpParserModel.POOL_BinaryExpressionNode_HIT}");
+            Console.WriteLine($"MISS: {CSharpParserModel.POOL_BinaryExpressionNode_MISS}");
+            Console.WriteLine($"RETURN: {CSharpParserModel.POOL_BinaryExpressionNode_RETURN}");
+            Console.WriteLine($"%: {((double)CSharpParserModel.POOL_BinaryExpressionNode_HIT / (CSharpParserModel.POOL_BinaryExpressionNode_HIT + CSharpParserModel.POOL_BinaryExpressionNode_MISS)):P2}");
+        });*/
     }
     
     public NamespacePrefixNode? FindPrefix(NamespacePrefixNode start, TextEditorTextSpan textSpan, string absolutePathString)
@@ -416,6 +439,11 @@ public class CSharpBinder
     public void FinalizeCompilationUnit(ResourceUri resourceUri, CSharpCompilationUnit compilationUnit)
     {
         UpsertCompilationUnit(resourceUri, compilationUnit);
+        
+        while (Pool_BinaryExpressionNode_Queue.Count > POOL_BINARY_EXPRESSION_NODE_MAX_COUNT)
+        {
+            _ = Pool_BinaryExpressionNode_Queue.Dequeue();
+        }
         
         while (Pool_TypeClauseNode_Queue.Count > POOL_TYPE_CLAUSE_NODE_MAX_COUNT)
         {
