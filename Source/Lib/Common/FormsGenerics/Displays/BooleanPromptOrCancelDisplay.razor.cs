@@ -1,6 +1,5 @@
 using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Web;
-using Walk.Common.RazorLib;
 using Walk.Common.RazorLib.Menus.Models;
 
 namespace Walk.Common.RazorLib.FormsGenerics.Displays;

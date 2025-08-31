@@ -1,5 +1,4 @@
 using Walk.Common.RazorLib.Keys.Models;
-using Walk.Common.RazorLib.Keymaps.Models;
 using Walk.TextEditor.RazorLib.Keymaps.Models;
 using Walk.TextEditor.RazorLib.Keymaps.Models.Defaults;
 using Walk.TextEditor.RazorLib.Decorations.Models;

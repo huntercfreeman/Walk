@@ -1,5 +1,3 @@
-using Walk.Common.RazorLib.Widgets.Models;
-
 namespace Walk.Common.RazorLib.Menus.Models;
 
 public struct MenuOptionRecord

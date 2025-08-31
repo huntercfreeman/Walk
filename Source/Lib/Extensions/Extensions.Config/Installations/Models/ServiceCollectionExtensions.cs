@@ -1,6 +1,5 @@
 using Microsoft.Extensions.DependencyInjection;
 using Walk.Common.RazorLib.Installations.Models;
-using Walk.Ide.RazorLib.Installations.Models;
 using Walk.Extensions.DotNet.Installations.Models;
 
 namespace Walk.Extensions.Config.Installations.Models;

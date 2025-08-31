@@ -9,7 +9,6 @@ using Walk.Common.RazorLib.Reactives.Models;
 using Walk.Common.RazorLib.Notifications.Models;
 using Walk.TextEditor.RazorLib.BackgroundTasks.Models;
 using Walk.TextEditor.RazorLib.Groups.Models;
-using Walk.TextEditor.RazorLib.Installations.Models;
 using Walk.TextEditor.RazorLib.JsRuntimes.Models;
 using Walk.TextEditor.RazorLib.Lexers.Models;
 using Walk.TextEditor.RazorLib.Lines.Models;

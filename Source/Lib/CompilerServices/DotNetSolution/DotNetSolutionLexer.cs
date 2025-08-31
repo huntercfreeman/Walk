@@ -2,7 +2,6 @@ using System.Text;
 using Walk.TextEditor.RazorLib.Lexers.Models;
 using Walk.TextEditor.RazorLib.Decorations.Models;
 using Walk.CompilerServices.DotNetSolution.Models.Project;
-using Walk.CompilerServices.Xml;
 
 namespace Walk.CompilerServices.DotNetSolution;
 
