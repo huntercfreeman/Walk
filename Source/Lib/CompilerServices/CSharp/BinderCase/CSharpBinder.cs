@@ -291,6 +291,15 @@ public class CSharpBinder
             Console.WriteLine($"MISS: {POOL_TemporaryLocalVariable_MISS}");
             Console.WriteLine($"RETURN: {POOL_TemporaryLocalVariable_RETURN}");
             Console.WriteLine($"%: {((double)POOL_TemporaryLocalVariable_HIT / (POOL_TemporaryLocalVariable_HIT + POOL_TemporaryLocalVariable_MISS)):P2}");
+            
+            Console.WriteLine($"Pool_TemporaryLocalVariable_Queue: {Pool_TemporaryLocalVariable_Queue.Count}");
+            Console.WriteLine($"Pool_BinaryExpressionNode_Queue: {Pool_BinaryExpressionNode_Queue.Count}");
+            Console.WriteLine($"Pool_TypeClauseNode_Queue: {Pool_TypeClauseNode_Queue.Count}");
+            Console.WriteLine($"Pool_VariableReferenceNode_Queue: {Pool_VariableReferenceNode_Queue.Count}");
+            Console.WriteLine($"Pool_NamespaceClauseNode_Queue: {Pool_NamespaceClauseNode_Queue.Count}");
+            Console.WriteLine($"Pool_AmbiguousIdentifierExpressionNode_Queue: {Pool_AmbiguousIdentifierExpressionNode_Queue.Count}");
+            Console.WriteLine($"Pool_FunctionInvocationNode_Queue: {Pool_FunctionInvocationNode_Queue.Count}");
+            Console.WriteLine($"Pool_ConstructorInvocationExpressionNode_Queue: {Pool_ConstructorInvocationExpressionNode_Queue.Count}");
         });
     }
     
@@ -528,6 +537,15 @@ public class CSharpBinder
         // and then after the solution wide parse make sure
         // to manually minimize the pools.
         
+        if (compilationUnit.CompilationUnitKind != Walk.TextEditor.RazorLib.CompilerServices.CompilationUnitKind.SolutionWide_DefinitionsOnly &&
+            compilationUnit.CompilationUnitKind != Walk.TextEditor.RazorLib.CompilerServices.CompilationUnitKind.SolutionWide_MinimumLocalsData)
+        {
+            MinimizePools();
+        }
+    }
+    
+    public void MinimizePools()
+    {
         while (Pool_TemporaryLocalVariable_Queue.Count > POOL_TEMPORARY_LOCAL_VARIABLE_MAX_COUNT)
         {
             _ = Pool_TemporaryLocalVariable_Queue.Dequeue();

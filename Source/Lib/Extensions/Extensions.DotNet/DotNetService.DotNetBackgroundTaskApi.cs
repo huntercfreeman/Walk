@@ -401,6 +401,7 @@ public partial class DotNetService
 
                         cSharpCompilerService.Clear_MAIN_StreamReaderTupleCache();
                         cSharpCompilerService.Clear_BACKUP_StreamReaderTupleCache();
+                        cSharpCompilerService.__CSharpBinder.MinimizePools();
                     }
                 }
                 return ValueTask.CompletedTask;
