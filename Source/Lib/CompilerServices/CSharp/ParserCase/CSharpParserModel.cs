@@ -537,7 +537,7 @@ public ref struct CSharpParserModel
     {
         if (shouldCreateVariableSymbol)
             CreateVariableSymbol(variableDeclarationNode.IdentifierToken, variableDeclarationNode.VariableKind);
-        
+
         if (TryGetVariableDeclarationNodeByScope(
                 ResourceUri,
                 Compilation,
@@ -561,7 +561,7 @@ public ref struct CSharpParserModel
                 Compilation.IndexDiagnosticList + Compilation.CountDiagnosticList,
                 ...);
             Compilation.CountDiagnosticList++;
-            
+
             DiagnosticHelper.ReportAlreadyDefinedVariable(
                 Compilation.__DiagnosticList,
                 variableDeclarationNode.IdentifierToken.TextSpan,
@@ -808,6 +808,13 @@ public ref struct CSharpParserModel
     /// </summary>
     public void NewScopeAndBuilderFromOwner(ICodeBlockOwner codeBlockOwner, TextEditorTextSpan textSpan)
     {
+        if (Compilation.CompilationUnitKind == CompilationUnitKind.SolutionWide_MinimumLocalsData &&
+                  (CurrentCodeBlockOwner.SyntaxKind == SyntaxKind.FunctionDefinitionNode ||
+                   CurrentCodeBlockOwner.SyntaxKind == SyntaxKind.ArbitraryCodeBlockNode))
+        {
+            ++Binder.TemporaryLocalVariable_NestEitherArbitraryOrFunction_Count;
+        }
+
         codeBlockOwner.Unsafe_ParentIndexKey = CurrentCodeBlockOwner.Unsafe_SelfIndexKey;
         codeBlockOwner.Scope_StartInclusiveIndex = textSpan.StartInclusiveIndex;
 
@@ -861,16 +868,21 @@ public ref struct CSharpParserModel
         if (CurrentCodeBlockOwner.Unsafe_SelfIndexKey == 0)
             return;
         
-        /*if (Compilation.CompilationUnitKind == CompilationUnitKind.SolutionWide_MinimumLocalsData &&
-            (CurrentCodeBlockOwner.SyntaxKind == SyntaxKind.FunctionDefinitionNode ||
-             CurrentCodeBlockOwner.SyntaxKind == SyntaxKind.ArbitraryCodeBlockNode))
+        if (Compilation.CompilationUnitKind == CompilationUnitKind.SolutionWide_MinimumLocalsData &&
+                  (CurrentCodeBlockOwner.SyntaxKind == SyntaxKind.FunctionDefinitionNode ||
+                   CurrentCodeBlockOwner.SyntaxKind == SyntaxKind.ArbitraryCodeBlockNode))
         {
-            for (int i = Compilation.NodeList.Count - 1; i >= 0; i--)
+            --Binder.TemporaryLocalVariable_NestEitherArbitraryOrFunction_Count;
+
+            if (Binder.TemporaryLocalVariable_NestEitherArbitraryOrFunction_Count == 0)
             {
-                if (Compilation.NodeList[i].Unsafe_ParentIndexKey == CurrentCodeBlockOwner.Unsafe_SelfIndexKey)
-                    Compilation.NodeList.RemoveAt(i);
+                foreach (var variableDeclarationNode in Binder.TemporaryLocalVariableList)
+                {
+                    Binder.Return_TemporaryLocalVariable(variableDeclarationNode);
+                }
+                Binder.TemporaryLocalVariableList.Clear();
             }
-        }*/
+        }
         
         CurrentCodeBlockOwner.Scope_EndExclusiveIndex = textSpan.EndExclusiveIndex;
         CurrentCodeBlockOwner = GetParent(CurrentCodeBlockOwner, Compilation);
@@ -1356,6 +1368,27 @@ public ref struct CSharpParserModel
         out VariableDeclarationNode? variableDeclarationNode,
         bool isRecursive = false)
     {
+        if (Compilation.CompilationUnitKind == CompilationUnitKind.SolutionWide_MinimumLocalsData &&
+                (CurrentCodeBlockOwner.SyntaxKind == SyntaxKind.FunctionDefinitionNode ||
+                 CurrentCodeBlockOwner.SyntaxKind == SyntaxKind.ArbitraryCodeBlockNode))
+        {
+            foreach (var temporaryVariableDeclarationNode in Binder.TemporaryLocalVariableList)
+            {
+                var node = temporaryVariableDeclarationNode;
+
+                if (node.Unsafe_ParentIndexKey == declarationScopeIndexKey &&
+                    node.SyntaxKind == SyntaxKind.VariableDeclarationNode)
+                {
+                    if (Binder.CSharpCompilerService.SafeCompareTextSpans(
+                            referenceResourceUri.Value, referenceTextSpan, declarationResourceUri.Value, GetIdentifierTextSpan(node)))
+                    {
+                        variableDeclarationNode = (VariableDeclarationNode)node;
+                        return true;
+                    }
+                }
+            }
+        }
+
         variableDeclarationNode = null;
         for (int i = declarationCompilationUnit.IndexNodeList; i < declarationCompilationUnit.IndexNodeList + declarationCompilationUnit.CountNodeList; i++)
         {
@@ -1466,38 +1499,49 @@ public ref struct CSharpParserModel
         TextEditorTextSpan variableIdentifierTextSpan,
         VariableDeclarationNode variableDeclarationNode)
     {
-        var scopeIndexKey = CurrentCodeBlockOwner.Unsafe_SelfIndexKey;
-
-        VariableDeclarationNode? matchNode = null;
-        for (int i = Compilation.IndexNodeList; i < Compilation.IndexNodeList + Compilation.CountNodeList; i++)
+        if (Compilation.CompilationUnitKind == CompilationUnitKind.SolutionWide_MinimumLocalsData &&
+                (CurrentCodeBlockOwner.SyntaxKind == SyntaxKind.FunctionDefinitionNode ||
+                 CurrentCodeBlockOwner.SyntaxKind == SyntaxKind.ArbitraryCodeBlockNode))
         {
-            var x = Binder.NodeList[i];
-            if (x.Unsafe_ParentIndexKey == scopeIndexKey &&
-                x.SyntaxKind == SyntaxKind.VariableDeclarationNode)
-            {
-                if (Binder.CSharpCompilerService.SafeCompareTextSpans(
-                        ResourceUri.Value, variableIdentifierTextSpan, ResourceUri.Value, GetIdentifierTextSpan(x)))
-                {
-                    matchNode = (VariableDeclarationNode)x;
-                    break;
-                }
-            }
-        }
-        
-        if (matchNode is null)
-        {
-            variableDeclarationNode.Unsafe_ParentIndexKey = scopeIndexKey;
-            
-            Binder.NodeList.Insert(
-                Compilation.IndexNodeList + Compilation.CountNodeList,
-                variableDeclarationNode);
-            ++Compilation.CountNodeList;
-            
-            return true;
+            variableDeclarationNode.Unsafe_ParentIndexKey = CurrentCodeBlockOwner.Unsafe_SelfIndexKey;
+            Binder.TemporaryLocalVariableList.Add(variableDeclarationNode);
+            return false;
         }
         else
         {
-            return false;
+            var scopeIndexKey = CurrentCodeBlockOwner.Unsafe_SelfIndexKey;
+
+            VariableDeclarationNode? matchNode = null;
+            for (int i = Compilation.IndexNodeList; i < Compilation.IndexNodeList + Compilation.CountNodeList; i++)
+            {
+                var x = Binder.NodeList[i];
+                if (x.Unsafe_ParentIndexKey == scopeIndexKey &&
+                    x.SyntaxKind == SyntaxKind.VariableDeclarationNode)
+                {
+                    if (Binder.CSharpCompilerService.SafeCompareTextSpans(
+                            ResourceUri.Value, variableIdentifierTextSpan, ResourceUri.Value, GetIdentifierTextSpan(x)))
+                    {
+                        matchNode = (VariableDeclarationNode)x;
+                        break;
+                    }
+                }
+            }
+
+            if (matchNode is null)
+            {
+                variableDeclarationNode.Unsafe_ParentIndexKey = scopeIndexKey;
+
+                Binder.NodeList.Insert(
+                    Compilation.IndexNodeList + Compilation.CountNodeList,
+                    variableDeclarationNode);
+                ++Compilation.CountNodeList;
+
+                return true;
+            }
+            else
+            {
+                return false;
+            }
         }
     }
     
@@ -1505,30 +1549,41 @@ public ref struct CSharpParserModel
         TextEditorTextSpan variableIdentifierTextSpan,
         VariableDeclarationNode variableDeclarationNode)
     {
-        int scopeIndexKey = CurrentCodeBlockOwner.Unsafe_SelfIndexKey;
-        
-        VariableDeclarationNode? matchNode = null;
-        int index = Compilation.IndexNodeList;
-        for (; index < Compilation.IndexNodeList + Compilation.CountNodeList; index++)
+        if (Compilation.CompilationUnitKind == CompilationUnitKind.SolutionWide_MinimumLocalsData &&
+                (CurrentCodeBlockOwner.SyntaxKind == SyntaxKind.FunctionDefinitionNode ||
+                 CurrentCodeBlockOwner.SyntaxKind == SyntaxKind.ArbitraryCodeBlockNode))
         {
-            var x = Binder.NodeList[index];
-            
-            if (x.Unsafe_ParentIndexKey == scopeIndexKey &&
-                x.SyntaxKind == SyntaxKind.VariableDeclarationNode)
+            variableDeclarationNode.Unsafe_ParentIndexKey = CurrentCodeBlockOwner.Unsafe_SelfIndexKey;
+            Binder.TemporaryLocalVariableList.Add(variableDeclarationNode);
+            return;
+        }
+        else
+        {
+            int scopeIndexKey = CurrentCodeBlockOwner.Unsafe_SelfIndexKey;
+
+            VariableDeclarationNode? matchNode = null;
+            int index = Compilation.IndexNodeList;
+            for (; index < Compilation.IndexNodeList + Compilation.CountNodeList; index++)
             {
-                if (Binder.CSharpCompilerService.SafeCompareTextSpans(
-                        ResourceUri.Value, variableIdentifierTextSpan, ResourceUri.Value, GetIdentifierTextSpan(x)))
+                var x = Binder.NodeList[index];
+
+                if (x.Unsafe_ParentIndexKey == scopeIndexKey &&
+                    x.SyntaxKind == SyntaxKind.VariableDeclarationNode)
                 {
-                    matchNode = (VariableDeclarationNode)x;
-                    break;
+                    if (Binder.CSharpCompilerService.SafeCompareTextSpans(
+                            ResourceUri.Value, variableIdentifierTextSpan, ResourceUri.Value, GetIdentifierTextSpan(x)))
+                    {
+                        matchNode = (VariableDeclarationNode)x;
+                        break;
+                    }
                 }
             }
-        }
-        
-        if (index != -1)
-        {
-            variableDeclarationNode.Unsafe_ParentIndexKey = scopeIndexKey;
-            Binder.NodeList[index] = variableDeclarationNode;
+
+            if (index != -1)
+            {
+                variableDeclarationNode.Unsafe_ParentIndexKey = scopeIndexKey;
+                Binder.NodeList[index] = variableDeclarationNode;
+            }
         }
     }
     

@@ -2873,13 +2873,29 @@ public static class ParseExpressions
                             var expressionNode = ForceDecisionAmbiguousIdentifier(typeClauseNode, ambiguousExpressionNode, ref parserModel);
                             nameToken = parserModel.Binder.GetNameToken(expressionNode);
                         }
+
+                        if (parserModel.Compilation.CompilationUnitKind == CompilationUnitKind.SolutionWide_MinimumLocalsData &&
+                            (parserModel.CurrentCodeBlockOwner.SyntaxKind == SyntaxKind.FunctionDefinitionNode ||
+                             parserModel.CurrentCodeBlockOwner.SyntaxKind == SyntaxKind.ArbitraryCodeBlockNode))
+                        {
+                            variableDeclarationNode = parserModel.Binder.Rent_TemporaryLocalVariable();
+
+                            variableDeclarationNode.TypeReference = new TypeReference(typeClauseNode);
+                            variableDeclarationNode.IdentifierToken = nameToken;
+                            variableDeclarationNode.VariableKind = VariableKind.Local;
+                            variableDeclarationNode.IsInitialized = false;
+                            variableDeclarationNode.ResourceUri = parserModel.ResourceUri;
+                        }
+                        else
+                        {
+                            variableDeclarationNode = new VariableDeclarationNode(
+                                new TypeReference(typeClauseNode),
+                                nameToken,
+                                VariableKind.Local,
+                                false,
+                                parserModel.ResourceUri);
+                        }
                         
-                        variableDeclarationNode = new VariableDeclarationNode(
-                            new TypeReference(typeClauseNode),
-                            nameToken,
-                            VariableKind.Local,
-                            false,
-                            parserModel.ResourceUri);
                         parserModel.Return_TypeClauseNode(typeClauseNode);
                     }
                     else

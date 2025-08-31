@@ -1,13 +1,15 @@
-using Walk.TextEditor.RazorLib.Lexers.Models;
-using Walk.TextEditor.RazorLib;
-using Walk.Extensions.CompilerServices.Utility;
-using Walk.Extensions.CompilerServices.Syntax;
-using Walk.Extensions.CompilerServices.Syntax.Nodes;
-using Walk.Extensions.CompilerServices.Syntax.Nodes.Interfaces;
-using Walk.Extensions.CompilerServices.Syntax.Nodes.Enums;
+using System.Reflection;
+using System.Reflection.Metadata;
+using Walk.CompilerServices.CSharp.CompilerServiceCase;
 using Walk.CompilerServices.CSharp.Facts;
 using Walk.CompilerServices.CSharp.ParserCase;
-using Walk.CompilerServices.CSharp.CompilerServiceCase;
+using Walk.Extensions.CompilerServices.Syntax;
+using Walk.Extensions.CompilerServices.Syntax.Nodes;
+using Walk.Extensions.CompilerServices.Syntax.Nodes.Enums;
+using Walk.Extensions.CompilerServices.Syntax.Nodes.Interfaces;
+using Walk.Extensions.CompilerServices.Utility;
+using Walk.TextEditor.RazorLib;
+using Walk.TextEditor.RazorLib.Lexers.Models;
 
 namespace Walk.CompilerServices.CSharp.BinderCase;
 
@@ -78,11 +80,42 @@ public class CSharpBinder
     internal readonly List<SyntaxToken> LEXER_syntaxTokenList = new();
 
     public char[] KeywordCheckBuffer { get; } = new char[10];
-    
+
+    /// <summary>
+    /// If a function defined within another function,
+    /// or arbitrary scope '{ ... }' appears anywhere
+    /// such that nesting of either kind occurs
+    /// then this count will reflect how deep you are.
+    /// 
+    /// Because you can't clear the shared list unless you have no nesting remaining.
+    /// </summary>
+    internal int TemporaryLocalVariable_NestEitherArbitraryOrFunction_Count;
+    internal readonly List<VariableDeclarationNode> TemporaryLocalVariableList = new();
+
+    internal const int POOL_TEMPORARY_LOCAL_VARIABLE_MAX_COUNT = 3;
+    /// <summary>
+    /// This is only safe to use while parsing
+    /// 
+    /// When parsing solution wide, a lot of VariableDeclarationNodes are made, and stored long term.
+    /// Meanwhile a lot of them are locally scoped to a function definition.
+    /// Thus, you'd have to actually open the file in particular to see the variables.
+    /// 
+    /// But, you need to during the parse of that function definition make sure that
+    /// the local variables exist so they are referenced within that function's scope properly.
+    /// 
+    /// So, the idea is it have a separate List of VariableDeclarationNode
+    /// that is only used during CompilationUnitKind.SolutionWide_MinimumLocalsData.
+    /// 
+    /// This separate list pulls from this pool when creating a new VariableDeclarationNode.
+    /// And when you hit the end of the function's scope you can then clear this separate list
+    /// and not store the local variables long term.
+    /// </summary>
+    internal readonly Queue<VariableDeclarationNode> Pool_TemporaryLocalVariable_Queue = new();
+
     internal const int POOL_BINARY_EXPRESSION_NODE_MAX_COUNT = 3;
     /// <summary>This is only safe to use while parsing</summary>
     internal readonly Queue<BinaryExpressionNode> Pool_BinaryExpressionNode_Queue = new();
-    
+
     internal const int POOL_TYPE_CLAUSE_NODE_MAX_COUNT = 3;
     /// <summary>This is only safe to use while parsing</summary>
     internal readonly Queue<TypeClauseNode> Pool_TypeClauseNode_Queue = new();
@@ -143,7 +176,7 @@ public class CSharpBinder
     public CSharpCompilerService CSharpCompilerService { get; set; }
     
     public GlobalCodeBlockNode GlobalCodeBlockNode { get; } = new GlobalCodeBlockNode();
-    
+
     public CSharpBinder(TextEditorService textEditorService, CSharpCompilerService cSharpCompilerService)
     {
         _topLevelNamespaceStatementNode = new NamespaceStatementNode(
@@ -170,6 +203,16 @@ public class CSharpBinder
         _allTypeDefinitions.Add("bool", CSharpFacts.Types.Bool);
         _allTypeDefinitions.Add("var", CSharpFacts.Types.Var);
     
+        for (int i = 0; i < POOL_TEMPORARY_LOCAL_VARIABLE_MAX_COUNT; i++)
+        {
+            Pool_TemporaryLocalVariable_Queue.Enqueue(new VariableDeclarationNode(
+                typeReference: default,
+                identifierToken: default,
+                variableKind: default,
+                isInitialized: default,
+                resourceUri: default));
+        }
+        
         for (int i = 0; i < POOL_BINARY_EXPRESSION_NODE_MAX_COUNT; i++)
         {
             Pool_BinaryExpressionNode_Queue.Enqueue(new BinaryExpressionNode(
@@ -240,17 +283,57 @@ public class CSharpBinder
                 closeParenthesisToken: default));
         }
         
-        /*_ = Task.Run(async () =>
+        _ = Task.Run(async () =>
         {
-            await Task.Delay(10_000);
+            await Task.Delay(11_000);
             
-            Console.WriteLine($"HIT: {CSharpParserModel.POOL_BinaryExpressionNode_HIT}");
-            Console.WriteLine($"MISS: {CSharpParserModel.POOL_BinaryExpressionNode_MISS}");
-            Console.WriteLine($"RETURN: {CSharpParserModel.POOL_BinaryExpressionNode_RETURN}");
-            Console.WriteLine($"%: {((double)CSharpParserModel.POOL_BinaryExpressionNode_HIT / (CSharpParserModel.POOL_BinaryExpressionNode_HIT + CSharpParserModel.POOL_BinaryExpressionNode_MISS)):P2}");
-        });*/
+            Console.WriteLine($"HIT: {POOL_TemporaryLocalVariable_HIT}");
+            Console.WriteLine($"MISS: {POOL_TemporaryLocalVariable_MISS}");
+            Console.WriteLine($"RETURN: {POOL_TemporaryLocalVariable_RETURN}");
+            Console.WriteLine($"%: {((double)POOL_TemporaryLocalVariable_HIT / (POOL_TemporaryLocalVariable_HIT + POOL_TemporaryLocalVariable_MISS)):P2}");
+        });
     }
     
+    public int POOL_TemporaryLocalVariable_HIT { get; set; }
+    public int POOL_TemporaryLocalVariable_MISS { get; set; }
+    public int POOL_TemporaryLocalVariable_RETURN { get; set; }
+
+    public VariableDeclarationNode Rent_TemporaryLocalVariable()
+    {
+        if (Pool_TemporaryLocalVariable_Queue.TryDequeue(out var variableDeclarationNode))
+        {
+            ++POOL_TemporaryLocalVariable_HIT;
+            return variableDeclarationNode;
+        }
+
+        ++POOL_TemporaryLocalVariable_MISS;
+        return new VariableDeclarationNode(
+            typeReference: default,
+            identifierToken: default,
+            variableKind: default,
+            isInitialized: default,
+            resourceUri: default);
+    }
+
+    public void Return_TemporaryLocalVariable(VariableDeclarationNode variableDeclarationNode)
+    {
+        ++POOL_TemporaryLocalVariable_RETURN;
+        
+        variableDeclarationNode.TypeReference = default;
+        variableDeclarationNode.IdentifierToken = default;
+        variableDeclarationNode.VariableKind = default;
+        variableDeclarationNode.IsInitialized = default;
+        variableDeclarationNode.ResourceUri = default;
+        variableDeclarationNode.HasGetter = default;
+        variableDeclarationNode.GetterIsAutoImplemented = default;
+        variableDeclarationNode.HasSetter = default;
+        variableDeclarationNode.SetterIsAutoImplemented = default;
+        variableDeclarationNode.Unsafe_ParentIndexKey = default;
+        variableDeclarationNode._isFabricated = default;
+
+        Pool_TemporaryLocalVariable_Queue.Enqueue(variableDeclarationNode);
+    }
+
     public NamespacePrefixNode? FindPrefix(NamespacePrefixNode start, TextEditorTextSpan textSpan, string absolutePathString)
     {
         var findTuple = NamespacePrefixTree.FindRange(
@@ -439,7 +522,17 @@ public class CSharpBinder
     public void FinalizeCompilationUnit(ResourceUri resourceUri, CSharpCompilationUnit compilationUnit)
     {
         UpsertCompilationUnit(resourceUri, compilationUnit);
+
+        // TODO: Put an if statement around these pool max count dequeue logic...
+        // ...that only runs this if it is a single file parse
+        // and then after the solution wide parse make sure
+        // to manually minimize the pools.
         
+        while (Pool_TemporaryLocalVariable_Queue.Count > POOL_TEMPORARY_LOCAL_VARIABLE_MAX_COUNT)
+        {
+            _ = Pool_TemporaryLocalVariable_Queue.Dequeue();
+        }
+
         while (Pool_BinaryExpressionNode_Queue.Count > POOL_BINARY_EXPRESSION_NODE_MAX_COUNT)
         {
             _ = Pool_BinaryExpressionNode_Queue.Dequeue();
