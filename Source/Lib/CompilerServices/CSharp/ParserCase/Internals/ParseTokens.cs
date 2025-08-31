@@ -581,12 +581,7 @@ public static class ParseTokens
         if (parserModel.CurrentCodeBlockOwner.SyntaxKind == SyntaxKind.NamespaceStatementNode)
         {
             var namespaceStatementNode = (NamespaceStatementNode)parserModel.CurrentCodeBlockOwner;
-            
-            ICodeBlockOwner nextCodeBlockOwner = namespaceStatementNode;
-            TypeClauseNode? scopeReturnTypeClauseNode = null;
-            
             namespaceStatementNode.CodeBlock_EndExclusiveIndex = statementDelimiterToken.TextSpan.EndExclusiveIndex;
-
             parserModel.AddNamespaceToCurrentScope(namespaceStatementNode.IdentifierToken.TextSpan);
         }
         else 
