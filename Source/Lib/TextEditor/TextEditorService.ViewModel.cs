@@ -705,10 +705,6 @@ public partial class TextEditorService
         TextEditorViewModel viewModel,
         TextEditorComponentData componentData)
     {
-#if DEBUG
-        var startTime = Stopwatch.GetTimestamp();
-#endif
-
         var tabWidth = editContext.TextEditorService.Options_GetOptions().TabWidth;
         viewModel.Virtualization.ShouldCalculateVirtualizationResult = false;
 
