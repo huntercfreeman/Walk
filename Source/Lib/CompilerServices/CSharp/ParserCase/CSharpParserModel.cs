@@ -167,11 +167,11 @@ public ref struct CSharpParserModel
     {
         if (Binder.Pool_BinaryExpressionNode_Queue.TryDequeue(out var binaryExpressionNode))
         {
-            ++POOL_BinaryExpressionNode_HIT;
+            //++POOL_BinaryExpressionNode_HIT;
             return binaryExpressionNode;
         }
         
-        ++POOL_BinaryExpressionNode_MISS;
+        //++POOL_BinaryExpressionNode_MISS;
         return new BinaryExpressionNode(
             leftOperandTypeReference: default,
             operatorToken: default,
@@ -186,7 +186,7 @@ public ref struct CSharpParserModel
     /// </summary>
     public readonly void Return_BinaryExpressionNode(BinaryExpressionNode binaryExpressionNode)
     {
-        ++POOL_BinaryExpressionNode_RETURN;
+        //++POOL_BinaryExpressionNode_RETURN;
         binaryExpressionNode._isFabricated = false;
     
         binaryExpressionNode.LeftOperandTypeReference = default;
