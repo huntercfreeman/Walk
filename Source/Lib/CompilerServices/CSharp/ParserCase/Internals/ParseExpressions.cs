@@ -218,6 +218,40 @@ public static class ParseExpressions
                     
                     parserModel.ExpressionPrimary = expressionPrimaryPreviousRoot;
                     
+                    foreach (var tuple in parserModel.ExpressionList)
+                    {
+                        if (tuple.ExpressionNode is null)
+                            continue;
+                            
+                        if (tuple.ExpressionNode != parserModel.ExpressionPrimary)
+                        {
+                            switch (tuple.ExpressionNode.SyntaxKind)
+                            {
+                                case SyntaxKind.BinaryExpressionNode:
+                                    parserModel.Return_BinaryExpressionNode((BinaryExpressionNode)tuple.ExpressionNode);
+                                    break;
+                                /*case SyntaxKind.TypeClauseNode:
+                                    parserModel.Return_TypeClauseNode((TypeClauseNode)tuple.ExpressionNode);
+                                    break;
+                                case SyntaxKind.VariableReferenceNode:
+                                    parserModel.Return_VariableReferenceNode((VariableReferenceNode)tuple.ExpressionNode);
+                                    break;
+                                case SyntaxKind.NamespaceClauseNode:
+                                    parserModel.Return_NamespaceClauseNode((NamespaceClauseNode)tuple.ExpressionNode);
+                                    break;
+                                case SyntaxKind.AmbiguousIdentifierExpressionNode:
+                                    parserModel.Return_AmbiguousIdentifierExpressionNode((AmbiguousIdentifierExpressionNode)tuple.ExpressionNode);
+                                    break;
+                                case SyntaxKind.FunctionInvocationNode:
+                                    parserModel.Return_FunctionInvocationNode((FunctionInvocationNode)tuple.ExpressionNode);
+                                    break;
+                                case SyntaxKind.ConstructorInvocationExpressionNode:
+                                    parserModel.Return_ConstructorInvocationExpressionNode((ConstructorInvocationExpressionNode)tuple.ExpressionNode);
+                                    break;*/
+                            }
+                        }
+                    }
+                    
                     forceExit = true;
                 }
             }

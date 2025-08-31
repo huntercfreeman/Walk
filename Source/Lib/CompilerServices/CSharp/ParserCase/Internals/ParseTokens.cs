@@ -562,7 +562,11 @@ public static class ParseTokens
         {
             parserModel.ForceParseExpressionInitialPrimaryExpression = backtrackNode;
         }
-        _ = ParseExpressions.ParseExpression(ref parserModel);
+        var expression = ParseExpressions.ParseExpression(ref parserModel);
+        if (expression.SyntaxKind == SyntaxKind.BinaryExpressionNode)
+        {
+            parserModel.Return_BinaryExpressionNode((BinaryExpressionNode)expression);
+        }
         parserModel.ForceParseExpressionInitialPrimaryExpression = EmptyExpressionNode.Empty;
     }
 
