@@ -158,7 +158,7 @@ public static class CSharpParser
                 {
                     var tuple = parserModel.ParseChildScopeStack.Peek();
                     
-                    if (Object.ReferenceEquals(tuple.CodeBlockOwner, parserModel.CurrentCodeBlockOwner))
+                    if (tuple.ScopeOffset == parserModel.CurrentScopeOffset)
                     {
                         tuple = parserModel.ParseChildScopeStack.Pop();
                         tuple.DeferredChildScope.PrepareMainParserLoop(parserModel.TokenWalker.Index, ref parserModel);
@@ -197,7 +197,7 @@ public static class CSharpParser
             parserModel.TokenWalker.ConsumeCounterReset();
         }
 
-        if (parserModel.GetParent(parserModel.CurrentCodeBlockOwner, compilationUnit) is not null)
+        if (!parserModel.GetParent(parserModel.Binder.ScopeList[parserModel.CurrentScopeOffset].ParentScopeOffset, compilationUnit).IsDefault())
             parserModel.CloseScope(parserModel.TokenWalker.Current.TextSpan); // The current token here would be the EOF token.
 
         parserModel.Binder.FinalizeCompilationUnit(parserModel.ResourceUri, compilationUnit);

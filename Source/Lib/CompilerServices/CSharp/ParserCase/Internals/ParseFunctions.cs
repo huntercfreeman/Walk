@@ -86,7 +86,7 @@ public class ParseFunctions
         }
         
         if (parserModel.TokenWalker.Current.SyntaxKind == SyntaxKind.StatementDelimiterToken)
-            parserModel.SetCurrentScope_IsImplicitOpenCodeBlockTextSpan_True();
+            parserModel.SetCurrentScope_IsImplicitOpenCodeBlockTextSpan(true);
         else if (parserModel.TokenWalker.Current.SyntaxKind == SyntaxKind.EqualsCloseAngleBracketToken)
             ParseTokens.MoveToExpressionBody(ref parserModel);
     }

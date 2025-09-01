@@ -351,7 +351,7 @@ public static class ParseTokens
         
         if (parserModel.TokenWalker.Current.SyntaxKind == SyntaxKind.StatementDelimiterToken)
         {
-            parserModel.SetCurrentScope_IsImplicitOpenCodeBlockTextSpan_True();
+            parserModel.SetCurrentScope_IsImplicitOpenCodeBlockTextSpan(true);
         }
         else if (parserModel.TokenWalker.Current.SyntaxKind == SyntaxKind.EqualsCloseAngleBracketToken)
         {
@@ -600,7 +600,7 @@ public static class ParseTokens
     {
         _ = parserModel.TokenWalker.Consume(); // Consume 'EqualsCloseAngleBracketToken'
     
-        parserModel.SetCurrentScope_IsImplicitOpenCodeBlockTextSpan_True();
+        parserModel.SetCurrentScope_IsImplicitOpenCodeBlockTextSpan(true);
         
         // Global scope has a null parent.
         var parentScopeDirection = parserModel.GetParent(parserModel.CurrentCodeBlockOwner, parserModel.Compilation)?.ScopeDirectionKind ?? ScopeDirectionKind.Both;

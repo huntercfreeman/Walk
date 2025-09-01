@@ -1993,17 +1993,17 @@ public ref struct CSharpParserModel
         return typeClauseNode;
     }
     
-    public readonly void SetCurrentScope_IsImplicitOpenCodeBlockTextSpan_True()
+    public readonly void SetCurrentScope_IsImplicitOpenCodeBlockTextSpan(bool value)
     {
         var scope = Binder.ScopeList[Compilation.ScopeIndex + CurrentScopeOffset];
-        scope.IsImplicitOpenCodeBlockTextSpan = true;
+        scope.IsImplicitOpenCodeBlockTextSpan = value;
         Binder.ScopeList[Compilation.ScopeIndex + CurrentScopeOffset] = scope;
     }
     
-    public readonly void SetCurrentScope_PermitCodeBlockParsing_True()
+    public readonly void SetCurrentScope_PermitCodeBlockParsing(bool value)
     {
         var scope = Binder.ScopeList[Compilation.ScopeIndex + CurrentScopeOffset];
-        scope.PermitCodeBlockParsing = true;
+        scope.PermitCodeBlockParsing = value;
         Binder.ScopeList[Compilation.ScopeIndex + CurrentScopeOffset] = scope;
     }
 }

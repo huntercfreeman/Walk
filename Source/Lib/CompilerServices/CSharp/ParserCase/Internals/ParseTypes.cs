@@ -89,7 +89,7 @@ public static class ParseTypes
             _ = parserModel.TokenWalker.Consume();
         }
         
-        parserModel.SetCurrentScope_PermitCodeBlockParsing_True();
+        parserModel.SetCurrentScope_PermitCodeBlockParsing(true);
         
         parserModel.StatementBuilder.FinishStatement(parserModel.TokenWalker.Index, ref parserModel);
         
