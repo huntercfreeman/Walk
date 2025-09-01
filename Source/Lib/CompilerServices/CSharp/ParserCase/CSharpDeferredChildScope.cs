@@ -20,7 +20,7 @@ public struct CSharpDeferredChildScope
     
     public readonly void PrepareMainParserLoop(int tokenIndexToRestore, ref CSharpParserModel parserModel)
     {
-        var currentScope = parserModel.Binder.CodeBlockValueList[parserModel.Compilation.IndexCodeBlockOwnerList + CodeBlockValueSelfIndexKey];
+        var currentScope = parserModel.Binder.ScopeList[parserModel.Compilation.IndexCodeBlockOwnerList + CodeBlockValueSelfIndexKey];
         currentScope.PermitCodeBlockParsing = true;
         parserModel.Binder.ScopeList[IndexCodeBlockValue] = currentCodeBlockValue;
         

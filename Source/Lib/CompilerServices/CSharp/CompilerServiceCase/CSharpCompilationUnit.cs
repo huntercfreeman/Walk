@@ -38,11 +38,11 @@ public struct CSharpCompilationUnit : IExtendedCompilationUnit, ICompilerService
     /// <summary>
     /// The starting index within CSharpBinder.ScopeList that this compilation unit's scope entries reside.
     /// </summary>
-    public int IndexScope { get; set; }
+    public int ScopeIndex { get; set; }
     /// <summary>
     /// The count of contiguous entries within CSharpBinder.ScopeList that correspond to this compilation unit.
     /// </summary>
-    public int CountScope { get; set; }
+    public int ScopeCount { get; set; }
     
     /// <summary>Set this index in the CSharpParserModel constructor</summary>
     public int IndexNodeList { get; set; }
