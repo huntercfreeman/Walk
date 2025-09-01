@@ -353,8 +353,8 @@ public static class ParseTokens
         		codeBlock_StartInclusiveIndex: parserModel.TokenWalker.Current.TextSpan.StartInclusiveIndex,
         		codeBlock_EndExclusiveIndex: -1,
         		parentScopeOffset: parserModel.CurrentScopeOffset,
-        		selfScopeOffset: parserModel.Compilation.ScopeCount,
-        		nodeOffset: parserModel.Compilation.CountNodeList,
+        		selfScopeOffset: parserModel.Compilation.ScopeLength,
+        		nodeOffset: parserModel.Compilation.NodeLength,
         		permitCodeBlockParsing: false,
         		isImplicitOpenCodeBlockTextSpan: false,
         		returnTypeReference: Walk.CompilerServices.CSharp.Facts.CSharpFacts.Types.Void.ToTypeReference(),
@@ -389,8 +389,8 @@ public static class ParseTokens
     {
         var openBraceToken = parserModel.TokenWalker.Consume();
         
-        if (parserModel.Binder.ScopeList[parserModel.Compilation.ScopeIndex + parserModel.CurrentScopeOffset].IsImplicitOpenCodeBlockTextSpan ||
-            parserModel.Binder.ScopeList[parserModel.Compilation.ScopeIndex + parserModel.CurrentScopeOffset].CodeBlock_StartInclusiveIndex != -1)
+        if (parserModel.Binder.ScopeList[parserModel.Compilation.ScopeOffset + parserModel.CurrentScopeOffset].IsImplicitOpenCodeBlockTextSpan ||
+            parserModel.Binder.ScopeList[parserModel.Compilation.ScopeOffset + parserModel.CurrentScopeOffset].CodeBlock_StartInclusiveIndex != -1)
         {
             var arbitraryCodeBlockNode = new ArbitraryCodeBlockNode();
             
@@ -402,8 +402,8 @@ public static class ParseTokens
             		codeBlock_StartInclusiveIndex: parserModel.TokenWalker.Current.TextSpan.StartInclusiveIndex,
             		codeBlock_EndExclusiveIndex: -1,
             		parentScopeOffset: parserModel.CurrentScopeOffset,
-            		selfScopeOffset: parserModel.Compilation.ScopeCount,
-            		nodeOffset: parserModel.Compilation.CountNodeList,
+            		selfScopeOffset: parserModel.Compilation.ScopeLength,
+            		nodeOffset: parserModel.Compilation.NodeLength,
             		permitCodeBlockParsing: false,
             		isImplicitOpenCodeBlockTextSpan: false,
             		returnTypeReference: Walk.CompilerServices.CSharp.Facts.CSharpFacts.Types.Void.ToTypeReference(),
@@ -413,14 +413,14 @@ public static class ParseTokens
         
         parserModel.SetCurrentScope_IsImplicitOpenCodeBlockTextSpan(false);
 
-        var parentScope = parserModel.GetParent(parserModel.Binder.ScopeList[parserModel.Compilation.ScopeIndex + parserModel.CurrentScopeOffset].ParentScopeOffset, parserModel.Compilation);
+        var parentScope = parserModel.GetParent(parserModel.Binder.ScopeList[parserModel.Compilation.ScopeOffset + parserModel.CurrentScopeOffset].ParentScopeOffset, parserModel.Compilation);
         var parentScopeDirection = parentScope.IsDefault()
             ? ScopeDirectionKind.Both
             : parentScope.ScopeDirectionKind;
         
         if (parentScopeDirection == ScopeDirectionKind.Both)
         {
-            if (!parserModel.Binder.ScopeList[parserModel.Compilation.ScopeIndex + parserModel.CurrentScopeOffset].PermitCodeBlockParsing)
+            if (!parserModel.Binder.ScopeList[parserModel.Compilation.ScopeOffset + parserModel.CurrentScopeOffset].PermitCodeBlockParsing)
             {
                 parserModel.TokenWalker.DeferParsingOfChildScope(ref parserModel);
                 return;
@@ -461,7 +461,7 @@ public static class ParseTokens
             }
         }
 
-        if (parserModel.Binder.ScopeList[parserModel.Compilation.ScopeIndex + parserModel.CurrentScopeOffset].OwnerSyntaxKind != SyntaxKind.GlobalCodeBlockNode)
+        if (parserModel.Binder.ScopeList[parserModel.Compilation.ScopeOffset + parserModel.CurrentScopeOffset].OwnerSyntaxKind != SyntaxKind.GlobalCodeBlockNode)
         {
             parserModel.SetCurrentScope_CodeBlock_EndExclusiveIndex(closeBraceToken.TextSpan.EndExclusiveIndex);
         }
@@ -605,21 +605,21 @@ public static class ParseTokens
     {
         var statementDelimiterToken = parserModel.TokenWalker.Consume();
     
-        if (parserModel.Binder.ScopeList[parserModel.Compilation.ScopeIndex + parserModel.CurrentScopeOffset].OwnerSyntaxKind == SyntaxKind.NamespaceStatementNode)
+        if (parserModel.Binder.ScopeList[parserModel.Compilation.ScopeOffset + parserModel.CurrentScopeOffset].OwnerSyntaxKind == SyntaxKind.NamespaceStatementNode)
         {
             var namespaceStatementNode =
                 (NamespaceStatementNode)
                 parserModel.Binder.NodeList[
-                    parserModel.Compilation.IndexNodeList +
-                    parserModel.Binder.ScopeList[parserModel.Compilation.ScopeIndex + parserModel.CurrentScopeOffset].NodeOffset];
+                    parserModel.Compilation.NodeOffset +
+                    parserModel.Binder.ScopeList[parserModel.Compilation.ScopeOffset + parserModel.CurrentScopeOffset].NodeOffset];
                 
             parserModel.SetCurrentScope_CodeBlock_EndExclusiveIndex(statementDelimiterToken.TextSpan.EndExclusiveIndex);
             parserModel.AddNamespaceToCurrentScope(namespaceStatementNode.IdentifierToken.TextSpan);
         }
         else 
         {
-            while (parserModel.Binder.ScopeList[parserModel.Compilation.ScopeIndex + parserModel.CurrentScopeOffset].OwnerSyntaxKind != SyntaxKind.GlobalCodeBlockNode &&
-                   parserModel.Binder.ScopeList[parserModel.Compilation.ScopeIndex + parserModel.CurrentScopeOffset].IsImplicitOpenCodeBlockTextSpan)
+            while (parserModel.Binder.ScopeList[parserModel.Compilation.ScopeOffset + parserModel.CurrentScopeOffset].OwnerSyntaxKind != SyntaxKind.GlobalCodeBlockNode &&
+                   parserModel.Binder.ScopeList[parserModel.Compilation.ScopeOffset + parserModel.CurrentScopeOffset].IsImplicitOpenCodeBlockTextSpan)
             {
                 parserModel.SetCurrentScope_CodeBlock_EndExclusiveIndex(statementDelimiterToken.TextSpan.EndExclusiveIndex);
                 parserModel.CloseScope(statementDelimiterToken.TextSpan);
@@ -633,14 +633,14 @@ public static class ParseTokens
     
         parserModel.SetCurrentScope_IsImplicitOpenCodeBlockTextSpan(true);
         
-        var parentScope = parserModel.GetParent(parserModel.Binder.ScopeList[parserModel.Compilation.ScopeIndex + parserModel.CurrentScopeOffset].ParentScopeOffset, parserModel.Compilation);
+        var parentScope = parserModel.GetParent(parserModel.Binder.ScopeList[parserModel.Compilation.ScopeOffset + parserModel.CurrentScopeOffset].ParentScopeOffset, parserModel.Compilation);
         var parentScopeDirection = parentScope.IsDefault()
             ? ScopeDirectionKind.Both
             : parentScope.ScopeDirectionKind;
         
         if (parentScopeDirection == ScopeDirectionKind.Both)
         {
-            if (!parserModel.Binder.ScopeList[parserModel.Compilation.ScopeIndex + parserModel.CurrentScopeOffset].PermitCodeBlockParsing)
+            if (!parserModel.Binder.ScopeList[parserModel.Compilation.ScopeOffset + parserModel.CurrentScopeOffset].PermitCodeBlockParsing)
             {
                 parserModel.TokenWalker.DeferParsingOfChildScope(ref parserModel);
                 return;

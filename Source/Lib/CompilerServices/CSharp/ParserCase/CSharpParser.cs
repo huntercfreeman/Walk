@@ -11,11 +11,11 @@ public static class CSharpParser
 {
     public static void Parse(Walk.TextEditor.RazorLib.Lexers.Models.ResourceUri resourceUri, ref CSharpCompilationUnit compilationUnit, CSharpBinder binder, ref CSharpLexerOutput lexerOutput)
     {
-        compilationUnit.ScopeIndex = binder.ScopeList.Count;
-        compilationUnit.IndexNamespaceContributionList = binder.NamespaceContributionList.Count;
+        compilationUnit.ScopeOffset = binder.ScopeList.Count;
+        compilationUnit.NamespaceContributionOffset = binder.NamespaceContributionList.Count;
 
         binder.ScopeList.Insert(
-            compilationUnit.ScopeIndex + compilationUnit.ScopeCount,
+            compilationUnit.ScopeOffset + compilationUnit.ScopeLength,
             new Scope(
         		Walk.Extensions.CompilerServices.Syntax.Nodes.Enums.ScopeDirectionKind.Both,
         		scope_StartInclusiveIndex: 0,
@@ -29,7 +29,7 @@ public static class CSharpParser
         		isImplicitOpenCodeBlockTextSpan: false,
         		returnTypeReference: Walk.CompilerServices.CSharp.Facts.CSharpFacts.Types.Void.ToTypeReference(),
         		ownerSyntaxKind: SyntaxKind.GlobalCodeBlockNode));
-        ++compilationUnit.ScopeCount;
+        ++compilationUnit.ScopeLength;
         
         var parserModel = new CSharpParserModel(
             binder,

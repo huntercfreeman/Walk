@@ -864,7 +864,7 @@ public sealed class CSharpCompilerService : IExtendedCompilerService
             var resource = GetResource(virtualizationResult.Model.PersistentState.ResourceUri);
             var compilationUnitLocal = (CSharpCompilationUnit)resource.CompilationUnit;
             
-            var symbols = __CSharpBinder.SymbolList.Skip(compilationUnitLocal.IndexSymbolList).Take(compilationUnitLocal.CountSymbolList).ToList();
+            var symbols = __CSharpBinder.SymbolList.Skip(compilationUnitLocal.SymbolOffset).Take(compilationUnitLocal.SymbolLength).ToList();
             // var diagnostics = compilationUnitLocal.DiagnosticList;
             
             Symbol foundSymbol = default;
@@ -1018,7 +1018,7 @@ public sealed class CSharpCompilerService : IExtendedCompilerService
                             if (__CSharpBinder.__CompilationUnitMap.TryGetValue(typeReference.ExplicitDefinitionResourceUri, out innerCompilationUnit))
                             {
                                 innerResourceUri = typeReference.ExplicitDefinitionResourceUri;
-                                symbols = __CSharpBinder.SymbolList.Skip(innerCompilationUnit.IndexSymbolList).Take(innerCompilationUnit.CountSymbolList).ToList();
+                                symbols = __CSharpBinder.SymbolList.Skip(innerCompilationUnit.SymbolOffset).Take(innerCompilationUnit.SymbolLength).ToList();
                             }
                         }
                         
@@ -1326,7 +1326,7 @@ public sealed class CSharpCompilerService : IExtendedCompilerService
 
         if (!foundMatch)
         {
-            for (int i = compilationUnitLocal.IndexSymbolList; i < compilationUnitLocal.IndexSymbolList + compilationUnitLocal.CountSymbolList; i++)
+            for (int i = compilationUnitLocal.SymbolOffset; i < compilationUnitLocal.SymbolOffset + compilationUnitLocal.SymbolLength; i++)
             {
                 var symbol = __CSharpBinder.SymbolList[i];
                 
@@ -1512,7 +1512,7 @@ public sealed class CSharpCompilerService : IExtendedCompilerService
         var resource = GetResource(modelModifier.PersistentState.ResourceUri);
         var compilationUnitLocal = (CSharpCompilationUnit)resource.CompilationUnit;
         
-        var symbolList = __CSharpBinder.SymbolList.Skip(compilationUnitLocal.IndexSymbolList).Take(compilationUnitLocal.CountSymbolList).ToList();
+        var symbolList = __CSharpBinder.SymbolList.Skip(compilationUnitLocal.SymbolOffset).Take(compilationUnitLocal.SymbolLength).ToList();
         var foundSymbol = default(Symbol);
         
         foreach (var symbol in symbolList)
@@ -1683,7 +1683,7 @@ public sealed class CSharpCompilerService : IExtendedCompilerService
                         {
                             ISyntaxNode? otherTypeDefinitionNode = null;
                             
-                            for (int i = innerCompilationUnit.IndexNodeList; i < innerCompilationUnit.IndexNodeList + innerCompilationUnit.CountNodeList; i++)
+                            for (int i = innerCompilationUnit.NodeOffset; i < innerCompilationUnit.NodeOffset + innerCompilationUnit.NodeLength; i++)
                             {
                                 var x = __CSharpBinder.NodeList[i];
                                 
@@ -1852,7 +1852,7 @@ public sealed class CSharpCompilerService : IExtendedCompilerService
                     modelModifier,
                     lexerOutput.SyntaxTokenList.Select(x => x.TextSpan)
                         .Concat(lexerOutput.MiscTextSpanList)
-                        .Concat(__CSharpBinder.SymbolList.Skip(cSharpCompilationUnit.IndexSymbolList).Take(cSharpCompilationUnit.CountSymbolList).Select(x => x.TextSpan)));
+                        .Concat(__CSharpBinder.SymbolList.Skip(cSharpCompilationUnit.SymbolOffset).Take(cSharpCompilationUnit.SymbolLength).Select(x => x.TextSpan)));
             }
 
             _currentFileBeingParsedTuple = (null, null);
@@ -1955,7 +1955,7 @@ public sealed class CSharpCompilerService : IExtendedCompilerService
         if (__CSharpBinder.__CompilationUnitMap.TryGetValue(resourceUri, out var compilationUnit))
         {
             var scope = __CSharpBinder.GetScopeByPositionIndex(compilationUnit, positionIndex);
-            return (scope, (ICodeBlockOwner)__CSharpBinder.NodeList[compilationUnit.IndexNodeList + scope.NodeOffset]);
+            return (scope, (ICodeBlockOwner)__CSharpBinder.NodeList[compilationUnit.NodeOffset + scope.NodeOffset]);
         }
         
         return default;

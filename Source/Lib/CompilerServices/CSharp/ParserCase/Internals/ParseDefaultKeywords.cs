@@ -60,8 +60,8 @@ public class ParseDefaultKeywords
                 codeBlock_StartInclusiveIndex: parserModel.TokenWalker.Current.TextSpan.StartInclusiveIndex,
                 codeBlock_EndExclusiveIndex: -1,
                 parentScopeOffset: parserModel.CurrentScopeOffset,
-                selfScopeOffset: parserModel.Compilation.ScopeCount,
-                nodeOffset: parserModel.Compilation.CountNodeList,
+                selfScopeOffset: parserModel.Compilation.ScopeLength,
+                nodeOffset: parserModel.Compilation.NodeLength,
                 permitCodeBlockParsing: false,
                 isImplicitOpenCodeBlockTextSpan: false,
                 returnTypeReference: Walk.CompilerServices.CSharp.Facts.CSharpFacts.Types.Void.ToTypeReference(),
@@ -151,8 +151,8 @@ public class ParseDefaultKeywords
         		codeBlock_StartInclusiveIndex: parserModel.TokenWalker.Current.TextSpan.StartInclusiveIndex,
         		codeBlock_EndExclusiveIndex: -1,
         		parentScopeOffset: parserModel.CurrentScopeOffset,
-        		selfScopeOffset: parserModel.Compilation.ScopeCount,
-        		nodeOffset: parserModel.Compilation.CountNodeList,
+        		selfScopeOffset: parserModel.Compilation.ScopeLength,
+        		nodeOffset: parserModel.Compilation.NodeLength,
         		permitCodeBlockParsing: false,
         		isImplicitOpenCodeBlockTextSpan: false,
         		returnTypeReference: Walk.CompilerServices.CSharp.Facts.CSharpFacts.Types.Void.ToTypeReference(),
@@ -188,8 +188,8 @@ public class ParseDefaultKeywords
         		codeBlock_StartInclusiveIndex: parserModel.TokenWalker.Current.TextSpan.StartInclusiveIndex,
         		codeBlock_EndExclusiveIndex: -1,
         		parentScopeOffset: parserModel.CurrentScopeOffset,
-        		selfScopeOffset: parserModel.Compilation.ScopeCount,
-        		nodeOffset: parserModel.Compilation.CountNodeList,
+        		selfScopeOffset: parserModel.Compilation.ScopeLength,
+        		nodeOffset: parserModel.Compilation.NodeLength,
         		permitCodeBlockParsing: false,
         		isImplicitOpenCodeBlockTextSpan: false,
         		returnTypeReference: Walk.CompilerServices.CSharp.Facts.CSharpFacts.Types.Void.ToTypeReference(),
@@ -251,8 +251,8 @@ public class ParseDefaultKeywords
         		codeBlock_StartInclusiveIndex: parserModel.TokenWalker.Current.TextSpan.StartInclusiveIndex,
         		codeBlock_EndExclusiveIndex: -1,
         		parentScopeOffset: parserModel.CurrentScopeOffset,
-        		selfScopeOffset: parserModel.Compilation.ScopeCount,
-        		nodeOffset: parserModel.Compilation.CountNodeList,
+        		selfScopeOffset: parserModel.Compilation.ScopeLength,
+        		nodeOffset: parserModel.Compilation.NodeLength,
         		permitCodeBlockParsing: false,
         		isImplicitOpenCodeBlockTextSpan: false,
         		returnTypeReference: Walk.CompilerServices.CSharp.Facts.CSharpFacts.Types.Void.ToTypeReference(),
@@ -293,8 +293,8 @@ public class ParseDefaultKeywords
         		codeBlock_StartInclusiveIndex: parserModel.TokenWalker.Current.TextSpan.StartInclusiveIndex,
         		codeBlock_EndExclusiveIndex: -1,
         		parentScopeOffset: parserModel.CurrentScopeOffset,
-        		selfScopeOffset: parserModel.Compilation.ScopeCount,
-        		nodeOffset: parserModel.Compilation.CountNodeList,
+        		selfScopeOffset: parserModel.Compilation.ScopeLength,
+        		nodeOffset: parserModel.Compilation.NodeLength,
         		permitCodeBlockParsing: false,
         		isImplicitOpenCodeBlockTextSpan: false,
         		returnTypeReference: Walk.CompilerServices.CSharp.Facts.CSharpFacts.Types.Void.ToTypeReference(),
@@ -353,8 +353,8 @@ public class ParseDefaultKeywords
         		codeBlock_StartInclusiveIndex: parserModel.TokenWalker.Current.TextSpan.StartInclusiveIndex,
         		codeBlock_EndExclusiveIndex: -1,
         		parentScopeOffset: parserModel.CurrentScopeOffset,
-        		selfScopeOffset: parserModel.Compilation.ScopeCount,
-        		nodeOffset: parserModel.Compilation.CountNodeList,
+        		selfScopeOffset: parserModel.Compilation.ScopeLength,
+        		nodeOffset: parserModel.Compilation.NodeLength,
         		permitCodeBlockParsing: false,
         		isImplicitOpenCodeBlockTextSpan: false,
         		returnTypeReference: Walk.CompilerServices.CSharp.Facts.CSharpFacts.Types.Void.ToTypeReference(),
@@ -449,8 +449,8 @@ public class ParseDefaultKeywords
         		codeBlock_StartInclusiveIndex: parserModel.TokenWalker.Current.TextSpan.StartInclusiveIndex,
         		codeBlock_EndExclusiveIndex: -1,
         		parentScopeOffset: parserModel.CurrentScopeOffset,
-        		selfScopeOffset: parserModel.Compilation.ScopeCount,
-        		nodeOffset: parserModel.Compilation.CountNodeList,
+        		selfScopeOffset: parserModel.Compilation.ScopeLength,
+        		nodeOffset: parserModel.Compilation.NodeLength,
         		permitCodeBlockParsing: false,
         		isImplicitOpenCodeBlockTextSpan: false,
         		returnTypeReference: Walk.CompilerServices.CSharp.Facts.CSharpFacts.Types.Void.ToTypeReference(),
@@ -571,8 +571,8 @@ public class ParseDefaultKeywords
         		codeBlock_StartInclusiveIndex: parserModel.TokenWalker.Current.TextSpan.StartInclusiveIndex,
         		codeBlock_EndExclusiveIndex: -1,
         		parentScopeOffset: parserModel.CurrentScopeOffset,
-        		selfScopeOffset: parserModel.Compilation.ScopeCount,
-        		nodeOffset: parserModel.Compilation.CountNodeList,
+        		selfScopeOffset: parserModel.Compilation.ScopeLength,
+        		nodeOffset: parserModel.Compilation.NodeLength,
         		permitCodeBlockParsing: false,
         		isImplicitOpenCodeBlockTextSpan: false,
         		returnTypeReference: Walk.CompilerServices.CSharp.Facts.CSharpFacts.Types.Void.ToTypeReference(),
@@ -621,8 +621,8 @@ public class ParseDefaultKeywords
         		codeBlock_StartInclusiveIndex: parserModel.TokenWalker.Current.TextSpan.StartInclusiveIndex,
         		codeBlock_EndExclusiveIndex: -1,
         		parentScopeOffset: parserModel.CurrentScopeOffset,
-        		selfScopeOffset: parserModel.Compilation.ScopeCount,
-        		nodeOffset: parserModel.Compilation.CountNodeList,
+        		selfScopeOffset: parserModel.Compilation.ScopeLength,
+        		nodeOffset: parserModel.Compilation.NodeLength,
         		permitCodeBlockParsing: false,
         		isImplicitOpenCodeBlockTextSpan: false,
         		returnTypeReference: Walk.CompilerServices.CSharp.Facts.CSharpFacts.Types.Void.ToTypeReference(),
@@ -721,8 +721,8 @@ public class ParseDefaultKeywords
         		codeBlock_StartInclusiveIndex: parserModel.TokenWalker.Current.TextSpan.StartInclusiveIndex,
         		codeBlock_EndExclusiveIndex: -1,
         		parentScopeOffset: parserModel.CurrentScopeOffset,
-        		selfScopeOffset: parserModel.Compilation.ScopeCount,
-        		nodeOffset: parserModel.Compilation.CountNodeList,
+        		selfScopeOffset: parserModel.Compilation.ScopeLength,
+        		nodeOffset: parserModel.Compilation.NodeLength,
         		permitCodeBlockParsing: false,
         		isImplicitOpenCodeBlockTextSpan: false,
         		returnTypeReference: Walk.CompilerServices.CSharp.Facts.CSharpFacts.Types.Void.ToTypeReference(),
@@ -844,8 +844,8 @@ public class ParseDefaultKeywords
         		codeBlock_StartInclusiveIndex: parserModel.TokenWalker.Current.TextSpan.StartInclusiveIndex,
         		codeBlock_EndExclusiveIndex: -1,
         		parentScopeOffset: parserModel.CurrentScopeOffset,
-        		selfScopeOffset: parserModel.Compilation.ScopeCount,
-        		nodeOffset: parserModel.Compilation.CountNodeList,
+        		selfScopeOffset: parserModel.Compilation.ScopeLength,
+        		nodeOffset: parserModel.Compilation.NodeLength,
         		permitCodeBlockParsing: false,
         		isImplicitOpenCodeBlockTextSpan: false,
         		returnTypeReference: Walk.CompilerServices.CSharp.Facts.CSharpFacts.Types.Void.ToTypeReference(),
@@ -897,8 +897,8 @@ public class ParseDefaultKeywords
         		codeBlock_StartInclusiveIndex: parserModel.TokenWalker.Current.TextSpan.StartInclusiveIndex,
         		codeBlock_EndExclusiveIndex: -1,
         		parentScopeOffset: parserModel.CurrentScopeOffset,
-        		selfScopeOffset: parserModel.Compilation.ScopeCount,
-        		nodeOffset: parserModel.Compilation.CountNodeList,
+        		selfScopeOffset: parserModel.Compilation.ScopeLength,
+        		nodeOffset: parserModel.Compilation.NodeLength,
         		permitCodeBlockParsing: false,
         		isImplicitOpenCodeBlockTextSpan: false,
         		returnTypeReference: Walk.CompilerServices.CSharp.Facts.CSharpFacts.Types.Void.ToTypeReference(),
@@ -1098,8 +1098,8 @@ public class ParseDefaultKeywords
         		codeBlock_StartInclusiveIndex: parserModel.TokenWalker.Current.TextSpan.StartInclusiveIndex,
         		codeBlock_EndExclusiveIndex: -1,
         		parentScopeOffset: parserModel.CurrentScopeOffset,
-        		selfScopeOffset: parserModel.Compilation.ScopeCount,
-        		nodeOffset: parserModel.Compilation.CountNodeList,
+        		selfScopeOffset: parserModel.Compilation.ScopeLength,
+        		nodeOffset: parserModel.Compilation.NodeLength,
         		permitCodeBlockParsing: false,
         		isImplicitOpenCodeBlockTextSpan: false,
         		returnTypeReference: Walk.CompilerServices.CSharp.Facts.CSharpFacts.Types.Void.ToTypeReference(),
@@ -1114,20 +1114,20 @@ public class ParseDefaultKeywords
             {
                 if (parserModel.Binder.__CompilationUnitMap.TryGetValue(parserModel.ResourceUri, out var previousCompilationUnit))
                 {
-                    if (typeDefinitionNode.ParentScopeOffset < previousCompilationUnit.ScopeCount)
+                    if (typeDefinitionNode.ParentScopeOffset < previousCompilationUnit.ScopeLength)
                     {
-                        var previousParent = parserModel.Binder.ScopeList[previousCompilationUnit.ScopeIndex + typeDefinitionNode.ParentScopeOffset];
+                        var previousParent = parserModel.Binder.ScopeList[previousCompilationUnit.ScopeOffset + typeDefinitionNode.ParentScopeOffset];
                         var currentParent = parserModel.GetParent(typeDefinitionNode.ParentScopeOffset, parserModel.Compilation);
                         
                         if (currentParent.OwnerSyntaxKind == previousParent.OwnerSyntaxKind)
                         {
                             var currentParentIdentifierText = parserModel.Binder.GetIdentifierText(
-                                parserModel.Binder.NodeList[parserModel.Compilation.IndexNodeList + currentParent.NodeOffset],
+                                parserModel.Binder.NodeList[parserModel.Compilation.NodeOffset + currentParent.NodeOffset],
                                 parserModel.ResourceUri,
                                 parserModel.Compilation);
                             
                             var previousParentIdentifierText = parserModel.Binder.GetIdentifierText(
-                                parserModel.Binder.NodeList[previousCompilationUnit.IndexNodeList + previousParent.NodeOffset],
+                                parserModel.Binder.NodeList[previousCompilationUnit.NodeOffset + previousParent.NodeOffset],
                                 parserModel.ResourceUri,
                                 previousCompilationUnit);
                             
@@ -1146,19 +1146,19 @@ public class ParseDefaultKeywords
                                 
                                 ISyntaxNode? previousNode = null;
                                 
-                                for (int i = previousCompilationUnit.ScopeIndex; i < previousCompilationUnit.ScopeIndex + previousCompilationUnit.ScopeCount; i++)
+                                for (int i = previousCompilationUnit.ScopeOffset; i < previousCompilationUnit.ScopeOffset + previousCompilationUnit.ScopeLength; i++)
                                 {
                                     var x = parserModel.Binder.ScopeList[i];
                                     
                                     if (x.ParentScopeOffset == previousParent.SelfScopeOffset &&
                                         x.OwnerSyntaxKind == SyntaxKind.TypeDefinitionNode &&
                                         binder.GetIdentifierText(
-                                                parserModel.Binder.NodeList[previousCompilationUnit.IndexNodeList + x.NodeOffset],
+                                                parserModel.Binder.NodeList[previousCompilationUnit.NodeOffset + x.NodeOffset],
                                                 parserModel.ResourceUri,
                                                 previousCompilationUnit) ==
                                             binder.GetIdentifierText(typeDefinitionNode, parserModel.ResourceUri, compilation))
                                     {
-                                        previousNode = parserModel.Binder.NodeList[previousCompilationUnit.IndexNodeList + x.NodeOffset];
+                                        previousNode = parserModel.Binder.NodeList[previousCompilationUnit.NodeOffset + x.NodeOffset];
                                         break;
                                     }
                                 }
@@ -1340,8 +1340,8 @@ public class ParseDefaultKeywords
                         if (parserModel.Binder.__CompilationUnitMap.TryGetValue(partialTypeDefinitionEntry.ResourceUri, out var innerCompilationUnit))
                         {
                             var innerTypeDefinitionNode = (TypeDefinitionNode)parserModel.Binder.NodeList[
-                                innerCompilationUnit.IndexNodeList +
-                                parserModel.Binder.ScopeList[innerCompilationUnit.ScopeIndex + partialTypeDefinitionEntry.ScopeOffset].NodeOffset];
+                                innerCompilationUnit.NodeOffset +
+                                parserModel.Binder.ScopeList[innerCompilationUnit.ScopeOffset + partialTypeDefinitionEntry.ScopeOffset].NodeOffset];
                             innerTypeDefinitionNode.IndexPartialTypeDefinition = partialTypeDefinitionEntry.IndexStartGroup + 1;
                         }
                     }
@@ -1387,8 +1387,8 @@ public class ParseDefaultKeywords
         		codeBlock_StartInclusiveIndex: parserModel.TokenWalker.Current.TextSpan.StartInclusiveIndex,
         		codeBlock_EndExclusiveIndex: -1,
         		parentScopeOffset: parserModel.CurrentScopeOffset,
-        		selfScopeOffset: parserModel.Compilation.ScopeCount,
-        		nodeOffset: parserModel.Compilation.CountNodeList,
+        		selfScopeOffset: parserModel.Compilation.ScopeLength,
+        		nodeOffset: parserModel.Compilation.NodeLength,
         		permitCodeBlockParsing: false,
         		isImplicitOpenCodeBlockTextSpan: false,
         		returnTypeReference: Walk.CompilerServices.CSharp.Facts.CSharpFacts.Types.Void.ToTypeReference(),

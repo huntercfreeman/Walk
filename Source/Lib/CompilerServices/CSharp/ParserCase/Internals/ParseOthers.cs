@@ -74,12 +74,12 @@ public static class ParseOthers
                     if (parserModel.Compilation.CompilationUnitKind == CompilationUnitKind.IndividualFile_AllData)
                     {
                         parserModel.Binder.SymbolList.Insert(
-                            parserModel.Compilation.IndexSymbolList + parserModel.Compilation.CountSymbolList,
+                            parserModel.Compilation.SymbolOffset + parserModel.Compilation.SymbolLength,
                             new Symbol(
                                 SyntaxKind.NamespaceSymbol,
                                 parserModel.GetNextSymbolId(),
                                 textSpan));
-                        ++parserModel.Compilation.CountSymbolList;
+                        ++parserModel.Compilation.SymbolLength;
                     }
                 
                     if (isNamespaceStatement)
@@ -110,12 +110,12 @@ public static class ParseOthers
             return default;
             
         parserModel.Binder.SymbolList.Insert(
-            parserModel.Compilation.IndexSymbolList + parserModel.Compilation.CountSymbolList,
+            parserModel.Compilation.SymbolOffset + parserModel.Compilation.SymbolLength,
             new Symbol(
                 SyntaxKind.NamespaceSymbol,
                 parserModel.GetNextSymbolId(),
                 textSpan));
-        ++parserModel.Compilation.CountSymbolList;
+        ++parserModel.Compilation.SymbolLength;
 
         return new SyntaxToken(SyntaxKind.IdentifierToken, textSpan);
     }

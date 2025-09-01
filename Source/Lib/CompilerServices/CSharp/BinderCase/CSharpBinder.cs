@@ -407,7 +407,7 @@ public class CSharpBinder
     {
         if (__CompilationUnitMap.TryGetValue(resourceUri, out var previousCompilationUnit))
         {
-            for (int i = previousCompilationUnit.IndexNamespaceContributionList + previousCompilationUnit.CountNamespaceContributionList - 1; i >= previousCompilationUnit.IndexNamespaceContributionList; i--)
+            for (int i = previousCompilationUnit.NamespaceContributionOffset + previousCompilationUnit.NamespaceContributionLength - 1; i >= previousCompilationUnit.NamespaceContributionOffset; i--)
             {
                 var namespaceContributionEntry = NamespaceContributionList[i];
                 
@@ -523,7 +523,7 @@ public class CSharpBinder
         var min = int.MaxValue;
         var selfScopeOffset = -1;
         
-        for (int i = compilationUnit.ScopeIndex; i < compilationUnit.ScopeIndex + compilationUnit.ScopeCount; i++)
+        for (int i = compilationUnit.ScopeOffset; i < compilationUnit.ScopeOffset + compilationUnit.ScopeLength; i++)
         {
             var scope = ScopeList[i];
             
@@ -543,7 +543,7 @@ public class CSharpBinder
         if (selfScopeOffset == -1)
             return default;
         else
-            return ScopeList[compilationUnit.ScopeIndex + selfScopeOffset];
+            return ScopeList[compilationUnit.ScopeOffset + selfScopeOffset];
     }
 
     public Scope GetScopeByOffset(CSharpCompilationUnit compilationUnit, int scopeOffset)
@@ -551,8 +551,8 @@ public class CSharpBinder
         if (scopeOffset < 0)
             return default;
 
-        if (scopeOffset < compilationUnit.ScopeCount)
-            return ScopeList[compilationUnit.ScopeIndex + scopeOffset];
+        if (scopeOffset < compilationUnit.ScopeLength)
+            return ScopeList[compilationUnit.ScopeOffset + scopeOffset];
         
         return default;
     }
@@ -563,7 +563,7 @@ public class CSharpBinder
     {
         var typeDefinitionNodeList = new List<TypeDefinitionNode>();
     
-        for (int i = compilationUnit.IndexNodeList; i < compilationUnit.IndexNodeList + compilationUnit.CountNodeList; i++)
+        for (int i = compilationUnit.NodeOffset; i < compilationUnit.NodeOffset + compilationUnit.NodeLength; i++)
         {
             var node = NodeList[i];
             
@@ -621,7 +621,7 @@ public class CSharpBinder
     {
         typeDefinitionNode = null;
         
-        for (int i = compilationUnit.IndexNodeList; i < compilationUnit.IndexNodeList + compilationUnit.CountNodeList; i++)
+        for (int i = compilationUnit.NodeOffset; i < compilationUnit.NodeOffset + compilationUnit.NodeLength; i++)
         {
             var x = NodeList[i];
             if (x.ParentScopeOffset == scopeOffset &&
@@ -645,7 +645,7 @@ public class CSharpBinder
     {
         List<FunctionDefinitionNode> functionDefinitionNodeList = new();
     
-        for (int i = compilationUnit.IndexNodeList; i < compilationUnit.IndexNodeList + compilationUnit.CountNodeList; i++)
+        for (int i = compilationUnit.NodeOffset; i < compilationUnit.NodeOffset + compilationUnit.NodeLength; i++)
         {
             var node = NodeList[i];
             
@@ -701,7 +701,7 @@ public class CSharpBinder
     {
         functionDefinitionNode = null;
         
-        for (int i = compilationUnit.IndexNodeList; i < compilationUnit.IndexNodeList + compilationUnit.CountNodeList; i++)
+        for (int i = compilationUnit.NodeOffset; i < compilationUnit.NodeOffset + compilationUnit.NodeLength; i++)
         {
             var x = NodeList[i];
             
@@ -729,7 +729,7 @@ public class CSharpBinder
         var isRecursive = variableDeclarationNodeList is not null;
         variableDeclarationNodeList ??= new List<VariableDeclarationNode>();
         
-        for (int i = compilationUnit.IndexNodeList; i < compilationUnit.IndexNodeList + compilationUnit.CountNodeList; i++)
+        for (int i = compilationUnit.NodeOffset; i < compilationUnit.NodeOffset + compilationUnit.NodeLength; i++)
         {
             var node = NodeList[i];
             
@@ -737,9 +737,9 @@ public class CSharpBinder
                 variableDeclarationNodeList.Add((VariableDeclarationNode)node);
         }
 
-        if (!isRecursive && scopeOffset < compilationUnit.ScopeCount)
+        if (!isRecursive && scopeOffset < compilationUnit.ScopeLength)
         {
-            var node = NodeList[compilationUnit.IndexNodeList + ScopeList[compilationUnit.ScopeIndex + scopeOffset].NodeOffset];
+            var node = NodeList[compilationUnit.NodeOffset + ScopeList[compilationUnit.ScopeOffset + scopeOffset].NodeOffset];
             if (node.SyntaxKind == SyntaxKind.TypeDefinitionNode)
             {
                 var typeDefinitionNode = (TypeDefinitionNode)node;
@@ -962,7 +962,7 @@ public class CSharpBinder
     {
         VariableDeclarationNode? matchNode = null;
         
-        for (int i = compilationUnit.IndexNodeList; i < compilationUnit.IndexNodeList + compilationUnit.CountNodeList; i++)
+        for (int i = compilationUnit.NodeOffset; i < compilationUnit.NodeOffset + compilationUnit.NodeLength; i++)
         {
             var x = NodeList[i];
             
@@ -977,10 +977,10 @@ public class CSharpBinder
         
         if (matchNode is null)
         {
-            var scope = ScopeList[compilationUnit.ScopeIndex + scopeOffset];
+            var scope = ScopeList[compilationUnit.ScopeOffset + scopeOffset];
             if (!isRecursive && scope.OwnerSyntaxKind == SyntaxKind.TypeDefinitionNode)
             {
-                var typeDefinitionNode = (TypeDefinitionNode)NodeList[compilationUnit.IndexNodeList + scope.NodeOffset];
+                var typeDefinitionNode = (TypeDefinitionNode)NodeList[compilationUnit.NodeOffset + scope.NodeOffset];
                 if (typeDefinitionNode.IndexPartialTypeDefinition != -1)
                 {
                     if (TryGetVariableDeclarationByPartialType(
@@ -1046,7 +1046,7 @@ public class CSharpBinder
     {
         LabelDeclarationNode? matchNode = null;
         
-        for (int i = compilationUnit.IndexNodeList; i < compilationUnit.IndexNodeList + compilationUnit.CountNodeList; i++)
+        for (int i = compilationUnit.NodeOffset; i < compilationUnit.NodeOffset + compilationUnit.NodeLength; i++)
         {
             var x = NodeList[i];
             
@@ -1152,13 +1152,13 @@ public class CSharpBinder
                 {
                     if (functionDefinitionNode.IndexMethodOverloadDefinition != -1 &&
                         compilationUnit.CompilationUnitKind == Walk.TextEditor.RazorLib.CompilerServices.CompilationUnitKind.IndividualFile_AllData &&
-                        compilationUnit.IndexFunctionInvocationParameterMetadataList != -1 &&
-                        compilationUnit.CountFunctionInvocationParameterMetadataList != 0 &&
+                        compilationUnit.FunctionInvocationParameterMetadataOffset != -1 &&
+                        compilationUnit.FunctionInvocationParameterMetadataLength != 0 &&
                         symbol is not null)
                     {
                         var functionParameterList = new List<FunctionInvocationParameterMetadata>();
                         
-                        for (int i = compilationUnit.IndexFunctionInvocationParameterMetadataList; i < compilationUnit.IndexFunctionInvocationParameterMetadataList + compilationUnit.CountFunctionInvocationParameterMetadataList; i++)
+                        for (int i = compilationUnit.FunctionInvocationParameterMetadataOffset; i < compilationUnit.FunctionInvocationParameterMetadataOffset + compilationUnit.FunctionInvocationParameterMetadataLength; i++)
                         {
                             var entry = FunctionInvocationParameterMetadataList[i];
                             if (entry.IdentifierStartInclusiveIndex == symbol.Value.TextSpan.StartInclusiveIndex)
@@ -1174,7 +1174,7 @@ public class CSharpBinder
                             if (__CompilationUnitMap.TryGetValue(entry.ResourceUri, out var innerCompilationUnit))
                             {
                                 var innerFunctionDefinitionNode = 
-                                    (FunctionDefinitionNode)NodeList[innerCompilationUnit.IndexNodeList + ScopeList[innerCompilationUnit.ScopeIndex + entry.ScopeIndexKey].NodeOffset];
+                                    (FunctionDefinitionNode)NodeList[innerCompilationUnit.NodeOffset + ScopeList[innerCompilationUnit.ScopeOffset + entry.ScopeIndexKey].NodeOffset];
                                 
                                 if (innerFunctionDefinitionNode.CountFunctionArgumentEntryList == functionParameterList.Count)
                                 {
@@ -1687,7 +1687,7 @@ public class CSharpBinder
         
         var syntaxNodeList = new List<ISyntaxNode>();
         
-        for (int i = compilationUnit.IndexNodeList; i < compilationUnit.IndexNodeList + compilationUnit.CountNodeList; i++)
+        for (int i = compilationUnit.NodeOffset; i < compilationUnit.NodeOffset + compilationUnit.NodeLength; i++)
         {
             var x = NodeList[i];
             
@@ -1743,7 +1743,7 @@ public class CSharpBinder
                         {
                             var innerScopeIndexKey = PartialTypeDefinitionList[positionExclusive].ScopeOffset;
                             
-                            for (int i = innerCompilationUnit.IndexNodeList; i < innerCompilationUnit.IndexNodeList + innerCompilationUnit.CountNodeList; i++)
+                            for (int i = innerCompilationUnit.NodeOffset; i < innerCompilationUnit.NodeOffset + innerCompilationUnit.NodeLength; i++)
                             {
                                 var x = NodeList[i];
                                 
@@ -1782,7 +1782,7 @@ public class CSharpBinder
             return _getMemberList;
         }
         
-        for (int i = compilationUnit.IndexNodeList; i < compilationUnit.IndexNodeList + compilationUnit.CountNodeList; i++)
+        for (int i = compilationUnit.NodeOffset; i < compilationUnit.NodeOffset + compilationUnit.NodeLength; i++)
         {
             var node = NodeList[i];
             
@@ -1840,15 +1840,15 @@ public class CSharpBinder
                             var partialTypeDefinition = PartialTypeDefinitionList[positionExclusive];
                             var innerScopeIndexKey = partialTypeDefinition.ScopeOffset;
                             
-                            if (partialTypeDefinition.ScopeOffset < innerCompilationUnit.ScopeCount)
+                            if (partialTypeDefinition.ScopeOffset < innerCompilationUnit.ScopeLength)
                             {
-                                var innerCodeBlockOwner = NodeList[innerCompilationUnit.IndexNodeList + ScopeList[innerCompilationUnit.ScopeIndex + partialTypeDefinition.ScopeOffset].NodeOffset];
+                                var innerCodeBlockOwner = NodeList[innerCompilationUnit.NodeOffset + ScopeList[innerCompilationUnit.ScopeOffset + partialTypeDefinition.ScopeOffset].NodeOffset];
                                 
                                 if (innerCodeBlockOwner.SyntaxKind == SyntaxKind.TypeDefinitionNode)
                                 {
                                     var innerTypeDefinitionNode = (TypeDefinitionNode)innerCodeBlockOwner;
                                 
-                                    for (int i = innerCompilationUnit.IndexNodeList; i < innerCompilationUnit.IndexNodeList + innerCompilationUnit.CountNodeList; i++)
+                                    for (int i = innerCompilationUnit.NodeOffset; i < innerCompilationUnit.NodeOffset + innerCompilationUnit.NodeLength; i++)
                                     {
                                         var node = NodeList[i];
                                         
@@ -1900,7 +1900,7 @@ public class CSharpBinder
 
         var typeDefinitionNodeList = new List<TypeDefinitionNode>();
         
-        for (int i = compilationUnit.IndexNodeList; i < compilationUnit.IndexNodeList + compilationUnit.CountNodeList; i++)
+        for (int i = compilationUnit.NodeOffset; i < compilationUnit.NodeOffset + compilationUnit.NodeLength; i++)
         {
             var x = NodeList[i];
             
@@ -1943,7 +1943,7 @@ public class CSharpBinder
             return _getTopLevelTypeDefinitionNodes;
         }
 
-        for (int i = compilationUnit.IndexNodeList; i < compilationUnit.IndexNodeList + compilationUnit.CountNodeList; i++)
+        for (int i = compilationUnit.NodeOffset; i < compilationUnit.NodeOffset + compilationUnit.NodeLength; i++)
         {
             var node = NodeList[i];
         

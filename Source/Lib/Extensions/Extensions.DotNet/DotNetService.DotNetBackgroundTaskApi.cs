@@ -378,11 +378,11 @@ public partial class DotNetService
                     {
                         var compilationUnit = compilationUnitKvp.Value;
 
-                        compilationUnit.IndexDiagnosticList -= countDiagnosticList;
-                        compilationUnit.IndexSymbolList -= countSymbolList;
-                        compilationUnit.IndexFunctionInvocationParameterMetadataList -= countFunctionInvocationParameterMetadataList;
-                        compilationUnit.ScopeIndex -= countScopeList;
-                        compilationUnit.IndexNodeList -= countNodeList;
+                        compilationUnit.DiagnosticOffset -= countDiagnosticList;
+                        compilationUnit.SymbolOffset -= countSymbolList;
+                        compilationUnit.FunctionInvocationParameterMetadataOffset -= countFunctionInvocationParameterMetadataList;
+                        compilationUnit.ScopeOffset -= countScopeList;
+                        compilationUnit.NodeOffset -= countNodeList;
 
                         cSharpCompilerService.__CSharpBinder.__CompilationUnitMap[compilationUnitKvp.Key] = compilationUnit;
                     }

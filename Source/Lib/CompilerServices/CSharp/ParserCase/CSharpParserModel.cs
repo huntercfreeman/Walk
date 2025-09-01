@@ -84,14 +84,14 @@ public ref struct CSharpParserModel
             Binder.SymbolIdToExternalTextSpanMap.Remove(ResourceUri.Value);
         }
         
-        Compilation.IndexDiagnosticList = Binder.DiagnosticList.Count;
+        Compilation.DiagnosticOffset = Binder.DiagnosticList.Count;
         
-        Compilation.IndexSymbolList = Binder.SymbolList.Count;
+        Compilation.SymbolOffset = Binder.SymbolList.Count;
         
-        Compilation.IndexNodeList = Binder.NodeList.Count;
+        Compilation.NodeOffset = Binder.NodeList.Count;
 
         binder.NodeList.Add(EmptyExpressionNode.Empty);
-        ++compilationUnit.CountNodeList;
+        ++compilationUnit.NodeLength;
     }
     
     public TokenWalker TokenWalker { get; }
@@ -477,7 +477,7 @@ public ref struct CSharpParserModel
         if (parentScopeOffset == -1)
             return default;
             
-        return Binder.ScopeList[Compilation.ScopeIndex + parentScopeOffset];
+        return Binder.ScopeList[Compilation.ScopeOffset + parentScopeOffset];
     }
     
     public int GetNextIndexKey()
@@ -493,7 +493,7 @@ public ref struct CSharpParserModel
     public void BindDiscard(SyntaxToken identifierToken)
     {
         Binder.SymbolList.Insert(
-            Compilation.IndexSymbolList + Compilation.CountSymbolList,
+            Compilation.SymbolOffset + Compilation.SymbolLength,
             new Symbol(
                 SyntaxKind.DiscardSymbol,
                 GetNextSymbolId(),
@@ -501,13 +501,13 @@ public ref struct CSharpParserModel
                 {
                     DecorationByte = (byte)GenericDecorationKind.None,
                 }));
-        ++Compilation.CountSymbolList;
+        ++Compilation.SymbolLength;
     }
     
     public void BindFunctionDefinitionNode(FunctionDefinitionNode functionDefinitionNode)
     {
         Binder.SymbolList.Insert(
-            Compilation.IndexSymbolList + Compilation.CountSymbolList,
+            Compilation.SymbolOffset + Compilation.SymbolLength,
             new Symbol(
             SyntaxKind.FunctionSymbol,
             GetNextSymbolId(),
@@ -515,14 +515,14 @@ public ref struct CSharpParserModel
             {
                 DecorationByte = (byte)GenericDecorationKind.Function
             }));
-        ++Compilation.CountSymbolList;
+        ++Compilation.SymbolLength;
     }
     
     public readonly void BindNamespaceStatementNode(NamespaceStatementNode namespaceStatementNode)
     {
         var namespaceContributionEntry = new NamespaceContributionEntry(namespaceStatementNode.IdentifierToken.TextSpan);
         Binder.NamespaceContributionList.Add(namespaceContributionEntry);
-        ++Compilation.CountNamespaceContributionList;
+        ++Compilation.NamespaceContributionLength;
 
         var tuple = Binder.FindNamespaceGroup_Reversed_WithMatchedIndex(
             ResourceUri,
@@ -585,7 +585,7 @@ public ref struct CSharpParserModel
     public void BindLabelDeclarationNode(LabelDeclarationNode labelDeclarationNode)
     {
         Binder.SymbolList.Insert(
-            Compilation.IndexSymbolList + Compilation.CountSymbolList,
+            Compilation.SymbolOffset + Compilation.SymbolLength,
             new Symbol(
                 SyntaxKind.LabelSymbol,
                 GetNextSymbolId(),
@@ -593,7 +593,7 @@ public ref struct CSharpParserModel
                 {
                     DecorationByte = (byte)GenericDecorationKind.None
                 }));
-        ++Compilation.CountSymbolList;
+        ++Compilation.SymbolLength;
     
         if (TryGetLabelDeclarationNodeByScope(
                 ResourceUri,
@@ -679,7 +679,7 @@ public ref struct CSharpParserModel
     public void BindLabelReferenceNode(LabelReferenceNode labelReferenceNode)
     {
         Binder.SymbolList.Insert(
-            Compilation.IndexSymbolList + Compilation.CountSymbolList,
+            Compilation.SymbolOffset + Compilation.SymbolLength,
             new Symbol(
                 SyntaxKind.LabelSymbol,
                 GetNextSymbolId(),
@@ -687,13 +687,13 @@ public ref struct CSharpParserModel
                 {
                     DecorationByte = (byte)GenericDecorationKind.None
                 }));
-        ++Compilation.CountSymbolList;
+        ++Compilation.SymbolLength;
     }
 
     public void BindConstructorDefinitionIdentifierToken(SyntaxToken identifierToken)
     {
         Binder.SymbolList.Insert(
-            Compilation.IndexSymbolList + Compilation.CountSymbolList,
+            Compilation.SymbolOffset + Compilation.SymbolLength,
             new Symbol(
             SyntaxKind.ConstructorSymbol,
             GetNextSymbolId(),
@@ -701,13 +701,13 @@ public ref struct CSharpParserModel
             {
                 DecorationByte = (byte)GenericDecorationKind.Type
             }));
-        ++Compilation.CountSymbolList;
+        ++Compilation.SymbolLength;
     }
 
     public void BindFunctionInvocationNode(FunctionInvocationNode functionInvocationNode)
     {
         Binder.SymbolList.Insert(
-            Compilation.IndexSymbolList + Compilation.CountSymbolList,
+            Compilation.SymbolOffset + Compilation.SymbolLength,
             new Symbol(
             SyntaxKind.FunctionSymbol,
             GetNextSymbolId(),
@@ -715,7 +715,7 @@ public ref struct CSharpParserModel
             {
                 DecorationByte = (byte)GenericDecorationKind.Function
             }));
-        ++Compilation.CountSymbolList;
+        ++Compilation.SymbolLength;
 
         if (TryGetFunctionHierarchically(
                 ResourceUri,
@@ -733,7 +733,7 @@ public ref struct CSharpParserModel
     public void BindNamespaceReference(SyntaxToken namespaceIdentifierToken)
     {
         Binder.SymbolList.Insert(
-            Compilation.IndexSymbolList + Compilation.CountSymbolList,
+            Compilation.SymbolOffset + Compilation.SymbolLength,
             new Symbol(
             SyntaxKind.NamespaceSymbol,
             GetNextSymbolId(),
@@ -741,7 +741,7 @@ public ref struct CSharpParserModel
             {
                 DecorationByte = (byte)GenericDecorationKind.None
             }));
-        ++Compilation.CountSymbolList;
+        ++Compilation.SymbolLength;
     }
 
     public void BindTypeClauseNode(TypeClauseNode typeClauseNode)
@@ -749,7 +749,7 @@ public ref struct CSharpParserModel
         if (!typeClauseNode.IsKeywordType)
         {
             Binder.SymbolList.Insert(
-                Compilation.IndexSymbolList + Compilation.CountSymbolList,
+                Compilation.SymbolOffset + Compilation.SymbolLength,
                 new Symbol(
                 SyntaxKind.TypeSymbol,
                 GetNextSymbolId(),
@@ -757,7 +757,7 @@ public ref struct CSharpParserModel
                 {
                     DecorationByte = (byte)GenericDecorationKind.Type
                 }));
-            ++Compilation.CountSymbolList;
+            ++Compilation.SymbolLength;
         }
     }
     
@@ -766,7 +766,7 @@ public ref struct CSharpParserModel
         if (identifierToken.SyntaxKind == SyntaxKind.IdentifierToken)
         {
             Binder.SymbolList.Insert(
-                Compilation.IndexSymbolList + Compilation.CountSymbolList,
+                Compilation.SymbolOffset + Compilation.SymbolLength,
                 new Symbol(
                 SyntaxKind.TypeSymbol,
                 GetNextSymbolId(),
@@ -774,7 +774,7 @@ public ref struct CSharpParserModel
                 {
                     DecorationByte = (byte)GenericDecorationKind.Type
                 }));
-            ++Compilation.CountSymbolList;
+            ++Compilation.SymbolLength;
         }
     }
 
@@ -816,9 +816,9 @@ public ref struct CSharpParserModel
     public void RegisterScopeAndOwner(Scope scope, ICodeBlockOwner codeBlockOwner)
     {
         codeBlockOwner.ParentScopeOffset = CurrentScopeOffset;
-        codeBlockOwner.SelfScopeOffset = Compilation.ScopeCount;
+        codeBlockOwner.SelfScopeOffset = Compilation.ScopeLength;
         
-        var parent = Binder.ScopeList[Compilation.ScopeIndex + CurrentScopeOffset];
+        var parent = Binder.ScopeList[Compilation.ScopeOffset + CurrentScopeOffset];
         var parentScopeDirection = parent.IsDefault()
             ? ScopeDirectionKind.Both
             : parent.ScopeDirectionKind;
@@ -831,11 +831,11 @@ public ref struct CSharpParserModel
             case SyntaxKind.ConstructorDefinitionNode:
             case SyntaxKind.FunctionDefinitionNode:
             case SyntaxKind.NamespaceStatementNode:
-                scope.NodeOffset = Compilation.CountNodeList;
+                scope.NodeOffset = Compilation.NodeLength;
                 Binder.NodeList.Insert(
-                    Compilation.IndexNodeList + Compilation.CountNodeList,
+                    Compilation.NodeOffset + Compilation.NodeLength,
                     codeBlockOwner);
-                ++Compilation.CountNodeList;
+                ++Compilation.NodeLength;
                 break;
             default:
                 scope.NodeOffset = 0;
@@ -843,9 +843,9 @@ public ref struct CSharpParserModel
         }
         
         Binder.ScopeList.Insert(
-            Compilation.ScopeIndex + Compilation.ScopeCount,
+            Compilation.ScopeOffset + Compilation.ScopeLength,
             scope);
-        ++Compilation.ScopeCount;
+        ++Compilation.ScopeLength;
     
         CurrentScopeOffset = codeBlockOwner.SelfScopeOffset;
         
@@ -912,7 +912,7 @@ public ref struct CSharpParserModel
         {
             case VariableKind.Field:
                 Binder.SymbolList.Insert(
-                    Compilation.IndexSymbolList + Compilation.CountSymbolList,
+                    Compilation.SymbolOffset + Compilation.SymbolLength,
                     new Symbol(
                         SyntaxKind.FieldSymbol,
                         symbolId,
@@ -920,11 +920,11 @@ public ref struct CSharpParserModel
                         {
                             DecorationByte = (byte)GenericDecorationKind.Field
                         }));
-                ++Compilation.CountSymbolList;
+                ++Compilation.SymbolLength;
                 break;
             case VariableKind.Property:
                 Binder.SymbolList.Insert(
-                    Compilation.IndexSymbolList + Compilation.CountSymbolList,
+                    Compilation.SymbolOffset + Compilation.SymbolLength,
                     new Symbol(
                         SyntaxKind.PropertySymbol,
                         symbolId,
@@ -932,11 +932,11 @@ public ref struct CSharpParserModel
                         {
                             DecorationByte = (byte)GenericDecorationKind.Property
                         }));
-                ++Compilation.CountSymbolList;
+                ++Compilation.SymbolLength;
                 break;
             case VariableKind.EnumMember:
                 Binder.SymbolList.Insert(
-                    Compilation.IndexSymbolList + Compilation.CountSymbolList,
+                    Compilation.SymbolOffset + Compilation.SymbolLength,
                     new Symbol(
                         SyntaxKind.EnumMemberSymbol,
                         symbolId,
@@ -944,7 +944,7 @@ public ref struct CSharpParserModel
                         {
                             DecorationByte = (byte)GenericDecorationKind.Property
                         }));
-                ++Compilation.CountSymbolList;
+                ++Compilation.SymbolLength;
                 break;
             case VariableKind.Local:
                 goto default;
@@ -952,7 +952,7 @@ public ref struct CSharpParserModel
                 goto default;
             default:
                 Binder.SymbolList.Insert(
-                    Compilation.IndexSymbolList + Compilation.CountSymbolList,
+                    Compilation.SymbolOffset + Compilation.SymbolLength,
                     new Symbol(
                         SyntaxKind.VariableSymbol,
                         symbolId,
@@ -960,7 +960,7 @@ public ref struct CSharpParserModel
                         {
                             DecorationByte = (byte)GenericDecorationKind.Variable
                         }));
-                ++Compilation.CountSymbolList;
+                ++Compilation.SymbolLength;
                 break;
         }
         
@@ -1096,7 +1096,7 @@ public ref struct CSharpParserModel
     {
         typeDefinitionNode = null;
         
-        for (int i = definitionCompilationUnit.IndexNodeList; i < definitionCompilationUnit.IndexNodeList + definitionCompilationUnit.CountNodeList; i++)
+        for (int i = definitionCompilationUnit.NodeOffset; i < definitionCompilationUnit.NodeOffset + definitionCompilationUnit.NodeLength; i++)
         {
             var x = Binder.NodeList[i];
             if (x.ParentScopeOffset == definitionScopeOffset &&
@@ -1144,7 +1144,7 @@ public ref struct CSharpParserModel
     {
         List<FunctionDefinitionNode> functionDefinitionNodeList = new();
     
-        for (int i = compilationUnit.IndexNodeList; i < compilationUnit.IndexNodeList + compilationUnit.CountNodeList; i++)
+        for (int i = compilationUnit.NodeOffset; i < compilationUnit.NodeOffset + compilationUnit.NodeLength; i++)
         {
             var node = Binder.NodeList[i];
             
@@ -1215,7 +1215,7 @@ public ref struct CSharpParserModel
     {
         functionDefinitionNode = null;
         
-        for (int i = definitionCompilationUnit.IndexNodeList; i < definitionCompilationUnit.IndexNodeList + definitionCompilationUnit.CountNodeList; i++)
+        for (int i = definitionCompilationUnit.NodeOffset; i < definitionCompilationUnit.NodeOffset + definitionCompilationUnit.NodeLength; i++)
         {
             var x = Binder.NodeList[i];
             
@@ -1242,7 +1242,7 @@ public ref struct CSharpParserModel
     {
         var variableDeclarationNodeList = new List<VariableDeclarationNode>();
         
-        for (int i = compilationUnit.IndexNodeList; i < compilationUnit.IndexNodeList + compilationUnit.CountNodeList; i++)
+        for (int i = compilationUnit.NodeOffset; i < compilationUnit.NodeOffset + compilationUnit.NodeLength; i++)
         {
             var kvp = Binder.NodeList[i];
             
@@ -1381,7 +1381,7 @@ public ref struct CSharpParserModel
         bool isRecursive = false)
     {
         variableDeclarationNode = null;
-        for (int i = declarationCompilationUnit.IndexNodeList; i < declarationCompilationUnit.IndexNodeList + declarationCompilationUnit.CountNodeList; i++)
+        for (int i = declarationCompilationUnit.NodeOffset; i < declarationCompilationUnit.NodeOffset + declarationCompilationUnit.NodeLength; i++)
         {
             var node = Binder.NodeList[i];
             
@@ -1399,20 +1399,11 @@ public ref struct CSharpParserModel
         
         if (variableDeclarationNode is null)
         {
-            Scope scope = default;
-
-            try
-            {
-                scope = Binder.ScopeList[declarationCompilationUnit.ScopeIndex + declarationScopeOffset];
-            }
-            catch (Exception e)
-            {
-
-            }
+            var scope = Binder.ScopeList[declarationCompilationUnit.ScopeOffset + declarationScopeOffset];
             
             if (!isRecursive && scope.OwnerSyntaxKind == SyntaxKind.TypeDefinitionNode)
             {
-                var typeDefinitionNode = (TypeDefinitionNode)Binder.NodeList[declarationCompilationUnit.IndexNodeList + scope.NodeOffset];
+                var typeDefinitionNode = (TypeDefinitionNode)Binder.NodeList[declarationCompilationUnit.NodeOffset + scope.NodeOffset];
                 if (typeDefinitionNode.IndexPartialTypeDefinition != -1)
                 {
                     if (TryGetVariableDeclarationByPartialType(
@@ -1502,7 +1493,7 @@ public ref struct CSharpParserModel
         var scopeOffset = CurrentScopeOffset;
 
         VariableDeclarationNode? matchNode = null;
-        for (int i = Compilation.IndexNodeList; i < Compilation.IndexNodeList + Compilation.CountNodeList; i++)
+        for (int i = Compilation.NodeOffset; i < Compilation.NodeOffset + Compilation.NodeLength; i++)
         {
             var x = Binder.NodeList[i];
             if (x.ParentScopeOffset == scopeOffset &&
@@ -1522,9 +1513,9 @@ public ref struct CSharpParserModel
             variableDeclarationNode.ParentScopeOffset = scopeOffset;
             
             Binder.NodeList.Insert(
-                Compilation.IndexNodeList + Compilation.CountNodeList,
+                Compilation.NodeOffset + Compilation.NodeLength,
                 variableDeclarationNode);
-            ++Compilation.CountNodeList;
+            ++Compilation.NodeLength;
             
             return true;
         }
@@ -1541,8 +1532,8 @@ public ref struct CSharpParserModel
         int scopeOffset = CurrentScopeOffset;
         
         VariableDeclarationNode? matchNode = null;
-        int index = Compilation.IndexNodeList;
-        for (; index < Compilation.IndexNodeList + Compilation.CountNodeList; index++)
+        int index = Compilation.NodeOffset;
+        for (; index < Compilation.NodeOffset + Compilation.NodeLength; index++)
         {
             var x = Binder.NodeList[index];
             
@@ -1609,7 +1600,7 @@ public ref struct CSharpParserModel
         out LabelDeclarationNode labelDeclarationNode)
     {
         labelDeclarationNode = null;
-        for (int i = Compilation.IndexNodeList; i < Compilation.IndexNodeList + Compilation.CountNodeList; i++)
+        for (int i = Compilation.NodeOffset; i < Compilation.NodeOffset + Compilation.NodeLength; i++)
         {
             var x = Binder.NodeList[i];
             
@@ -1636,7 +1627,7 @@ public ref struct CSharpParserModel
         LabelDeclarationNode labelDeclarationNode)
     {
         LabelDeclarationNode? matchNode = null;
-        for (var i = Compilation.IndexNodeList; i < Compilation.IndexNodeList + Compilation.CountNodeList; i++)
+        for (var i = Compilation.NodeOffset; i < Compilation.NodeOffset + Compilation.NodeLength; i++)
         {
             var x = Binder.NodeList[i];
             
@@ -1656,9 +1647,9 @@ public ref struct CSharpParserModel
             labelDeclarationNode.ParentScopeOffset = scopeOffset;
             
             Binder.NodeList.Insert(
-                Compilation.IndexNodeList + Compilation.CountNodeList,
+                Compilation.NodeOffset + Compilation.NodeLength,
                 labelDeclarationNode);
-            ++Compilation.CountNodeList;
+            ++Compilation.NodeLength;
             
             return true;
         }
@@ -1674,8 +1665,8 @@ public ref struct CSharpParserModel
         LabelDeclarationNode labelDeclarationNode)
     {
         LabelDeclarationNode? matchNode = null;
-        int index = Compilation.IndexNodeList;
-        for (; index < Compilation.IndexNodeList + Compilation.CountNodeList; index++)
+        int index = Compilation.NodeOffset;
+        for (; index < Compilation.NodeOffset + Compilation.NodeLength; index++)
         {
             var x = Binder.NodeList[index];
             
@@ -2015,36 +2006,36 @@ public ref struct CSharpParserModel
     
     public readonly void SetCurrentScope_IsImplicitOpenCodeBlockTextSpan(bool value)
     {
-        var scope = Binder.ScopeList[Compilation.ScopeIndex + CurrentScopeOffset];
+        var scope = Binder.ScopeList[Compilation.ScopeOffset + CurrentScopeOffset];
         scope.IsImplicitOpenCodeBlockTextSpan = value;
-        Binder.ScopeList[Compilation.ScopeIndex + CurrentScopeOffset] = scope;
+        Binder.ScopeList[Compilation.ScopeOffset + CurrentScopeOffset] = scope;
     }
     
     public readonly void SetCurrentScope_PermitCodeBlockParsing(bool value)
     {
-        var scope = Binder.ScopeList[Compilation.ScopeIndex + CurrentScopeOffset];
+        var scope = Binder.ScopeList[Compilation.ScopeOffset + CurrentScopeOffset];
         scope.PermitCodeBlockParsing = value;
-        Binder.ScopeList[Compilation.ScopeIndex + CurrentScopeOffset] = scope;
+        Binder.ScopeList[Compilation.ScopeOffset + CurrentScopeOffset] = scope;
     }
     
     public readonly void SetCurrentScope_Scope_EndExclusiveIndex(int endExclusiveIndex)
     {
-        var scope = Binder.ScopeList[Compilation.ScopeIndex + CurrentScopeOffset];
+        var scope = Binder.ScopeList[Compilation.ScopeOffset + CurrentScopeOffset];
         scope.Scope_EndExclusiveIndex = endExclusiveIndex;
-        Binder.ScopeList[Compilation.ScopeIndex + CurrentScopeOffset] = scope;
+        Binder.ScopeList[Compilation.ScopeOffset + CurrentScopeOffset] = scope;
     }
     
     public readonly void SetCurrentScope_CodeBlock_EndExclusiveIndex(int endExclusiveIndex)
     {
-        var scope = Binder.ScopeList[Compilation.ScopeIndex + CurrentScopeOffset];
+        var scope = Binder.ScopeList[Compilation.ScopeOffset + CurrentScopeOffset];
         scope.CodeBlock_EndExclusiveIndex = endExclusiveIndex;
-        Binder.ScopeList[Compilation.ScopeIndex + CurrentScopeOffset] = scope;
+        Binder.ScopeList[Compilation.ScopeOffset + CurrentScopeOffset] = scope;
     }
     
     public readonly void SetCurrentScope_CodeBlock_StartInclusiveIndex(int startInclusiveIndex)
     {
-        var scope = Binder.ScopeList[Compilation.ScopeIndex + CurrentScopeOffset];
+        var scope = Binder.ScopeList[Compilation.ScopeOffset + CurrentScopeOffset];
         scope.CodeBlock_StartInclusiveIndex = startInclusiveIndex;
-        Binder.ScopeList[Compilation.ScopeIndex + CurrentScopeOffset] = scope;
+        Binder.ScopeList[Compilation.ScopeOffset + CurrentScopeOffset] = scope;
     }
 }
