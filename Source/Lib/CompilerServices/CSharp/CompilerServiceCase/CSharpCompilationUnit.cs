@@ -35,9 +35,14 @@ public struct CSharpCompilationUnit : IExtendedCompilationUnit, ICompilerService
     public int IndexFunctionInvocationParameterMetadataList { get; set; } = -1;
     public int CountFunctionInvocationParameterMetadataList { get; set; }
     
-    /// <summary>Set this index in the CSharpParserModel constructor</summary>
-    public int IndexCodeBlockOwnerList { get; set; }
-    public int CountCodeBlockOwnerList { get; set; }
+    /// <summary>
+    /// The starting index within CSharpBinder.ScopeList that this compilation unit's scope entries reside.
+    /// </summary>
+    public int IndexScope { get; set; }
+    /// <summary>
+    /// The count of contiguous entries within CSharpBinder.ScopeList that correspond to this compilation unit.
+    /// </summary>
+    public int CountScope { get; set; }
     
     /// <summary>Set this index in the CSharpParserModel constructor</summary>
     public int IndexNodeList { get; set; }
