@@ -442,10 +442,6 @@ public class ParseDefaultKeywords
             closeParenthesisToken);
             
         parserModel.RegisterScopeAndOwner(
-            lockStatementNode,
-            parserModel.TokenWalker.Current.TextSpan);
-            
-        parserModel.RegisterScopeAndOwner(
         	new Scope(
         		ScopeDirectionKind.Down,
         		scope_StartInclusiveIndex: parserModel.TokenWalker.Current.TextSpan.StartInclusiveIndex,

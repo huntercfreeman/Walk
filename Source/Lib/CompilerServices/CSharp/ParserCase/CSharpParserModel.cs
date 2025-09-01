@@ -465,12 +465,12 @@ public ref struct CSharpParserModel
         Binder.Pool_ConstructorInvocationExpressionNode_Queue.Enqueue(constructorInvocationExpressionNode);
     }
     
-    public readonly ICodeBlockOwner? GetParent(
+    public readonly Scope GetParent(
         ICodeBlockOwner codeBlockOwner,
         Walk.CompilerServices.CSharp.CompilerServiceCase.CSharpCompilationUnit cSharpCompilationUnit)
     {
         if (codeBlockOwner.ParentScopeOffset == -1)
-            return null;
+            return default;
             
         return Binder.ScopeList[Compilation.ScopeIndex + codeBlockOwner.ParentScopeOffset];
     }
@@ -814,9 +814,6 @@ public ref struct CSharpParserModel
         codeBlockOwner.SelfScopeOffset = Compilation.ScopeCount;
         
         codeBlockOwner.ParentScopeOffset = CurrentScopeOffset;
-        codeBlockOwner.Scope_StartInclusiveIndex = textSpan.StartInclusiveIndex;
-
-        
 
         // ???
         // codeBlockOwner.CurrentScopeOffset = Compilation.ScopeCount;
@@ -2000,6 +1997,13 @@ public ref struct CSharpParserModel
     {
         var scope = Binder.ScopeList[Compilation.ScopeIndex + CurrentScopeOffset];
         scope.IsImplicitOpenCodeBlockTextSpan = true;
+        Binder.ScopeList[Compilation.ScopeIndex + CurrentScopeOffset] = scope;
+    }
+    
+    public readonly void SetCurrentScope_PermitCodeBlockParsing_True()
+    {
+        var scope = Binder.ScopeList[Compilation.ScopeIndex + CurrentScopeOffset];
+        scope.PermitCodeBlockParsing = true;
         Binder.ScopeList[Compilation.ScopeIndex + CurrentScopeOffset] = scope;
     }
 }

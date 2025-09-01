@@ -567,7 +567,7 @@ public class CSharpBinder
         {
             var scope = ScopeList[i];
             
-            if (scope.ParentScopeOffset == scopeOffset && scope.SyntaxKind == SyntaxKind.TypeDefinitionNode)
+            if (scope.ParentScopeOffset == scopeOffset && scope.OwnerSyntaxKind == SyntaxKind.TypeDefinitionNode)
                 typeDefinitionNodeList.Add((TypeDefinitionNode)scope);
         }
         

@@ -46,7 +46,7 @@ public static class ParseTokens
         parserModel.TryParseExpressionSyntaxKindList.Add(SyntaxKind.VariableReferenceNode);
         parserModel.TryParseExpressionSyntaxKindList.Add(SyntaxKind.ConstructorInvocationExpressionNode);
         
-        if (parserModel.CurrentCodeBlockOwner.SyntaxKind != SyntaxKind.TypeDefinitionNode)
+        if (parserModel.Binder.ScopeList[parserModel.CurrentScopeOffset].OwnerSyntaxKind != SyntaxKind.TypeDefinitionNode)
         {
             // There is a syntax conflict between a ConstructorDefinitionNode and a FunctionInvocationNode.
             //
@@ -137,7 +137,7 @@ public static class ParseTokens
         {
             variableKind = VariableKind.Property;
         }
-        else if (parserModel.CurrentCodeBlockOwner.SyntaxKind == SyntaxKind.TypeDefinitionNode)
+        else if (parserModel.Binder.ScopeList[parserModel.CurrentScopeOffset].OwnerSyntaxKind == SyntaxKind.TypeDefinitionNode)
         {
             variableKind = VariableKind.Field;
         }
@@ -248,7 +248,8 @@ public static class ParseTokens
         {
             parserModel.StatementBuilder.MostRecentNode = typeClauseNode;
         }
-        else if (parserModel.CurrentCodeBlockOwner is TypeDefinitionNode typeDefinitionNode &&
+        else if (parserModel.Binder.ScopeList[parserModel.CurrentScopeOffset].OwnerSyntaxKind == SyntaxKind.TypeDefinitionNode &&
+                 parserModel.Binder.ScopeList[parserModel.CurrentScopeOffset] is TypeDefinitionNode typeDefinitionNode &&
                  UtilityApi.IsConvertibleToIdentifierToken(typeClauseNode.TypeIdentifierToken.SyntaxKind) &&
                  parserModel.TokenWalker.Current.SyntaxKind == SyntaxKind.OpenParenthesisToken &&
                  parserModel.GetTextSpanText(typeDefinitionNode.TypeIdentifierToken.TextSpan) == parserModel.GetTextSpanText(typeClauseNode.TypeIdentifierToken.TextSpan))

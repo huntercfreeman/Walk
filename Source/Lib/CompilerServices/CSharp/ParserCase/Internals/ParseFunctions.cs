@@ -128,7 +128,7 @@ public class ParseFunctions
                     var previousParent = parserModel.Binder.ScopeList[previousCompilationUnit.ScopeIndex + existingNode.ParentScopeOffset];
                     var currentParent = parserModel.GetParent(newNode, parserModel.Compilation);
                     
-                    if (currentParent.SyntaxKind == previousParent.SyntaxKind)
+                    if (currentParent.OwnerSyntaxKind == previousParent.OwnerSyntaxKind)
                     {
                         var currentParentIdentifierText = parserModel.Binder.GetIdentifierText(currentParent, parserModel.ResourceUri, parserModel.Compilation);
                         
@@ -153,8 +153,8 @@ public class ParseFunctions
                             {
                                 var x = parserModel.Binder.ScopeList[indexPreviousNode];
                                 
-                                if (x.ParentScopeOffset == previousParent.SelfIndexKey &&
-                                    x.SyntaxKind == SyntaxKind.FunctionDefinitionNode &&
+                                if (x.ParentScopeOffset == previousParent.SelfScopeOffset &&
+                                    x.OwnerSyntaxKind == SyntaxKind.FunctionDefinitionNode &&
                                     binder.GetIdentifierText(x, parserModel.ResourceUri, previousCompilationUnit) == binder.GetIdentifierText(existingNode, parserModel.ResourceUri, compilation))
                                 {
                                     previousNode = x;
