@@ -633,8 +633,10 @@ public static class ParseTokens
     
         parserModel.SetCurrentScope_IsImplicitOpenCodeBlockTextSpan(true);
         
-        // Global scope has a null parent.
-        var parentScopeDirection = parserModel.GetParent(parserModel.CurrentCodeBlockOwner, parserModel.Compilation)?.ScopeDirectionKind ?? ScopeDirectionKind.Both;
+        var parentScope = parserModel.GetParent(parserModel.Binder.ScopeList[parserModel.Compilation.ScopeIndex + parserModel.CurrentScopeOffset].ParentScopeOffset, parserModel.Compilation);
+        var parentScopeDirection = parentScope.IsDefault()
+            ? ScopeDirectionKind.Both
+            : parentScope.ScopeDirectionKind;
         
         if (parentScopeDirection == ScopeDirectionKind.Both)
         {
