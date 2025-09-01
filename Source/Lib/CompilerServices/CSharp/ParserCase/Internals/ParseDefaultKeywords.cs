@@ -1119,12 +1119,20 @@ public class ParseDefaultKeywords
                         var previousParent = parserModel.Binder.ScopeList[previousCompilationUnit.ScopeIndex + typeDefinitionNode.ParentScopeOffset];
                         var currentParent = parserModel.GetParent(typeDefinitionNode.ParentScopeOffset, parserModel.Compilation);
                         
-                        if (currentParent.SyntaxKind == previousParent.SyntaxKind)
+                        if (currentParent.OwnerSyntaxKind == previousParent.OwnerSyntaxKind)
                         {
-                            var currentParentIdentifierText = parserModel.Binder.GetIdentifierText(currentParent, parserModel.ResourceUri, parserModel.Compilation);
+                            var currentParentIdentifierText = parserModel.Binder.GetIdentifierText(
+                                parserModel.Binder.NodeList[parserModel.Compilation.IndexNodeList + currentParent.NodeOffset],
+                                parserModel.ResourceUri,
+                                parserModel.Compilation);
+                            
+                            var previousParentIdentifierText = parserModel.Binder.GetIdentifierText(
+                                parserModel.Binder.NodeList[previousCompilationUnit.IndexNodeList + previousParent.NodeOffset],
+                                parserModel.ResourceUri,
+                                previousCompilationUnit);
                             
                             if (currentParentIdentifierText is not null &&
-                                currentParentIdentifierText == parserModel.Binder.GetIdentifierText(previousParent, parserModel.ResourceUri, previousCompilationUnit))
+                                currentParentIdentifierText == previousParentIdentifierText)
                             {
                                 // All the existing entires will be "emptied"
                                 // so don't both with checking whether the arguments are the same here.
@@ -1142,11 +1150,15 @@ public class ParseDefaultKeywords
                                 {
                                     var x = parserModel.Binder.ScopeList[i];
                                     
-                                    if (x.ParentScopeOffset == previousParent.Unsafe_SelfIndexKey &&
-                                        x.SyntaxKind == SyntaxKind.TypeDefinitionNode &&
-                                        binder.GetIdentifierText(x, parserModel.ResourceUri, previousCompilationUnit) == binder.GetIdentifierText(typeDefinitionNode, parserModel.ResourceUri, compilation))
+                                    if (x.ParentScopeOffset == previousParent.SelfScopeOffset &&
+                                        x.OwnerSyntaxKind == SyntaxKind.TypeDefinitionNode &&
+                                        binder.GetIdentifierText(
+                                                parserModel.Binder.NodeList[previousCompilationUnit.IndexNodeList + x.NodeOffset],
+                                                parserModel.ResourceUri,
+                                                previousCompilationUnit) ==
+                                            binder.GetIdentifierText(typeDefinitionNode, parserModel.ResourceUri, compilation))
                                     {
-                                        previousNode = x;
+                                        previousNode = parserModel.Binder.NodeList[previousCompilationUnit.IndexNodeList + x.NodeOffset];
                                         break;
                                     }
                                 }
@@ -1327,7 +1339,10 @@ public class ParseDefaultKeywords
                         
                         if (parserModel.Binder.__CompilationUnitMap.TryGetValue(partialTypeDefinitionEntry.ResourceUri, out var innerCompilationUnit))
                         {
-                            ((TypeDefinitionNode)parserModel.Binder.ScopeList[innerCompilationUnit.ScopeIndex + partialTypeDefinitionEntry.ScopeOffset]).IndexPartialTypeDefinition = partialTypeDefinitionEntry.IndexStartGroup + 1;
+                            var innerTypeDefinitionNode = (TypeDefinitionNode)parserModel.Binder.NodeList[
+                                innerCompilationUnit.IndexNodeList +
+                                parserModel.Binder.ScopeList[innerCompilationUnit.ScopeIndex + partialTypeDefinitionEntry.ScopeOffset].NodeOffset];
+                            innerTypeDefinitionNode.IndexPartialTypeDefinition = partialTypeDefinitionEntry.IndexStartGroup + 1;
                         }
                     }
                     
