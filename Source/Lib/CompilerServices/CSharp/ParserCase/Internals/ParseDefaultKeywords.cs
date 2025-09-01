@@ -53,8 +53,20 @@ public class ParseDefaultKeywords
             closeParenthesisToken: default);
         
         parserModel.RegisterScopeAndOwner(
-            catchNode,
-            parserModel.TokenWalker.Current.TextSpan);
+            new Scope(
+                ScopeDirectionKind.Down,
+                scope_StartInclusiveIndex: textSpan.StartInclusiveIndex,
+                scope_EndExclusiveIndex: -1,
+                codeBlock_StartInclusiveIndex: textSpan.StartInclusiveIndex,
+                codeBlock_EndExclusiveIndex: -1,
+                parentScopeOffset: parserModel.CurrentScopeOffset,
+                selfScopeOffset: parserModel.Binder.ScopeList.Count,
+                nodeOffset: parserModel.Binder.NodeList.Count,
+                permitCodeBlockParsing: false,
+                isImplicitOpenCodeBlockTextSpan: false,
+                returnTypeReference: CSharpFacts.Types.Void.ToTypeReference(),
+                syntaxKind: catchNode.SyntaxKind),
+            catchNode);
         
         parserModel.ExpressionList.Add((SyntaxKind.CloseParenthesisToken, null));
         var expressionNode = ParseExpressions.ParseExpression(ref parserModel);

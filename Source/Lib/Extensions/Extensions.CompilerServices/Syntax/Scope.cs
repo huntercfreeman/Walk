@@ -7,14 +7,6 @@ namespace Walk.Extensions.CompilerServices.Syntax;
 /// </summary>
 public struct Scope
 {
-    public Scope()
-    {
-        Scope_StartInclusiveIndex = -1;
-        Scope_EndExclusiveIndex = -1;
-        CodeBlock_StartInclusiveIndex = -1;
-        CodeBlock_EndExclusiveIndex = -1;
-    }
-
     public Scope(
         ScopeDirectionKind scopeDirectionKind,
         int scope_StartInclusiveIndex,
@@ -26,7 +18,8 @@ public struct Scope
         int nodeOffset,
         bool permitCodeBlockParsing,
         bool isImplicitOpenCodeBlockTextSpan,
-        TypeReference returnTypeReference)
+        TypeReference returnTypeReference,
+        SyntaxKind ownerSyntaxKind)
     {
         ScopeDirectionKind = scopeDirectionKind;
         Scope_StartInclusiveIndex = scope_StartInclusiveIndex;
@@ -35,9 +28,11 @@ public struct Scope
         CodeBlock_EndExclusiveIndex = codeBlock_EndExclusiveIndex;
         ParentScopeOffset = parentScopeOffset;
         SelfScopeOffset = selfScopeOffset;
+        NodeOffset = nodeOffset;
         PermitCodeBlockParsing = permitCodeBlockParsing;
         IsImplicitOpenCodeBlockTextSpan = isImplicitOpenCodeBlockTextSpan;
         ReturnTypeReference = returnTypeReference;
+        OwnerSyntaxKind = ownerSyntaxKind;
     }
     
     public ScopeDirectionKind ScopeDirectionKind { get; }
@@ -51,10 +46,10 @@ public struct Scope
     public bool PermitCodeBlockParsing { get; set; }
     public bool IsImplicitOpenCodeBlockTextSpan { get; set; }
     public TypeReference ReturnTypeReference { get; set; }
-    public SyntaxKind SyntaxKind { get; set; }
+    public SyntaxKind OwnerSyntaxKind { get; set; }
     
     public bool IsDefault()
     {
-        return SyntaxKind == SyntaxKind.NotApplicable;
+        return OwnerSyntaxKind == SyntaxKind.NotApplicable;
     }
 }
