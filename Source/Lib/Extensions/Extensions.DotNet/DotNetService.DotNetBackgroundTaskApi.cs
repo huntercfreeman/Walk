@@ -346,7 +346,7 @@ public partial class DotNetService
                     int countDiagnosticList;
                     int countSymbolList;
                     int countFunctionInvocationParameterMetadataList;
-                    int countCodeBlockOwnerList;
+                    int countScopeList;
                     int countNodeList;
 
                     if (cSharpCompilerService is not null)
@@ -354,7 +354,7 @@ public partial class DotNetService
                         countDiagnosticList = cSharpCompilerService.__CSharpBinder.DiagnosticList.Count;
                         countSymbolList = cSharpCompilerService.__CSharpBinder.SymbolList.Count;
                         countFunctionInvocationParameterMetadataList = cSharpCompilerService.__CSharpBinder.FunctionInvocationParameterMetadataList.Count;
-                        countCodeBlockOwnerList = cSharpCompilerService.__CSharpBinder.CodeBlockOwnerList.Count;
+                        countScopeList = cSharpCompilerService.__CSharpBinder.ScopeList.Count;
                         countNodeList = cSharpCompilerService.__CSharpBinder.NodeList.Count;
                     }
                     else
@@ -362,7 +362,7 @@ public partial class DotNetService
                         countDiagnosticList = 0;
                         countSymbolList = 0;
                         countFunctionInvocationParameterMetadataList = 0;
-                        countCodeBlockOwnerList = 0;
+                        countScopeList = 0;
                         countNodeList = 0;
                     }
 
@@ -371,7 +371,7 @@ public partial class DotNetService
                     cSharpCompilerService.__CSharpBinder.DiagnosticList.RemoveRange(0, countDiagnosticList);
                     cSharpCompilerService.__CSharpBinder.SymbolList.RemoveRange(0, countSymbolList);
                     cSharpCompilerService.__CSharpBinder.FunctionInvocationParameterMetadataList.RemoveRange(0, countFunctionInvocationParameterMetadataList);
-                    cSharpCompilerService.__CSharpBinder.CodeBlockOwnerList.RemoveRange(0, countCodeBlockOwnerList);
+                    cSharpCompilerService.__CSharpBinder.ScopeList.RemoveRange(0, countScopeList);
                     cSharpCompilerService.__CSharpBinder.NodeList.RemoveRange(0, countNodeList);
 
                     foreach (var compilationUnitKvp in cSharpCompilerService.__CSharpBinder.__CompilationUnitMap)
@@ -381,7 +381,7 @@ public partial class DotNetService
                         compilationUnit.IndexDiagnosticList -= countDiagnosticList;
                         compilationUnit.IndexSymbolList -= countSymbolList;
                         compilationUnit.IndexFunctionInvocationParameterMetadataList -= countFunctionInvocationParameterMetadataList;
-                        compilationUnit.ScopeIndex -= countCodeBlockOwnerList;
+                        compilationUnit.ScopeIndex -= countScopeList;
                         compilationUnit.IndexNodeList -= countNodeList;
 
                         cSharpCompilerService.__CSharpBinder.__CompilationUnitMap[compilationUnitKvp.Key] = compilationUnit;
