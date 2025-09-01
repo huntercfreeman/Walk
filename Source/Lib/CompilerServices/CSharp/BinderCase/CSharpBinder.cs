@@ -483,7 +483,7 @@ public class CSharpBinder
         DiagnosticList.Clear();
         SymbolList.Clear();
         FunctionInvocationParameterMetadataList.Clear();
-        CodeBlockValueList.Clear();
+        ScopeList.Clear();
         NodeList.Clear();
     }
     
@@ -523,7 +523,7 @@ public class CSharpBinder
         var min = int.MaxValue;
         var selfIndexKey = -1;
         
-        for (int i = compilationUnit.IndexCodeBlockValueList; i < compilationUnit.IndexCodeBlockValueList + compilationUnit.CountCodeBlockValueList; i++)
+        for (int i = compilationUnit.ScopeIndex; i < compilationUnit.ScopeIndex + compilationUnit.ScopeCount; i++)
         {
             var value = CodeBlockValueList[i];
             
