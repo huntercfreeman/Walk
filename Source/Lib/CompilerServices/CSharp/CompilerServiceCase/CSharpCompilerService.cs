@@ -1687,8 +1687,8 @@ public sealed class CSharpCompilerService : IExtendedCompilerService
                             {
                                 var x = __CSharpBinder.ScopeList[i];
                                 
-                                if (x.SyntaxKind == SyntaxKind.TypeDefinitionNode &&
-                                    ((TypeDefinitionNode)x).Unsafe_SelfIndexKey == tuple.ScopeIndexKey)
+                                if (x.OwnerSyntaxKind == SyntaxKind.TypeDefinitionNode &&
+                                    ((TypeDefinitionNode)x).SelfScopeOffset == tuple.ScopeIndexKey)
                                 {
                                     otherTypeDefinitionNode = x;
                                     break;
@@ -1953,9 +1953,12 @@ public sealed class CSharpCompilerService : IExtendedCompilerService
     public (Scope Scope, ICodeBlockOwner? CodeBlockOwner) GetCodeBlockTupleByPositionIndex(ResourceUri resourceUri, int positionIndex)
     {
         if (__CSharpBinder.__CompilationUnitMap.TryGetValue(resourceUri, out var compilationUnit))
-            return __CSharpBinder.GetScopeByPositionIndex(compilationUnit, positionIndex);
+        {
+            var scope = __CSharpBinder.GetScopeByPositionIndex(compilationUnit, positionIndex);
+            return (scope, (ICodeBlockOwner)__CSharpBinder.NodeList[compilationUnit.IndexNodeList + scope.NodeOffset]);
+        }
         
-        return null;
+        return default;
     }
     
     public List<AutocompleteEntry>? OBSOLETE_GetAutocompleteEntries(string word, TextEditorTextSpan textSpan, TextEditorVirtualizationResult virtualizationResult)
@@ -1965,7 +1968,7 @@ public sealed class CSharpCompilerService : IExtendedCompilerService
             
         var boundScope = __CSharpBinder.GetScope(compilationUnit, textSpan);
 
-        if (boundScope is null)
+        if (boundScope.IsDefault())
             return null;
         
         var autocompleteEntryList = new List<AutocompleteEntry>();
@@ -2068,7 +2071,7 @@ public sealed class CSharpCompilerService : IExtendedCompilerService
         }
         else
         {
-            while (targetScope is not null)
+            while (!targetScope.IsDefault())
             {
                 autocompleteEntryList.AddRange(
                     __CSharpBinder.GetVariableDeclarationNodesByScope(virtualizationResult.Model.PersistentState.ResourceUri, compilationUnit, targetScope.SelfScopeOffset)

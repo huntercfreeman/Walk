@@ -1028,7 +1028,7 @@ public static class ParseExpressions
         _ = parserModel.TryGetTypeDefinitionHierarchically(
                 parserModel.ResourceUri,
                 parserModel.Compilation,
-                parserModel.CurrentCodeBlockOwner.Unsafe_SelfIndexKey,
+                parserModel.CurrentScopeOffset,
                 parserModel.ResourceUri,
                 token.TextSpan,
                 out var typeDefinitionNode);
@@ -1105,7 +1105,7 @@ public static class ParseExpressions
             if (parserModel.TryGetVariableDeclarationHierarchically(
                     parserModel.ResourceUri,
                     parserModel.Compilation,
-                    parserModel.CurrentCodeBlockOwner.Unsafe_SelfIndexKey,
+                    parserModel.CurrentScopeOffset,
                     parserModel.ResourceUri,
                     ambiguousIdentifierExpressionNode.Token.TextSpan,
                     out var existingVariableDeclarationNode))
@@ -1134,7 +1134,7 @@ public static class ParseExpressions
             if (parserModel.TryGetTypeDefinitionHierarchically(
                     parserModel.ResourceUri,
                     parserModel.Compilation,
-                    parserModel.CurrentCodeBlockOwner.Unsafe_SelfIndexKey,
+                    parserModel.CurrentScopeOffset,
                     parserModel.ResourceUri,
                     ambiguousIdentifierExpressionNode.Token.TextSpan,
                     out var typeDefinitionNode))
@@ -1187,7 +1187,7 @@ public static class ParseExpressions
             if (!parserModel.TryGetVariableDeclarationHierarchically(
                     parserModel.ResourceUri,
                     parserModel.Compilation,
-                    parserModel.CurrentCodeBlockOwner.Unsafe_SelfIndexKey,
+                    parserModel.CurrentScopeOffset,
                     parserModel.ResourceUri,
                     ambiguousIdentifierExpressionNode.Token.TextSpan,
                     out _))
@@ -1205,7 +1205,7 @@ public static class ParseExpressions
             if (parserModel.TryGetFunctionHierarchically(
                     parserModel.ResourceUri,
                     parserModel.Compilation,
-                    parserModel.CurrentCodeBlockOwner.Unsafe_SelfIndexKey,
+                    parserModel.CurrentScopeOffset,
                     parserModel.ResourceUri,
                     ambiguousIdentifierExpressionNode.Token.TextSpan,
                     out var functionDefinitionNode))
@@ -1258,7 +1258,7 @@ public static class ParseExpressions
             if (parserModel.TryGetLabelDeclarationHierarchically(
                     parserModel.ResourceUri,
                     parserModel.Compilation,
-                    parserModel.CurrentCodeBlockOwner.Unsafe_SelfIndexKey,
+                    parserModel.CurrentScopeOffset,
                     parserModel.ResourceUri,
                     ambiguousIdentifierExpressionNode.Token.TextSpan,
                     out var labelDefinitionNode))
@@ -3217,7 +3217,7 @@ public static class ParseExpressions
             _ = parserModel.TokenWalker.Consume();
         }
         
-        var lambdaCodeBlockBuilder = parserModel.CurrentCodeBlockOwner;
+        var lambdaScope = parserModel.Binder.ScopeList[parserModel.CurrentScopeOffset];
         CloseLambdaExpressionScope(lambdaExpressionNode, ref parserModel);
     
         var closeTokenIndex = parserModel.TokenWalker.Index;
@@ -3225,11 +3225,11 @@ public static class ParseExpressions
         
         parserModel.StatementBuilder.ParseLambdaStatementScopeStack.Push(
             (
-                parserModel.CurrentCodeBlockOwner,
+                parserModel.CurrentScopeOffset,
                 new CSharpDeferredChildScope(
                     openTokenIndex,
                     closeTokenIndex,
-                    lambdaCodeBlockBuilder)
+                    lambdaScope)
             ));
             
         return lambdaExpressionNode;
@@ -3336,12 +3336,12 @@ public static class ParseExpressions
                     innerResourceUri = typeReference.ExplicitDefinitionResourceUri;
                     var scope = parserModel.Binder.GetScope(innerCompilationUnit, typeReference.ExplicitDefinitionTextSpan);
 
-                    if (scope is not null)
+                    if (!scope.IsDefault())
                     {
                         if (parserModel.TryGetTypeDefinitionHierarchically(
                                 innerResourceUri,
                                 innerCompilationUnit,
-                                scope.SelfIndexKey,
+                                scope.SelfScopeOffset,
                                 innerResourceUri,
                                 typeReference.ExplicitDefinitionTextSpan,
                                 out var innerTypeDefinitionNode) &&
@@ -3378,7 +3378,7 @@ public static class ParseExpressions
             {
                 var scope = parserModel.Binder.GetScope(parserModel.Compilation, typeReference.TypeIdentifierToken.TextSpan);
 
-                if (scope is not null)
+                if (!scope.IsDefault())
                 {
                     if (parserModel.TryGetTypeDefinitionHierarchically(
                             parserModel.ResourceUri,

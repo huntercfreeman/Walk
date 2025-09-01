@@ -889,8 +889,8 @@ public ref struct CSharpParserModel
             }
         }*/
         
-        CurrentCodeBlockOwner.Scope_EndExclusiveIndex = textSpan.EndExclusiveIndex;
-        CurrentCodeBlockOwner = GetParent(CurrentCodeBlockOwner, Compilation);
+        SetCurrentScope_Scope_EndExclusiveIndex(textSpan.EndExclusiveIndex);
+        CurrentScopeOffset = Binder.ScopeList[CurrentScopeOffset].ParentScopeOffset;
     }
 
     /// <summary>
@@ -2008,6 +2008,13 @@ public ref struct CSharpParserModel
     {
         var scope = Binder.ScopeList[Compilation.ScopeIndex + CurrentScopeOffset];
         scope.PermitCodeBlockParsing = value;
+        Binder.ScopeList[Compilation.ScopeIndex + CurrentScopeOffset] = scope;
+    }
+    
+    public readonly void SetCurrentScope_Scope_EndExclusiveIndex(int endExclusiveIndex)
+    {
+        var scope = Binder.ScopeList[Compilation.ScopeIndex + CurrentScopeOffset];
+        scope.Scope_EndExclusiveIndex = endExclusiveIndex;
         Binder.ScopeList[Compilation.ScopeIndex + CurrentScopeOffset] = scope;
     }
 }
