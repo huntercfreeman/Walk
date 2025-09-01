@@ -13,7 +13,7 @@ public sealed class LiteralExpressionNode : IExpressionNode
     public SyntaxToken LiteralSyntaxToken { get; }
     public TypeReference ResultTypeReference { get; }
 
-    public int ParentIndexKey { get; set; }
+    public int ParentScopeOffset { get; set; }
     public bool IsFabricated { get; init; }
     public SyntaxKind SyntaxKind => SyntaxKind.LiteralExpressionNode;
 }

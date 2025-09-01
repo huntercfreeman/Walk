@@ -4,7 +4,7 @@ namespace Walk.Extensions.CompilerServices.Syntax.Nodes;
 
 public sealed class CollectionInitializationNode : IExpressionNode
 {
-    public int ParentIndexKey { get; set; }
+    public int ParentScopeOffset { get; set; }
     public bool IsFabricated { get; init; }
     public SyntaxKind SyntaxKind => SyntaxKind.CollectionInitializationNode;
     

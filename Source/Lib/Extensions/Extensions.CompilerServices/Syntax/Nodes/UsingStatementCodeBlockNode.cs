@@ -14,8 +14,8 @@ public sealed class UsingStatementCodeBlockNode : ICodeBlockOwner
 
     // ICodeBlockOwner properties.
     public ScopeDirectionKind ScopeDirectionKind => ScopeDirectionKind.Down;
-    public int ParentIndexKey { get; set; } = -1;
-    public int SelfIndexKey { get; set; } = -1;
+    public int ParentScopeOffset { get; set; } = -1;
+    public int SelfScopeOffset { get; set; } = -1;
 
     public bool IsFabricated { get; init; }
     public SyntaxKind SyntaxKind => SyntaxKind.UsingStatementCodeBlockNode;

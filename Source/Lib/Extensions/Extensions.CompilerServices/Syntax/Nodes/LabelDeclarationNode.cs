@@ -13,7 +13,7 @@ public sealed class LabelDeclarationNode : IExpressionNode
 
     TypeReference IExpressionNode.ResultTypeReference => TypeFacts.Pseudo.ToTypeReference();
 
-    public int ParentIndexKey { get; set; }
+    public int ParentScopeOffset { get; set; }
     public bool IsFabricated { get; init; }
     public SyntaxKind SyntaxKind => SyntaxKind.LabelDeclarationNode;
 }

@@ -34,7 +34,7 @@ public sealed class EmptyExpressionNode : IExpressionNode
     public TypeReference ResultTypeReference { get; }
     public bool FollowsMemberAccessToken { get; init; }
 
-    public int ParentIndexKey { get; set; }
+    public int ParentScopeOffset { get; set; }
     public bool IsFabricated { get; init; }
     public SyntaxKind SyntaxKind => SyntaxKind.EmptyExpressionNode;
 }

@@ -21,13 +21,13 @@ namespace Walk.Extensions.CompilerServices.Syntax.Nodes;
 /// </summary>
 public sealed class GlobalCodeBlockNode : ICodeBlockOwner
 {
-    public int ParentIndexKey { get; set; } = -1;
+    public int ParentScopeOffset { get; set; } = -1;
     /// <summary>
     /// GlobalCodeBlockNode should have 'Unsafe_SelfIndexKey' be initialized to 0.
     /// This is contrary to the pattern in every other ICodeBlockOwner.
     /// For that reason initialization syntax is used here even though 0 is the default value.
     /// </summary>
-    public int SelfIndexKey { get; set; } = 0;
+    public int SelfScopeOffset { get; set; } = 0;
 
     public bool IsFabricated { get; init; }
     public SyntaxKind SyntaxKind => SyntaxKind.GlobalCodeBlockNode;

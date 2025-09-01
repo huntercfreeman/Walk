@@ -49,7 +49,7 @@ public sealed class FunctionInvocationNode : IInvocationNode, IGenericParameterN
     public ResourceUri ResourceUri { get; set; }
     public int IdentifierStartInclusiveIndex => FunctionInvocationIdentifierToken.TextSpan.StartInclusiveIndex;
 
-    public int ParentIndexKey { get; set; }
+    public int ParentScopeOffset { get; set; }
     
     public bool _isFabricated;
     public bool IsFabricated

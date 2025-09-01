@@ -115,8 +115,8 @@ public sealed class TypeDefinitionNode : ICodeBlockOwner, IFunctionDefinitionNod
     
     // ICodeBlockOwner properties.
     public ScopeDirectionKind ScopeDirectionKind => ScopeDirectionKind.Both;
-    public int ParentIndexKey { get; set; } = -1;
-    public int SelfIndexKey { get; set; } = -1;
+    public int ParentScopeOffset { get; set; } = -1;
+    public int SelfScopeOffset { get; set; } = -1;
 
     public bool IsKeywordType { get; init; }
     

@@ -22,8 +22,8 @@ public sealed class DoWhileStatementNode : ICodeBlockOwner
     public SyntaxToken OpenParenthesisToken { get; set; }
     public SyntaxToken CloseParenthesisToken { get; set; }
 
-    public int ParentIndexKey { get; set; } = -1;
-    public int SelfIndexKey { get; set; } = -1;
+    public int ParentScopeOffset { get; set; } = -1;
+    public int SelfScopeOffset { get; set; } = -1;
 
     public bool IsFabricated { get; init; }
     public SyntaxKind SyntaxKind => SyntaxKind.DoWhileStatementNode;

@@ -39,7 +39,7 @@ public sealed class ConstructorInvocationExpressionNode : IInvocationNode
 
     public ConstructorInvocationStageKind ConstructorInvocationStageKind { get; set; } = ConstructorInvocationStageKind.Unset;
 
-    public int ParentIndexKey { get; set; }
+    public int ParentScopeOffset { get; set; }
     
     public bool _isFabricated;
     public bool IsFabricated

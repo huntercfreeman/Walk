@@ -14,7 +14,7 @@ public sealed class KeywordFunctionOperatorNode : IExpressionNode
     public IExpressionNode ExpressionNodeToMakePrimary { get; set; }
     public TypeReference ResultTypeReference => ExpressionNodeToMakePrimary.ResultTypeReference;
 
-    public int ParentIndexKey { get; set; }
+    public int ParentScopeOffset { get; set; }
     public bool IsFabricated { get; init; }
     public SyntaxKind SyntaxKind => SyntaxKind.KeywordFunctionOperatorNode;
 }

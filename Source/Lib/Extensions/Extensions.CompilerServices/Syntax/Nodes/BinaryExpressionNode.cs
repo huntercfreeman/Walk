@@ -50,7 +50,7 @@ public sealed class BinaryExpressionNode : IExpressionNode
     }
     public bool RightExpressionNodeWasSet { get; set; }
 
-    public int ParentIndexKey { get; set; }
+    public int ParentScopeOffset { get; set; }
     public bool IsFabricated
     {
         get

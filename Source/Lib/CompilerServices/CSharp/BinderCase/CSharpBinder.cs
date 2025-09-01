@@ -70,7 +70,7 @@ public class CSharpBinder
     public List<Walk.TextEditor.RazorLib.CompilerServices.TextEditorDiagnostic> DiagnosticList { get; } = new();
     public List<Symbol> SymbolList { get; } = new();
     public List<ISyntaxNode> NodeList { get; } = new();
-    public List<CodeBlockValue> CodeBlockValueList { get; } = new();
+    public List<Scope> ScopeList { get; } = new();
 
     /// <summary>
     /// This list is used within TextEditorEditContext and for the lexers to re-use by clearing it prior to starting the lexing.
@@ -518,7 +518,7 @@ public class CSharpBinder
         return GetScopeByPositionIndex(compilationUnit, textSpan.StartInclusiveIndex);
     }
     
-    public (CodeBlockValue CodeBlockValue, ICodeBlockOwner? CodeBlockOwner) GetScopeByPositionIndex(CSharpCompilationUnit compilationUnit, int positionIndex)
+    public (Scope Scope, ICodeBlockOwner? CodeBlockOwner) GetScopeByPositionIndex(CSharpCompilationUnit compilationUnit, int positionIndex)
     {
         var min = int.MaxValue;
         var selfIndexKey = -1;

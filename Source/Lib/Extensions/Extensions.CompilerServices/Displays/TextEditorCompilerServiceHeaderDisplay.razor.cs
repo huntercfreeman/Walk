@@ -140,31 +140,31 @@ public partial class TextEditorCompilerServiceHeaderDisplay : ComponentBase, ITe
     
             TextEditorTextSpan textSpanStart;
             
-            if (codeBlockTuple.CodeBlockValue.CodeBlock_StartInclusiveIndex == -1)
+            if (codeBlockTuple.Scope.CodeBlock_StartInclusiveIndex == -1)
             {
                 textSpanStart = new TextEditorTextSpan(
-                    codeBlockTuple.CodeBlockValue.Scope_StartInclusiveIndex,
-                    codeBlockTuple.CodeBlockValue.Scope_StartInclusiveIndex + 1,
+                    codeBlockTuple.Scope.Scope_StartInclusiveIndex,
+                    codeBlockTuple.Scope.Scope_StartInclusiveIndex + 1,
                     (byte)TextEditorDevToolsDecorationKind.Scope);
             }
             else
             {
                 textSpanStart = new TextEditorTextSpan(
-                    codeBlockTuple.CodeBlockValue.CodeBlock_StartInclusiveIndex,
-                    codeBlockTuple.CodeBlockValue.CodeBlock_StartInclusiveIndex + 1,
+                    codeBlockTuple.Scope.CodeBlock_StartInclusiveIndex,
+                    codeBlockTuple.Scope.CodeBlock_StartInclusiveIndex + 1,
                     (byte)TextEditorDevToolsDecorationKind.Scope);
             }
 
             int useStartInclusiveIndex;
-            if (codeBlockTuple.CodeBlockValue.Scope_EndExclusiveIndex == -1)
+            if (codeBlockTuple.Scope.Scope_EndExclusiveIndex == -1)
                 useStartInclusiveIndex = presentationModel.PendingCalculation.ContentAtRequest.Length - 1;
             else
-                useStartInclusiveIndex = codeBlockTuple.CodeBlockValue.Scope_EndExclusiveIndex - 1;
+                useStartInclusiveIndex = codeBlockTuple.Scope.Scope_EndExclusiveIndex - 1;
 
             if (useStartInclusiveIndex < 0)
                 useStartInclusiveIndex = 0;
 
-            var useEndExclusiveIndex = codeBlockTuple.CodeBlockValue.Scope_EndExclusiveIndex;
+            var useEndExclusiveIndex = codeBlockTuple.Scope.Scope_EndExclusiveIndex;
             if (useEndExclusiveIndex == -1)
                 useEndExclusiveIndex = presentationModel.PendingCalculation.ContentAtRequest.Length;
                 

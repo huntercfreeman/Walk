@@ -20,8 +20,8 @@ public sealed class NamespaceStatementNode : ICodeBlockOwner
     public SyntaxToken IdentifierToken { get; }
     public ResourceUri ResourceUri { get; }
 
-    public int ParentIndexKey { get; set; } = -1;
-    public int SelfIndexKey { get; set; } = -1;
+    public int ParentScopeOffset { get; set; } = -1;
+    public int SelfScopeOffset { get; set; } = -1;
 
     public bool IsFabricated { get; init; }
     public SyntaxKind SyntaxKind => SyntaxKind.NamespaceStatementNode;

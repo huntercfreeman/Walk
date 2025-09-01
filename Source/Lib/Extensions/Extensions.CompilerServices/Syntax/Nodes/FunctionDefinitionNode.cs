@@ -54,8 +54,8 @@ public sealed class FunctionDefinitionNode : ICodeBlockOwner, IFunctionDefinitio
     public ResourceUri ResourceUri { get; set; }
     public int IndexMethodOverloadDefinition { get; set; } = -1;
 
-    public int ParentIndexKey { get; set; } = -1;
-    public int SelfIndexKey { get; set; } = -1;
+    public int ParentScopeOffset { get; set; } = -1;
+    public int SelfScopeOffset { get; set; } = -1;
 
     public bool IsFabricated { get; init; }
     public SyntaxKind SyntaxKind => SyntaxKind.FunctionDefinitionNode;
