@@ -1399,7 +1399,16 @@ public ref struct CSharpParserModel
         
         if (variableDeclarationNode is null)
         {
-            var scope = Binder.ScopeList[declarationCompilationUnit.ScopeIndex + declarationScopeOffset];
+            Scope scope = default;
+
+            try
+            {
+                scope = Binder.ScopeList[declarationCompilationUnit.ScopeIndex + declarationScopeOffset];
+            }
+            catch (Exception e)
+            {
+
+            }
             
             if (!isRecursive && scope.OwnerSyntaxKind == SyntaxKind.TypeDefinitionNode)
             {
