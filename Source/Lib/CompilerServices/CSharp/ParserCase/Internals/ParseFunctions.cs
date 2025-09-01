@@ -141,7 +141,7 @@ public class ParseFunctions
                             {
                                 var x = parserModel.Binder.CodeBlockOwnerList[indexPreviousNode];
                                 
-                                if (x.ParentIndexKey == previousParent.SelfIndexKey &&
+                                if (x.ParentScopeOffset == previousParent.SelfIndexKey &&
                                     x.SyntaxKind == SyntaxKind.FunctionDefinitionNode &&
                                     binder.GetIdentifierText(x, parserModel.ResourceUri, previousCompilationUnit) == binder.GetIdentifierText(existingNode, parserModel.ResourceUri, compilation))
                                 {

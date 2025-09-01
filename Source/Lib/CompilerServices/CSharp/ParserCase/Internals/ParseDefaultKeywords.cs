@@ -986,7 +986,7 @@ public class ParseDefaultKeywords
                                 {
                                     var x = parserModel.Binder.CodeBlockOwnerList[i];
                                     
-                                    if (x.Unsafe_ParentIndexKey == previousParent.Unsafe_SelfIndexKey &&
+                                    if (x.ParentScopeOffset == previousParent.Unsafe_SelfIndexKey &&
                                         x.SyntaxKind == SyntaxKind.TypeDefinitionNode &&
                                         binder.GetIdentifierText(x, parserModel.ResourceUri, previousCompilationUnit) == binder.GetIdentifierText(typeDefinitionNode, parserModel.ResourceUri, compilation))
                                     {

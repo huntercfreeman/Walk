@@ -2100,10 +2100,10 @@ public sealed class CSharpCompilerService : IExtendedCompilerService
                             null);
                     }));
     
-                if (targetScope.ParentIndexKey == -1)
+                if (targetScope.ParentScopeOffset == -1)
                     targetScope = default;
                 else
-                    targetScope = __CSharpBinder.GetScopeByScopeIndexKey(compilationUnit, targetScope.ParentIndexKey);
+                    targetScope = __CSharpBinder.GetScopeByScopeIndexKey(compilationUnit, targetScope.ParentScopeOffset);
             }
         
             var allTypeDefinitions = __CSharpBinder.AllTypeDefinitions;

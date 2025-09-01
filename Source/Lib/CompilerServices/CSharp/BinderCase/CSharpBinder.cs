@@ -567,7 +567,7 @@ public class CSharpBinder
         {
             var scope = ScopeList[i];
             
-            if (scope.ParentIndexKey == scopeOffset && scope.SyntaxKind == SyntaxKind.TypeDefinitionNode)
+            if (scope.ParentScopeOffset == scopeOffset && scope.SyntaxKind == SyntaxKind.TypeDefinitionNode)
                 typeDefinitionNodeList.Add((TypeDefinitionNode)scope);
         }
         
@@ -624,7 +624,7 @@ public class CSharpBinder
         for (int i = compilationUnit.ScopeIndex; i < compilationUnit.ScopeIndex + compilationUnit.ScopeCount; i++)
         {
             var x = CodeBlockOwnerList[i];
-            if (x.ParentIndexKey == scopeIndexKey &&
+            if (x.ParentScopeOffset == scopeIndexKey &&
                 x.SyntaxKind == SyntaxKind.TypeDefinitionNode &&
                 GetIdentifierText(x, resourceUri, compilationUnit) == typeIdentifierText)
             {
@@ -649,7 +649,7 @@ public class CSharpBinder
         {
             var kvp = CodeBlockOwnerList[i];
             
-            if (kvp.ParentIndexKey == scopeIndexKey && kvp.SyntaxKind == SyntaxKind.FunctionDefinitionNode)
+            if (kvp.ParentScopeOffset == scopeIndexKey && kvp.SyntaxKind == SyntaxKind.FunctionDefinitionNode)
                 functionDefinitionNodeList.Add((FunctionDefinitionNode)kvp);
         }
         
@@ -705,7 +705,7 @@ public class CSharpBinder
         {
             var x = ScopeList[i];
             
-            if (x.ParentIndexKey == scopeIndexKey &&
+            if (x.ParentScopeOffset == scopeIndexKey &&
                 x.SyntaxKind == SyntaxKind.FunctionDefinitionNode &&
                 GetIdentifierText(x, resourceUri, compilationUnit) == functionIdentifierText)
             {
@@ -1691,7 +1691,7 @@ public class CSharpBinder
         {
             var x = CodeBlockOwnerList[i];
         
-            if (x.ParentIndexKey == typeDefinitionNode.SelfScopeOffset &&
+            if (x.ParentScopeOffset == typeDefinitionNode.SelfScopeOffset &&
                 (x.SyntaxKind == SyntaxKind.TypeDefinitionNode ||
                  x.SyntaxKind == SyntaxKind.FunctionDefinitionNode))
             {
@@ -1757,7 +1757,7 @@ public class CSharpBinder
                             {
                                 var x = CodeBlockOwnerList[i];
                                 
-                                if (x.ParentIndexKey == innerScopeIndexKey &&
+                                if (x.ParentScopeOffset == innerScopeIndexKey &&
                                     (x.SyntaxKind == SyntaxKind.TypeDefinitionNode ||
                                      x.SyntaxKind == SyntaxKind.FunctionDefinitionNode))
                                 {
@@ -1806,7 +1806,7 @@ public class CSharpBinder
         {
             var codeBlockOwner = CodeBlockOwnerList[i];
             
-            if (codeBlockOwner.ParentIndexKey == typeDefinitionNode.SelfIndexKey &&
+            if (codeBlockOwner.ParentScopeOffset == typeDefinitionNode.SelfIndexKey &&
                 (codeBlockOwner.SyntaxKind == SyntaxKind.TypeDefinitionNode ||
                  codeBlockOwner.SyntaxKind == SyntaxKind.FunctionDefinitionNode))
             {
@@ -1818,7 +1818,7 @@ public class CSharpBinder
         {
             var node = NodeList[i];
             
-            if (node.ParentIndexKey == typeDefinitionNode.SelfIndexKey &&
+            if (node.ParentScopeOffset == typeDefinitionNode.SelfIndexKey &&
                 node.SyntaxKind == SyntaxKind.VariableDeclarationNode)
             {
                 _getMemberList.Add(node);
@@ -1883,7 +1883,7 @@ public class CSharpBinder
                                     {
                                         var codeBlockOwner = CodeBlockOwnerList[i];
                                     
-                                        if (codeBlockOwner.ParentIndexKey == innerScopeIndexKey &&
+                                        if (codeBlockOwner.ParentScopeOffset == innerScopeIndexKey &&
                                             (codeBlockOwner.SyntaxKind == SyntaxKind.TypeDefinitionNode ||
                                              codeBlockOwner.SyntaxKind == SyntaxKind.FunctionDefinitionNode))
                                         {
@@ -1895,7 +1895,7 @@ public class CSharpBinder
                                     {
                                         var node = NodeList[i];
                                         
-                                        if (node.ParentIndexKey == innerScopeIndexKey &&
+                                        if (node.ParentScopeOffset == innerScopeIndexKey &&
                                             node.SyntaxKind == SyntaxKind.VariableDeclarationNode)
                                         {
                                             _getMemberList.Add(node);
@@ -1945,7 +1945,7 @@ public class CSharpBinder
         {
             var x = CodeBlockOwnerList[i];
             
-            if (x.ParentIndexKey == namespaceStatementNode.SelfIndexKey && x.SyntaxKind == SyntaxKind.TypeDefinitionNode)
+            if (x.ParentScopeOffset == namespaceStatementNode.SelfIndexKey && x.SyntaxKind == SyntaxKind.TypeDefinitionNode)
                 typeDefinitionNodeList.Add((TypeDefinitionNode)x);
         }
 
@@ -1988,7 +1988,7 @@ public class CSharpBinder
         {
             var codeBlockOwner = CodeBlockOwnerList[i];
         
-            if (codeBlockOwner.ParentIndexKey == namespaceStatementNode.SelfScopeOffset && codeBlockOwner.SyntaxKind == SyntaxKind.TypeDefinitionNode)
+            if (codeBlockOwner.ParentScopeOffset == namespaceStatementNode.SelfScopeOffset && codeBlockOwner.SyntaxKind == SyntaxKind.TypeDefinitionNode)
                 _getTopLevelTypeDefinitionNodes.Add((TypeDefinitionNode)codeBlockOwner);
         }
         
