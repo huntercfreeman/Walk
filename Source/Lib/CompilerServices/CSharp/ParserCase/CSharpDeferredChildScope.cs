@@ -7,20 +7,20 @@ public struct CSharpDeferredChildScope
     public CSharpDeferredChildScope(
         int openTokenIndex,
         int closeTokenIndex,
-        ICodeBlockOwner codeBlockOwner)
+        int indexCodeBlockValue)
     {
         OpenTokenIndex = openTokenIndex;
         CloseTokenIndex = closeTokenIndex;
-        CodeBlockOwner = codeBlockOwner;
+        IndexCodeBlockValue = indexCodeBlockValue;
     }
     
     public int OpenTokenIndex { get; }
     public int CloseTokenIndex { get; }
-    public ICodeBlockOwner CodeBlockOwner { get; }
+    public int IndexCodeBlockValue { get; }
     
     public readonly void PrepareMainParserLoop(int tokenIndexToRestore, ref CSharpParserModel parserModel)
     {
-        parserModel.CurrentCodeBlockOwner = CodeBlockOwner;
+        parserModel.CurrentCodeBlockValue = parserModel.Binder.CodeBlockValueList[IndexCodeBlockValue];
         
         parserModel.CurrentCodeBlockOwner.PermitCodeBlockParsing = true;
         

@@ -6,6 +6,7 @@ using Walk.TextEditor.RazorLib.TextEditors.Models.Internals;
 using Walk.TextEditor.RazorLib.Exceptions;
 using Walk.TextEditor.RazorLib.Lexers.Models;
 using Walk.TextEditor.RazorLib.Decorations.Models;
+using Walk.TextEditor.RazorLib.CompilerServices;
 using Walk.Extensions.CompilerServices.Syntax.Nodes.Interfaces;
 
 namespace Walk.Extensions.CompilerServices.Displays;
@@ -25,7 +26,7 @@ public partial class TextEditorCompilerServiceHeaderDisplay : ComponentBase, ITe
     private int _lineIndexPrevious = -1;
     private int _columnIndexPrevious = -1;
     
-    private ICodeBlockOwner? _codeBlockOwner;
+    private ICodeBlockOwner _codeBlockOwner;
     private bool _shouldRender = false;
     
     private bool _showDefaultToolbar = false;
@@ -130,40 +131,40 @@ public partial class TextEditorCompilerServiceHeaderDisplay : ComponentBase, ITe
             if (modelModifier.PersistentState.CompilerService is not IExtendedCompilerService extendedCompilerService)
                 return;
     
-            var targetScope = extendedCompilerService.GetScopeByPositionIndex(
+            var codeBlockTuple = extendedCompilerService.GetCodeBlockTupleByPositionIndex(
                 resourceUri,
                 modelModifier.GetPositionIndex(viewModelModifier));
             
-            if (targetScope is null)
+            if (codeBlockTuple.CodeBlockOwner is null)
                 return;
     
             TextEditorTextSpan textSpanStart;
             
-            if (targetScope.CodeBlock_StartInclusiveIndex == -1)
+            if (codeBlockTuple.CodeBlockValue.CodeBlock_StartInclusiveIndex == -1)
             {
                 textSpanStart = new TextEditorTextSpan(
-                    targetScope.Scope_StartInclusiveIndex,
-                    targetScope.Scope_StartInclusiveIndex + 1,
+                    codeBlockTuple.CodeBlockValue.Scope_StartInclusiveIndex,
+                    codeBlockTuple.CodeBlockValue.Scope_StartInclusiveIndex + 1,
                     (byte)TextEditorDevToolsDecorationKind.Scope);
             }
             else
             {
                 textSpanStart = new TextEditorTextSpan(
-                    targetScope.CodeBlock_StartInclusiveIndex,
-                    targetScope.CodeBlock_StartInclusiveIndex + 1,
+                    codeBlockTuple.CodeBlockValue.CodeBlock_StartInclusiveIndex,
+                    codeBlockTuple.CodeBlockValue.CodeBlock_StartInclusiveIndex + 1,
                     (byte)TextEditorDevToolsDecorationKind.Scope);
             }
 
             int useStartInclusiveIndex;
-            if (targetScope.Scope_EndExclusiveIndex == -1)
+            if (codeBlockTuple.CodeBlockValue.Scope_EndExclusiveIndex == -1)
                 useStartInclusiveIndex = presentationModel.PendingCalculation.ContentAtRequest.Length - 1;
             else
-                useStartInclusiveIndex = targetScope.Scope_EndExclusiveIndex - 1;
+                useStartInclusiveIndex = codeBlockTuple.CodeBlockValue.Scope_EndExclusiveIndex - 1;
 
             if (useStartInclusiveIndex < 0)
                 useStartInclusiveIndex = 0;
 
-            var useEndExclusiveIndex = targetScope.Scope_EndExclusiveIndex;
+            var useEndExclusiveIndex = codeBlockTuple.CodeBlockValue.Scope_EndExclusiveIndex;
             if (useEndExclusiveIndex == -1)
                 useEndExclusiveIndex = presentationModel.PendingCalculation.ContentAtRequest.Length;
                 
@@ -187,10 +188,10 @@ public partial class TextEditorCompilerServiceHeaderDisplay : ComponentBase, ITe
                 var lowerLine = modelModifier.GetLineInformation(lowerLineIndexInclusive);
                 var upperLine = modelModifier.GetLineInformation(upperLineIndexInclusive);
             }
-                
-            if (_codeBlockOwner != targetScope)
+            
+            if (_codeBlockOwner != codeBlockTuple.CodeBlockOwner)
             {
-                _codeBlockOwner = targetScope;
+                _codeBlockOwner = codeBlockTuple.CodeBlockOwner;
                 _shouldRender = true;
             }
             

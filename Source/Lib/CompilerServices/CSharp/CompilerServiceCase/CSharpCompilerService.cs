@@ -1950,7 +1950,7 @@ public sealed class CSharpCompilerService : IExtendedCompilerService
         return null;
     }
 
-    public ICodeBlockOwner? GetScopeByPositionIndex(ResourceUri resourceUri, int positionIndex)
+    public (CodeBlockValue CodeBlockValue, ICodeBlockOwner? CodeBlockOwner) GetCodeBlockTupleByPositionIndex(ResourceUri resourceUri, int positionIndex)
     {
         if (__CSharpBinder.__CompilationUnitMap.TryGetValue(resourceUri, out var compilationUnit))
             return __CSharpBinder.GetScopeByPositionIndex(compilationUnit, positionIndex);

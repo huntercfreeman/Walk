@@ -70,7 +70,7 @@ public class CSharpBinder
     public List<Walk.TextEditor.RazorLib.CompilerServices.TextEditorDiagnostic> DiagnosticList { get; } = new();
     public List<Symbol> SymbolList { get; } = new();
     public List<ISyntaxNode> NodeList { get; } = new();
-    public List<CodeBlockOwnerValue> CodeBlockOwnerList { get; } = new();
+    public List<CodeBlockValue> CodeBlockValueList { get; } = new();
 
     /// <summary>
     /// This list is used within TextEditorEditContext and for the lexers to re-use by clearing it prior to starting the lexing.
