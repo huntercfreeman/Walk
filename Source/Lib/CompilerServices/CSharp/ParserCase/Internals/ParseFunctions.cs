@@ -113,7 +113,7 @@ public class ParseFunctions
                 
                 if (existingNode.ParentScopeOffset < previousCompilationUnit.ScopeCount)
                 {
-                    var previousParent = parserModel.Binder.CodeBlockOwnerList[previousCompilationUnit.IndexCodeBlockOwnerList + existingNode.ParentIndexKey];
+                    var previousParent = parserModel.Binder.CodeBlockOwnerList[previousCompilationUnit.ScopeIndex + existingNode.ParentScopeOffset];
                     var currentParent = parserModel.GetParent(newNode, parserModel.Compilation);
                     
                     if (currentParent.SyntaxKind == previousParent.SyntaxKind)
@@ -135,8 +135,8 @@ public class ParseFunctions
                             
                             ISyntaxNode? previousNode = null;
                             
-                            for (int indexPreviousNode = previousCompilationUnit.IndexCodeBlockOwnerList;
-                                 indexPreviousNode < previousCompilationUnit.IndexCodeBlockOwnerList + previousCompilationUnit.CountCodeBlockOwnerList;
+                            for (int indexPreviousNode = previousCompilationUnit.ScopeIndex;
+                                 indexPreviousNode < previousCompilationUnit.ScopeIndex + previousCompilationUnit.ScopeCount;
                                  indexPreviousNode++)
                             {
                                 var x = parserModel.Binder.CodeBlockOwnerList[indexPreviousNode];

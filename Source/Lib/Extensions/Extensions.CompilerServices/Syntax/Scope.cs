@@ -21,8 +21,9 @@ public struct Scope
         int scope_EndExclusiveIndex,
         int codeBlock_StartInclusiveIndex,
         int codeBlock_EndExclusiveIndex,
-        int offsetParentScope,
-        int offsetSelfScope,
+        int parentScopeOffset,
+        int selfScopeOffset,
+        int nodeOffset,
         bool permitCodeBlockParsing,
         bool isImplicitOpenCodeBlockTextSpan,
         TypeReference returnTypeReference)
@@ -32,8 +33,8 @@ public struct Scope
         Scope_EndExclusiveIndex = scope_EndExclusiveIndex;
         CodeBlock_StartInclusiveIndex = codeBlock_StartInclusiveIndex;
         CodeBlock_EndExclusiveIndex = codeBlock_EndExclusiveIndex;
-        OffsetParentScope = offsetParentScope;
-        OffsetSelfScope = offsetSelfScope;
+        ParentScopeOffset = parentScopeOffset;
+        SelfScopeOffset = selfScopeOffset;
         PermitCodeBlockParsing = permitCodeBlockParsing;
         IsImplicitOpenCodeBlockTextSpan = isImplicitOpenCodeBlockTextSpan;
         ReturnTypeReference = returnTypeReference;
@@ -44,9 +45,9 @@ public struct Scope
     public int Scope_EndExclusiveIndex { get; set; }
     public int CodeBlock_StartInclusiveIndex { get; set; }
     public int CodeBlock_EndExclusiveIndex { get; set; }
-    public int OffsetParentScope { get; set; }
-    public int OffsetSelfScope { get; set; }
-    public int OffsetNode { get; set; }
+    public int ParentScopeOffset { get; set; }
+    public int SelfScopeOffset { get; set; }
+    public int NodeOffset { get; set; }
     public bool PermitCodeBlockParsing { get; set; }
     public bool IsImplicitOpenCodeBlockTextSpan { get; set; }
     public TypeReference ReturnTypeReference { get; set; }

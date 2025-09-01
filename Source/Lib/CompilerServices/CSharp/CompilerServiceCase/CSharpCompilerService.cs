@@ -1683,7 +1683,7 @@ public sealed class CSharpCompilerService : IExtendedCompilerService
                         {
                             ISyntaxNode? otherTypeDefinitionNode = null;
                             
-                            for (int i = innerCompilationUnit.IndexCodeBlockOwnerList; i < innerCompilationUnit.IndexCodeBlockOwnerList + innerCompilationUnit.CountCodeBlockOwnerList; i++)
+                            for (int i = innerCompilationUnit.ScopeIndex; i < innerCompilationUnit.ScopeIndex + innerCompilationUnit.ScopeCount; i++)
                             {
                                 var x = __CSharpBinder.CodeBlockOwnerList[i];
                                 

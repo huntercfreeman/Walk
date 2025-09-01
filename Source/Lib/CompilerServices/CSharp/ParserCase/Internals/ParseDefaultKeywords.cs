@@ -958,9 +958,9 @@ public class ParseDefaultKeywords
             {
                 if (parserModel.Binder.__CompilationUnitMap.TryGetValue(parserModel.ResourceUri, out var previousCompilationUnit))
                 {
-                    if (typeDefinitionNode.ParentScopeOffset < previousCompilationUnit.CountCodeBlockOwnerList)
+                    if (typeDefinitionNode.ParentScopeOffset < previousCompilationUnit.ScopeCount)
                     {
-                        var previousParent = parserModel.Binder.CodeBlockOwnerList[previousCompilationUnit.IndexCodeBlockOwnerList + typeDefinitionNode.ParentScopeOffset];
+                        var previousParent = parserModel.Binder.CodeBlockOwnerList[previousCompilationUnit.ScopeIndex + typeDefinitionNode.ParentScopeOffset];
                         var currentParent = parserModel.GetParent(typeDefinitionNode, parserModel.Compilation);
                         
                         if (currentParent.SyntaxKind == previousParent.SyntaxKind)
@@ -982,7 +982,7 @@ public class ParseDefaultKeywords
                                 
                                 ISyntaxNode? previousNode = null;
                                 
-                                for (int i = previousCompilationUnit.IndexCodeBlockOwnerList; i < previousCompilationUnit.IndexCodeBlockOwnerList + previousCompilationUnit.CountCodeBlockOwnerList; i++)
+                                for (int i = previousCompilationUnit.ScopeIndex; i < previousCompilationUnit.ScopeIndex + previousCompilationUnit.ScopeCount; i++)
                                 {
                                     var x = parserModel.Binder.CodeBlockOwnerList[i];
                                     
@@ -1171,7 +1171,7 @@ public class ParseDefaultKeywords
                         
                         if (parserModel.Binder.__CompilationUnitMap.TryGetValue(partialTypeDefinitionEntry.ResourceUri, out var innerCompilationUnit))
                         {
-                            ((TypeDefinitionNode)parserModel.Binder.CodeBlockOwnerList[innerCompilationUnit.IndexCodeBlockOwnerList + partialTypeDefinitionEntry.ScopeIndexKey]).IndexPartialTypeDefinition = partialTypeDefinitionEntry.IndexStartGroup + 1;
+                            ((TypeDefinitionNode)parserModel.Binder.CodeBlockOwnerList[innerCompilationUnit.ScopeIndex + partialTypeDefinitionEntry.ScopeIndexKey]).IndexPartialTypeDefinition = partialTypeDefinitionEntry.IndexStartGroup + 1;
                         }
                     }
                     

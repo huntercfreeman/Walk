@@ -381,7 +381,7 @@ public partial class DotNetService
                         compilationUnit.IndexDiagnosticList -= countDiagnosticList;
                         compilationUnit.IndexSymbolList -= countSymbolList;
                         compilationUnit.IndexFunctionInvocationParameterMetadataList -= countFunctionInvocationParameterMetadataList;
-                        compilationUnit.IndexCodeBlockOwnerList -= countCodeBlockOwnerList;
+                        compilationUnit.ScopeIndex -= countCodeBlockOwnerList;
                         compilationUnit.IndexNodeList -= countNodeList;
 
                         cSharpCompilerService.__CSharpBinder.__CompilationUnitMap[compilationUnitKvp.Key] = compilationUnit;

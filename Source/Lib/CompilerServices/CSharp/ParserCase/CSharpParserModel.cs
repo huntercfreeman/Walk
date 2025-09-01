@@ -472,7 +472,7 @@ public ref struct CSharpParserModel
         if (codeBlockOwner.ParentScopeOffset == -1)
             return null;
             
-        return Binder.CodeBlockOwnerList[Compilation.IndexCodeBlockOwnerList + codeBlockOwner.ParentScopeOffset];
+        return Binder.CodeBlockOwnerList[Compilation.ScopeIndex + codeBlockOwner.ParentScopeOffset];
     }
     
     public int GetNextIndexKey()
@@ -813,7 +813,7 @@ public ref struct CSharpParserModel
         codeBlockOwner.ParentScopeOffset = CurrentScopeOffset;
         codeBlockOwner.Scope_StartInclusiveIndex = textSpan.StartInclusiveIndex;
 
-        codeBlockOwner.CurrentScopeOffset = Compilation.CountCodeBlockOwnerList;
+        codeBlockOwner.CurrentScopeOffset = Compilation.ScopeCount;
         Binder.ScopeList.Insert(
             Compilation.ScopeIndex + Compilation.ScopeCount,
             codeBlockOwner);
@@ -1074,7 +1074,7 @@ public ref struct CSharpParserModel
     {
         typeDefinitionNode = null;
         
-        for (int i = definitionCompilationUnit.IndexCodeBlockOwnerList; i < definitionCompilationUnit.IndexCodeBlockOwnerList + definitionCompilationUnit.CountCodeBlockOwnerList; i++)
+        for (int i = definitionCompilationUnit.ScopeIndex; i < definitionCompilationUnit.ScopeIndex + definitionCompilationUnit.ScopeCount; i++)
         {
             var x = Binder.CodeBlockOwnerList[i];
             if (x.Unsafe_ParentScopeOffset == definitionScopeOffset &&
@@ -1122,7 +1122,7 @@ public ref struct CSharpParserModel
     {
         List<FunctionDefinitionNode> functionDefinitionNodeList = new();
     
-        for (int i = compilationUnit.IndexCodeBlockOwnerList; i < compilationUnit.IndexCodeBlockOwnerList + compilationUnit.CountCodeBlockOwnerList; i++)
+        for (int i = compilationUnit.ScopeIndex; i < compilationUnit.ScopeIndex + compilationUnit.ScopeCount; i++)
         {
             var kvp = Binder.CodeBlockOwnerList[i];
             
@@ -1193,7 +1193,7 @@ public ref struct CSharpParserModel
     {
         functionDefinitionNode = null;
         
-        for (int i = definitionCompilationUnit.IndexCodeBlockOwnerList; i < definitionCompilationUnit.IndexCodeBlockOwnerList + definitionCompilationUnit.CountCodeBlockOwnerList; i++)
+        for (int i = definitionCompilationUnit.ScopeIndex; i < definitionCompilationUnit.ScopeIndex + definitionCompilationUnit.ScopeCount; i++)
         {
             var x = Binder.CodeBlockOwnerList[i];
             
@@ -1377,7 +1377,7 @@ public ref struct CSharpParserModel
         
         if (variableDeclarationNode is null)
         {
-            var codeBlockOwner = Binder.CodeBlockOwnerList[declarationCompilationUnit.IndexCodeBlockOwnerList + declarationScopeOffset];
+            var codeBlockOwner = Binder.CodeBlockOwnerList[declarationCompilationUnit.ScopeIndex + declarationScopeOffset];
             
             if (!isRecursive && codeBlockOwner.SyntaxKind == SyntaxKind.TypeDefinitionNode)
             {
