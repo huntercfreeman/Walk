@@ -12,7 +12,6 @@ public static class CSharpParser
     public static void Parse(Walk.TextEditor.RazorLib.Lexers.Models.ResourceUri resourceUri, ref CSharpCompilationUnit compilationUnit, CSharpBinder binder, ref CSharpLexerOutput lexerOutput)
     {
         compilationUnit.ScopeIndex = binder.ScopeList.Count;
-        compilationUnit.IndexNodeList = binder.NodeList.Count;
         compilationUnit.IndexNamespaceContributionList = binder.NamespaceContributionList.Count;
 
         binder.ScopeList.Insert(
@@ -31,9 +30,6 @@ public static class CSharpParser
         		returnTypeReference: Walk.CompilerServices.CSharp.Facts.CSharpFacts.Types.Void.ToTypeReference(),
         		ownerSyntaxKind: SyntaxKind.GlobalCodeBlockNode));
         ++compilationUnit.ScopeCount;
-        
-        binder.NodeList.Add(Walk.Extensions.CompilerServices.Syntax.Nodes.EmptyExpressionNode.Empty);
-        ++compilationUnit.CountNodeList;
         
         var parserModel = new CSharpParserModel(
             binder,

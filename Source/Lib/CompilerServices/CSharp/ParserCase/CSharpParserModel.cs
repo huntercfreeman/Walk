@@ -89,6 +89,9 @@ public ref struct CSharpParserModel
         Compilation.IndexSymbolList = Binder.SymbolList.Count;
         
         Compilation.IndexNodeList = Binder.NodeList.Count;
+
+        binder.NodeList.Add(EmptyExpressionNode.Empty);
+        ++compilationUnit.CountNodeList;
     }
     
     public TokenWalker TokenWalker { get; }
