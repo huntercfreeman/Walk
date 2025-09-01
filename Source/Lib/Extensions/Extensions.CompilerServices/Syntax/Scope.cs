@@ -51,4 +51,10 @@ public struct Scope
     public bool PermitCodeBlockParsing { get; set; }
     public bool IsImplicitOpenCodeBlockTextSpan { get; set; }
     public TypeReference ReturnTypeReference { get; set; }
+    public SyntaxKind SyntaxKind { get; set; }
+    
+    public bool IsDefault()
+    {
+        return SyntaxKind == SyntaxKind.NotApplicable;
+    }
 }
