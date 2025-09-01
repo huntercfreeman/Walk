@@ -521,7 +521,7 @@ public class CSharpBinder
     public (CodeBlockValue CodeBlockValue, ICodeBlockOwner? CodeBlockOwner) GetScopeByPositionIndex(CSharpCompilationUnit compilationUnit, int positionIndex)
     {
         var min = int.MaxValue;
-        var valueIndex = -1;
+        var selfIndexKey = -1;
         
         for (int i = compilationUnit.IndexCodeBlockValueList; i < compilationUnit.IndexCodeBlockValueList + compilationUnit.CountCodeBlockValueList; i++)
         {
@@ -540,13 +540,13 @@ public class CSharpBinder
             }
         }
     
-        if (valueIndex == -1)
+        if (selfIndexKey == -1)
         {
             return (default(CodeBlockValue), null);
         }
         else
         {
-            var codeBlockValue = compilationUnit.IndexCodeBlockValueList[valueIndex];
+            var codeBlockValue = CodeBlockValueList[compilationUnit.IndexCodeBlockValueList + selfIndexKey];
             return (codeBlockValue, NodeList[codeBlockValue.NodeIndex]);
         }
     }

@@ -136,7 +136,7 @@ public ref struct CSharpParserModel
     
     public ref CSharpCompilationUnit Compilation;
     
-    public int IndexCurrentCodeBlockValue { get; set; }
+    public int CurrentCodeBlockValueSelfIndexKey { get; set; }
     
     public NamespaceStatementNode CurrentNamespaceStatementNode { get; set; }
     public TypeReference MostRecentLeftHandSideAssignmentExpressionTypeClauseNode { get; set; } = CSharpFacts.Types.Void.ToTypeReference();

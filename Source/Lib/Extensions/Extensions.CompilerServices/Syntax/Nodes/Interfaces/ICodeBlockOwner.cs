@@ -13,7 +13,7 @@ public interface ICodeBlockOwner : ISyntaxNode
     ///
     /// This is unsafe, because you must be certain that all data you're interacting with is coming from the same 'CSharpCompilationUnit'.
     /// </summary>
-    public int SelfIndexKey { get; set; }
+    public int SelfScopeOffset { get; set; }
     
     public static bool ImplementsICodeBlockOwner(SyntaxKind syntaxKind)
     {

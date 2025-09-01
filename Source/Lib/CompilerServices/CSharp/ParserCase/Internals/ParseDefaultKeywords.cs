@@ -79,7 +79,10 @@ public class ParseDefaultKeywords
         
         // Not valid C# -- catch requires brace deliminated code block --, but here for parser recovery.
         if (parserModel.TokenWalker.Current.SyntaxKind != SyntaxKind.OpenBraceToken)
+        {
+            var currentCodeBlockValue = parserModel.Binder.CodeBlockValueList[parserModel.IndexCurrentCodeBlockValue];
             parserModel.CurrentCodeBlockOwner.IsImplicitOpenCodeBlockTextSpan = true;
+        }
     }
 
     public static void HandleCharTokenKeyword(ref CSharpParserModel parserModel)
