@@ -3383,7 +3383,7 @@ public static class ParseExpressions
                     if (parserModel.TryGetTypeDefinitionHierarchically(
                             parserModel.ResourceUri,
                             parserModel.Compilation,
-                            scope.SelfIndexKey,
+                            scope.SelfScopeOffset,
                             parserModel.ResourceUri,
                             typeReference.TypeIdentifierToken.TextSpan,
                             out var innerTypeDefinitionNode) &&

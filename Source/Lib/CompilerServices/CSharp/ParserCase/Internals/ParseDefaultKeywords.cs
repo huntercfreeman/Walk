@@ -1022,7 +1022,7 @@ public class ParseDefaultKeywords
                             seenResourceUri = true;
                         
                             var partialTypeDefinitionEntry = parserModel.Binder.PartialTypeDefinitionList[positionExclusive];
-                            partialTypeDefinitionEntry.ScopeIndexKey = -1;
+                            partialTypeDefinitionEntry.ScopeOffset = -1;
                             parserModel.Binder.PartialTypeDefinitionList[positionExclusive] = partialTypeDefinitionEntry;
                             
                             positionExclusive++;
@@ -1119,10 +1119,10 @@ public class ParseDefaultKeywords
                 {
                     if (parserModel.Binder.PartialTypeDefinitionList[positionExclusive].ResourceUri == parserModel.ResourceUri)
                     {
-                        if (parserModel.Binder.PartialTypeDefinitionList[positionExclusive].ScopeIndexKey == -1)
+                        if (parserModel.Binder.PartialTypeDefinitionList[positionExclusive].ScopeOffset == -1)
                         {
                             var partialTypeDefinitionEntry = parserModel.Binder.PartialTypeDefinitionList[positionExclusive];
-                            partialTypeDefinitionEntry.ScopeIndexKey = typeDefinitionNode.SelfScopeOffset;
+                            partialTypeDefinitionEntry.ScopeOffset = typeDefinitionNode.SelfScopeOffset;
                             parserModel.Binder.PartialTypeDefinitionList[positionExclusive] = partialTypeDefinitionEntry;
                             wroteToExistingSlot = true;
                             break;
@@ -1171,7 +1171,7 @@ public class ParseDefaultKeywords
                         
                         if (parserModel.Binder.__CompilationUnitMap.TryGetValue(partialTypeDefinitionEntry.ResourceUri, out var innerCompilationUnit))
                         {
-                            ((TypeDefinitionNode)parserModel.Binder.CodeBlockOwnerList[innerCompilationUnit.ScopeIndex + partialTypeDefinitionEntry.ScopeIndexKey]).IndexPartialTypeDefinition = partialTypeDefinitionEntry.IndexStartGroup + 1;
+                            ((TypeDefinitionNode)parserModel.Binder.ScopeList[innerCompilationUnit.ScopeIndex + partialTypeDefinitionEntry.ScopeOffset]).IndexPartialTypeDefinition = partialTypeDefinitionEntry.IndexStartGroup + 1;
                         }
                     }
                     

@@ -160,7 +160,7 @@ public class ParseFunctions
                                     existingWasFound = true;
                                     
                                     var entry = parserModel.Binder.MethodOverloadDefinitionList[existingNode.IndexMethodOverloadDefinition];
-                                    entry.ScopeIndexKey = existingNode.SelfIndexKey;
+                                    entry.ScopeIndexKey = existingNode.SelfScopeOffset;
                                     parserModel.Binder.MethodOverloadDefinitionList[existingNode.IndexMethodOverloadDefinition] = entry;
                                 }
                             }
@@ -175,7 +175,7 @@ public class ParseFunctions
                 parserModel.Binder.MethodOverloadDefinitionList.Add(new MethodOverloadDefinitionEntry(
                     parserModel.ResourceUri,
                     parserModel.Binder.MethodOverloadDefinitionList.Count,
-                    existingNode.SelfIndexKey));
+                    existingNode.SelfScopeOffset));
             }
         }
         
@@ -191,7 +191,7 @@ public class ParseFunctions
                 parserModel.Binder.MethodOverloadDefinitionList[i] = new MethodOverloadDefinitionEntry(
                     parserModel.ResourceUri,
                     existingNode.IndexMethodOverloadDefinition,
-                    newNode.SelfIndexKey);
+                    newNode.SelfScopeOffset);
             }
         }
         
@@ -202,7 +202,7 @@ public class ParseFunctions
                 new MethodOverloadDefinitionEntry(
                     parserModel.ResourceUri,
                     existingNode.IndexMethodOverloadDefinition,
-                    newNode.SelfIndexKey));
+                    newNode.SelfScopeOffset));
         }
     }
 
