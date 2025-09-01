@@ -80,8 +80,9 @@ public class ParseDefaultKeywords
         // Not valid C# -- catch requires brace deliminated code block --, but here for parser recovery.
         if (parserModel.TokenWalker.Current.SyntaxKind != SyntaxKind.OpenBraceToken)
         {
-            var currentCodeBlockValue = parserModel.Binder.CodeBlockValueList[parserModel.IndexCurrentCodeBlockValue];
-            parserModel.CurrentCodeBlockOwner.IsImplicitOpenCodeBlockTextSpan = true;
+            var currentScope = parserModel.Binder.ScopeList[parserModel.Compilation.ScopeIndex + parserModel.CurrentScopeOffset];
+            currentScope.IsImplicitOpenCodeBlockTextSpan = true;
+            parserModel.Binder.ScopeList[parserModel.Compilation.ScopeIndex + parserModel.CurrentScopeOffset] = currentScope;
         }
     }
 
@@ -961,9 +962,9 @@ public class ParseDefaultKeywords
             {
                 if (parserModel.Binder.__CompilationUnitMap.TryGetValue(parserModel.ResourceUri, out var previousCompilationUnit))
                 {
-                    if (typeDefinitionNode.ParentIndexKey < previousCompilationUnit.CountCodeBlockOwnerList)
+                    if (typeDefinitionNode.ParentScopeOffset < previousCompilationUnit.CountCodeBlockOwnerList)
                     {
-                        var previousParent = parserModel.Binder.CodeBlockOwnerList[previousCompilationUnit.IndexCodeBlockOwnerList + typeDefinitionNode.ParentIndexKey];
+                        var previousParent = parserModel.Binder.CodeBlockOwnerList[previousCompilationUnit.IndexCodeBlockOwnerList + typeDefinitionNode.ParentScopeOffset];
                         var currentParent = parserModel.GetParent(typeDefinitionNode, parserModel.Compilation);
                         
                         if (currentParent.SyntaxKind == previousParent.SyntaxKind)
@@ -1125,7 +1126,7 @@ public class ParseDefaultKeywords
                         if (parserModel.Binder.PartialTypeDefinitionList[positionExclusive].ScopeIndexKey == -1)
                         {
                             var partialTypeDefinitionEntry = parserModel.Binder.PartialTypeDefinitionList[positionExclusive];
-                            partialTypeDefinitionEntry.ScopeIndexKey = typeDefinitionNode.SelfIndexKey;
+                            partialTypeDefinitionEntry.ScopeIndexKey = typeDefinitionNode.SelfScopeOffset;
                             parserModel.Binder.PartialTypeDefinitionList[positionExclusive] = partialTypeDefinitionEntry;
                             wroteToExistingSlot = true;
                             break;
@@ -1158,7 +1159,7 @@ public class ParseDefaultKeywords
                 new PartialTypeDefinitionEntry(
                     typeDefinitionNode.ResourceUri,
                     typeDefinitionNode.IndexPartialTypeDefinition,
-                    typeDefinitionNode.SelfIndexKey));
+                    typeDefinitionNode.SelfScopeOffset));
         
             int positionExclusive = indexForInsertion + 1;
             int lastSeenIndexStartGroup = typeDefinitionNode.IndexPartialTypeDefinition;

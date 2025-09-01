@@ -198,7 +198,7 @@ public ref struct CSharpParserModel
         
         binaryExpressionNode._rightExpressionResultTypeReference = default;
         binaryExpressionNode.RightExpressionNodeWasSet = false;
-        binaryExpressionNode.ParentIndexKey = 0;
+        binaryExpressionNode.ParentScopeOffset = 0;
     
         Binder.Pool_BinaryExpressionNode_Queue.Enqueue(binaryExpressionNode);
     }
@@ -469,10 +469,10 @@ public ref struct CSharpParserModel
         ICodeBlockOwner codeBlockOwner,
         Walk.CompilerServices.CSharp.CompilerServiceCase.CSharpCompilationUnit cSharpCompilationUnit)
     {
-        if (codeBlockOwner.ParentIndexKey == -1)
+        if (codeBlockOwner.ParentScopeOffset == -1)
             return null;
             
-        return Binder.CodeBlockOwnerList[Compilation.IndexCodeBlockOwnerList + codeBlockOwner.ParentIndexKey];
+        return Binder.CodeBlockOwnerList[Compilation.IndexCodeBlockOwnerList + codeBlockOwner.ParentScopeOffset];
     }
     
     public int GetNextIndexKey()
@@ -810,7 +810,7 @@ public ref struct CSharpParserModel
     /// </summary>
     public void NewScopeAndBuilderFromOwner(ICodeBlockOwner codeBlockOwner, TextEditorTextSpan textSpan)
     {
-        codeBlockOwner.Unsafe_ParentIndexKey = CurrentCodeBlockOwner.Unsafe_SelfIndexKey;
+        codeBlockOwner.ParentScopeOffset = CurrentCodeBlockOwner.Unsafe_SelfIndexKey;
         codeBlockOwner.Scope_StartInclusiveIndex = textSpan.StartInclusiveIndex;
 
         codeBlockOwner.Unsafe_SelfIndexKey = Compilation.CountCodeBlockOwnerList;
@@ -869,7 +869,7 @@ public ref struct CSharpParserModel
         {
             for (int i = Compilation.NodeList.Count - 1; i >= 0; i--)
             {
-                if (Compilation.NodeList[i].Unsafe_ParentIndexKey == CurrentCodeBlockOwner.Unsafe_SelfIndexKey)
+                if (Compilation.NodeList[i].ParentScopeOffset == CurrentCodeBlockOwner.Unsafe_SelfIndexKey)
                     Compilation.NodeList.RemoveAt(i);
             }
         }*/
@@ -1052,11 +1052,11 @@ public ref struct CSharpParserModel
                 return true;
             }
 
-            if (localScope.ParentIndexKey == -1)
+            if (localScope.ParentScopeOffset == -1)
                 localScope = default;
             else
             {
-                localScope = Binder.GetScopeByScopeIndexKey(definitionCompilationUnit, localScope.ParentIndexKey);
+                localScope = Binder.GetScopeByScopeIndexKey(definitionCompilationUnit, localScope.ParentScopeOffset);
             }
         }
 
@@ -1077,7 +1077,7 @@ public ref struct CSharpParserModel
         for (int i = definitionCompilationUnit.IndexCodeBlockOwnerList; i < definitionCompilationUnit.IndexCodeBlockOwnerList + definitionCompilationUnit.CountCodeBlockOwnerList; i++)
         {
             var x = Binder.CodeBlockOwnerList[i];
-            if (x.Unsafe_ParentIndexKey == definitionScopeIndexKey &&
+            if (x.Unsafe_ParentScopeOffset == definitionScopeIndexKey &&
                 x.SyntaxKind == SyntaxKind.TypeDefinitionNode)
             {
                 if (Binder.CSharpCompilerService.SafeCompareTextSpans(
@@ -1126,7 +1126,7 @@ public ref struct CSharpParserModel
         {
             var kvp = Binder.CodeBlockOwnerList[i];
             
-            if (kvp.Unsafe_ParentIndexKey == scopeIndexKey && kvp.SyntaxKind == SyntaxKind.FunctionDefinitionNode)
+            if (kvp.Unsafe_ParentScopeOffset == scopeIndexKey && kvp.SyntaxKind == SyntaxKind.FunctionDefinitionNode)
                 functionDefinitionNodeList.Add((FunctionDefinitionNode)kvp);
         }
         
@@ -1173,10 +1173,10 @@ public ref struct CSharpParserModel
                 return true;
             }
 
-            if (localScope.ParentIndexKey == -1)
+            if (localScope.ParentScopeOffset == -1)
                 localScope = default;
             else
-                localScope = Binder.GetScopeByScopeIndexKey(definitionCompilationUnit, localScope.ParentIndexKey);
+                localScope = Binder.GetScopeByScopeIndexKey(definitionCompilationUnit, localScope.ParentScopeOffset);
         }
 
         functionDefinitionNode = null;
@@ -1197,7 +1197,7 @@ public ref struct CSharpParserModel
         {
             var x = Binder.CodeBlockOwnerList[i];
             
-            if (x.Unsafe_ParentIndexKey == definitionScopeIndexKey &&
+            if (x.ParentScopeOffset == definitionScopeIndexKey &&
                 x.SyntaxKind == SyntaxKind.FunctionDefinitionNode)
             {
                 if (Binder.CSharpCompilerService.SafeCompareTextSpans(referenceResourceUri.Value, referenceTextSpan, definitionResourceUri.Value, GetIdentifierTextSpan(x)))
@@ -1224,7 +1224,7 @@ public ref struct CSharpParserModel
         {
             var kvp = Binder.NodeList[i];
             
-            if (kvp.ParentIndexKey == scopeIndexKey && kvp.SyntaxKind == SyntaxKind.VariableDeclarationNode)
+            if (kvp.ParentScopeOffset == scopeIndexKey && kvp.SyntaxKind == SyntaxKind.VariableDeclarationNode)
                 variableDeclarationNodeList.Add((VariableDeclarationNode)kvp);
         }
         
@@ -1271,10 +1271,10 @@ public ref struct CSharpParserModel
                 return true;
             }
 
-            if (localScope.ParentIndexKey == -1)
+            if (localScope.ParentScopeOffset == -1)
                 localScope = default;
             else
-                localScope = Binder.GetScopeByScopeIndexKey(declarationCompilationUnit, localScope.ParentIndexKey);
+                localScope = Binder.GetScopeByScopeIndexKey(declarationCompilationUnit, localScope.ParentScopeOffset);
         }
         
         variableDeclarationStatementNode = null;
@@ -1363,7 +1363,7 @@ public ref struct CSharpParserModel
         {
             var node = Binder.NodeList[i];
             
-            if (node.ParentIndexKey == declarationScopeIndexKey &&
+            if (node.ParentScopeOffset == declarationScopeIndexKey &&
                 node.SyntaxKind == SyntaxKind.VariableDeclarationNode)
             {
                 if (Binder.CSharpCompilerService.SafeCompareTextSpans(
@@ -1474,7 +1474,7 @@ public ref struct CSharpParserModel
         for (int i = Compilation.IndexNodeList; i < Compilation.IndexNodeList + Compilation.CountNodeList; i++)
         {
             var x = Binder.NodeList[i];
-            if (x.ParentIndexKey == scopeIndexKey &&
+            if (x.ParentScopeOffset == scopeIndexKey &&
                 x.SyntaxKind == SyntaxKind.VariableDeclarationNode)
             {
                 if (Binder.CSharpCompilerService.SafeCompareTextSpans(
@@ -1488,7 +1488,7 @@ public ref struct CSharpParserModel
         
         if (matchNode is null)
         {
-            variableDeclarationNode.ParentIndexKey = scopeIndexKey;
+            variableDeclarationNode.ParentScopeOffset = scopeIndexKey;
             
             Binder.NodeList.Insert(
                 Compilation.IndexNodeList + Compilation.CountNodeList,
@@ -1515,7 +1515,7 @@ public ref struct CSharpParserModel
         {
             var x = Binder.NodeList[index];
             
-            if (x.ParentIndexKey == scopeIndexKey &&
+            if (x.ParentScopeOffset == scopeIndexKey &&
                 x.SyntaxKind == SyntaxKind.VariableDeclarationNode)
             {
                 if (Binder.CSharpCompilerService.SafeCompareTextSpans(
@@ -1529,7 +1529,7 @@ public ref struct CSharpParserModel
         
         if (index != -1)
         {
-            variableDeclarationNode.ParentIndexKey = scopeIndexKey;
+            variableDeclarationNode.ParentScopeOffset = scopeIndexKey;
             Binder.NodeList[index] = variableDeclarationNode;
         }
     }
@@ -1559,10 +1559,10 @@ public ref struct CSharpParserModel
                 return true;
             }
 
-            if (localScope.ParentIndexKey == -1)
+            if (localScope.ParentScopeOffset == -1)
                 localScope = default;
             else
-                localScope = Binder.GetScopeByScopeIndexKey(Compilation, localScope.ParentIndexKey);
+                localScope = Binder.GetScopeByScopeIndexKey(Compilation, localScope.ParentScopeOffset);
         }
         
         labelDeclarationNode = null;
@@ -1582,7 +1582,7 @@ public ref struct CSharpParserModel
         {
             var x = Binder.NodeList[i];
             
-            if (x.ParentIndexKey == declarationScopeIndexKey &&
+            if (x.ParentScopeOffset == declarationScopeIndexKey &&
                 x.SyntaxKind == SyntaxKind.LabelDeclarationNode)
             {
                 if (Binder.CSharpCompilerService.SafeCompareTextSpans(referenceResourceUri.Value, referenceTextSpan, declarationResourceUri.Value, GetIdentifierTextSpan(x)))
@@ -1609,7 +1609,7 @@ public ref struct CSharpParserModel
         {
             var x = Binder.NodeList[i];
             
-            if (x.ParentIndexKey == scopeIndexKey &&
+            if (x.ParentScopeOffset == scopeIndexKey &&
                 x.SyntaxKind == SyntaxKind.LabelDeclarationNode)
             {
                 if (Binder.CSharpCompilerService.SafeCompareTextSpans(ResourceUri.Value, labelIdentifierTextSpan, ResourceUri.Value, GetIdentifierTextSpan(x)))
@@ -1622,7 +1622,7 @@ public ref struct CSharpParserModel
         
         if (matchNode is null)
         {
-            labelDeclarationNode.ParentIndexKey = scopeIndexKey;
+            labelDeclarationNode.ParentScopeOffset = scopeIndexKey;
             
             Binder.NodeList.Insert(
                 Compilation.IndexNodeList + Compilation.CountNodeList,
@@ -1648,7 +1648,7 @@ public ref struct CSharpParserModel
         {
             var x = Binder.NodeList[index];
             
-            if (x.ParentIndexKey == scopeIndexKey &&
+            if (x.ParentScopeOffset == scopeIndexKey &&
                 x.SyntaxKind == SyntaxKind.LabelDeclarationNode)
             {
                 if (Binder.CSharpCompilerService.SafeCompareTextSpans(ResourceUri.Value, referenceTextSpan, ResourceUri.Value, GetIdentifierTextSpan(x)))
@@ -1661,7 +1661,7 @@ public ref struct CSharpParserModel
 
         if (index != -1)
         {
-            labelDeclarationNode.ParentIndexKey = scopeIndexKey;
+            labelDeclarationNode.ParentScopeOffset = scopeIndexKey;
             Binder.NodeList[index] = labelDeclarationNode;
         }
     }
