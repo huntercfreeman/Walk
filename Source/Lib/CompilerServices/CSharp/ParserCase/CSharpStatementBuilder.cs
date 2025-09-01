@@ -23,7 +23,7 @@ public class CSharpStatementBuilder
     /// All currently known cases of finishing a statement will do so by invoking FinishStatement(...),
     /// this method will perform this check internally.
     /// </summary>
-    public Stack<(int IndexCodeBlockValue, CSharpDeferredChildScope DeferredChildScope)> ParseLambdaStatementScopeStack { get; } = new();
+    public Stack<(int ScopeOffset, CSharpDeferredChildScope DeferredChildScope)> ParseLambdaStatementScopeStack { get; } = new();
     
     /// <summary>Invokes the other overload with index: ^1</summary>
     public bool TryPeek(out SyntaxToken syntax)
@@ -121,7 +121,7 @@ public class CSharpStatementBuilder
         {
             var tuple = ParseLambdaStatementScopeStack.Peek();
             
-            if (tuple.IndexCodeBlockValue == parserModel.CurrentScopeOffset)
+            if (tuple.ScopeOffset == parserModel.CurrentScopeOffset)
             {
                 tuple = ParseLambdaStatementScopeStack.Pop();
                 tuple.DeferredChildScope.PrepareMainParserLoop(finishTokenIndex, ref parserModel);

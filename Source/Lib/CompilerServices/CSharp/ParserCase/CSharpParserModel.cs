@@ -99,7 +99,7 @@ public ref struct CSharpParserModel
     /// <summary>
     /// Prior to closing a statement-codeblock, you must check whether ParseChildScopeStack has a child that needs to be parsed.
     /// </summary>
-    public Stack<(ICodeBlockOwner CodeBlockOwner, CSharpDeferredChildScope DeferredChildScope)> ParseChildScopeStack { get; }
+    public Stack<(int ScopeOffset, CSharpDeferredChildScope DeferredChildScope)> ParseChildScopeStack { get; }
     
     /// <summary>
     /// The C# IParserModel implementation will only "short circuit" if the 'SyntaxKind DelimiterSyntaxKind'

@@ -17,7 +17,19 @@ public static class CSharpParser
 
         binder.ScopeList.Insert(
             compilationUnit.ScopeIndex + compilationUnit.ScopeCount,
-            binder.GlobalCodeBlockNode);
+            new Scope(
+        		Walk.Extensions.CompilerServices.Syntax.Nodes.Enums.ScopeDirectionKind.Both,
+        		scope_StartInclusiveIndex: 0,
+        		scope_EndExclusiveIndex: -1,
+        		codeBlock_StartInclusiveIndex: 0,
+        		codeBlock_EndExclusiveIndex: -1,
+        		parentScopeOffset: -1,
+        		selfScopeOffset: 0,
+        		nodeOffset: -1,
+        		permitCodeBlockParsing: false,
+        		isImplicitOpenCodeBlockTextSpan: false,
+        		returnTypeReference: Walk.CompilerServices.CSharp.Facts.CSharpFacts.Types.Void.ToTypeReference(),
+        		ownerSyntaxKind: SyntaxKind.GlobalCodeBlockNode));
         ++compilationUnit.ScopeCount;
         
         var parserModel = new CSharpParserModel(
@@ -82,7 +94,7 @@ public static class CSharpParser
                     var closeBraceTokenIndex = parserModel.TokenWalker.Index;
                     
                     if (parserModel.ParseChildScopeStack.Count > 0 &&
-                        parserModel.ParseChildScopeStack.Peek().CodeBlockOwner == parserModel.CurrentCodeBlockOwner)
+                        parserModel.ParseChildScopeStack.Peek().ScopeOffset == parserModel.CurrentScopeOffset)
                     {
                         parserModel.TokenWalker.SetNullDeferredParsingTuple();
                     }
