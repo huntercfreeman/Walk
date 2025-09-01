@@ -1054,7 +1054,7 @@ public ref struct CSharpParserModel
     {
         var localScope = Binder.GetScopeByOffset(definitionCompilationUnit, definitionInitialScopeOffset);
 
-        while (localScope is not null)
+        while (!localScope.IsDefault())
         {
             if (TryGetTypeDefinitionNodeByScope(
                     definitionResourceUri,
@@ -1175,12 +1175,12 @@ public ref struct CSharpParserModel
     {
         var localScope = Binder.GetScopeByOffset(definitionCompilationUnit, definitionInitialScopeOffset);
 
-        while (localScope is not null)
+        while (!localScope.IsDefault())
         {
             if (TryGetFunctionDefinitionNodeByScope(
                     definitionResourceUri,
                     definitionCompilationUnit,
-                    localScope.SelfIndexKey,
+                    localScope.SelfScopeOffset,
                     referenceResourceUri,
                     referenceTextSpan,
                     out functionDefinitionNode))
@@ -1273,7 +1273,7 @@ public ref struct CSharpParserModel
     {
         var localScope = Binder.GetScopeByOffset(declarationCompilationUnit, declarationInitialScopeOffset);
 
-        while (localScope is not null)
+        while (!localScope.IsDefault())
         {
             if (TryGetVariableDeclarationNodeByScope(
                     declarationResourceUri,
@@ -1392,11 +1392,11 @@ public ref struct CSharpParserModel
         
         if (variableDeclarationNode is null)
         {
-            var codeBlockOwner = Binder.ScopeList[declarationCompilationUnit.ScopeIndex + declarationScopeOffset];
+            var scope = Binder.ScopeList[declarationCompilationUnit.ScopeIndex + declarationScopeOffset];
             
-            if (!isRecursive && codeBlockOwner.SyntaxKind == SyntaxKind.TypeDefinitionNode)
+            if (!isRecursive && scope.OwnerSyntaxKind == SyntaxKind.TypeDefinitionNode)
             {
-                var typeDefinitionNode = (TypeDefinitionNode)codeBlockOwner;
+                var typeDefinitionNode = (TypeDefinitionNode)scope;
                 if (typeDefinitionNode.IndexPartialTypeDefinition != -1)
                 {
                     if (TryGetVariableDeclarationByPartialType(
@@ -1440,7 +1440,7 @@ public ref struct CSharpParserModel
 
                     var typeDefinitionScopeIndexKey = Binder.GetScopeByPositionIndex(typeDefinitionCompilationUnit, typeDefinitionTextSpan.StartInclusiveIndex);
 
-                    if (typeDefinitionScopeIndexKey is not null)
+                    if (!typeDefinitionScopeIndexKey.IsDefault())
                     {
                         if (TryGetTypeDefinitionHierarchically(
                                 typeDefinitionResourceUri,
@@ -1561,12 +1561,12 @@ public ref struct CSharpParserModel
 
         var localScope = Binder.GetScopeByOffset(Compilation, initialScopeOffset);
 
-        while (localScope is not null)
+        while (!localScope.IsDefault())
         {
             if (TryGetLabelDeclarationNodeByScope(
                     declarationResourceUri,
                     declarationCompilationUnit,
-                    localScope.SelfIndexKey,
+                    localScope.SelfScopeOffset,
                     referenceResourceUri,
                     referenceTextSpan,
                     out labelDeclarationNode))
@@ -2015,6 +2015,13 @@ public ref struct CSharpParserModel
     {
         var scope = Binder.ScopeList[Compilation.ScopeIndex + CurrentScopeOffset];
         scope.Scope_EndExclusiveIndex = endExclusiveIndex;
+        Binder.ScopeList[Compilation.ScopeIndex + CurrentScopeOffset] = scope;
+    }
+    
+    public readonly void SetCurrentScope_CodeBlock_EndExclusiveIndex(int endExclusiveIndex)
+    {
+        var scope = Binder.ScopeList[Compilation.ScopeIndex + CurrentScopeOffset];
+        scope.CodeBlock_EndExclusiveIndex = endExclusiveIndex;
         Binder.ScopeList[Compilation.ScopeIndex + CurrentScopeOffset] = scope;
     }
 }

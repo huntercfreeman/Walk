@@ -602,7 +602,7 @@ public static class ParseTokens
             while (parserModel.CurrentCodeBlockOwner.SyntaxKind != SyntaxKind.GlobalCodeBlockNode &&
                    parserModel.CurrentCodeBlockOwner.IsImplicitOpenCodeBlockTextSpan)
             {
-                parserModel.CurrentCodeBlockOwner.CodeBlock_EndExclusiveIndex = statementDelimiterToken.TextSpan.EndExclusiveIndex;
+                parserModel.SetCurrentScope_CodeBlock_EndExclusiveIndex(statementDelimiterToken.TextSpan.EndExclusiveIndex);
                 parserModel.CloseScope(statementDelimiterToken.TextSpan);
             }
         }
@@ -625,7 +625,7 @@ public static class ParseTokens
                 return;
             }
 
-            parserModel.CurrentCodeBlockOwner.PermitCodeBlockParsing = false;
+            parserModel.SetCurrentScope_PermitCodeBlockParsing(false);
         }
         else
         {

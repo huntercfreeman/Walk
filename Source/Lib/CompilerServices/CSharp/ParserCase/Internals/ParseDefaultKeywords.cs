@@ -864,8 +864,8 @@ public class ParseDefaultKeywords
         {
             HandleUsingCodeBlockOwner(ref usingKeywordToken, ref parserModel);
         }
-        else if (parserModel.CurrentCodeBlockOwner.SyntaxKind == SyntaxKind.GlobalCodeBlockNode ||
-                 parserModel.CurrentCodeBlockOwner.SyntaxKind == SyntaxKind.NamespaceStatementNode)
+        else if (parserModel.Binder.ScopeList[parserModel.CurrentScopeOffset].OwnerSyntaxKind == SyntaxKind.GlobalCodeBlockNode ||
+                 parserModel.Binder.ScopeList[parserModel.CurrentScopeOffset].OwnerSyntaxKind == SyntaxKind.NamespaceStatementNode)
         {
             var namespaceIdentifierToken = ParseOthers.HandleNamespaceIdentifier(ref parserModel, isNamespaceStatement: false);
     
@@ -1076,7 +1076,7 @@ public class ParseDefaultKeywords
             if (parserModel.TryGetTypeDefinitionHierarchically(
                     parserModel.ResourceUri,
                     parserModel.Compilation,
-                    parserModel.CurrentCodeBlockOwner.Unsafe_SelfIndexKey,
+                    parserModel.CurrentScopeOffset,
                     parserModel.ResourceUri,
                     identifierToken.TextSpan,
                     out TypeDefinitionNode? previousTypeDefinitionNode))
@@ -1106,7 +1106,7 @@ public class ParseDefaultKeywords
         		ownerSyntaxKind: typeDefinitionNode.SyntaxKind),
     	    typeDefinitionNode);
         
-        parserModel.CurrentCodeBlockOwner.IsImplicitOpenCodeBlockTextSpan = false;
+        parserModel.SetCurrentScope_IsImplicitOpenCodeBlockTextSpan(false);
         
         if (typeDefinitionNode.HasPartialModifier)
         {
@@ -1116,7 +1116,7 @@ public class ParseDefaultKeywords
                 {
                     if (typeDefinitionNode.ParentScopeOffset < previousCompilationUnit.ScopeCount)
                     {
-                        var previousParent = parserModel.Binder.CodeBlockOwnerList[previousCompilationUnit.ScopeIndex + typeDefinitionNode.ParentScopeOffset];
+                        var previousParent = parserModel.Binder.ScopeList[previousCompilationUnit.ScopeIndex + typeDefinitionNode.ParentScopeOffset];
                         var currentParent = parserModel.GetParent(typeDefinitionNode, parserModel.Compilation);
                         
                         if (currentParent.SyntaxKind == previousParent.SyntaxKind)
@@ -1140,7 +1140,7 @@ public class ParseDefaultKeywords
                                 
                                 for (int i = previousCompilationUnit.ScopeIndex; i < previousCompilationUnit.ScopeIndex + previousCompilationUnit.ScopeCount; i++)
                                 {
-                                    var x = parserModel.Binder.CodeBlockOwnerList[i];
+                                    var x = parserModel.Binder.ScopeList[i];
                                     
                                     if (x.ParentScopeOffset == previousParent.Unsafe_SelfIndexKey &&
                                         x.SyntaxKind == SyntaxKind.TypeDefinitionNode &&
@@ -1363,10 +1363,6 @@ public class ParseDefaultKeywords
             parserModel.ResourceUri);
 
         parserModel.SetCurrentNamespaceStatementNode(namespaceStatementNode);
-        
-        parserModel.RegisterScopeAndOwner(
-            namespaceStatementNode,
-            parserModel.TokenWalker.Current.TextSpan);
         
         parserModel.RegisterScopeAndOwner(
         	new Scope(
