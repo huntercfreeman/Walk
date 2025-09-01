@@ -130,10 +130,18 @@ public class ParseFunctions
                     
                     if (currentParent.OwnerSyntaxKind == previousParent.OwnerSyntaxKind)
                     {
-                        var currentParentIdentifierText = parserModel.Binder.GetIdentifierText(currentParent, parserModel.ResourceUri, parserModel.Compilation);
+                        var currentParentIdentifierText = parserModel.Binder.GetIdentifierText(
+                            parserModel.Binder.NodeList[parserModel.Compilation.IndexNodeList + currentParent.NodeOffset],
+                            parserModel.ResourceUri,
+                            parserModel.Compilation);
+                            
+                        var previousParentIdentifierText = parserModel.Binder.GetIdentifierText(
+                            parserModel.Binder.NodeList[previousCompilationUnit.IndexNodeList + previousParent.NodeOffset],
+                            parserModel.ResourceUri,
+                            previousCompilationUnit);
                         
                         if (currentParentIdentifierText is not null &&
-                            currentParentIdentifierText == parserModel.Binder.GetIdentifierText(previousParent, parserModel.ResourceUri, previousCompilationUnit))
+                            currentParentIdentifierText == previousParentIdentifierText)
                         {
                             // All the existing entires will be "emptied"
                             // so don't both with checking whether the arguments are the same here.
@@ -155,9 +163,13 @@ public class ParseFunctions
                                 
                                 if (x.ParentScopeOffset == previousParent.SelfScopeOffset &&
                                     x.OwnerSyntaxKind == SyntaxKind.FunctionDefinitionNode &&
-                                    binder.GetIdentifierText(x, parserModel.ResourceUri, previousCompilationUnit) == binder.GetIdentifierText(existingNode, parserModel.ResourceUri, compilation))
+                                    binder.GetIdentifierText(
+                                            parserModel.Binder.NodeList[previousCompilationUnit.IndexNodeList + x.NodeOffset],
+                                            parserModel.ResourceUri,
+                                            previousCompilationUnit) ==
+                                        binder.GetIdentifierText(existingNode, parserModel.ResourceUri, compilation))
                                 {
-                                    previousNode = x;
+                                    previousNode = parserModel.Binder.NodeList[previousCompilationUnit.IndexNodeList + x.NodeOffset];
                                     break;
                                 }
                             }
