@@ -827,11 +827,15 @@ public ref struct CSharpParserModel
             case SyntaxKind.TypeDefinitionNode:
             case SyntaxKind.ConstructorDefinitionNode:
             case SyntaxKind.FunctionDefinitionNode:
+            case SyntaxKind.NamespaceStatementNode:
                 scope.NodeOffset = Compilation.CountNodeList;
                 Binder.NodeList.Insert(
                     Compilation.IndexNodeList + Compilation.CountNodeList,
                     codeBlockOwner);
                 ++Compilation.CountNodeList;
+                break;
+            default:
+                scope.NodeOffset = 0;
                 break;
         }
         

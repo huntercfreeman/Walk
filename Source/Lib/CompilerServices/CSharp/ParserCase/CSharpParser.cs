@@ -25,12 +25,15 @@ public static class CSharpParser
         		codeBlock_EndExclusiveIndex: -1,
         		parentScopeOffset: -1,
         		selfScopeOffset: 0,
-        		nodeOffset: -1,
+        		nodeOffset: 0,
         		permitCodeBlockParsing: false,
         		isImplicitOpenCodeBlockTextSpan: false,
         		returnTypeReference: Walk.CompilerServices.CSharp.Facts.CSharpFacts.Types.Void.ToTypeReference(),
         		ownerSyntaxKind: SyntaxKind.GlobalCodeBlockNode));
         ++compilationUnit.ScopeCount;
+        
+        binder.NodeList.Add(Walk.Extensions.CompilerServices.Syntax.Nodes.EmptyExpressionNode.Empty);
+        ++compilationUnit.CountNodeList;
         
         var parserModel = new CSharpParserModel(
             binder,
