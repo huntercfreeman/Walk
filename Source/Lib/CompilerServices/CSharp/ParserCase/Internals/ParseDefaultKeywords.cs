@@ -55,17 +55,17 @@ public class ParseDefaultKeywords
         parserModel.RegisterScopeAndOwner(
             new Scope(
                 ScopeDirectionKind.Down,
-                scope_StartInclusiveIndex: textSpan.StartInclusiveIndex,
+                scope_StartInclusiveIndex: parserModel.TokenWalker.Current.TextSpan.StartInclusiveIndex,
                 scope_EndExclusiveIndex: -1,
-                codeBlock_StartInclusiveIndex: textSpan.StartInclusiveIndex,
+                codeBlock_StartInclusiveIndex: parserModel.TokenWalker.Current.TextSpan.StartInclusiveIndex,
                 codeBlock_EndExclusiveIndex: -1,
                 parentScopeOffset: parserModel.CurrentScopeOffset,
                 selfScopeOffset: parserModel.Binder.ScopeList.Count,
                 nodeOffset: parserModel.Binder.NodeList.Count,
                 permitCodeBlockParsing: false,
                 isImplicitOpenCodeBlockTextSpan: false,
-                returnTypeReference: CSharpFacts.Types.Void.ToTypeReference(),
-                syntaxKind: catchNode.SyntaxKind),
+                returnTypeReference: Walk.CompilerServices.CSharp.Facts.CSharpFacts.Types.Void.ToTypeReference(),
+                ownerSyntaxKind: catchNode.SyntaxKind),
             catchNode);
         
         parserModel.ExpressionList.Add((SyntaxKind.CloseParenthesisToken, null));
@@ -144,8 +144,20 @@ public class ParseDefaultKeywords
             closeParenthesisToken: default);
         
         parserModel.RegisterScopeAndOwner(
-            doWhileStatementNode,
-            parserModel.TokenWalker.Current.TextSpan);
+        	new Scope(
+        		ScopeDirectionKind.Down,
+        		scope_StartInclusiveIndex: parserModel.TokenWalker.Current.TextSpan.StartInclusiveIndex,
+        		scope_EndExclusiveIndex: -1,
+        		codeBlock_StartInclusiveIndex: parserModel.TokenWalker.Current.TextSpan.StartInclusiveIndex,
+        		codeBlock_EndExclusiveIndex: -1,
+        		parentScopeOffset: parserModel.CurrentScopeOffset,
+        		selfScopeOffset: parserModel.Binder.ScopeList.Count,
+        		nodeOffset: parserModel.Binder.NodeList.Count,
+        		permitCodeBlockParsing: false,
+        		isImplicitOpenCodeBlockTextSpan: false,
+        		returnTypeReference: Walk.CompilerServices.CSharp.Facts.CSharpFacts.Types.Void.ToTypeReference(),
+        		ownerSyntaxKind: doWhileStatementNode.SyntaxKind),
+    	    doWhileStatementNode);
         
         if (parserModel.TokenWalker.Current.SyntaxKind != SyntaxKind.OpenBraceToken)
             parserModel.SetCurrentScope_IsImplicitOpenCodeBlockTextSpan_True();
@@ -167,10 +179,22 @@ public class ParseDefaultKeywords
         var elseTokenKeyword = parserModel.TokenWalker.Consume();
         
         var ifStatementNode = new IfStatementNode(elseTokenKeyword);
-        
+            
         parserModel.RegisterScopeAndOwner(
-            ifStatementNode,
-            parserModel.TokenWalker.Current.TextSpan);
+        	new Scope(
+        		ScopeDirectionKind.Down,
+        		scope_StartInclusiveIndex: parserModel.TokenWalker.Current.TextSpan.StartInclusiveIndex,
+        		scope_EndExclusiveIndex: -1,
+        		codeBlock_StartInclusiveIndex: parserModel.TokenWalker.Current.TextSpan.StartInclusiveIndex,
+        		codeBlock_EndExclusiveIndex: -1,
+        		parentScopeOffset: parserModel.CurrentScopeOffset,
+        		selfScopeOffset: parserModel.Binder.ScopeList.Count,
+        		nodeOffset: parserModel.Binder.NodeList.Count,
+        		permitCodeBlockParsing: false,
+        		isImplicitOpenCodeBlockTextSpan: false,
+        		returnTypeReference: Walk.CompilerServices.CSharp.Facts.CSharpFacts.Types.Void.ToTypeReference(),
+        		ownerSyntaxKind: ifStatementNode.SyntaxKind),
+    	    ifStatementNode);
         
         if (parserModel.TokenWalker.Current.SyntaxKind != SyntaxKind.OpenBraceToken)
             parserModel.SetCurrentScope_IsImplicitOpenCodeBlockTextSpan_True();
@@ -218,11 +242,23 @@ public class ParseDefaultKeywords
     
         // This was done with CSharpParserModel's SyntaxStack, but that property is now being removed. A different way to accomplish this needs to be done. (2025-02-06)
         // tryStatementNode.SetTryStatementFinallyNode(finallyNode);
-        
-        parserModel.RegisterScopeAndOwner(
-            finallyNode,
-            parserModel.TokenWalker.Current.TextSpan);
     
+        parserModel.RegisterScopeAndOwner(
+        	new Scope(
+        		ScopeDirectionKind.Down,
+        		scope_StartInclusiveIndex: parserModel.TokenWalker.Current.TextSpan.StartInclusiveIndex,
+        		scope_EndExclusiveIndex: -1,
+        		codeBlock_StartInclusiveIndex: parserModel.TokenWalker.Current.TextSpan.StartInclusiveIndex,
+        		codeBlock_EndExclusiveIndex: -1,
+        		parentScopeOffset: parserModel.CurrentScopeOffset,
+        		selfScopeOffset: parserModel.Binder.ScopeList.Count,
+        		nodeOffset: parserModel.Binder.NodeList.Count,
+        		permitCodeBlockParsing: false,
+        		isImplicitOpenCodeBlockTextSpan: false,
+        		returnTypeReference: Walk.CompilerServices.CSharp.Facts.CSharpFacts.Types.Void.ToTypeReference(),
+        		ownerSyntaxKind: finallyNode.SyntaxKind),
+    	    finallyNode);
+        
         if (parserModel.TokenWalker.Current.SyntaxKind != SyntaxKind.OpenBraceToken)
             parserModel.SetCurrentScope_IsImplicitOpenCodeBlockTextSpan_True();
     }
@@ -248,10 +284,22 @@ public class ParseDefaultKeywords
             initializationStatementDelimiterToken: default,
             conditionStatementDelimiterToken: default,
             closeParenthesisToken: default);
-            
+        
         parserModel.RegisterScopeAndOwner(
-            forStatementNode,
-            parserModel.TokenWalker.Current.TextSpan);
+        	new Scope(
+        		ScopeDirectionKind.Down,
+        		scope_StartInclusiveIndex: parserModel.TokenWalker.Current.TextSpan.StartInclusiveIndex,
+        		scope_EndExclusiveIndex: -1,
+        		codeBlock_StartInclusiveIndex: parserModel.TokenWalker.Current.TextSpan.StartInclusiveIndex,
+        		codeBlock_EndExclusiveIndex: -1,
+        		parentScopeOffset: parserModel.CurrentScopeOffset,
+        		selfScopeOffset: parserModel.Binder.ScopeList.Count,
+        		nodeOffset: parserModel.Binder.NodeList.Count,
+        		permitCodeBlockParsing: false,
+        		isImplicitOpenCodeBlockTextSpan: false,
+        		returnTypeReference: Walk.CompilerServices.CSharp.Facts.CSharpFacts.Types.Void.ToTypeReference(),
+        		ownerSyntaxKind: forStatementNode.SyntaxKind),
+    	    forStatementNode);
         
         parserModel.CurrentCodeBlockOwner.IsImplicitOpenCodeBlockTextSpan = false;
         
@@ -296,10 +344,22 @@ public class ParseDefaultKeywords
             openParenthesisToken,
             inKeywordToken: default,
             closeParenthesisToken: default);
-        
+            
         parserModel.RegisterScopeAndOwner(
-            foreachStatementNode,
-            parserModel.TokenWalker.Current.TextSpan);
+        	new Scope(
+        		ScopeDirectionKind.Down,
+        		scope_StartInclusiveIndex: parserModel.TokenWalker.Current.TextSpan.StartInclusiveIndex,
+        		scope_EndExclusiveIndex: -1,
+        		codeBlock_StartInclusiveIndex: parserModel.TokenWalker.Current.TextSpan.StartInclusiveIndex,
+        		codeBlock_EndExclusiveIndex: -1,
+        		parentScopeOffset: parserModel.CurrentScopeOffset,
+        		selfScopeOffset: parserModel.Binder.ScopeList.Count,
+        		nodeOffset: parserModel.Binder.NodeList.Count,
+        		permitCodeBlockParsing: false,
+        		isImplicitOpenCodeBlockTextSpan: false,
+        		returnTypeReference: Walk.CompilerServices.CSharp.Facts.CSharpFacts.Types.Void.ToTypeReference(),
+        		ownerSyntaxKind: foreachStatementNode.SyntaxKind),
+    	    foreachStatementNode);
             
         var successParse = ParseExpressions.TryParseVariableDeclarationNode(ref parserModel, out var variableDeclarationNode);
         if (successParse)
@@ -384,6 +444,22 @@ public class ParseDefaultKeywords
         parserModel.RegisterScopeAndOwner(
             lockStatementNode,
             parserModel.TokenWalker.Current.TextSpan);
+            
+        parserModel.RegisterScopeAndOwner(
+        	new Scope(
+        		ScopeDirectionKind.Down,
+        		scope_StartInclusiveIndex: parserModel.TokenWalker.Current.TextSpan.StartInclusiveIndex,
+        		scope_EndExclusiveIndex: -1,
+        		codeBlock_StartInclusiveIndex: parserModel.TokenWalker.Current.TextSpan.StartInclusiveIndex,
+        		codeBlock_EndExclusiveIndex: -1,
+        		parentScopeOffset: parserModel.CurrentScopeOffset,
+        		selfScopeOffset: parserModel.Binder.ScopeList.Count,
+        		nodeOffset: parserModel.Binder.NodeList.Count,
+        		permitCodeBlockParsing: false,
+        		isImplicitOpenCodeBlockTextSpan: false,
+        		returnTypeReference: Walk.CompilerServices.CSharp.Facts.CSharpFacts.Types.Void.ToTypeReference(),
+        		ownerSyntaxKind: lockStatementNode.SyntaxKind),
+    	    lockStatementNode);
     
         if (parserModel.TokenWalker.Current.SyntaxKind != SyntaxKind.OpenBraceToken)
             parserModel.SetCurrentScope_IsImplicitOpenCodeBlockTextSpan_True();

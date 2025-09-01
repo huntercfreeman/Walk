@@ -35,8 +35,20 @@ public class ParseFunctions
                 parserModel.ResourceUri,
                 consumedIdentifierToken.TextSpan,
                 out var existingFunctionDefinitionNode))        {            isFunctionOverloadCase = true;        }        else        {            isFunctionOverloadCase = false;        }        parserModel.RegisterScopeAndOwner(
-            functionDefinitionNode,
-            parserModel.TokenWalker.Current.TextSpan);
+        	new Scope(
+        		ScopeDirectionKind.Down,
+        		scope_StartInclusiveIndex: parserModel.TokenWalker.Current.TextSpan.StartInclusiveIndex,
+        		scope_EndExclusiveIndex: -1,
+        		codeBlock_StartInclusiveIndex: parserModel.TokenWalker.Current.TextSpan.StartInclusiveIndex,
+        		codeBlock_EndExclusiveIndex: -1,
+        		parentScopeOffset: parserModel.CurrentScopeOffset,
+        		selfScopeOffset: parserModel.Binder.ScopeList.Count,
+        		nodeOffset: parserModel.Binder.NodeList.Count,
+        		permitCodeBlockParsing: false,
+        		isImplicitOpenCodeBlockTextSpan: false,
+        		returnTypeReference: Walk.CompilerServices.CSharp.Facts.CSharpFacts.Types.Void.ToTypeReference(),
+        		ownerSyntaxKind: functionDefinitionNode.SyntaxKind),
+    	    functionDefinitionNode);
     
         if (parserModel.TokenWalker.Current.SyntaxKind == SyntaxKind.OpenAngleBracketToken)
         {
@@ -113,7 +125,7 @@ public class ParseFunctions
                 
                 if (existingNode.ParentScopeOffset < previousCompilationUnit.ScopeCount)
                 {
-                    var previousParent = parserModel.Binder.CodeBlockOwnerList[previousCompilationUnit.ScopeIndex + existingNode.ParentScopeOffset];
+                    var previousParent = parserModel.Binder.ScopeList[previousCompilationUnit.ScopeIndex + existingNode.ParentScopeOffset];
                     var currentParent = parserModel.GetParent(newNode, parserModel.Compilation);
                     
                     if (currentParent.SyntaxKind == previousParent.SyntaxKind)
@@ -139,7 +151,7 @@ public class ParseFunctions
                                  indexPreviousNode < previousCompilationUnit.ScopeIndex + previousCompilationUnit.ScopeCount;
                                  indexPreviousNode++)
                             {
-                                var x = parserModel.Binder.CodeBlockOwnerList[indexPreviousNode];
+                                var x = parserModel.Binder.ScopeList[indexPreviousNode];
                                 
                                 if (x.ParentScopeOffset == previousParent.SelfIndexKey &&
                                     x.SyntaxKind == SyntaxKind.FunctionDefinitionNode &&
@@ -225,7 +237,6 @@ public class ParseFunctions
             indexFunctionArgumentEntryList: -1,
             countFunctionArgumentEntryList: 0,
             closeParenthesisToken: default,
-            default,
             parserModel.ResourceUri);
         
         parserModel.Return_TypeClauseNode(typeClauseNode);
@@ -233,8 +244,20 @@ public class ParseFunctions
         parserModel.BindConstructorDefinitionIdentifierToken(consumedIdentifierToken);
         
         parserModel.RegisterScopeAndOwner(
-            constructorDefinitionNode,
-            parserModel.TokenWalker.Current.TextSpan);
+        	new Scope(
+        		ScopeDirectionKind.Down,
+        		scope_StartInclusiveIndex: parserModel.TokenWalker.Current.TextSpan.StartInclusiveIndex,
+        		scope_EndExclusiveIndex: -1,
+        		codeBlock_StartInclusiveIndex: parserModel.TokenWalker.Current.TextSpan.StartInclusiveIndex,
+        		codeBlock_EndExclusiveIndex: -1,
+        		parentScopeOffset: parserModel.CurrentScopeOffset,
+        		selfScopeOffset: parserModel.Binder.ScopeList.Count,
+        		nodeOffset: parserModel.Binder.NodeList.Count,
+        		permitCodeBlockParsing: false,
+        		isImplicitOpenCodeBlockTextSpan: false,
+        		returnTypeReference: Walk.CompilerServices.CSharp.Facts.CSharpFacts.Types.Void.ToTypeReference(),
+        		ownerSyntaxKind: constructorDefinitionNode.SyntaxKind),
+    	    constructorDefinitionNode);
         
         HandleFunctionArguments(constructorDefinitionNode, ref parserModel);
 
