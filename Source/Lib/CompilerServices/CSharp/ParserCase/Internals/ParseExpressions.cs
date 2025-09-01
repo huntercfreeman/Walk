@@ -2503,7 +2503,7 @@ public static class ParseExpressions
             parserModel.Return_BinaryExpressionNode((BinaryExpressionNode)expressionSecondary);
         }
     
-        if (lambdaExpressionNode.CodeBlock_StartInclusiveIndex == -1)
+        if (parserModel.Binder.ScopeList[parserModel.Compilation.ScopeIndex + lambdaExpressionNode.SelfScopeOffset].CodeBlock_StartInclusiveIndex == -1)
             CloseLambdaExpressionScope(lambdaExpressionNode, ref parserModel);
         
         return lambdaExpressionNode;
@@ -2858,7 +2858,7 @@ public static class ParseExpressions
                         
                         var nameToken = identifierToken;
                         
-                        if (parserModel.CurrentCodeBlockOwner.SyntaxKind == SyntaxKind.TypeDefinitionNode &&
+                        if (parserModel.Binder.ScopeList[parserModel.Compilation.ScopeIndex + parserModel.CurrentScopeOffset].OwnerSyntaxKind == SyntaxKind.TypeDefinitionNode &&
                             parserModel.TokenWalker.Next.SyntaxKind == SyntaxKind.MemberAccessToken)
                         {
                             parserModel.ParserContextKind = CSharpParserContextKind.None;
@@ -3170,8 +3170,20 @@ public static class ParseExpressions
     public static void OpenLambdaExpressionScope(LambdaExpressionNode lambdaExpressionNode, ref SyntaxToken openBraceToken, ref CSharpParserModel parserModel)
     {
         parserModel.RegisterScopeAndOwner(
-            lambdaExpressionNode,
-            openBraceToken.TextSpan);
+        	new Scope(
+        		ScopeDirectionKind.Down,
+        		scope_StartInclusiveIndex: openBraceToken.TextSpan.StartInclusiveIndex,
+        		scope_EndExclusiveIndex: -1,
+        		codeBlock_StartInclusiveIndex: openBraceToken.TextSpan.StartInclusiveIndex,
+        		codeBlock_EndExclusiveIndex: -1,
+        		parentScopeOffset: parserModel.CurrentScopeOffset,
+        		selfScopeOffset: parserModel.Binder.ScopeList.Count,
+        		nodeOffset: parserModel.Binder.NodeList.Count,
+        		permitCodeBlockParsing: false,
+        		isImplicitOpenCodeBlockTextSpan: false,
+        		returnTypeReference: Walk.CompilerServices.CSharp.Facts.CSharpFacts.Types.Void.ToTypeReference(),
+        		ownerSyntaxKind: lambdaExpressionNode.SyntaxKind),
+    	    lambdaExpressionNode);
     }
     
     public static void CloseLambdaExpressionScope(LambdaExpressionNode lambdaExpressionNode, ref CSharpParserModel parserModel)
@@ -3229,7 +3241,7 @@ public static class ParseExpressions
                 new CSharpDeferredChildScope(
                     openTokenIndex,
                     closeTokenIndex,
-                    lambdaScope)
+                    lambdaScope.SelfScopeOffset)
             ));
             
         return lambdaExpressionNode;
