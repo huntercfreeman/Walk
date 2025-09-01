@@ -1028,7 +1028,7 @@ public static class ParseExpressions
         _ = parserModel.TryGetTypeDefinitionHierarchically(
                 parserModel.ResourceUri,
                 parserModel.Compilation,
-                parserModel.CurrentScopeOffset,
+                parserModel.ScopeCurrentSubIndex,
                 parserModel.ResourceUri,
                 token.TextSpan,
                 out var typeDefinitionNode);
@@ -1105,7 +1105,7 @@ public static class ParseExpressions
             if (parserModel.TryGetVariableDeclarationHierarchically(
                     parserModel.ResourceUri,
                     parserModel.Compilation,
-                    parserModel.CurrentScopeOffset,
+                    parserModel.ScopeCurrentSubIndex,
                     parserModel.ResourceUri,
                     ambiguousIdentifierExpressionNode.Token.TextSpan,
                     out var existingVariableDeclarationNode))
@@ -1134,7 +1134,7 @@ public static class ParseExpressions
             if (parserModel.TryGetTypeDefinitionHierarchically(
                     parserModel.ResourceUri,
                     parserModel.Compilation,
-                    parserModel.CurrentScopeOffset,
+                    parserModel.ScopeCurrentSubIndex,
                     parserModel.ResourceUri,
                     ambiguousIdentifierExpressionNode.Token.TextSpan,
                     out var typeDefinitionNode))
@@ -1187,7 +1187,7 @@ public static class ParseExpressions
             if (!parserModel.TryGetVariableDeclarationHierarchically(
                     parserModel.ResourceUri,
                     parserModel.Compilation,
-                    parserModel.CurrentScopeOffset,
+                    parserModel.ScopeCurrentSubIndex,
                     parserModel.ResourceUri,
                     ambiguousIdentifierExpressionNode.Token.TextSpan,
                     out _))
@@ -1205,7 +1205,7 @@ public static class ParseExpressions
             if (parserModel.TryGetFunctionHierarchically(
                     parserModel.ResourceUri,
                     parserModel.Compilation,
-                    parserModel.CurrentScopeOffset,
+                    parserModel.ScopeCurrentSubIndex,
                     parserModel.ResourceUri,
                     ambiguousIdentifierExpressionNode.Token.TextSpan,
                     out var functionDefinitionNode))
@@ -1258,7 +1258,7 @@ public static class ParseExpressions
             if (parserModel.TryGetLabelDeclarationHierarchically(
                     parserModel.ResourceUri,
                     parserModel.Compilation,
-                    parserModel.CurrentScopeOffset,
+                    parserModel.ScopeCurrentSubIndex,
                     parserModel.ResourceUri,
                     ambiguousIdentifierExpressionNode.Token.TextSpan,
                     out var labelDefinitionNode))
@@ -2858,7 +2858,7 @@ public static class ParseExpressions
                         
                         var nameToken = identifierToken;
                         
-                        if (parserModel.Binder.ScopeList[parserModel.Compilation.ScopeOffset + parserModel.CurrentScopeOffset].OwnerSyntaxKind == SyntaxKind.TypeDefinitionNode &&
+                        if (parserModel.Binder.ScopeList[parserModel.Compilation.ScopeOffset + parserModel.ScopeCurrentSubIndex].OwnerSyntaxKind == SyntaxKind.TypeDefinitionNode &&
                             parserModel.TokenWalker.Next.SyntaxKind == SyntaxKind.MemberAccessToken)
                         {
                             parserModel.ParserContextKind = CSharpParserContextKind.None;
@@ -3176,7 +3176,7 @@ public static class ParseExpressions
         		scope_EndExclusiveIndex: -1,
         		codeBlock_StartInclusiveIndex: openBraceToken.TextSpan.StartInclusiveIndex,
         		codeBlock_EndExclusiveIndex: -1,
-        		parentScopeSubIndex: parserModel.CurrentScopeOffset,
+        		parentScopeSubIndex: parserModel.ScopeCurrentSubIndex,
         		selfScopeSubIndex: parserModel.Compilation.ScopeLength,
         		nodeSubIndex: parserModel.Compilation.NodeLength,
         		permitCodeBlockParsing: false,
@@ -3229,7 +3229,7 @@ public static class ParseExpressions
             _ = parserModel.TokenWalker.Consume();
         }
         
-        var lambdaScope = parserModel.Binder.ScopeList[parserModel.CurrentScopeOffset];
+        var lambdaScope = parserModel.Binder.ScopeList[parserModel.ScopeCurrentSubIndex];
         CloseLambdaExpressionScope(lambdaExpressionNode, ref parserModel);
     
         var closeTokenIndex = parserModel.TokenWalker.Index;
@@ -3237,7 +3237,7 @@ public static class ParseExpressions
         
         parserModel.StatementBuilder.ParseLambdaStatementScopeStack.Push(
             (
-                parserModel.CurrentScopeOffset,
+                parserModel.ScopeCurrentSubIndex,
                 new CSharpDeferredChildScope(
                     openTokenIndex,
                     closeTokenIndex,

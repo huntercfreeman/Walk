@@ -1649,7 +1649,7 @@ public sealed class CSharpCompilerService : IExtendedCompilerService
                     siblingFileStringList.Add(
                         (
                             __CSharpBinder.PartialTypeDefinitionList[positionExclusive].ResourceUri.Value,
-                            __CSharpBinder.PartialTypeDefinitionList[positionExclusive].ScopeOffset
+                            __CSharpBinder.PartialTypeDefinitionList[positionExclusive].ScopeSubIndex
                         ));
                     positionExclusive++;
                 }

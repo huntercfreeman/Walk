@@ -59,7 +59,7 @@ public class ParseDefaultKeywords
                 scope_EndExclusiveIndex: -1,
                 codeBlock_StartInclusiveIndex: parserModel.TokenWalker.Current.TextSpan.StartInclusiveIndex,
                 codeBlock_EndExclusiveIndex: -1,
-                parentScopeSubIndex: parserModel.CurrentScopeOffset,
+                parentScopeSubIndex: parserModel.ScopeCurrentSubIndex,
                 selfScopeSubIndex: parserModel.Compilation.ScopeLength,
                 nodeSubIndex: parserModel.Compilation.NodeLength,
                 permitCodeBlockParsing: false,
@@ -150,7 +150,7 @@ public class ParseDefaultKeywords
         		scope_EndExclusiveIndex: -1,
         		codeBlock_StartInclusiveIndex: parserModel.TokenWalker.Current.TextSpan.StartInclusiveIndex,
         		codeBlock_EndExclusiveIndex: -1,
-        		parentScopeSubIndex: parserModel.CurrentScopeOffset,
+        		parentScopeSubIndex: parserModel.ScopeCurrentSubIndex,
         		selfScopeSubIndex: parserModel.Compilation.ScopeLength,
         		nodeSubIndex: parserModel.Compilation.NodeLength,
         		permitCodeBlockParsing: false,
@@ -187,7 +187,7 @@ public class ParseDefaultKeywords
         		scope_EndExclusiveIndex: -1,
         		codeBlock_StartInclusiveIndex: parserModel.TokenWalker.Current.TextSpan.StartInclusiveIndex,
         		codeBlock_EndExclusiveIndex: -1,
-        		parentScopeSubIndex: parserModel.CurrentScopeOffset,
+        		parentScopeSubIndex: parserModel.ScopeCurrentSubIndex,
         		selfScopeSubIndex: parserModel.Compilation.ScopeLength,
         		nodeSubIndex: parserModel.Compilation.NodeLength,
         		permitCodeBlockParsing: false,
@@ -250,7 +250,7 @@ public class ParseDefaultKeywords
         		scope_EndExclusiveIndex: -1,
         		codeBlock_StartInclusiveIndex: parserModel.TokenWalker.Current.TextSpan.StartInclusiveIndex,
         		codeBlock_EndExclusiveIndex: -1,
-        		parentScopeSubIndex: parserModel.CurrentScopeOffset,
+        		parentScopeSubIndex: parserModel.ScopeCurrentSubIndex,
         		selfScopeSubIndex: parserModel.Compilation.ScopeLength,
         		nodeSubIndex: parserModel.Compilation.NodeLength,
         		permitCodeBlockParsing: false,
@@ -292,7 +292,7 @@ public class ParseDefaultKeywords
         		scope_EndExclusiveIndex: -1,
         		codeBlock_StartInclusiveIndex: parserModel.TokenWalker.Current.TextSpan.StartInclusiveIndex,
         		codeBlock_EndExclusiveIndex: -1,
-        		parentScopeSubIndex: parserModel.CurrentScopeOffset,
+        		parentScopeSubIndex: parserModel.ScopeCurrentSubIndex,
         		selfScopeSubIndex: parserModel.Compilation.ScopeLength,
         		nodeSubIndex: parserModel.Compilation.NodeLength,
         		permitCodeBlockParsing: false,
@@ -352,7 +352,7 @@ public class ParseDefaultKeywords
         		scope_EndExclusiveIndex: -1,
         		codeBlock_StartInclusiveIndex: parserModel.TokenWalker.Current.TextSpan.StartInclusiveIndex,
         		codeBlock_EndExclusiveIndex: -1,
-        		parentScopeSubIndex: parserModel.CurrentScopeOffset,
+        		parentScopeSubIndex: parserModel.ScopeCurrentSubIndex,
         		selfScopeSubIndex: parserModel.Compilation.ScopeLength,
         		nodeSubIndex: parserModel.Compilation.NodeLength,
         		permitCodeBlockParsing: false,
@@ -448,7 +448,7 @@ public class ParseDefaultKeywords
         		scope_EndExclusiveIndex: -1,
         		codeBlock_StartInclusiveIndex: parserModel.TokenWalker.Current.TextSpan.StartInclusiveIndex,
         		codeBlock_EndExclusiveIndex: -1,
-        		parentScopeSubIndex: parserModel.CurrentScopeOffset,
+        		parentScopeSubIndex: parserModel.ScopeCurrentSubIndex,
         		selfScopeSubIndex: parserModel.Compilation.ScopeLength,
         		nodeSubIndex: parserModel.Compilation.NodeLength,
         		permitCodeBlockParsing: false,
@@ -570,7 +570,7 @@ public class ParseDefaultKeywords
         		scope_EndExclusiveIndex: -1,
         		codeBlock_StartInclusiveIndex: parserModel.TokenWalker.Current.TextSpan.StartInclusiveIndex,
         		codeBlock_EndExclusiveIndex: -1,
-        		parentScopeSubIndex: parserModel.CurrentScopeOffset,
+        		parentScopeSubIndex: parserModel.ScopeCurrentSubIndex,
         		selfScopeSubIndex: parserModel.Compilation.ScopeLength,
         		nodeSubIndex: parserModel.Compilation.NodeLength,
         		permitCodeBlockParsing: false,
@@ -620,7 +620,7 @@ public class ParseDefaultKeywords
         		scope_EndExclusiveIndex: -1,
         		codeBlock_StartInclusiveIndex: parserModel.TokenWalker.Current.TextSpan.StartInclusiveIndex,
         		codeBlock_EndExclusiveIndex: -1,
-        		parentScopeSubIndex: parserModel.CurrentScopeOffset,
+        		parentScopeSubIndex: parserModel.ScopeCurrentSubIndex,
         		selfScopeSubIndex: parserModel.Compilation.ScopeLength,
         		nodeSubIndex: parserModel.Compilation.NodeLength,
         		permitCodeBlockParsing: false,
@@ -720,7 +720,7 @@ public class ParseDefaultKeywords
         		scope_EndExclusiveIndex: -1,
         		codeBlock_StartInclusiveIndex: parserModel.TokenWalker.Current.TextSpan.StartInclusiveIndex,
         		codeBlock_EndExclusiveIndex: -1,
-        		parentScopeSubIndex: parserModel.CurrentScopeOffset,
+        		parentScopeSubIndex: parserModel.ScopeCurrentSubIndex,
         		selfScopeSubIndex: parserModel.Compilation.ScopeLength,
         		nodeSubIndex: parserModel.Compilation.NodeLength,
         		permitCodeBlockParsing: false,
@@ -843,7 +843,7 @@ public class ParseDefaultKeywords
         		scope_EndExclusiveIndex: -1,
         		codeBlock_StartInclusiveIndex: parserModel.TokenWalker.Current.TextSpan.StartInclusiveIndex,
         		codeBlock_EndExclusiveIndex: -1,
-        		parentScopeSubIndex: parserModel.CurrentScopeOffset,
+        		parentScopeSubIndex: parserModel.ScopeCurrentSubIndex,
         		selfScopeSubIndex: parserModel.Compilation.ScopeLength,
         		nodeSubIndex: parserModel.Compilation.NodeLength,
         		permitCodeBlockParsing: false,
@@ -864,8 +864,8 @@ public class ParseDefaultKeywords
         {
             HandleUsingCodeBlockOwner(ref usingKeywordToken, ref parserModel);
         }
-        else if (parserModel.Binder.ScopeList[parserModel.CurrentScopeOffset].OwnerSyntaxKind == SyntaxKind.GlobalCodeBlockNode ||
-                 parserModel.Binder.ScopeList[parserModel.CurrentScopeOffset].OwnerSyntaxKind == SyntaxKind.NamespaceStatementNode)
+        else if (parserModel.Binder.ScopeList[parserModel.ScopeCurrentSubIndex].OwnerSyntaxKind == SyntaxKind.GlobalCodeBlockNode ||
+                 parserModel.Binder.ScopeList[parserModel.ScopeCurrentSubIndex].OwnerSyntaxKind == SyntaxKind.NamespaceStatementNode)
         {
             var namespaceIdentifierToken = ParseOthers.HandleNamespaceIdentifier(ref parserModel, isNamespaceStatement: false);
     
@@ -896,7 +896,7 @@ public class ParseDefaultKeywords
         		scope_EndExclusiveIndex: -1,
         		codeBlock_StartInclusiveIndex: parserModel.TokenWalker.Current.TextSpan.StartInclusiveIndex,
         		codeBlock_EndExclusiveIndex: -1,
-        		parentScopeSubIndex: parserModel.CurrentScopeOffset,
+        		parentScopeSubIndex: parserModel.ScopeCurrentSubIndex,
         		selfScopeSubIndex: parserModel.Compilation.ScopeLength,
         		nodeSubIndex: parserModel.Compilation.NodeLength,
         		permitCodeBlockParsing: false,
@@ -1076,7 +1076,7 @@ public class ParseDefaultKeywords
             if (parserModel.TryGetTypeDefinitionHierarchically(
                     parserModel.ResourceUri,
                     parserModel.Compilation,
-                    parserModel.CurrentScopeOffset,
+                    parserModel.ScopeCurrentSubIndex,
                     parserModel.ResourceUri,
                     identifierToken.TextSpan,
                     out TypeDefinitionNode? previousTypeDefinitionNode))
@@ -1097,7 +1097,7 @@ public class ParseDefaultKeywords
         		scope_EndExclusiveIndex: -1,
         		codeBlock_StartInclusiveIndex: parserModel.TokenWalker.Current.TextSpan.StartInclusiveIndex,
         		codeBlock_EndExclusiveIndex: -1,
-        		parentScopeSubIndex: parserModel.CurrentScopeOffset,
+        		parentScopeSubIndex: parserModel.ScopeCurrentSubIndex,
         		selfScopeSubIndex: parserModel.Compilation.ScopeLength,
         		nodeSubIndex: parserModel.Compilation.NodeLength,
         		permitCodeBlockParsing: false,
@@ -1190,7 +1190,7 @@ public class ParseDefaultKeywords
                             seenResourceUri = true;
                         
                             var partialTypeDefinitionEntry = parserModel.Binder.PartialTypeDefinitionList[positionExclusive];
-                            partialTypeDefinitionEntry.ScopeOffset = -1;
+                            partialTypeDefinitionEntry.ScopeSubIndex = -1;
                             parserModel.Binder.PartialTypeDefinitionList[positionExclusive] = partialTypeDefinitionEntry;
                             
                             positionExclusive++;
@@ -1287,10 +1287,10 @@ public class ParseDefaultKeywords
                 {
                     if (parserModel.Binder.PartialTypeDefinitionList[positionExclusive].ResourceUri == parserModel.ResourceUri)
                     {
-                        if (parserModel.Binder.PartialTypeDefinitionList[positionExclusive].ScopeOffset == -1)
+                        if (parserModel.Binder.PartialTypeDefinitionList[positionExclusive].ScopeSubIndex == -1)
                         {
                             var partialTypeDefinitionEntry = parserModel.Binder.PartialTypeDefinitionList[positionExclusive];
-                            partialTypeDefinitionEntry.ScopeOffset = typeDefinitionNode.SelfScopeSubIndex;
+                            partialTypeDefinitionEntry.ScopeSubIndex = typeDefinitionNode.SelfScopeSubIndex;
                             parserModel.Binder.PartialTypeDefinitionList[positionExclusive] = partialTypeDefinitionEntry;
                             wroteToExistingSlot = true;
                             break;
@@ -1341,7 +1341,7 @@ public class ParseDefaultKeywords
                         {
                             var innerTypeDefinitionNode = (TypeDefinitionNode)parserModel.Binder.NodeList[
                                 innerCompilationUnit.NodeOffset +
-                                parserModel.Binder.ScopeList[innerCompilationUnit.ScopeOffset + partialTypeDefinitionEntry.ScopeOffset].NodeSubIndex];
+                                parserModel.Binder.ScopeList[innerCompilationUnit.ScopeOffset + partialTypeDefinitionEntry.ScopeSubIndex].NodeSubIndex];
                             innerTypeDefinitionNode.IndexPartialTypeDefinition = partialTypeDefinitionEntry.IndexStartGroup + 1;
                         }
                     }
@@ -1386,7 +1386,7 @@ public class ParseDefaultKeywords
         		scope_EndExclusiveIndex: -1,
         		codeBlock_StartInclusiveIndex: parserModel.TokenWalker.Current.TextSpan.StartInclusiveIndex,
         		codeBlock_EndExclusiveIndex: -1,
-        		parentScopeSubIndex: parserModel.CurrentScopeOffset,
+        		parentScopeSubIndex: parserModel.ScopeCurrentSubIndex,
         		selfScopeSubIndex: parserModel.Compilation.ScopeLength,
         		nodeSubIndex: parserModel.Compilation.NodeLength,
         		permitCodeBlockParsing: false,

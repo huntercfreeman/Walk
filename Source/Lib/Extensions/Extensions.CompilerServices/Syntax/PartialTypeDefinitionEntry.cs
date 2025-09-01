@@ -11,10 +11,10 @@ public struct PartialTypeDefinitionEntry
     {
         ResourceUri = resourceUri;
         IndexStartGroup = indexStartGroup;
-        ScopeOffset = scopeOffset;
+        ScopeSubIndex = scopeOffset;
     }
 
     public ResourceUri ResourceUri { get; set; }
     public int IndexStartGroup { get; set; }
-    public int ScopeOffset { get; set; }
+    public int ScopeSubIndex { get; set; }
 }

@@ -123,7 +123,7 @@ public class CSharpStatementBuilder
         {
             var tuple = ParseLambdaStatementScopeStack.Peek();
             
-            if (tuple.ScopeOffset == parserModel.CurrentScopeOffset)
+            if (tuple.ScopeOffset == parserModel.ScopeCurrentSubIndex)
             {
                 tuple = ParseLambdaStatementScopeStack.Pop();
                 tuple.DeferredChildScope.PrepareMainParserLoop(finishTokenIndex, ref parserModel);

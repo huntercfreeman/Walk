@@ -93,7 +93,7 @@ public static class CSharpParser
                     var closeBraceTokenIndex = parserModel.TokenWalker.Index;
                     
                     if (parserModel.ParseChildScopeStack.Count > 0 &&
-                        parserModel.ParseChildScopeStack.Peek().ScopeOffset == parserModel.CurrentScopeOffset)
+                        parserModel.ParseChildScopeStack.Peek().ScopeOffset == parserModel.ScopeCurrentSubIndex)
                     {
                         parserModel.TokenWalker.SetNullDeferredParsingTuple();
                     }
@@ -157,7 +157,7 @@ public static class CSharpParser
                 {
                     var tuple = parserModel.ParseChildScopeStack.Peek();
                     
-                    if (tuple.ScopeOffset == parserModel.CurrentScopeOffset)
+                    if (tuple.ScopeOffset == parserModel.ScopeCurrentSubIndex)
                     {
                         tuple = parserModel.ParseChildScopeStack.Pop();
                         tuple.DeferredChildScope.PrepareMainParserLoop(parserModel.TokenWalker.Index, ref parserModel);
@@ -196,7 +196,7 @@ public static class CSharpParser
             parserModel.TokenWalker.ConsumeCounterReset();
         }
 
-        if (!parserModel.GetParent(parserModel.Binder.ScopeList[parserModel.CurrentScopeOffset].ParentScopeSubIndex, compilationUnit).IsDefault())
+        if (!parserModel.GetParent(parserModel.Binder.ScopeList[parserModel.ScopeCurrentSubIndex].ParentScopeSubIndex, compilationUnit).IsDefault())
             parserModel.CloseScope(parserModel.TokenWalker.Current.TextSpan); // The current token here would be the EOF token.
 
         parserModel.Binder.FinalizeCompilationUnit(parserModel.ResourceUri, compilationUnit);

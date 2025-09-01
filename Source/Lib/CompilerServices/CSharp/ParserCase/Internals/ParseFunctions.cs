@@ -31,7 +31,7 @@ public class ParseFunctions
         bool isFunctionOverloadCase;        // This compilation has not been written to the __CompilationUnitMap yet,        // so this will read the previous compilation of this file.        if (parserModel.TryGetFunctionDefinitionNodeByScope(
                 parserModel.ResourceUri,
                 parserModel.Compilation,
-                parserModel.CurrentScopeOffset,
+                parserModel.ScopeCurrentSubIndex,
                 parserModel.ResourceUri,
                 consumedIdentifierToken.TextSpan,
                 out var existingFunctionDefinitionNode))        {            isFunctionOverloadCase = true;        }        else        {            isFunctionOverloadCase = false;        }        parserModel.RegisterScopeAndOwner(
@@ -41,7 +41,7 @@ public class ParseFunctions
         		scope_EndExclusiveIndex: -1,
         		codeBlock_StartInclusiveIndex: parserModel.TokenWalker.Current.TextSpan.StartInclusiveIndex,
         		codeBlock_EndExclusiveIndex: -1,
-        		parentScopeSubIndex: parserModel.CurrentScopeOffset,
+        		parentScopeSubIndex: parserModel.ScopeCurrentSubIndex,
         		selfScopeSubIndex: parserModel.Compilation.ScopeLength,
         		nodeSubIndex: parserModel.Compilation.NodeLength,
         		permitCodeBlockParsing: false,
@@ -262,7 +262,7 @@ public class ParseFunctions
         		scope_EndExclusiveIndex: -1,
         		codeBlock_StartInclusiveIndex: parserModel.TokenWalker.Current.TextSpan.StartInclusiveIndex,
         		codeBlock_EndExclusiveIndex: -1,
-        		parentScopeSubIndex: parserModel.CurrentScopeOffset,
+        		parentScopeSubIndex: parserModel.ScopeCurrentSubIndex,
         		selfScopeSubIndex: parserModel.Compilation.ScopeLength,
         		nodeSubIndex: parserModel.Compilation.NodeLength,
         		permitCodeBlockParsing: false,
