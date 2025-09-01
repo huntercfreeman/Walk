@@ -126,7 +126,7 @@ public class ParseFunctions
                 if (existingNode.ParentScopeOffset < previousCompilationUnit.ScopeCount)
                 {
                     var previousParent = parserModel.Binder.ScopeList[previousCompilationUnit.ScopeIndex + existingNode.ParentScopeOffset];
-                    var currentParent = parserModel.GetParent(newNode, parserModel.Compilation);
+                    var currentParent = parserModel.GetParent(newNode.ParentScopeOffset, parserModel.Compilation);
                     
                     if (currentParent.OwnerSyntaxKind == previousParent.OwnerSyntaxKind)
                     {

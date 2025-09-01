@@ -1089,9 +1089,9 @@ public ref struct CSharpParserModel
     {
         typeDefinitionNode = null;
         
-        for (int i = definitionCompilationUnit.ScopeIndex; i < definitionCompilationUnit.ScopeIndex + definitionCompilationUnit.ScopeCount; i++)
+        for (int i = definitionCompilationUnit.IndexNodeList; i < definitionCompilationUnit.IndexNodeList + definitionCompilationUnit.CountNodeList; i++)
         {
-            var x = Binder.ScopeList[i];
+            var x = Binder.NodeList[i];
             if (x.ParentScopeOffset == definitionScopeOffset &&
                 x.SyntaxKind == SyntaxKind.TypeDefinitionNode)
             {
@@ -1137,12 +1137,12 @@ public ref struct CSharpParserModel
     {
         List<FunctionDefinitionNode> functionDefinitionNodeList = new();
     
-        for (int i = compilationUnit.ScopeIndex; i < compilationUnit.ScopeIndex + compilationUnit.ScopeCount; i++)
+        for (int i = compilationUnit.IndexNodeList; i < compilationUnit.IndexNodeList + compilationUnit.CountNodeList; i++)
         {
-            var scope = Binder.ScopeList[i];
+            var node = Binder.NodeList[i];
             
-            if (scope.ParentScopeOffset == scopeIndexKey && scope.SyntaxKind == SyntaxKind.FunctionDefinitionNode)
-                functionDefinitionNodeList.Add((FunctionDefinitionNode)scope);
+            if (node.ParentScopeOffset == scopeIndexKey && node.SyntaxKind == SyntaxKind.FunctionDefinitionNode)
+                functionDefinitionNodeList.Add((FunctionDefinitionNode)node);
         }
         
         return functionDefinitionNodeList.ToArray();
@@ -1208,9 +1208,9 @@ public ref struct CSharpParserModel
     {
         functionDefinitionNode = null;
         
-        for (int i = definitionCompilationUnit.ScopeIndex; i < definitionCompilationUnit.ScopeIndex + definitionCompilationUnit.ScopeCount; i++)
+        for (int i = definitionCompilationUnit.IndexNodeList; i < definitionCompilationUnit.IndexNodeList + definitionCompilationUnit.CountNodeList; i++)
         {
-            var x = Binder.ScopeList[i];
+            var x = Binder.NodeList[i];
             
             if (x.ParentScopeOffset == definitionScopeOffset &&
                 x.SyntaxKind == SyntaxKind.FunctionDefinitionNode)
@@ -1396,7 +1396,7 @@ public ref struct CSharpParserModel
             
             if (!isRecursive && scope.OwnerSyntaxKind == SyntaxKind.TypeDefinitionNode)
             {
-                var typeDefinitionNode = (TypeDefinitionNode)scope;
+                var typeDefinitionNode = (TypeDefinitionNode)Binder.NodeList[declarationCompilationUnit.IndexNodeList + scope.NodeOffset];
                 if (typeDefinitionNode.IndexPartialTypeDefinition != -1)
                 {
                     if (TryGetVariableDeclarationByPartialType(

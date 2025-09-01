@@ -1117,7 +1117,7 @@ public class ParseDefaultKeywords
                     if (typeDefinitionNode.ParentScopeOffset < previousCompilationUnit.ScopeCount)
                     {
                         var previousParent = parserModel.Binder.ScopeList[previousCompilationUnit.ScopeIndex + typeDefinitionNode.ParentScopeOffset];
-                        var currentParent = parserModel.GetParent(typeDefinitionNode, parserModel.Compilation);
+                        var currentParent = parserModel.GetParent(typeDefinitionNode.ParentScopeOffset, parserModel.Compilation);
                         
                         if (currentParent.SyntaxKind == previousParent.SyntaxKind)
                         {

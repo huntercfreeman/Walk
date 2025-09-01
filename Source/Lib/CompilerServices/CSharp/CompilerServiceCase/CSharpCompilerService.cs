@@ -1683,11 +1683,11 @@ public sealed class CSharpCompilerService : IExtendedCompilerService
                         {
                             ISyntaxNode? otherTypeDefinitionNode = null;
                             
-                            for (int i = innerCompilationUnit.ScopeIndex; i < innerCompilationUnit.ScopeIndex + innerCompilationUnit.ScopeCount; i++)
+                            for (int i = innerCompilationUnit.IndexNodeList; i < innerCompilationUnit.IndexNodeList + innerCompilationUnit.CountNodeList; i++)
                             {
-                                var x = __CSharpBinder.ScopeList[i];
+                                var x = __CSharpBinder.NodeList[i];
                                 
-                                if (x.OwnerSyntaxKind == SyntaxKind.TypeDefinitionNode &&
+                                if (x.SyntaxKind == SyntaxKind.TypeDefinitionNode &&
                                     ((TypeDefinitionNode)x).SelfScopeOffset == tuple.ScopeIndexKey)
                                 {
                                     otherTypeDefinitionNode = x;
