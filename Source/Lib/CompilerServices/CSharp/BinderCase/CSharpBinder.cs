@@ -588,7 +588,7 @@ public class CSharpBinder
     {
         var localScope = GetScopeByOffset(compilationUnit, initialScopeOffset);
 
-        while (localScope is not null)
+        while (!localScope.IsDefault())
         {
             if (TryGetTypeDefinitionNodeByScope(
                     resourceUri,
@@ -625,7 +625,7 @@ public class CSharpBinder
         {
             var x = ScopeList[i];
             if (x.ParentScopeOffset == scopeOffset &&
-                x.SyntaxKind == SyntaxKind.TypeDefinitionNode &&
+                x.OwnerSyntaxKind == SyntaxKind.TypeDefinitionNode &&
                 GetIdentifierText(x, resourceUri, compilationUnit) == typeIdentifierText)
             {
                 typeDefinitionNode = (TypeDefinitionNode)x;
@@ -649,7 +649,7 @@ public class CSharpBinder
         {
             var scope = ScopeList[i];
             
-            if (scope.ParentScopeOffset == scopeOffset && scope.SyntaxKind == SyntaxKind.FunctionDefinitionNode)
+            if (scope.ParentScopeOffset == scopeOffset && scope.OwnerSyntaxKind == SyntaxKind.FunctionDefinitionNode)
                 functionDefinitionNodeList.Add((FunctionDefinitionNode)scope);
         }
         
@@ -670,7 +670,7 @@ public class CSharpBinder
     {
         var localScope = GetScopeByOffset(compilationUnit, initialScopeOffset);
 
-        while (localScope is not null)
+        while (!localScope.IsDefault())
         {
             if (TryGetFunctionDefinitionNodeByScope(
                     resourceUri,
@@ -706,7 +706,7 @@ public class CSharpBinder
             var x = ScopeList[i];
             
             if (x.ParentScopeOffset == scopeOffset &&
-                x.SyntaxKind == SyntaxKind.FunctionDefinitionNode &&
+                x.OwnerSyntaxKind == SyntaxKind.FunctionDefinitionNode &&
                 GetIdentifierText(x, resourceUri, compilationUnit) == functionIdentifierText)
             {
                 functionDefinitionNode = (FunctionDefinitionNode)x;
@@ -820,7 +820,7 @@ public class CSharpBinder
                             typeDefinitionNode.InheritedTypeReference.ExplicitDefinitionTextSpan != default)
                         {
                             var scope = GetScopeByPositionIndex(innerCompilationUnit, typeDefinitionNode.InheritedTypeReference.ExplicitDefinitionTextSpan.StartInclusiveIndex);
-                            if (scope is not null)
+                            if (!scope.IsDefault())
                             {
                                 innerScopeIndexKey = scope.SelfScopeOffset;
                             }
@@ -862,7 +862,7 @@ public class CSharpBinder
     {
         var localScope = GetScopeByOffset(compilationUnit, initialScopeOffset);
 
-        while (localScope is not null)
+        while (!localScope.IsDefault())
         {
             if (TryGetVariableDeclarationNodeByScope(
                     resourceUri,
@@ -979,7 +979,7 @@ public class CSharpBinder
         if (matchNode is null)
         {
             var scope = ScopeList[compilationUnit.ScopeIndex + scopeOffset];
-            if (!isRecursive && scope.SyntaxKind == SyntaxKind.TypeDefinitionNode)
+            if (!isRecursive && scope.OwnerSyntaxKind == SyntaxKind.TypeDefinitionNode)
             {
                 var typeDefinitionNode = (TypeDefinitionNode)scope;
                 if (typeDefinitionNode.IndexPartialTypeDefinition != -1)
@@ -1016,7 +1016,7 @@ public class CSharpBinder
     {
         var localScope = GetScopeByOffset(compilationUnit, initialScopeOffset);
 
-        while (localScope is not null)
+        while (!localScope.IsDefault())
         {
             if (TryGetLabelDeclarationNodeByScope(
                     resourceUri,
@@ -1105,7 +1105,7 @@ public class CSharpBinder
     {
         var scope = GetScope(compilationUnit, textSpan);
 
-        if (scope is null)
+        if (scope.IsDefault())
             return null;
 
         var externalSyntaxKind = SyntaxKind.VariableDeclarationNode;
@@ -1692,8 +1692,8 @@ public class CSharpBinder
             var x = ScopeList[i];
         
             if (x.ParentScopeOffset == typeDefinitionNode.SelfScopeOffset &&
-                (x.SyntaxKind == SyntaxKind.TypeDefinitionNode ||
-                 x.SyntaxKind == SyntaxKind.FunctionDefinitionNode))
+                (x.OwnerSyntaxKind == SyntaxKind.TypeDefinitionNode ||
+                 x.OwnerSyntaxKind == SyntaxKind.FunctionDefinitionNode))
             {
                 syntaxNodeList.Add(x);
             }
@@ -1758,8 +1758,8 @@ public class CSharpBinder
                                 var x = ScopeList[i];
                                 
                                 if (x.ParentScopeOffset == innerScopeIndexKey &&
-                                    (x.SyntaxKind == SyntaxKind.TypeDefinitionNode ||
-                                     x.SyntaxKind == SyntaxKind.FunctionDefinitionNode))
+                                    (x.OwnerSyntaxKind == SyntaxKind.TypeDefinitionNode ||
+                                     x.OwnerSyntaxKind == SyntaxKind.FunctionDefinitionNode))
                                 {
                                     syntaxNodeList.Add(x);
                                 }
@@ -1807,8 +1807,8 @@ public class CSharpBinder
             var scope = ScopeList[i];
             
             if (scope.ParentScopeOffset == typeDefinitionNode.SelfScopeOffset &&
-                (scope.SyntaxKind == SyntaxKind.TypeDefinitionNode ||
-                 scope.SyntaxKind == SyntaxKind.FunctionDefinitionNode))
+                (scope.OwnerSyntaxKind == SyntaxKind.TypeDefinitionNode ||
+                 scope.OwnerSyntaxKind == SyntaxKind.FunctionDefinitionNode))
             {
                 _getMemberList.Add(scope);
             }
@@ -1874,7 +1874,7 @@ public class CSharpBinder
                             {
                                 var innerCodeBlockOwner = ScopeList[innerCompilationUnit.ScopeIndex + partialTypeDefinition.ScopeOffset];
                                 
-                                if (innerCodeBlockOwner.SyntaxKind == SyntaxKind.TypeDefinitionNode)
+                                if (innerCodeBlockOwner.OwnerSyntaxKind == SyntaxKind.TypeDefinitionNode)
                                 {
                                     var innerTypeDefinitionNode = (TypeDefinitionNode)innerCodeBlockOwner;
                                 
@@ -1884,8 +1884,8 @@ public class CSharpBinder
                                         var scope = ScopeList[i];
                                     
                                         if (scope.ParentScopeOffset == innerScopeIndexKey &&
-                                            (scope.SyntaxKind == SyntaxKind.TypeDefinitionNode ||
-                                             scope.SyntaxKind == SyntaxKind.FunctionDefinitionNode))
+                                            (scope.OwnerSyntaxKind == SyntaxKind.TypeDefinitionNode ||
+                                             scope.OwnerSyntaxKind == SyntaxKind.FunctionDefinitionNode))
                                         {
                                             _getMemberList.Add(scope);
                                         }
@@ -1945,7 +1945,7 @@ public class CSharpBinder
         {
             var x = ScopeList[i];
             
-            if (x.ParentScopeOffset == namespaceStatementNode.SelfScopeOffset && x.SyntaxKind == SyntaxKind.TypeDefinitionNode)
+            if (x.ParentScopeOffset == namespaceStatementNode.SelfScopeOffset && x.OwnerSyntaxKind == SyntaxKind.TypeDefinitionNode)
                 typeDefinitionNodeList.Add((TypeDefinitionNode)x);
         }
 
@@ -1988,7 +1988,7 @@ public class CSharpBinder
         {
             var scope = ScopeList[i];
         
-            if (scope.ParentScopeOffset == namespaceStatementNode.SelfScopeOffset && scope.SyntaxKind == SyntaxKind.TypeDefinitionNode)
+            if (scope.ParentScopeOffset == namespaceStatementNode.SelfScopeOffset && scope.OwnerSyntaxKind == SyntaxKind.TypeDefinitionNode)
                 _getTopLevelTypeDefinitionNodes.Add((TypeDefinitionNode)scope);
         }
         
