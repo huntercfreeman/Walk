@@ -121,7 +121,7 @@ public class CSharpStatementBuilder
         {
             var tuple = ParseLambdaStatementScopeStack.Peek();
             
-            if (tuple.IndexCodeBlockValue == parserModel.IndexCurrentCodeBlockValue)
+            if (tuple.IndexCodeBlockValue == parserModel.CurrentScopeIndex)
             {
                 tuple = ParseLambdaStatementScopeStack.Pop();
                 tuple.DeferredChildScope.PrepareMainParserLoop(finishTokenIndex, ref parserModel);

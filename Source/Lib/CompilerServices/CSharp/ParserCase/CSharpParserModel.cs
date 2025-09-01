@@ -35,7 +35,7 @@ public ref struct CSharpParserModel
     {
         Binder = binder;
         Compilation = ref compilationUnit;
-        IndexCurrentCodeBlockValue = 0;
+        CurrentScopeOffset = 0;
         CurrentNamespaceStatementNode = binder.TopLevelNamespaceStatementNode;
         ResourceUri = resourceUri;
     
@@ -136,7 +136,7 @@ public ref struct CSharpParserModel
     
     public ref CSharpCompilationUnit Compilation;
     
-    public int CurrentCodeBlockValueSelfIndexKey { get; set; }
+    public int CurrentScopeOffset { get; set; }
     
     public NamespaceStatementNode CurrentNamespaceStatementNode { get; set; }
     public TypeReference MostRecentLeftHandSideAssignmentExpressionTypeClauseNode { get; set; } = CSharpFacts.Types.Void.ToTypeReference();
