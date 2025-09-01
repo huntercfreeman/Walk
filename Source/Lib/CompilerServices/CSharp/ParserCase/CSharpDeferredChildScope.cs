@@ -20,9 +20,9 @@ public struct CSharpDeferredChildScope
     
     public readonly void PrepareMainParserLoop(int tokenIndexToRestore, ref CSharpParserModel parserModel)
     {
-        var currentScope = parserModel.Binder.ScopeList[parserModel.Compilation.ScopeIndex + ScopeOffset];
-        currentScope.PermitCodeBlockParsing = true;
-        parserModel.Binder.ScopeList[IndexCodeBlockValue] = currentCodeBlockValue;
+        var scope = parserModel.Binder.ScopeList[parserModel.Compilation.ScopeIndex + ScopeOffset];
+        scope.PermitCodeBlockParsing = true;
+        parserModel.Binder.ScopeList[parserModel.Compilation.ScopeIndex + ScopeOffset] = scope;
         
         parserModel.TokenWalker.DeferredParsing(
             OpenTokenIndex,
