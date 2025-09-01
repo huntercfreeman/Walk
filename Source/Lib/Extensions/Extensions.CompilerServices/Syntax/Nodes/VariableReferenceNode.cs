@@ -18,7 +18,7 @@ public sealed class VariableReferenceNode : IExpressionNode
         IsFabricated = variableReference.IsFabricated;
     }
 
-    public int ParentScopeOffset { get; set; }
+    public int ParentScopeSubIndex { get; set; }
     public bool _isFabricated;
 
     public SyntaxToken VariableIdentifierToken { get; set; }

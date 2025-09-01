@@ -20,8 +20,8 @@ public sealed class TryStatementCatchNode : ICodeBlockOwner
     public VariableDeclarationNode? VariableDeclarationNode { get; set; }
     public SyntaxToken CloseParenthesisToken { get; }
 
-    public int ParentScopeOffset { get; set; } = -1;
-    public int SelfScopeOffset { get; set; } = -1;
+    public int ParentScopeSubIndex { get; set; } = -1;
+    public int SelfScopeSubIndex { get; set; } = -1;
 
     public bool IsFabricated { get; init; }
     public SyntaxKind SyntaxKind => SyntaxKind.TryStatementCatchNode;

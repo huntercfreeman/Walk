@@ -41,9 +41,9 @@ public class ParseFunctions
         		scope_EndExclusiveIndex: -1,
         		codeBlock_StartInclusiveIndex: parserModel.TokenWalker.Current.TextSpan.StartInclusiveIndex,
         		codeBlock_EndExclusiveIndex: -1,
-        		parentScopeOffset: parserModel.CurrentScopeOffset,
-        		selfScopeOffset: parserModel.Compilation.ScopeLength,
-        		nodeOffset: parserModel.Compilation.NodeLength,
+        		parentScopeSubIndex: parserModel.CurrentScopeOffset,
+        		selfScopeSubIndex: parserModel.Compilation.ScopeLength,
+        		nodeSubIndex: parserModel.Compilation.NodeLength,
         		permitCodeBlockParsing: false,
         		isImplicitOpenCodeBlockTextSpan: false,
         		returnTypeReference: Walk.CompilerServices.CSharp.Facts.CSharpFacts.Types.Void.ToTypeReference(),
@@ -123,20 +123,20 @@ public class ParseFunctions
             {
                 existingWasFound = false;
                 
-                if (existingNode.ParentScopeOffset < previousCompilationUnit.ScopeLength)
+                if (existingNode.ParentScopeSubIndex < previousCompilationUnit.ScopeLength)
                 {
-                    var previousParent = parserModel.Binder.ScopeList[previousCompilationUnit.ScopeOffset + existingNode.ParentScopeOffset];
-                    var currentParent = parserModel.GetParent(newNode.ParentScopeOffset, parserModel.Compilation);
+                    var previousParent = parserModel.Binder.ScopeList[previousCompilationUnit.ScopeOffset + existingNode.ParentScopeSubIndex];
+                    var currentParent = parserModel.GetParent(newNode.ParentScopeSubIndex, parserModel.Compilation);
                     
                     if (currentParent.OwnerSyntaxKind == previousParent.OwnerSyntaxKind)
                     {
                         var currentParentIdentifierText = parserModel.Binder.GetIdentifierText(
-                            parserModel.Binder.NodeList[parserModel.Compilation.NodeOffset + currentParent.NodeOffset],
+                            parserModel.Binder.NodeList[parserModel.Compilation.NodeOffset + currentParent.NodeSubIndex],
                             parserModel.ResourceUri,
                             parserModel.Compilation);
                             
                         var previousParentIdentifierText = parserModel.Binder.GetIdentifierText(
-                            parserModel.Binder.NodeList[previousCompilationUnit.NodeOffset + previousParent.NodeOffset],
+                            parserModel.Binder.NodeList[previousCompilationUnit.NodeOffset + previousParent.NodeSubIndex],
                             parserModel.ResourceUri,
                             previousCompilationUnit);
                         
@@ -161,15 +161,15 @@ public class ParseFunctions
                             {
                                 var x = parserModel.Binder.ScopeList[indexPreviousNode];
                                 
-                                if (x.ParentScopeOffset == previousParent.SelfScopeOffset &&
+                                if (x.ParentScopeSubIndex == previousParent.SelfScopeSubIndex &&
                                     x.OwnerSyntaxKind == SyntaxKind.FunctionDefinitionNode &&
                                     binder.GetIdentifierText(
-                                            parserModel.Binder.NodeList[previousCompilationUnit.NodeOffset + x.NodeOffset],
+                                            parserModel.Binder.NodeList[previousCompilationUnit.NodeOffset + x.NodeSubIndex],
                                             parserModel.ResourceUri,
                                             previousCompilationUnit) ==
                                         binder.GetIdentifierText(existingNode, parserModel.ResourceUri, compilation))
                                 {
-                                    previousNode = parserModel.Binder.NodeList[previousCompilationUnit.NodeOffset + x.NodeOffset];
+                                    previousNode = parserModel.Binder.NodeList[previousCompilationUnit.NodeOffset + x.NodeSubIndex];
                                     break;
                                 }
                             }
@@ -184,7 +184,7 @@ public class ParseFunctions
                                     existingWasFound = true;
                                     
                                     var entry = parserModel.Binder.MethodOverloadDefinitionList[existingNode.IndexMethodOverloadDefinition];
-                                    entry.ScopeIndexKey = existingNode.SelfScopeOffset;
+                                    entry.ScopeIndexKey = existingNode.SelfScopeSubIndex;
                                     parserModel.Binder.MethodOverloadDefinitionList[existingNode.IndexMethodOverloadDefinition] = entry;
                                 }
                             }
@@ -199,7 +199,7 @@ public class ParseFunctions
                 parserModel.Binder.MethodOverloadDefinitionList.Add(new MethodOverloadDefinitionEntry(
                     parserModel.ResourceUri,
                     parserModel.Binder.MethodOverloadDefinitionList.Count,
-                    existingNode.SelfScopeOffset));
+                    existingNode.SelfScopeSubIndex));
             }
         }
         
@@ -215,7 +215,7 @@ public class ParseFunctions
                 parserModel.Binder.MethodOverloadDefinitionList[i] = new MethodOverloadDefinitionEntry(
                     parserModel.ResourceUri,
                     existingNode.IndexMethodOverloadDefinition,
-                    newNode.SelfScopeOffset);
+                    newNode.SelfScopeSubIndex);
             }
         }
         
@@ -226,7 +226,7 @@ public class ParseFunctions
                 new MethodOverloadDefinitionEntry(
                     parserModel.ResourceUri,
                     existingNode.IndexMethodOverloadDefinition,
-                    newNode.SelfScopeOffset));
+                    newNode.SelfScopeSubIndex));
         }
     }
 
@@ -262,9 +262,9 @@ public class ParseFunctions
         		scope_EndExclusiveIndex: -1,
         		codeBlock_StartInclusiveIndex: parserModel.TokenWalker.Current.TextSpan.StartInclusiveIndex,
         		codeBlock_EndExclusiveIndex: -1,
-        		parentScopeOffset: parserModel.CurrentScopeOffset,
-        		selfScopeOffset: parserModel.Compilation.ScopeLength,
-        		nodeOffset: parserModel.Compilation.NodeLength,
+        		parentScopeSubIndex: parserModel.CurrentScopeOffset,
+        		selfScopeSubIndex: parserModel.Compilation.ScopeLength,
+        		nodeSubIndex: parserModel.Compilation.NodeLength,
         		permitCodeBlockParsing: false,
         		isImplicitOpenCodeBlockTextSpan: false,
         		returnTypeReference: Walk.CompilerServices.CSharp.Facts.CSharpFacts.Types.Void.ToTypeReference(),

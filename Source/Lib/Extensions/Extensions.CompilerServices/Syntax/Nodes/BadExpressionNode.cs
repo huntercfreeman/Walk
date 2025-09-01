@@ -39,7 +39,7 @@ public sealed class BadExpressionNode : IExpressionNode
 
     public TypeReference ResultTypeReference { get; }
 
-    public int ParentScopeOffset { get; set; }
+    public int ParentScopeSubIndex { get; set; }
     public bool IsFabricated { get; init; }
     public SyntaxKind SyntaxKind => SyntaxKind.BadExpressionNode;
 }

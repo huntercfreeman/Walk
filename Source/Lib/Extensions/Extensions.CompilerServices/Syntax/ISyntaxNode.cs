@@ -9,5 +9,5 @@ public interface ISyntaxNode : ISyntax
     ///
     /// This is unsafe, because you must be certain that all data you're interacting with is coming from the same 'CSharpCompilationUnit'.
     /// </summary>
-    public int ParentScopeOffset { get; set; }
+    public int ParentScopeSubIndex { get; set; }
 }

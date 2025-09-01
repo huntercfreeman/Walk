@@ -22,9 +22,9 @@ public static class CSharpParser
         		scope_EndExclusiveIndex: -1,
         		codeBlock_StartInclusiveIndex: 0,
         		codeBlock_EndExclusiveIndex: -1,
-        		parentScopeOffset: -1,
-        		selfScopeOffset: 0,
-        		nodeOffset: 0,
+        		parentScopeSubIndex: -1,
+        		selfScopeSubIndex: 0,
+        		nodeSubIndex: 0,
         		permitCodeBlockParsing: false,
         		isImplicitOpenCodeBlockTextSpan: false,
         		returnTypeReference: Walk.CompilerServices.CSharp.Facts.CSharpFacts.Types.Void.ToTypeReference(),
@@ -196,7 +196,7 @@ public static class CSharpParser
             parserModel.TokenWalker.ConsumeCounterReset();
         }
 
-        if (!parserModel.GetParent(parserModel.Binder.ScopeList[parserModel.CurrentScopeOffset].ParentScopeOffset, compilationUnit).IsDefault())
+        if (!parserModel.GetParent(parserModel.Binder.ScopeList[parserModel.CurrentScopeOffset].ParentScopeSubIndex, compilationUnit).IsDefault())
             parserModel.CloseScope(parserModel.TokenWalker.Current.TextSpan); // The current token here would be the EOF token.
 
         parserModel.Binder.FinalizeCompilationUnit(parserModel.ResourceUri, compilationUnit);

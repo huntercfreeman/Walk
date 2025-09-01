@@ -33,7 +33,7 @@ public sealed class AmbiguousIdentifierExpressionNode : IGenericParameterNode
     public bool FollowsMemberAccessToken { get; set; }
     public bool HasQuestionMark { get; set; }
 
-    public int ParentScopeOffset { get; set; }
+    public int ParentScopeSubIndex { get; set; }
     public bool IsFabricated { get; init; }
     public SyntaxKind SyntaxKind => SyntaxKind.AmbiguousIdentifierExpressionNode;
     

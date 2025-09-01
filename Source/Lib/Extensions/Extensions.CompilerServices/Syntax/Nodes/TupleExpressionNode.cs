@@ -8,7 +8,7 @@ public sealed class TupleExpressionNode : IExpressionNode
 
     // public List<IExpressionNode> InnerExpressionList { get; } = new();
 
-    public int ParentScopeOffset { get; set; }
+    public int ParentScopeSubIndex { get; set; }
     public bool IsFabricated { get; init; }
     public SyntaxKind SyntaxKind => SyntaxKind.TupleExpressionNode;
 }

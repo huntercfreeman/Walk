@@ -1688,7 +1688,7 @@ public sealed class CSharpCompilerService : IExtendedCompilerService
                                 var x = __CSharpBinder.NodeList[i];
                                 
                                 if (x.SyntaxKind == SyntaxKind.TypeDefinitionNode &&
-                                    ((TypeDefinitionNode)x).SelfScopeOffset == tuple.ScopeIndexKey)
+                                    ((TypeDefinitionNode)x).SelfScopeSubIndex == tuple.ScopeIndexKey)
                                 {
                                     otherTypeDefinitionNode = x;
                                     break;
@@ -1955,7 +1955,7 @@ public sealed class CSharpCompilerService : IExtendedCompilerService
         if (__CSharpBinder.__CompilationUnitMap.TryGetValue(resourceUri, out var compilationUnit))
         {
             var scope = __CSharpBinder.GetScopeByPositionIndex(compilationUnit, positionIndex);
-            return (scope, (ICodeBlockOwner)__CSharpBinder.NodeList[compilationUnit.NodeOffset + scope.NodeOffset]);
+            return (scope, (ICodeBlockOwner)__CSharpBinder.NodeList[compilationUnit.NodeOffset + scope.NodeSubIndex]);
         }
         
         return default;
@@ -2074,7 +2074,7 @@ public sealed class CSharpCompilerService : IExtendedCompilerService
             while (!targetScope.IsDefault())
             {
                 autocompleteEntryList.AddRange(
-                    __CSharpBinder.GetVariableDeclarationNodesByScope(virtualizationResult.Model.PersistentState.ResourceUri, compilationUnit, targetScope.SelfScopeOffset)
+                    __CSharpBinder.GetVariableDeclarationNodesByScope(virtualizationResult.Model.PersistentState.ResourceUri, compilationUnit, targetScope.SelfScopeSubIndex)
                     .Select(x => __CSharpBinder.GetIdentifierText(x, virtualizationResult.Model.PersistentState.ResourceUri, compilationUnit))
                     .ToArray()
                     .Where(x => x?.Contains(word, StringComparison.InvariantCulture) ?? false)
@@ -2089,7 +2089,7 @@ public sealed class CSharpCompilerService : IExtendedCompilerService
                     }));
     
                 autocompleteEntryList.AddRange(
-                    __CSharpBinder.GetFunctionDefinitionNodesByScope(compilationUnit, targetScope.SelfScopeOffset)
+                    __CSharpBinder.GetFunctionDefinitionNodesByScope(compilationUnit, targetScope.SelfScopeSubIndex)
                     .Select(x => x.FunctionIdentifierToken.TextSpan.GetText(virtualizationResult.Model.GetAllText(), _textEditorService))
                     .ToArray()
                     .Where(x => x.Contains(word, StringComparison.InvariantCulture))
@@ -2103,10 +2103,10 @@ public sealed class CSharpCompilerService : IExtendedCompilerService
                             null);
                     }));
     
-                if (targetScope.ParentScopeOffset == -1)
+                if (targetScope.ParentScopeSubIndex == -1)
                     targetScope = default;
                 else
-                    targetScope = __CSharpBinder.GetScopeByOffset(compilationUnit, targetScope.ParentScopeOffset);
+                    targetScope = __CSharpBinder.GetScopeByOffset(compilationUnit, targetScope.ParentScopeSubIndex);
             }
         
             var allTypeDefinitions = __CSharpBinder.AllTypeDefinitions;

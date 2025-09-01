@@ -16,7 +16,7 @@ public sealed class UnaryOperatorNode : ISyntaxNode
     public SyntaxToken OperatorToken { get; }
     public TypeReference ResultTypeReference { get; }
 
-    public int ParentScopeOffset { get; set; }
+    public int ParentScopeSubIndex { get; set; }
     public bool IsFabricated { get; init; }
     public SyntaxKind SyntaxKind => SyntaxKind.UnaryOperatorNode;
 }
