@@ -816,7 +816,9 @@ public ref struct CSharpParserModel
         codeBlockOwner.SelfScopeOffset = Compilation.ScopeCount;
         
         var parent = Binder.ScopeList[Compilation.ScopeIndex + CurrentScopeOffset];
-        var parentScopeDirection = parent?.ScopeDirectionKind ?? ScopeDirectionKind.Both;
+        var parentScopeDirection = parent.IsDefault()
+            ? ScopeDirectionKind.Both
+            : parent.ScopeDirectionKind;
         if (parentScopeDirection == ScopeDirectionKind.Both)
             scope.PermitCodeBlockParsing = false;
         

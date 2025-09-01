@@ -249,7 +249,7 @@ public static class ParseTokens
             parserModel.StatementBuilder.MostRecentNode = typeClauseNode;
         }
         else if (parserModel.Binder.ScopeList[parserModel.CurrentScopeOffset].OwnerSyntaxKind == SyntaxKind.TypeDefinitionNode &&
-                 parserModel.Binder.ScopeList[parserModel.CurrentScopeOffset] is TypeDefinitionNode typeDefinitionNode &&
+                 parserModel.Binder.NodeList[parserModel.Binder.ScopeList[parserModel.CurrentScopeOffset].NodeOffset] is TypeDefinitionNode typeDefinitionNode &&
                  UtilityApi.IsConvertibleToIdentifierToken(typeClauseNode.TypeIdentifierToken.SyntaxKind) &&
                  parserModel.TokenWalker.Current.SyntaxKind == SyntaxKind.OpenParenthesisToken &&
                  parserModel.GetTextSpanText(typeDefinitionNode.TypeIdentifierToken.TextSpan) == parserModel.GetTextSpanText(typeClauseNode.TypeIdentifierToken.TextSpan))
@@ -344,10 +344,22 @@ public static class ParseTokens
         parserModel.TokenWalker.Consume(); // Consume the 'get' or 'set' contextual keyword.
     
         var getterOrSetterNode = new GetterOrSetterNode();
-    
+        
         parserModel.RegisterScopeAndOwner(
-            getterOrSetterNode,
-            parserModel.TokenWalker.Current.TextSpan);
+        	new Scope(
+        		ScopeDirectionKind.Down,
+        		scope_StartInclusiveIndex: parserModel.TokenWalker.Current.TextSpan.StartInclusiveIndex,
+        		scope_EndExclusiveIndex: -1,
+        		codeBlock_StartInclusiveIndex: parserModel.TokenWalker.Current.TextSpan.StartInclusiveIndex,
+        		codeBlock_EndExclusiveIndex: -1,
+        		parentScopeOffset: parserModel.CurrentScopeOffset,
+        		selfScopeOffset: parserModel.Binder.ScopeList.Count,
+        		nodeOffset: parserModel.Binder.NodeList.Count,
+        		permitCodeBlockParsing: false,
+        		isImplicitOpenCodeBlockTextSpan: false,
+        		returnTypeReference: Walk.CompilerServices.CSharp.Facts.CSharpFacts.Types.Void.ToTypeReference(),
+        		ownerSyntaxKind: getterOrSetterNode.SyntaxKind),
+    	    getterOrSetterNode);
         
         if (parserModel.TokenWalker.Current.SyntaxKind == SyntaxKind.StatementDelimiterToken)
         {
