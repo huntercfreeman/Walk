@@ -13,9 +13,7 @@ internal static class TokenWalkerExtensionMethods
         // Pop off the 'TypeDefinitionNode', then push it back on when later dequeued.
         var deferredScope = parserModel.Binder.ScopeList[parserModel.CurrentScopeOffset];
         
-        parserModel.CurrentCodeBlockOwner = parserModel.GetParent(
-            deferredScope.ParentScopeOffset,
-            parserModel.Compilation);
+        parserModel.CurrentScopeOffset = deferredScope.ParentScopeOffset;
 
         var openTokenIndex = tokenWalker.Index - 1;
 
@@ -72,7 +70,7 @@ internal static class TokenWalkerExtensionMethods
         
         parserModel.ParseChildScopeStack.Push(
             (
-                parserModel.CurrentCodeBlockOwner,
+                parserModel.CurrentScopeOffset,
                 new CSharpDeferredChildScope(
                     openTokenIndex,
                     closeTokenIndex,

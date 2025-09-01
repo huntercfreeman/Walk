@@ -21,7 +21,9 @@ public class CSharpStatementBuilder
     /// <summary>
     /// Prior to finishing a statement, you must check whether ParseLambdaStatementScopeStack has a child that needs to be parsed.
     /// All currently known cases of finishing a statement will do so by invoking FinishStatement(...),
-    /// this method will perform this check internally.
+    /// this method will perform this check internally.'
+    ///
+    /// The ScopeOffset is that of the parent which contains the scope that was deferred.
     /// </summary>
     public Stack<(int ScopeOffset, CSharpDeferredChildScope DeferredChildScope)> ParseLambdaStatementScopeStack { get; } = new();
     

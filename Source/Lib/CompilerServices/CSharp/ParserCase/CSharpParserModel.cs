@@ -98,6 +98,8 @@ public ref struct CSharpParserModel
 
     /// <summary>
     /// Prior to closing a statement-codeblock, you must check whether ParseChildScopeStack has a child that needs to be parsed.
+    ///
+    /// The ScopeOffset is that of the parent which contains the scope that was deferred.
     /// </summary>
     public Stack<(int ScopeOffset, CSharpDeferredChildScope DeferredChildScope)> ParseChildScopeStack { get; }
     
@@ -813,28 +815,28 @@ public ref struct CSharpParserModel
         codeBlockOwner.ParentScopeOffset = CurrentScopeOffset;
         codeBlockOwner.SelfScopeOffset = Compilation.ScopeCount;
         
-        codeBlockOwner.ParentScopeOffset = CurrentScopeOffset;
-
-        // ???
-        // codeBlockOwner.CurrentScopeOffset = Compilation.ScopeCount;
-        
-        codeBlockOwner.SelfScopeOffset = Compilation.ScopeCount;
-        Binder.ScopeList.Insert(
-            Compilation.ScopeIndex + Compilation.ScopeCount,
-            codeBlockOwner);
-        ++Compilation.ScopeCount;
-        
-        codeBlockOwner.NodeSelfScopeOffset = Compilation.ScopeCount;
-        Binder.NodeList.Insert(
-            Compilation.ScopeIndex + Compilation.ScopeCount,
-            codeBlockOwner);
-        ++Compilation.ScopeCount;
-
-        var parent = GetParent(codeBlockOwner, Compilation);
-        
+        var parent = Binder.ScopeList[Compilation.ScopeIndex + CurrentScopeOffset];
         var parentScopeDirection = parent?.ScopeDirectionKind ?? ScopeDirectionKind.Both;
         if (parentScopeDirection == ScopeDirectionKind.Both)
-            codeBlockOwner.PermitCodeBlockParsing = false;
+            scope.PermitCodeBlockParsing = false;
+        
+        switch (scope.OwnerSyntaxKind)
+        {
+            case SyntaxKind.TypeDefinitionNode:
+            case SyntaxKind.ConstructorDefinitionNode:
+            case SyntaxKind.FunctionDefinitionNode:
+                scope.NodeOffset = Compilation.CountNodeList;
+                Binder.NodeList.Insert(
+                    Compilation.IndexNodeList + Compilation.CountNodeList,
+                    codeBlockOwner);
+                ++Compilation.CountNodeList;
+                break;
+        }
+        
+        Binder.ScopeList.Insert(
+            Compilation.ScopeIndex + Compilation.ScopeCount,
+            scope);
+        ++Compilation.ScopeCount;
     
         CurrentScopeOffset = codeBlockOwner.SelfScopeOffset;
         
