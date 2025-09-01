@@ -3169,7 +3169,7 @@ public static class ParseExpressions
     
     public static void OpenLambdaExpressionScope(LambdaExpressionNode lambdaExpressionNode, ref SyntaxToken openBraceToken, ref CSharpParserModel parserModel)
     {
-        parserModel.NewScopeAndBuilderFromOwner(
+        parserModel.RegisterScopeAndOwner(
             lambdaExpressionNode,
             openBraceToken.TextSpan);
     }

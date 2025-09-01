@@ -34,7 +34,7 @@ public class ParseFunctions
                 parserModel.CurrentScopeOffset,
                 parserModel.ResourceUri,
                 consumedIdentifierToken.TextSpan,
-                out var existingFunctionDefinitionNode))        {            isFunctionOverloadCase = true;        }        else        {            isFunctionOverloadCase = false;        }        parserModel.NewScopeAndBuilderFromOwner(
+                out var existingFunctionDefinitionNode))        {            isFunctionOverloadCase = true;        }        else        {            isFunctionOverloadCase = false;        }        parserModel.RegisterScopeAndOwner(
             functionDefinitionNode,
             parserModel.TokenWalker.Current.TextSpan);
     
@@ -232,7 +232,7 @@ public class ParseFunctions
     
         parserModel.BindConstructorDefinitionIdentifierToken(consumedIdentifierToken);
         
-        parserModel.NewScopeAndBuilderFromOwner(
+        parserModel.RegisterScopeAndOwner(
             constructorDefinitionNode,
             parserModel.TokenWalker.Current.TextSpan);
         

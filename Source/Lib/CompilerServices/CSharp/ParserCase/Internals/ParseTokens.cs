@@ -344,7 +344,7 @@ public static class ParseTokens
     
         var getterOrSetterNode = new GetterOrSetterNode();
     
-        parserModel.NewScopeAndBuilderFromOwner(
+        parserModel.RegisterScopeAndOwner(
             getterOrSetterNode,
             parserModel.TokenWalker.Current.TextSpan);
         
@@ -381,7 +381,7 @@ public static class ParseTokens
         {
             var arbitraryCodeBlockNode = new ArbitraryCodeBlockNode(parserModel.CurrentCodeBlockOwner);
             
-            parserModel.NewScopeAndBuilderFromOwner(
+            parserModel.RegisterScopeAndOwner(
                 arbitraryCodeBlockNode,
                 openBraceToken.TextSpan);
         }

@@ -52,7 +52,7 @@ public class ParseDefaultKeywords
             openParenthesisToken,
             closeParenthesisToken: default);
         
-        parserModel.NewScopeAndBuilderFromOwner(
+        parserModel.RegisterScopeAndOwner(
             catchNode,
             parserModel.TokenWalker.Current.TextSpan);
         
@@ -131,7 +131,7 @@ public class ParseDefaultKeywords
             openParenthesisToken: default,
             closeParenthesisToken: default);
         
-        parserModel.NewScopeAndBuilderFromOwner(
+        parserModel.RegisterScopeAndOwner(
             doWhileStatementNode,
             parserModel.TokenWalker.Current.TextSpan);
         
@@ -156,7 +156,7 @@ public class ParseDefaultKeywords
         
         var ifStatementNode = new IfStatementNode(elseTokenKeyword);
         
-        parserModel.NewScopeAndBuilderFromOwner(
+        parserModel.RegisterScopeAndOwner(
             ifStatementNode,
             parserModel.TokenWalker.Current.TextSpan);
         
@@ -207,7 +207,7 @@ public class ParseDefaultKeywords
         // This was done with CSharpParserModel's SyntaxStack, but that property is now being removed. A different way to accomplish this needs to be done. (2025-02-06)
         // tryStatementNode.SetTryStatementFinallyNode(finallyNode);
         
-        parserModel.NewScopeAndBuilderFromOwner(
+        parserModel.RegisterScopeAndOwner(
             finallyNode,
             parserModel.TokenWalker.Current.TextSpan);
     
@@ -237,7 +237,7 @@ public class ParseDefaultKeywords
             conditionStatementDelimiterToken: default,
             closeParenthesisToken: default);
             
-        parserModel.NewScopeAndBuilderFromOwner(
+        parserModel.RegisterScopeAndOwner(
             forStatementNode,
             parserModel.TokenWalker.Current.TextSpan);
         
@@ -285,7 +285,7 @@ public class ParseDefaultKeywords
             inKeywordToken: default,
             closeParenthesisToken: default);
         
-        parserModel.NewScopeAndBuilderFromOwner(
+        parserModel.RegisterScopeAndOwner(
             foreachStatementNode,
             parserModel.TokenWalker.Current.TextSpan);
             
@@ -369,7 +369,7 @@ public class ParseDefaultKeywords
             openParenthesisToken,
             closeParenthesisToken);
             
-        parserModel.NewScopeAndBuilderFromOwner(
+        parserModel.RegisterScopeAndOwner(
             lockStatementNode,
             parserModel.TokenWalker.Current.TextSpan);
     
@@ -479,7 +479,7 @@ public class ParseDefaultKeywords
             expressionNode,
             closeParenthesisToken);
             
-        parserModel.NewScopeAndBuilderFromOwner(
+        parserModel.RegisterScopeAndOwner(
             switchStatementNode,
             parserModel.TokenWalker.Current.TextSpan);
     }
@@ -517,7 +517,7 @@ public class ParseDefaultKeywords
             
         // parserModel.CurrentCodeBlockBuilder.AddChild(tryStatementTryNode);
         
-        parserModel.NewScopeAndBuilderFromOwner(
+        parserModel.RegisterScopeAndOwner(
             tryStatementTryNode,
             parserModel.TokenWalker.Current.TextSpan);
     
@@ -605,7 +605,7 @@ public class ParseDefaultKeywords
             openParenthesisToken,
             closeParenthesisToken);
             
-        parserModel.NewScopeAndBuilderFromOwner(
+        parserModel.RegisterScopeAndOwner(
             whileStatementNode,
             parserModel.TokenWalker.Current.TextSpan);
     
@@ -716,7 +716,7 @@ public class ParseDefaultKeywords
 
         var ifStatementNode = new IfStatementNode(ifTokenKeyword);
         
-        parserModel.NewScopeAndBuilderFromOwner(
+        parserModel.RegisterScopeAndOwner(
             ifStatementNode,
             parserModel.TokenWalker.Current.TextSpan);
         
@@ -757,7 +757,7 @@ public class ParseDefaultKeywords
         
         var usingStatementNode = new UsingStatementCodeBlockNode(usingKeywordToken);
             
-        parserModel.NewScopeAndBuilderFromOwner(
+        parserModel.RegisterScopeAndOwner(
             usingStatementNode,
             parserModel.TokenWalker.Current.TextSpan);
             
@@ -946,7 +946,7 @@ public class ParseDefaultKeywords
         
         parserModel.StatementBuilder.MostRecentNode = typeDefinitionNode;
         
-        parserModel.NewScopeAndBuilderFromOwner(
+        parserModel.RegisterScopeAndOwner(
             typeDefinitionNode,
             parserModel.TokenWalker.Current.TextSpan);
             
@@ -1208,7 +1208,7 @@ public class ParseDefaultKeywords
 
         parserModel.SetCurrentNamespaceStatementNode(namespaceStatementNode);
         
-        parserModel.NewScopeAndBuilderFromOwner(
+        parserModel.RegisterScopeAndOwner(
             namespaceStatementNode,
             parserModel.TokenWalker.Current.TextSpan);
         

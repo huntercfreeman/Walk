@@ -808,13 +808,27 @@ public ref struct CSharpParserModel
     /// 
     /// Also will update the 'CurrentCodeBlockBuilder'.
     /// </summary>
-    public void NewScopeAndBuilderFromOwner(ICodeBlockOwner codeBlockOwner, TextEditorTextSpan textSpan)
+    public void RegisterScopeAndOwner(Scope scope, ICodeBlockOwner codeBlockOwner, TextEditorTextSpan textSpan)
     {
+        //var scope = new Scope(
+        //    );
+        
         codeBlockOwner.ParentScopeOffset = CurrentScopeOffset;
         codeBlockOwner.Scope_StartInclusiveIndex = textSpan.StartInclusiveIndex;
 
-        codeBlockOwner.CurrentScopeOffset = Compilation.ScopeCount;
+        
+
+        // ???
+        // codeBlockOwner.CurrentScopeOffset = Compilation.ScopeCount;
+        
+        codeBlockOwner.SelfScopeOffset = Compilation.ScopeCount;
         Binder.ScopeList.Insert(
+            Compilation.ScopeIndex + Compilation.ScopeCount,
+            codeBlockOwner);
+        ++Compilation.ScopeCount;
+        
+        codeBlockOwner.NodeSelfScopeOffset = Compilation.ScopeCount;
+        Binder.NodeList.Insert(
             Compilation.ScopeIndex + Compilation.ScopeCount,
             codeBlockOwner);
         ++Compilation.ScopeCount;
