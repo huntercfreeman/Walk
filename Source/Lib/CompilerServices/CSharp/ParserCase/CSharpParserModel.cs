@@ -2024,4 +2024,11 @@ public ref struct CSharpParserModel
         scope.CodeBlock_EndExclusiveIndex = endExclusiveIndex;
         Binder.ScopeList[Compilation.ScopeIndex + CurrentScopeOffset] = scope;
     }
+    
+    public readonly void SetCurrentScope_CodeBlock_StartInclusiveIndex(int startInclusiveIndex)
+    {
+        var scope = Binder.ScopeList[Compilation.ScopeIndex + CurrentScopeOffset];
+        scope.CodeBlock_StartInclusiveIndex = startInclusiveIndex;
+        Binder.ScopeList[Compilation.ScopeIndex + CurrentScopeOffset] = scope;
+    }
 }
