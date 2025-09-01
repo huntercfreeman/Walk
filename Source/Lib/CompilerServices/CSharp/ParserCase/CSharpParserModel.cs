@@ -543,7 +543,7 @@ public ref struct CSharpParserModel
         if (TryGetVariableDeclarationNodeByScope(
                 ResourceUri,
                 Compilation,
-                CurrentCodeBlockOwner.Unsafe_SelfIndexKey,
+                CurrentScopeOffset,
                 ResourceUri,
                 variableDeclarationNode.IdentifierToken.TextSpan,
                 out var existingVariableDeclarationNode))
@@ -593,7 +593,7 @@ public ref struct CSharpParserModel
         if (TryGetLabelDeclarationNodeByScope(
                 ResourceUri,
                 Compilation,
-                CurrentCodeBlockOwner.Unsafe_SelfIndexKey,
+                CurrentScopeOffset,
                 ResourceUri,
                 labelDeclarationNode.IdentifierToken.TextSpan,
                 out var existingLabelDeclarationNode))
@@ -605,7 +605,7 @@ public ref struct CSharpParserModel
                 // TODO: Track one or many declarations?...
                 // (if there is an error where something is defined twice for example)
                 SetLabelDeclarationNodeByScope(
-                    CurrentCodeBlockOwner.Unsafe_SelfIndexKey,
+                    CurrentScopeOffset,
                     labelDeclarationNode.IdentifierToken.TextSpan,
                     labelDeclarationNode);
             }
@@ -623,7 +623,7 @@ public ref struct CSharpParserModel
         else
         {
             _ = TryAddLabelDeclarationNodeByScope(
-                CurrentCodeBlockOwner.Unsafe_SelfIndexKey,
+                CurrentScopeOffset,
                 labelDeclarationNode.IdentifierToken.TextSpan,
                 labelDeclarationNode);
         }
@@ -638,7 +638,7 @@ public ref struct CSharpParserModel
         if (TryGetVariableDeclarationHierarchically(
                 ResourceUri,
                 Compilation,
-                CurrentCodeBlockOwner.Unsafe_SelfIndexKey,
+                CurrentScopeOffset,
                 ResourceUri,
                 variableIdentifierToken.TextSpan,
                 out var variableDeclarationNode)
@@ -715,7 +715,7 @@ public ref struct CSharpParserModel
         if (TryGetFunctionHierarchically(
                 ResourceUri,
                 Compilation,
-                CurrentCodeBlockOwner.Unsafe_SelfIndexKey,
+                CurrentScopeOffset,
                 ResourceUri,
                 functionInvocationNode.FunctionInvocationIdentifierToken.TextSpan,
                 out var functionDefinitionNode) &&
@@ -810,14 +810,14 @@ public ref struct CSharpParserModel
     /// </summary>
     public void NewScopeAndBuilderFromOwner(ICodeBlockOwner codeBlockOwner, TextEditorTextSpan textSpan)
     {
-        codeBlockOwner.ParentScopeOffset = CurrentCodeBlockOwner.Unsafe_SelfIndexKey;
+        codeBlockOwner.ParentScopeOffset = CurrentScopeOffset;
         codeBlockOwner.Scope_StartInclusiveIndex = textSpan.StartInclusiveIndex;
 
-        codeBlockOwner.Unsafe_SelfIndexKey = Compilation.CountCodeBlockOwnerList;
-        Binder.CodeBlockOwnerList.Insert(
-            Compilation.IndexCodeBlockOwnerList + Compilation.CountCodeBlockOwnerList,
+        codeBlockOwner.CurrentScopeOffset = Compilation.CountCodeBlockOwnerList;
+        Binder.ScopeList.Insert(
+            Compilation.ScopeIndex + Compilation.ScopeCount,
             codeBlockOwner);
-        ++Compilation.CountCodeBlockOwnerList;
+        ++Compilation.ScopeCount;
 
         var parent = GetParent(codeBlockOwner, Compilation);
         
@@ -825,7 +825,7 @@ public ref struct CSharpParserModel
         if (parentScopeDirection == ScopeDirectionKind.Both)
             codeBlockOwner.PermitCodeBlockParsing = false;
     
-        CurrentCodeBlockOwner = codeBlockOwner;
+        CurrentScopeOffset = codeBlockOwner.SelfScopeOffset;
         
         OnBoundScopeCreatedAndSetAsCurrent(codeBlockOwner, Compilation);
     }

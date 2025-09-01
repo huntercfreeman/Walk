@@ -74,7 +74,7 @@ public class ParseFunctions
         }
         
         if (parserModel.TokenWalker.Current.SyntaxKind == SyntaxKind.StatementDelimiterToken)
-            parserModel.CurrentCodeBlockOwner.IsImplicitOpenCodeBlockTextSpan = true;
+            parserModel.SetCurrentScope_IsImplicitOpenCodeBlockTextSpan_True();
         else if (parserModel.TokenWalker.Current.SyntaxKind == SyntaxKind.EqualsCloseAngleBracketToken)
             ParseTokens.MoveToExpressionBody(ref parserModel);
     }
@@ -111,7 +111,7 @@ public class ParseFunctions
             {
                 existingWasFound = false;
                 
-                if (existingNode.ParentIndexKey < previousCompilationUnit.CountCodeBlockOwnerList)
+                if (existingNode.ParentScopeOffset < previousCompilationUnit.ScopeCount)
                 {
                     var previousParent = parserModel.Binder.CodeBlockOwnerList[previousCompilationUnit.IndexCodeBlockOwnerList + existingNode.ParentIndexKey];
                     var currentParent = parserModel.GetParent(newNode, parserModel.Compilation);
