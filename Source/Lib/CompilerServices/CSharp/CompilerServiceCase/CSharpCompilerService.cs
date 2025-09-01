@@ -2071,7 +2071,7 @@ public sealed class CSharpCompilerService : IExtendedCompilerService
             while (targetScope is not null)
             {
                 autocompleteEntryList.AddRange(
-                    __CSharpBinder.GetVariableDeclarationNodesByScope(virtualizationResult.Model.PersistentState.ResourceUri, compilationUnit, targetScope.Unsafe_SelfIndexKey)
+                    __CSharpBinder.GetVariableDeclarationNodesByScope(virtualizationResult.Model.PersistentState.ResourceUri, compilationUnit, targetScope.SelfIndexKey)
                     .Select(x => __CSharpBinder.GetIdentifierText(x, virtualizationResult.Model.PersistentState.ResourceUri, compilationUnit))
                     .ToArray()
                     .Where(x => x?.Contains(word, StringComparison.InvariantCulture) ?? false)
@@ -2086,7 +2086,7 @@ public sealed class CSharpCompilerService : IExtendedCompilerService
                     }));
     
                 autocompleteEntryList.AddRange(
-                    __CSharpBinder.GetFunctionDefinitionNodesByScope(compilationUnit, targetScope.Unsafe_SelfIndexKey)
+                    __CSharpBinder.GetFunctionDefinitionNodesByScope(compilationUnit, targetScope.SelfIndexKey)
                     .Select(x => x.FunctionIdentifierToken.TextSpan.GetText(virtualizationResult.Model.GetAllText(), _textEditorService))
                     .ToArray()
                     .Where(x => x.Contains(word, StringComparison.InvariantCulture))
@@ -2100,10 +2100,10 @@ public sealed class CSharpCompilerService : IExtendedCompilerService
                             null);
                     }));
     
-                if (targetScope.Unsafe_ParentIndexKey == -1)
+                if (targetScope.ParentIndexKey == -1)
                     targetScope = default;
                 else
-                    targetScope = __CSharpBinder.GetScopeByScopeIndexKey(compilationUnit, targetScope.Unsafe_ParentIndexKey);
+                    targetScope = __CSharpBinder.GetScopeByScopeIndexKey(compilationUnit, targetScope.ParentIndexKey);
             }
         
             var allTypeDefinitions = __CSharpBinder.AllTypeDefinitions;

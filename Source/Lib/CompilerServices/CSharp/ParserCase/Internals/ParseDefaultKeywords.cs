@@ -50,8 +50,7 @@ public class ParseDefaultKeywords
             // parent: null,
             catchKeywordToken,
             openParenthesisToken,
-            closeParenthesisToken: default,
-            codeBlock: default);
+            closeParenthesisToken: default);
         
         parserModel.NewScopeAndBuilderFromOwner(
             catchNode,
@@ -155,9 +154,7 @@ public class ParseDefaultKeywords
     
         var elseTokenKeyword = parserModel.TokenWalker.Consume();
         
-        var ifStatementNode = new IfStatementNode(
-            elseTokenKeyword,
-            default);
+        var ifStatementNode = new IfStatementNode(elseTokenKeyword);
         
         parserModel.NewScopeAndBuilderFromOwner(
             ifStatementNode,
@@ -205,8 +202,7 @@ public class ParseDefaultKeywords
         
         var finallyNode = new TryStatementFinallyNode(
             // tryStatementNode,
-            finallyKeywordToken,
-            codeBlock: default);
+            finallyKeywordToken);
     
         // This was done with CSharpParserModel's SyntaxStack, but that property is now being removed. A different way to accomplish this needs to be done. (2025-02-06)
         // tryStatementNode.SetTryStatementFinallyNode(finallyNode);
@@ -239,8 +235,7 @@ public class ParseDefaultKeywords
             openParenthesisToken,
             initializationStatementDelimiterToken: default,
             conditionStatementDelimiterToken: default,
-            closeParenthesisToken: default,
-            codeBlock: default);
+            closeParenthesisToken: default);
             
         parserModel.NewScopeAndBuilderFromOwner(
             forStatementNode,
@@ -288,8 +283,7 @@ public class ParseDefaultKeywords
             foreachKeywordToken,
             openParenthesisToken,
             inKeywordToken: default,
-            closeParenthesisToken: default,
-            codeBlock: default);
+            closeParenthesisToken: default);
         
         parserModel.NewScopeAndBuilderFromOwner(
             foreachStatementNode,
@@ -373,8 +367,7 @@ public class ParseDefaultKeywords
         var lockStatementNode = new LockStatementNode(
             lockKeywordToken,
             openParenthesisToken,
-            closeParenthesisToken,
-            codeBlock: default);
+            closeParenthesisToken);
             
         parserModel.NewScopeAndBuilderFromOwner(
             lockStatementNode,
@@ -484,8 +477,7 @@ public class ParseDefaultKeywords
             switchKeywordToken,
             openParenthesisToken,
             expressionNode,
-            closeParenthesisToken,
-            codeBlock: default);
+            closeParenthesisToken);
             
         parserModel.NewScopeAndBuilderFromOwner(
             switchStatementNode,
@@ -519,8 +511,7 @@ public class ParseDefaultKeywords
     
         var tryStatementTryNode = new TryStatementTryNode(
             // tryStatementNode,
-            tryKeywordToken,
-            codeBlock: default);
+            tryKeywordToken);
             
         // tryStatementNode.TryNode = tryStatementTryNode;
             
@@ -612,8 +603,7 @@ public class ParseDefaultKeywords
         var whileStatementNode = new WhileStatementNode(
             whileKeywordToken,
             openParenthesisToken,
-            closeParenthesisToken,
-            codeBlock: default);
+            closeParenthesisToken);
             
         parserModel.NewScopeAndBuilderFromOwner(
             whileStatementNode,
@@ -724,9 +714,7 @@ public class ParseDefaultKeywords
         
         var closeParenthesisToken = parserModel.TokenWalker.Match(SyntaxKind.CloseParenthesisToken);
 
-        var ifStatementNode = new IfStatementNode(
-            ifTokenKeyword,
-            default);
+        var ifStatementNode = new IfStatementNode(ifTokenKeyword);
         
         parserModel.NewScopeAndBuilderFromOwner(
             ifStatementNode,
@@ -767,9 +755,7 @@ public class ParseDefaultKeywords
     {
         var openParenthesisToken = parserModel.TokenWalker.Consume();
         
-        var usingStatementNode = new UsingStatementCodeBlockNode(
-            usingKeywordToken,
-            default);
+        var usingStatementNode = new UsingStatementCodeBlockNode(usingKeywordToken);
             
         parserModel.NewScopeAndBuilderFromOwner(
             usingStatementNode,
@@ -972,9 +958,9 @@ public class ParseDefaultKeywords
             {
                 if (parserModel.Binder.__CompilationUnitMap.TryGetValue(parserModel.ResourceUri, out var previousCompilationUnit))
                 {
-                    if (typeDefinitionNode.Unsafe_ParentIndexKey < previousCompilationUnit.CountCodeBlockOwnerList)
+                    if (typeDefinitionNode.ParentIndexKey < previousCompilationUnit.CountCodeBlockOwnerList)
                     {
-                        var previousParent = parserModel.Binder.CodeBlockOwnerList[previousCompilationUnit.IndexCodeBlockOwnerList + typeDefinitionNode.Unsafe_ParentIndexKey];
+                        var previousParent = parserModel.Binder.CodeBlockOwnerList[previousCompilationUnit.IndexCodeBlockOwnerList + typeDefinitionNode.ParentIndexKey];
                         var currentParent = parserModel.GetParent(typeDefinitionNode, parserModel.Compilation);
                         
                         if (currentParent.SyntaxKind == previousParent.SyntaxKind)
@@ -1136,7 +1122,7 @@ public class ParseDefaultKeywords
                         if (parserModel.Binder.PartialTypeDefinitionList[positionExclusive].ScopeIndexKey == -1)
                         {
                             var partialTypeDefinitionEntry = parserModel.Binder.PartialTypeDefinitionList[positionExclusive];
-                            partialTypeDefinitionEntry.ScopeIndexKey = typeDefinitionNode.Unsafe_SelfIndexKey;
+                            partialTypeDefinitionEntry.ScopeIndexKey = typeDefinitionNode.SelfIndexKey;
                             parserModel.Binder.PartialTypeDefinitionList[positionExclusive] = partialTypeDefinitionEntry;
                             wroteToExistingSlot = true;
                             break;
@@ -1169,7 +1155,7 @@ public class ParseDefaultKeywords
                 new PartialTypeDefinitionEntry(
                     typeDefinitionNode.ResourceUri,
                     typeDefinitionNode.IndexPartialTypeDefinition,
-                    typeDefinitionNode.Unsafe_SelfIndexKey));
+                    typeDefinitionNode.SelfIndexKey));
         
             int positionExclusive = indexForInsertion + 1;
             int lastSeenIndexStartGroup = typeDefinitionNode.IndexPartialTypeDefinition;
@@ -1218,7 +1204,6 @@ public class ParseDefaultKeywords
         var namespaceStatementNode = new NamespaceStatementNode(
             namespaceKeywordToken,
             (SyntaxToken)namespaceIdentifier,
-            default,
             parserModel.ResourceUri);
 
         parserModel.SetCurrentNamespaceStatementNode(namespaceStatementNode);

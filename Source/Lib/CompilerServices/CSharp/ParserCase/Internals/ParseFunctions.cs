@@ -29,26 +29,13 @@ public class ParseFunctions
             
         parserModel.BindFunctionDefinitionNode(functionDefinitionNode);
         
-        bool isFunctionOverloadCase;
-
-        // This compilation has not been written to the __CompilationUnitMap yet,
-        // so this will read the previous compilation of this file.
-        if (parserModel.TryGetFunctionDefinitionNodeByScope(
+        bool isFunctionOverloadCase;        // This compilation has not been written to the __CompilationUnitMap yet,        // so this will read the previous compilation of this file.        if (parserModel.TryGetFunctionDefinitionNodeByScope(
                 parserModel.ResourceUri,
                 parserModel.Compilation,
                 parserModel.CurrentCodeBlockOwner.Unsafe_SelfIndexKey,
                 parserModel.ResourceUri,
                 consumedIdentifierToken.TextSpan,
-                out var existingFunctionDefinitionNode))
-        {
-            isFunctionOverloadCase = true;
-        }
-        else
-        {
-            isFunctionOverloadCase = false;
-        }
-
-        parserModel.NewScopeAndBuilderFromOwner(
+                out var existingFunctionDefinitionNode))        {            isFunctionOverloadCase = true;        }        else        {            isFunctionOverloadCase = false;        }        parserModel.NewScopeAndBuilderFromOwner(
             functionDefinitionNode,
             parserModel.TokenWalker.Current.TextSpan);
     
@@ -125,9 +112,9 @@ public class ParseFunctions
             {
                 existingWasFound = false;
                 
-                if (existingNode.Unsafe_ParentIndexKey < previousCompilationUnit.CountCodeBlockOwnerList)
+                if (existingNode.ParentIndexKey < previousCompilationUnit.CountCodeBlockOwnerList)
                 {
-                    var previousParent = parserModel.Binder.CodeBlockOwnerList[previousCompilationUnit.IndexCodeBlockOwnerList + existingNode.Unsafe_ParentIndexKey];
+                    var previousParent = parserModel.Binder.CodeBlockOwnerList[previousCompilationUnit.IndexCodeBlockOwnerList + existingNode.ParentIndexKey];
                     var currentParent = parserModel.GetParent(newNode, parserModel.Compilation);
                     
                     if (currentParent.SyntaxKind == previousParent.SyntaxKind)
@@ -155,7 +142,7 @@ public class ParseFunctions
                             {
                                 var x = parserModel.Binder.CodeBlockOwnerList[indexPreviousNode];
                                 
-                                if (x.Unsafe_ParentIndexKey == previousParent.Unsafe_SelfIndexKey &&
+                                if (x.ParentIndexKey == previousParent.SelfIndexKey &&
                                     x.SyntaxKind == SyntaxKind.FunctionDefinitionNode &&
                                     binder.GetIdentifierText(x, parserModel.ResourceUri, previousCompilationUnit) == binder.GetIdentifierText(existingNode, parserModel.ResourceUri, compilation))
                                 {
@@ -174,7 +161,7 @@ public class ParseFunctions
                                     existingWasFound = true;
                                     
                                     var entry = parserModel.Binder.MethodOverloadDefinitionList[existingNode.IndexMethodOverloadDefinition];
-                                    entry.ScopeIndexKey = existingNode.Unsafe_SelfIndexKey;
+                                    entry.ScopeIndexKey = existingNode.SelfIndexKey;
                                     parserModel.Binder.MethodOverloadDefinitionList[existingNode.IndexMethodOverloadDefinition] = entry;
                                 }
                             }
@@ -189,7 +176,7 @@ public class ParseFunctions
                 parserModel.Binder.MethodOverloadDefinitionList.Add(new MethodOverloadDefinitionEntry(
                     parserModel.ResourceUri,
                     parserModel.Binder.MethodOverloadDefinitionList.Count,
-                    existingNode.Unsafe_SelfIndexKey));
+                    existingNode.SelfIndexKey));
             }
         }
         
@@ -205,7 +192,7 @@ public class ParseFunctions
                 parserModel.Binder.MethodOverloadDefinitionList[i] = new MethodOverloadDefinitionEntry(
                     parserModel.ResourceUri,
                     existingNode.IndexMethodOverloadDefinition,
-                    newNode.Unsafe_SelfIndexKey);
+                    newNode.SelfIndexKey);
             }
         }
         
@@ -216,7 +203,7 @@ public class ParseFunctions
                 new MethodOverloadDefinitionEntry(
                     parserModel.ResourceUri,
                     existingNode.IndexMethodOverloadDefinition,
-                    newNode.Unsafe_SelfIndexKey));
+                    newNode.SelfIndexKey));
         }
     }
 

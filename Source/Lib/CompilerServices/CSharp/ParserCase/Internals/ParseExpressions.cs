@@ -3341,7 +3341,7 @@ public static class ParseExpressions
                         if (parserModel.TryGetTypeDefinitionHierarchically(
                                 innerResourceUri,
                                 innerCompilationUnit,
-                                scope.Unsafe_SelfIndexKey,
+                                scope.SelfIndexKey,
                                 innerResourceUri,
                                 typeReference.ExplicitDefinitionTextSpan,
                                 out var innerTypeDefinitionNode) &&
@@ -3383,7 +3383,7 @@ public static class ParseExpressions
                     if (parserModel.TryGetTypeDefinitionHierarchically(
                             parserModel.ResourceUri,
                             parserModel.Compilation,
-                            scope.Unsafe_SelfIndexKey,
+                            scope.SelfIndexKey,
                             parserModel.ResourceUri,
                             typeReference.TypeIdentifierToken.TextSpan,
                             out var innerTypeDefinitionNode) &&
