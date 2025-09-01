@@ -1032,12 +1032,12 @@ public ref struct CSharpParserModel
     public readonly bool TryGetTypeDefinitionHierarchically(
         ResourceUri definitionResourceUri,
         CSharpCompilationUnit definitionCompilationUnit,
-        int definitionInitialScopeIndexKey,
+        int definitionInitialScopeOffset,
         ResourceUri referenceResourceUri,
         TextEditorTextSpan referenceTextSpan,
         out TypeDefinitionNode? typeDefinitionNode)
     {
-        var localScope = Binder.GetScopeByScopeIndexKey(definitionCompilationUnit, definitionInitialScopeIndexKey);
+        var localScope = Binder.GetScopeByScopeIndexKey(definitionCompilationUnit, definitionInitialScopeOffset);
 
         while (localScope is not null)
         {
@@ -1067,7 +1067,7 @@ public ref struct CSharpParserModel
     public readonly bool TryGetTypeDefinitionNodeByScope(
         ResourceUri definitionResourceUri,
         CSharpCompilationUnit definitionCompilationUnit,
-        int definitionScopeIndexKey,
+        int definitionScopeOffset,
         ResourceUri referenceResourceUri,
         TextEditorTextSpan referenceTextSpan,
         out TypeDefinitionNode? typeDefinitionNode)
@@ -1077,7 +1077,7 @@ public ref struct CSharpParserModel
         for (int i = definitionCompilationUnit.IndexCodeBlockOwnerList; i < definitionCompilationUnit.IndexCodeBlockOwnerList + definitionCompilationUnit.CountCodeBlockOwnerList; i++)
         {
             var x = Binder.CodeBlockOwnerList[i];
-            if (x.Unsafe_ParentScopeOffset == definitionScopeIndexKey &&
+            if (x.Unsafe_ParentScopeOffset == definitionScopeOffset &&
                 x.SyntaxKind == SyntaxKind.TypeDefinitionNode)
             {
                 if (Binder.CSharpCompilerService.SafeCompareTextSpans(
@@ -1091,7 +1091,7 @@ public ref struct CSharpParserModel
         
         if (typeDefinitionNode is null)
         {
-            if (definitionScopeIndexKey == 0)
+            if (definitionScopeOffset == 0)
             {
                 foreach (var externalDefinitionNode in ExternalTypeDefinitionList)
                 {
@@ -1153,12 +1153,12 @@ public ref struct CSharpParserModel
     public readonly bool TryGetFunctionHierarchically(
         ResourceUri definitionResourceUri,
         CSharpCompilationUnit definitionCompilationUnit,
-        int definitionInitialScopeIndexKey,
+        int definitionInitialScopeOffset,
         ResourceUri referenceResourceUri,
         TextEditorTextSpan referenceTextSpan,
         out FunctionDefinitionNode? functionDefinitionNode)
     {
-        var localScope = Binder.GetScopeByScopeIndexKey(definitionCompilationUnit, definitionInitialScopeIndexKey);
+        var localScope = Binder.GetScopeByScopeIndexKey(definitionCompilationUnit, definitionInitialScopeOffset);
 
         while (localScope is not null)
         {
@@ -1186,7 +1186,7 @@ public ref struct CSharpParserModel
     public readonly bool TryGetFunctionDefinitionNodeByScope(
         ResourceUri definitionResourceUri,
         CSharpCompilationUnit definitionCompilationUnit,
-        int definitionScopeIndexKey,
+        int definitionScopeOffset,
         ResourceUri referenceResourceUri,
         TextEditorTextSpan referenceTextSpan,
         out FunctionDefinitionNode functionDefinitionNode)
@@ -1197,7 +1197,7 @@ public ref struct CSharpParserModel
         {
             var x = Binder.CodeBlockOwnerList[i];
             
-            if (x.ParentScopeOffset == definitionScopeIndexKey &&
+            if (x.ParentScopeOffset == definitionScopeOffset &&
                 x.SyntaxKind == SyntaxKind.FunctionDefinitionNode)
             {
                 if (Binder.CSharpCompilerService.SafeCompareTextSpans(referenceResourceUri.Value, referenceTextSpan, definitionResourceUri.Value, GetIdentifierTextSpan(x)))
@@ -1251,12 +1251,12 @@ public ref struct CSharpParserModel
     public bool TryGetVariableDeclarationHierarchically(
         ResourceUri declarationResourceUri,
         CSharpCompilationUnit declarationCompilationUnit,
-        int declarationInitialScopeIndexKey,
+        int declarationInitialScopeOffset,
         ResourceUri referenceResourceUri,
         TextEditorTextSpan referenceTextSpan,
         out VariableDeclarationNode? variableDeclarationStatementNode)
     {
-        var localScope = Binder.GetScopeByScopeIndexKey(declarationCompilationUnit, declarationInitialScopeIndexKey);
+        var localScope = Binder.GetScopeByScopeIndexKey(declarationCompilationUnit, declarationInitialScopeOffset);
 
         while (localScope is not null)
         {
@@ -1284,7 +1284,7 @@ public ref struct CSharpParserModel
     public bool TryGetVariableDeclarationByPartialType(
         ResourceUri declarationResourceUri,
         CSharpCompilationUnit declarationCompilationUnit,
-        int declarationScopeIndexKey,
+        int declarationScopeOffset,
         ResourceUri referenceResourceUri,
         TextEditorTextSpan referenceTextSpan,
         TypeDefinitionNode typeDefinitionNode,
@@ -1352,7 +1352,7 @@ public ref struct CSharpParserModel
     public bool TryGetVariableDeclarationNodeByScope(
         ResourceUri declarationResourceUri,
         CSharpCompilationUnit declarationCompilationUnit,
-        int declarationScopeIndexKey,
+        int declarationScopeOffset,
         ResourceUri referenceResourceUri,
         TextEditorTextSpan referenceTextSpan,
         out VariableDeclarationNode? variableDeclarationNode,
@@ -1363,7 +1363,7 @@ public ref struct CSharpParserModel
         {
             var node = Binder.NodeList[i];
             
-            if (node.ParentScopeOffset == declarationScopeIndexKey &&
+            if (node.ParentScopeOffset == declarationScopeOffset &&
                 node.SyntaxKind == SyntaxKind.VariableDeclarationNode)
             {
                 if (Binder.CSharpCompilerService.SafeCompareTextSpans(
@@ -1377,7 +1377,7 @@ public ref struct CSharpParserModel
         
         if (variableDeclarationNode is null)
         {
-            var codeBlockOwner = Binder.CodeBlockOwnerList[declarationCompilationUnit.IndexCodeBlockOwnerList + declarationScopeIndexKey];
+            var codeBlockOwner = Binder.CodeBlockOwnerList[declarationCompilationUnit.IndexCodeBlockOwnerList + declarationScopeOffset];
             
             if (!isRecursive && codeBlockOwner.SyntaxKind == SyntaxKind.TypeDefinitionNode)
             {
@@ -1537,7 +1537,7 @@ public ref struct CSharpParserModel
     public readonly bool TryGetLabelDeclarationHierarchically(
         ResourceUri declarationResourceUri,
         CSharpCompilationUnit declarationCompilationUnit,
-        int declarationScopeIndexKey,
+        int declarationScopeOffset,
         ResourceUri referenceResourceUri,
         TextEditorTextSpan referenceTextSpan,
         out LabelDeclarationNode? labelDeclarationNode)
@@ -1572,7 +1572,7 @@ public ref struct CSharpParserModel
     public readonly bool TryGetLabelDeclarationNodeByScope(
         ResourceUri declarationResourceUri,
         CSharpCompilationUnit declarationCompilationUnit,
-        int declarationScopeIndexKey,
+        int declarationScopeOffset,
         ResourceUri referenceResourceUri,
         TextEditorTextSpan referenceTextSpan,
         out LabelDeclarationNode labelDeclarationNode)
@@ -1582,7 +1582,7 @@ public ref struct CSharpParserModel
         {
             var x = Binder.NodeList[i];
             
-            if (x.ParentScopeOffset == declarationScopeIndexKey &&
+            if (x.ParentScopeOffset == declarationScopeOffset &&
                 x.SyntaxKind == SyntaxKind.LabelDeclarationNode)
             {
                 if (Binder.CSharpCompilerService.SafeCompareTextSpans(referenceResourceUri.Value, referenceTextSpan, declarationResourceUri.Value, GetIdentifierTextSpan(x)))
@@ -1980,5 +1980,12 @@ public ref struct CSharpParserModel
         typeClauseNode.ExplicitDefinitionResourceUri = typeDefinitionNode.ResourceUri;
         
         return typeClauseNode;
+    }
+    
+    public readonly void SetCurrentScope_IsImplicitOpenCodeBlockTextSpan_True()
+    {
+        var scope = Binder.ScopeList[Compilation.ScopeIndex + CurrentScopeOffset];
+        scope.IsImplicitOpenCodeBlockTextSpan = true;
+        Binder.ScopeList[Compilation.ScopeIndex + CurrentScopeOffset] = scope;
     }
 }

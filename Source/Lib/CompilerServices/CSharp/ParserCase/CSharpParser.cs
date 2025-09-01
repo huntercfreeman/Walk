@@ -11,14 +11,14 @@ public static class CSharpParser
 {
     public static void Parse(Walk.TextEditor.RazorLib.Lexers.Models.ResourceUri resourceUri, ref CSharpCompilationUnit compilationUnit, CSharpBinder binder, ref CSharpLexerOutput lexerOutput)
     {
-        compilationUnit.IndexCodeBlockOwnerList = binder.CodeBlockOwnerList.Count;
+        compilationUnit.ScopeIndex = binder.ScopeList.Count;
         compilationUnit.IndexNodeList = binder.NodeList.Count;
         compilationUnit.IndexNamespaceContributionList = binder.NamespaceContributionList.Count;
 
-        binder.CodeBlockOwnerList.Insert(
-            compilationUnit.IndexCodeBlockOwnerList + compilationUnit.CountCodeBlockOwnerList,
+        binder.ScopeList.Insert(
+            compilationUnit.ScopeIndex + compilationUnit.ScopeCount,
             binder.GlobalCodeBlockNode);
-        ++compilationUnit.CountCodeBlockOwnerList;
+        ++compilationUnit.ScopeCount;
         
         var parserModel = new CSharpParserModel(
             binder,

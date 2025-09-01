@@ -46,6 +46,7 @@ public struct Scope
     public int CodeBlock_EndExclusiveIndex { get; set; }
     public int OffsetParentScope { get; set; }
     public int OffsetSelfScope { get; set; }
+    public int OffsetNode { get; set; }
     public bool PermitCodeBlockParsing { get; set; }
     public bool IsImplicitOpenCodeBlockTextSpan { get; set; }
     public TypeReference ReturnTypeReference { get; set; }

@@ -525,17 +525,17 @@ public class CSharpBinder
         
         for (int i = compilationUnit.ScopeIndex; i < compilationUnit.ScopeIndex + compilationUnit.ScopeCount; i++)
         {
-            var value = CodeBlockValueList[i];
+            var scope = ScopeList[i];
             
-            if (value.Scope_StartInclusiveIndex <= positionIndex &&
+            if (scope.Scope_StartInclusiveIndex <= positionIndex &&
                 // Global Scope awkwardly has '-1' ending index exclusive (2023-10-15)
-                (value.Scope_EndExclusiveIndex >= positionIndex || value.Scope_EndExclusiveIndex == -1))
+                (scope.Scope_EndExclusiveIndex >= positionIndex || scope.Scope_EndExclusiveIndex == -1))
             {
-                var distance = positionIndex - value.Scope_StartInclusiveIndex;
+                var distance = positionIndex - scope.Scope_StartInclusiveIndex;
                 if (distance < min)
                 {
                     min = distance;
-                    valueIndex = value.SelfIndexKey;
+                    valueIndex = scope.SelfIndexKey;
                 }
             }
         }
@@ -546,39 +546,34 @@ public class CSharpBinder
         }
         else
         {
-            var codeBlockValue = CodeBlockValueList[compilationUnit.IndexCodeBlockValueList + selfIndexKey];
-            return (codeBlockValue, NodeList[codeBlockValue.NodeIndex]);
+            var scope = ScopeList[compilationUnit.ScopeIndex + selfIndexKey];
+            return (scope, NodeList[scope.NodeOffset]);
         }
     }
 
-    public ICodeBlockOwner? GetScopeByScopeIndexKey(CSharpCompilationUnit compilationUnit, int scopeIndexKey)
+    public ICodeBlockOwner? GetScopeByOffset(CSharpCompilationUnit compilationUnit, int scopeOffset)
     {
-        if (scopeIndexKey < 0)
+        if (scopeOffset < 0)
             return null;
 
-        if (scopeIndexKey < compilationUnit.CountCodeBlockOwnerList)
-        {
-            var isValid = true;
-
-            if (isValid)
-                return CodeBlockOwnerList[compilationUnit.IndexCodeBlockOwnerList + scopeIndexKey];
-        }
+        if (scopeOffset < compilationUnit.CountCodeBlockOwnerList)
+            return ScopeList[compilationUnit.ScopeIndex + scopeOffset];
         
         return null;
     }
     
     public TypeDefinitionNode[] GetTypeDefinitionNodesByScope(
         CSharpCompilationUnit compilationUnit,
-        int scopeIndexKey)
+        int scopeOffset)
     {
         var typeDefinitionNodeList = new List<TypeDefinitionNode>();
     
         for (int i = compilationUnit.IndexCodeBlockOwnerList; i < compilationUnit.IndexCodeBlockOwnerList + compilationUnit.CountCodeBlockOwnerList; i++)
         {
-            var kvp = CodeBlockOwnerList[i];
+            var scope = ScopeList[i];
             
-            if (kvp.ParentIndexKey == scopeIndexKey && kvp.SyntaxKind == SyntaxKind.TypeDefinitionNode)
-                typeDefinitionNodeList.Add((TypeDefinitionNode)kvp);
+            if (scope.ParentIndexKey == scopeOffset && scope.SyntaxKind == SyntaxKind.TypeDefinitionNode)
+                typeDefinitionNodeList.Add((TypeDefinitionNode)scope);
         }
         
         return typeDefinitionNodeList.ToArray();
@@ -711,9 +706,9 @@ public class CSharpBinder
     {
         functionDefinitionNode = null;
         
-        for (int i = compilationUnit.IndexCodeBlockOwnerList; i < compilationUnit.IndexCodeBlockOwnerList + compilationUnit.CountCodeBlockOwnerList; i++)
+        for (int i = compilationUnit.ScopeIndex; i < compilationUnit.ScopeIndex + compilationUnit.ScopeCount; i++)
         {
-            var x = CodeBlockOwnerList[i];
+            var x = ScopeList[i];
             
             if (x.ParentIndexKey == scopeIndexKey &&
                 x.SyntaxKind == SyntaxKind.FunctionDefinitionNode &&
@@ -749,7 +744,8 @@ public class CSharpBinder
 
         if (!isRecursive && scopeIndexKey < compilationUnit.CountCodeBlockOwnerList)
         {
-            var codeBlockOwner = CodeBlockOwnerList[compilationUnit.IndexCodeBlockOwnerList + scopeIndexKey];
+            var scope = ScopeList[compilationUnit.IndexCodeBlockOwnerList + scopeIndexKey];
+            var codeBlockOwner = NodeList[compilationUnit.IndexNodeList + scope.OffsetNode];
             if (codeBlockOwner.SyntaxKind == SyntaxKind.TypeDefinitionNode)
             {
                 var typeDefinitionNode = (TypeDefinitionNode)codeBlockOwner;

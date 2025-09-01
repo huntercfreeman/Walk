@@ -24,7 +24,6 @@ public class ParseFunctions
             indexFunctionArgumentEntryList: -1,
             countFunctionArgumentEntryList: 0,
             closeParenthesisToken: default,
-            default,
             parserModel.ResourceUri);
             
         parserModel.BindFunctionDefinitionNode(functionDefinitionNode);
@@ -32,7 +31,7 @@ public class ParseFunctions
         bool isFunctionOverloadCase;        // This compilation has not been written to the __CompilationUnitMap yet,        // so this will read the previous compilation of this file.        if (parserModel.TryGetFunctionDefinitionNodeByScope(
                 parserModel.ResourceUri,
                 parserModel.Compilation,
-                parserModel.CurrentCodeBlockOwner.Unsafe_SelfIndexKey,
+                parserModel.CurrentScopeOffset,
                 parserModel.ResourceUri,
                 consumedIdentifierToken.TextSpan,
                 out var existingFunctionDefinitionNode))        {            isFunctionOverloadCase = true;        }        else        {            isFunctionOverloadCase = false;        }        parserModel.NewScopeAndBuilderFromOwner(
