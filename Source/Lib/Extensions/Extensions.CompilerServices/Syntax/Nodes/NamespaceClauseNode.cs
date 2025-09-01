@@ -23,7 +23,7 @@ public sealed class NamespaceClauseNode : IExpressionNode
 
     TypeReference IExpressionNode.ResultTypeReference => TypeFacts.Pseudo.ToTypeReference();
 
-    public int Unsafe_ParentIndexKey { get; set; }
+    public int ParentIndexKey { get; set; }
     
     public bool _isFabricated;
     public bool IsFabricated

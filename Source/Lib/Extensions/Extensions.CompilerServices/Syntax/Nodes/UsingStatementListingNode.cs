@@ -9,7 +9,7 @@ public sealed class UsingStatementListingNode : ISyntaxNode
     /// </summary>
     public List<(SyntaxToken KeywordToken, SyntaxToken NamespaceIdentifier)> UsingStatementTupleList { get; set; } = new();
 
-    public int Unsafe_ParentIndexKey { get; set; }
+    public int ParentIndexKey { get; set; }
     public bool IsFabricated { get; init; }
     public SyntaxKind SyntaxKind => SyntaxKind.UsingStatementListingNode;
 }

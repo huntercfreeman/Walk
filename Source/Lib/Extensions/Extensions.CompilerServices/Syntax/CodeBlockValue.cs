@@ -2,16 +2,27 @@ using Walk.Extensions.CompilerServices.Syntax.Nodes.Enums;
 
 namespace Walk.Extensions.CompilerServices.Syntax;
 
-public struct CodeBlockOwnerValue
+/// <summary>
+/// Scope and codeblock indices should be initialized to -1 as that will imply "null" / that it wasn't set yet.
+/// </summary>
+public struct CodeBlockValue
 {
-    public CodeBlockOwnerValue(
+    public CodeBlockValue()
+    {
+        Scope_StartInclusiveIndex = -1;
+        Scope_EndExclusiveIndex = -1;
+        CodeBlock_StartInclusiveIndex = -1;
+        CodeBlock_EndExclusiveIndex = -1;
+    }
+
+    public CodeBlockValue(
         ScopeDirectionKind scopeDirectionKind,
         int scope_StartInclusiveIndex,
         int scope_EndExclusiveIndex,
         int codeBlock_StartInclusiveIndex,
         int codeBlock_EndExclusiveIndex,
-        int unsafe_ParentIndexKey,
-        int unsafe_SelfIndexKey,
+        int parentIndexKey,
+        int selfIndexKey,
         bool permitCodeBlockParsing,
         bool isImplicitOpenCodeBlockTextSpan,
         TypeReference returnTypeReference)
@@ -21,8 +32,8 @@ public struct CodeBlockOwnerValue
         Scope_EndExclusiveIndex = scope_EndExclusiveIndex;
         CodeBlock_StartInclusiveIndex = codeBlock_StartInclusiveIndex;
         CodeBlock_EndExclusiveIndex = codeBlock_EndExclusiveIndex;
-        Unsafe_ParentIndexKey = unsafe_ParentIndexKey;
-        Unsafe_SelfIndexKey = unsafe_SelfIndexKey;
+        ParentIndexKey = parentIndexKey;
+        SelfIndexKey = selfIndexKey;
         PermitCodeBlockParsing = permitCodeBlockParsing;
         IsImplicitOpenCodeBlockTextSpan = isImplicitOpenCodeBlockTextSpan;
         ReturnTypeReference = returnTypeReference;
@@ -33,8 +44,8 @@ public struct CodeBlockOwnerValue
     public int Scope_EndExclusiveIndex { get; set; }
     public int CodeBlock_StartInclusiveIndex { get; set; }
     public int CodeBlock_EndExclusiveIndex { get; set; }
-    public int Unsafe_ParentIndexKey { get; set; }
-    public int Unsafe_SelfIndexKey { get; set; }
+    public int ParentIndexKey { get; set; }
+    public int SelfIndexKey { get; set; }
     public bool PermitCodeBlockParsing { get; set; }
     public bool IsImplicitOpenCodeBlockTextSpan { get; set; }
     public TypeReference ReturnTypeReference { get; set; }

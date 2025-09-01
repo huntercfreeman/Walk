@@ -9,7 +9,6 @@ public sealed class NamespaceStatementNode : ICodeBlockOwner
     public NamespaceStatementNode(
         SyntaxToken keywordToken,
         SyntaxToken identifierToken,
-        CodeBlock codeBlock,
         ResourceUri resourceUri)
     {
         KeywordToken = keywordToken;
@@ -21,24 +20,9 @@ public sealed class NamespaceStatementNode : ICodeBlockOwner
     public SyntaxToken IdentifierToken { get; }
     public ResourceUri ResourceUri { get; }
 
-    // ICodeBlockOwner properties.
-    public ScopeDirectionKind ScopeDirectionKind => ScopeDirectionKind.Both;
-    public int Scope_StartInclusiveIndex { get; set; } = -1;
-    public int Scope_EndExclusiveIndex { get; set; } = -1;
-    public int CodeBlock_StartInclusiveIndex { get; set; } = -1;
-    public int CodeBlock_EndExclusiveIndex { get; set; } = -1;
-    public int Unsafe_ParentIndexKey { get; set; } = -1;
-    public int Unsafe_SelfIndexKey { get; set; } = -1;
-    public bool PermitCodeBlockParsing { get; set; } = true;
-    public bool IsImplicitOpenCodeBlockTextSpan { get; set; }
+    public int ParentIndexKey { get; set; } = -1;
+    public int SelfIndexKey { get; set; } = -1;
 
     public bool IsFabricated { get; init; }
     public SyntaxKind SyntaxKind => SyntaxKind.NamespaceStatementNode;
-
-    #region ICodeBlockOwner_Methods
-    public TypeReference GetReturnTypeReference()
-    {
-        return TypeFacts.Empty.ToTypeReference();
-    }
-    #endregion
 }

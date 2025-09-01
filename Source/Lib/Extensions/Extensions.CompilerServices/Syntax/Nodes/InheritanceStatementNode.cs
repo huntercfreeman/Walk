@@ -9,7 +9,7 @@ public sealed class InheritanceStatementNode : ISyntaxNode
 
     public TypeClauseNode ParentTypeClauseNode { get; }
 
-    public int Unsafe_ParentIndexKey { get; set; }
+    public int ParentIndexKey { get; set; }
     public bool IsFabricated { get; init; }
     public SyntaxKind SyntaxKind => SyntaxKind.InheritanceStatementNode;
 }

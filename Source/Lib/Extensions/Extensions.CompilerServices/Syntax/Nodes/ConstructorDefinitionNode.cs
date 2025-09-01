@@ -17,7 +17,6 @@ public sealed class ConstructorDefinitionNode : ICodeBlockOwner, IFunctionDefini
         int indexFunctionArgumentEntryList,
         int countFunctionArgumentEntryList,
         SyntaxToken closeParenthesisToken,
-        CodeBlock codeBlock,
         ResourceUri resourceUri)
     {
         ReturnTypeReference = returnTypeReference;
@@ -35,7 +34,6 @@ public sealed class ConstructorDefinitionNode : ICodeBlockOwner, IFunctionDefini
         ResourceUri = resourceUri;
     }
 
-    public TypeReference ReturnTypeReference { get; }
     public SyntaxToken FunctionIdentifier { get; }
     
     public SyntaxToken OpenAngleBracketToken { get; }
@@ -49,26 +47,12 @@ public sealed class ConstructorDefinitionNode : ICodeBlockOwner, IFunctionDefini
     public SyntaxToken CloseParenthesisToken { get; set; }
     public ResourceUri ResourceUri { get; set; }
 
-    // ICodeBlockOwner properties.
-    public ScopeDirectionKind ScopeDirectionKind => ScopeDirectionKind.Down;
-    public int Scope_StartInclusiveIndex { get; set; } = -1;
-    public int Scope_EndExclusiveIndex { get; set; } = -1;
-    public int CodeBlock_StartInclusiveIndex { get; set; } = -1;
-    public int CodeBlock_EndExclusiveIndex { get; set; } = -1;
-    public int Unsafe_ParentIndexKey { get; set; } = -1;
-    public int Unsafe_SelfIndexKey { get; set; } = -1;
-    public bool PermitCodeBlockParsing { get; set; } = true;
-    public bool IsImplicitOpenCodeBlockTextSpan { get; set; }
+    public int ParentIndexKey { get; set; } = -1;
+    public int SelfIndexKey { get; set; } = -1;
 
     public bool IsFabricated { get; init; }
     public SyntaxKind SyntaxKind => SyntaxKind.ConstructorDefinitionNode;
     
     TypeReference IExpressionNode.ResultTypeReference => TypeFacts.Pseudo.ToTypeReference();
-
-    #region ICodeBlockOwner_Methods
-    public TypeReference GetReturnTypeReference()
-    {
-        return ReturnTypeReference;
-    }
-    #endregion
+    public TypeReference ReturnTypeReference { get; set; }
 }

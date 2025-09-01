@@ -8,7 +8,7 @@ public sealed class TupleExpressionNode : IExpressionNode
 
     // public List<IExpressionNode> InnerExpressionList { get; } = new();
 
-    public int Unsafe_ParentIndexKey { get; set; }
+    public int ParentIndexKey { get; set; }
     public bool IsFabricated { get; init; }
     public SyntaxKind SyntaxKind => SyntaxKind.TupleExpressionNode;
 }

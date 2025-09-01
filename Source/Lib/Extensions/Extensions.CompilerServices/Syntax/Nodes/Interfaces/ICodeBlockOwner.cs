@@ -6,31 +6,6 @@ namespace Walk.Extensions.CompilerServices.Syntax.Nodes.Interfaces;
 
 public interface ICodeBlockOwner : ISyntaxNode
 {
-    public ScopeDirectionKind ScopeDirectionKind { get; }
-    /// <summary>
-    /// This should be initialized to -1 as that will imply "null" / that it wasn't set yet.
-    /// </summary>
-    public int Scope_StartInclusiveIndex { get; set; }
-    /// <summary>
-    /// This should be initialized to -1 as that will imply "null" / that it wasn't set yet.
-    /// </summary>
-    public int Scope_EndExclusiveIndex { get; set; }
-    /// <summary>
-    /// This should be initialized to -1 as that will imply "null" / that it wasn't set yet.
-    /// </summary>
-    public int CodeBlock_StartInclusiveIndex { get; set; }
-    /// <summary>
-    /// This should be initialized to -1 as that will imply "null" / that it wasn't set yet.
-    /// </summary>
-    public int CodeBlock_EndExclusiveIndex { get; set; }
-    /// <summary>
-    /// This should be initialized to -1 as that will imply "null" / that it wasn't set yet.
-    ///
-    /// This indicates the index that the parent 'ICodeBlockOwner' is at in the 'CSharpCompilationUnit.DefinitionTupleList'.
-    ///
-    /// This is unsafe, because you must be certain that all data you're interacting with is coming from the same 'CSharpCompilationUnit'.
-    /// </summary>
-    public int Unsafe_ParentIndexKey { get; set; }
     /// <summary>
     /// This should be initialized to -1 as that will imply "null" / that it wasn't set yet.
     ///
@@ -38,45 +13,33 @@ public interface ICodeBlockOwner : ISyntaxNode
     ///
     /// This is unsafe, because you must be certain that all data you're interacting with is coming from the same 'CSharpCompilationUnit'.
     /// </summary>
-    public int Unsafe_SelfIndexKey { get; set; }
+    public int SelfIndexKey { get; set; }
     
-    public bool PermitCodeBlockParsing { get; set; }
-    
-    /// <summary>
-    /// This belongs on the 'CSharpCodeBlockBuilder', not the 'ICodeBlockOwner'.
-    ///
-    /// This is computational state to know whether to search
-    /// for 'StatementDelimiterToken' (if this is true) as the terminator or a 'CloseBraceToken' (if this is false).
-    ///
-    /// This is not necessary to disambiguate the SyntaxKind of the text spans that mark
-    /// the start and end of the code block.
-    ///
-    /// This is mentioned because that might be an argument for this being moved to 'ICodeBlockOwner'.
-    ///
-    /// But, .... interrupting my thought I think I'm wrong hang on....
-    ///
-    /// ````public void SomeFunction() => }
-    /// 
-    /// What should the above code snippet parse as?
-    /// Should the '}' be consumed as the closing delimiter token for 'SomeFunction()'?
-    ///
-    /// Is it the case that the closing text span of a scope is only
-    /// a 'CloseBracetoken' if the start text span is from an 'OpenBraceToken'?
-    ///
-    /// Furthermore, is it true that the start text span is only non-null
-    /// if it is an 'OpenBraceToken' that started the code block?
-    ///
-    /// An implicitly opened code block can have its start text span
-    /// retrieved on a 'per ICodeBlockOwner' basis.
-    ///
-    /// I am going to decide that:
-    /// ````public void SomeFunction() => }
-    ///
-    /// will not consume the 'CloseBraceToken' as its delimiter.
-    /// This matter is open to be changed though,
-    /// this decision is only being made to create consistency.
-    /// </summary>
-    public bool IsImplicitOpenCodeBlockTextSpan { get; set; }
-
-    public TypeReference GetReturnTypeReference();
+    public static bool ImplementsICodeBlockOwner(SyntaxKind syntaxKind)
+    {
+        switch (syntaxKind)
+        {
+            case SyntaxKind.DoWhileStatementNode:
+            case SyntaxKind.ForeachStatementNode:
+            case SyntaxKind.ArbitraryCodeBlockNode:
+            case SyntaxKind.ConstructorDefinitionNode:
+            case SyntaxKind.ForStatementNode:
+            case SyntaxKind.FunctionDefinitionNode:
+            case SyntaxKind.IfStatementNode:
+            case SyntaxKind.GetterOrSetterNode:
+            case SyntaxKind.GlobalCodeBlockNode:
+            case SyntaxKind.NamespaceStatementNode:
+            case SyntaxKind.LambdaExpressionNode:
+            case SyntaxKind.LockStatementNode:
+            case SyntaxKind.TryStatementFinallyNode:
+            case SyntaxKind.SwitchStatementNode:
+            case SyntaxKind.TryStatementTryNode:
+            case SyntaxKind.WhileStatementNode:
+            case SyntaxKind.TryStatementCatchNode:
+            case SyntaxKind.TypeDefinitionNode:
+                return true;
+            default:
+                return false;
+        }
+    }
 }
