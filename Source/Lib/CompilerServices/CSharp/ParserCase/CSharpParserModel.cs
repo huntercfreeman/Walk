@@ -466,13 +466,13 @@ public ref struct CSharpParserModel
     }
     
     public readonly Scope GetParent(
-        ICodeBlockOwner codeBlockOwner,
+        int parentScopeOffset,
         Walk.CompilerServices.CSharp.CompilerServiceCase.CSharpCompilationUnit cSharpCompilationUnit)
     {
-        if (codeBlockOwner.ParentScopeOffset == -1)
+        if (parentScopeOffset == -1)
             return default;
             
-        return Binder.ScopeList[Compilation.ScopeIndex + codeBlockOwner.ParentScopeOffset];
+        return Binder.ScopeList[Compilation.ScopeIndex + parentScopeOffset];
     }
     
     public int GetNextIndexKey()

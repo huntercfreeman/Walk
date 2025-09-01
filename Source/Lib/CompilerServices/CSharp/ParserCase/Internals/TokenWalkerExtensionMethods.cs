@@ -11,9 +11,11 @@ internal static class TokenWalkerExtensionMethods
         ref CSharpParserModel parserModel)
     {
         // Pop off the 'TypeDefinitionNode', then push it back on when later dequeued.
-        var deferredCodeBlockBuilder = parserModel.CurrentCodeBlockOwner;
+        var deferredScope = parserModel.Binder.ScopeList[parserModel.CurrentScopeOffset];
         
-        parserModel.CurrentCodeBlockOwner = parserModel.GetParent(deferredCodeBlockBuilder, parserModel.Compilation);
+        parserModel.CurrentCodeBlockOwner = parserModel.GetParent(
+            deferredScope.ParentScopeOffset,
+            parserModel.Compilation);
 
         var openTokenIndex = tokenWalker.Index - 1;
 
@@ -21,7 +23,7 @@ internal static class TokenWalkerExtensionMethods
         
         int closeTokenIndex;
         
-        if (deferredCodeBlockBuilder.IsImplicitOpenCodeBlockTextSpan)
+        if (deferredScope.IsImplicitOpenCodeBlockTextSpan)
         {
             while (true)
             {
@@ -62,8 +64,8 @@ internal static class TokenWalkerExtensionMethods
         }
 
         if (parserModel.Compilation.CompilationUnitKind == CompilationUnitKind.SolutionWide_DefinitionsOnly &&
-            deferredCodeBlockBuilder.SyntaxKind == SyntaxKind.FunctionDefinitionNode ||
-            deferredCodeBlockBuilder.SyntaxKind == SyntaxKind.ArbitraryCodeBlockNode)
+            deferredScope.OwnerSyntaxKind == SyntaxKind.FunctionDefinitionNode ||
+            deferredScope.OwnerSyntaxKind == SyntaxKind.ArbitraryCodeBlockNode)
         {
             return;
         }
@@ -74,7 +76,7 @@ internal static class TokenWalkerExtensionMethods
                 new CSharpDeferredChildScope(
                     openTokenIndex,
                     closeTokenIndex,
-                    deferredCodeBlockBuilder)
+                    deferredScope.SelfScopeOffset)
             ));
     }
 }
