@@ -15,9 +15,7 @@ public class CSharpStatementBuilder
                                     MostRecentNode == Walk.Extensions.CompilerServices.Syntax.Nodes.EmptyExpressionNode.Empty;
 
     public List<SyntaxToken> ChildList { get; } = new();
-    public ISyntaxNode MostRecentNode { get; set; }
-
-    /// <summary>
+    public ISyntaxNode MostRecentNode { get; set; }    /// <summary>
     /// Prior to finishing a statement, you must check whether ParseLambdaStatementScopeStack has a child that needs to be parsed.
     /// All currently known cases of finishing a statement will do so by invoking FinishStatement(...),
     /// this method will perform this check internally.'
@@ -98,7 +96,7 @@ public class CSharpStatementBuilder
         MostRecentNode = Walk.Extensions.CompilerServices.Syntax.Nodes.EmptyExpressionNode.Empty;
         ChildList.Clear();
         
-        if (ParseLambdaStatementScopeStack.Count > 0)
+        /*if (ParseLambdaStatementScopeStack.Count > 0)
         {
             var tuple = ParseLambdaStatementScopeStack.Peek();
             
@@ -108,7 +106,7 @@ public class CSharpStatementBuilder
                 tuple.DeferredChildScope.PrepareMainParserLoop(finishTokenIndex, ref parserModel);
                 return true;
             }
-        }
+        }*/
         
         return false;
     }
