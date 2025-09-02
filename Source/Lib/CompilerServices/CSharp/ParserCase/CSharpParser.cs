@@ -196,7 +196,7 @@ public static class CSharpParser
             parserModel.TokenWalker.ConsumeCounterReset();
         }
 
-        if (!parserModel.GetParent(parserModel.Binder.ScopeList[parserModel.ScopeCurrentSubIndex].ParentScopeSubIndex, compilationUnit).IsDefault())
+        if (!parserModel.GetParent(parserModel.Binder.ScopeList[parserModel.Compilation.ScopeOffset + parserModel.ScopeCurrentSubIndex].ParentScopeSubIndex, compilationUnit).IsDefault())
             parserModel.CloseScope(parserModel.TokenWalker.Current.TextSpan); // The current token here would be the EOF token.
 
         parserModel.Binder.FinalizeCompilationUnit(parserModel.ResourceUri, compilationUnit);

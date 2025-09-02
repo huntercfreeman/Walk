@@ -3218,7 +3218,7 @@ public static class ParseExpressions
             _ = parserModel.TokenWalker.Consume();
         }
         
-        var lambdaScope = parserModel.Binder.ScopeList[parserModel.ScopeCurrentSubIndex];
+        var lambdaScope = parserModel.Binder.ScopeList[parserModel.Compilation.ScopeOffset + parserModel.ScopeCurrentSubIndex];
         CloseLambdaExpressionScope(lambdaExpressionNode, ref parserModel);
     
         var closeTokenIndex = parserModel.TokenWalker.Index;
