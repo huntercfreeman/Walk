@@ -1098,14 +1098,14 @@ public ref struct CSharpParserModel
         
         for (int i = definitionCompilationUnit.NodeOffset; i < definitionCompilationUnit.NodeOffset + definitionCompilationUnit.NodeLength; i++)
         {
-            var x = Binder.NodeList[i];
-            if (x.ParentScopeSubIndex == definitionScopeSubIndex &&
-                x.SyntaxKind == SyntaxKind.TypeDefinitionNode)
+            var node = Binder.NodeList[i];
+            if (node.ParentScopeSubIndex == definitionScopeSubIndex &&
+                node.SyntaxKind == SyntaxKind.TypeDefinitionNode)
             {
                 if (Binder.CSharpCompilerService.SafeCompareTextSpans(
-                        referenceResourceUri.Value, referenceTextSpan, definitionResourceUri.Value, GetIdentifierTextSpan(x)))
+                        referenceResourceUri.Value, referenceTextSpan, definitionResourceUri.Value, GetIdentifierTextSpan(node)))
                 {
-                    typeDefinitionNode = (TypeDefinitionNode)x;
+                    typeDefinitionNode = (TypeDefinitionNode)node;
                     break;
                 }
             }
@@ -1217,14 +1217,14 @@ public ref struct CSharpParserModel
         
         for (int i = definitionCompilationUnit.NodeOffset; i < definitionCompilationUnit.NodeOffset + definitionCompilationUnit.NodeLength; i++)
         {
-            var x = Binder.NodeList[i];
+            var node = Binder.NodeList[i];
             
-            if (x.ParentScopeSubIndex == definitionScopeSubIndex &&
-                x.SyntaxKind == SyntaxKind.FunctionDefinitionNode)
+            if (node.ParentScopeSubIndex == definitionScopeSubIndex &&
+                node.SyntaxKind == SyntaxKind.FunctionDefinitionNode)
             {
-                if (Binder.CSharpCompilerService.SafeCompareTextSpans(referenceResourceUri.Value, referenceTextSpan, definitionResourceUri.Value, GetIdentifierTextSpan(x)))
+                if (Binder.CSharpCompilerService.SafeCompareTextSpans(referenceResourceUri.Value, referenceTextSpan, definitionResourceUri.Value, GetIdentifierTextSpan(node)))
                 {
-                    functionDefinitionNode = (FunctionDefinitionNode)x;
+                    functionDefinitionNode = (FunctionDefinitionNode)node;
                     break;
                 }
             }
@@ -1244,10 +1244,10 @@ public ref struct CSharpParserModel
         
         for (int i = compilationUnit.NodeOffset; i < compilationUnit.NodeOffset + compilationUnit.NodeLength; i++)
         {
-            var kvp = Binder.NodeList[i];
+            var node = Binder.NodeList[i];
             
-            if (kvp.ParentScopeSubIndex == scopeSubIndex && kvp.SyntaxKind == SyntaxKind.VariableDeclarationNode)
-                variableDeclarationNodeList.Add((VariableDeclarationNode)kvp);
+            if (node.ParentScopeSubIndex == scopeSubIndex && node.SyntaxKind == SyntaxKind.VariableDeclarationNode)
+                variableDeclarationNodeList.Add((VariableDeclarationNode)node);
         }
         
         return variableDeclarationNodeList.ToArray();
@@ -1490,19 +1490,19 @@ public ref struct CSharpParserModel
         TextEditorTextSpan variableIdentifierTextSpan,
         VariableDeclarationNode variableDeclarationNode)
     {
-        var scopeOffset = ScopeCurrentSubIndex;
+        var scopeSubIndex = ScopeCurrentSubIndex;
 
         VariableDeclarationNode? matchNode = null;
         for (int i = Compilation.NodeOffset; i < Compilation.NodeOffset + Compilation.NodeLength; i++)
         {
-            var x = Binder.NodeList[i];
-            if (x.ParentScopeSubIndex == scopeOffset &&
-                x.SyntaxKind == SyntaxKind.VariableDeclarationNode)
+            var node = Binder.NodeList[i];
+            if (node.ParentScopeSubIndex == scopeSubIndex &&
+                node.SyntaxKind == SyntaxKind.VariableDeclarationNode)
             {
                 if (Binder.CSharpCompilerService.SafeCompareTextSpans(
-                        ResourceUri.Value, variableIdentifierTextSpan, ResourceUri.Value, GetIdentifierTextSpan(x)))
+                        ResourceUri.Value, variableIdentifierTextSpan, ResourceUri.Value, GetIdentifierTextSpan(node)))
                 {
-                    matchNode = (VariableDeclarationNode)x;
+                    matchNode = (VariableDeclarationNode)node;
                     break;
                 }
             }
@@ -1510,7 +1510,7 @@ public ref struct CSharpParserModel
         
         if (matchNode is null)
         {
-            variableDeclarationNode.ParentScopeSubIndex = scopeOffset;
+            variableDeclarationNode.ParentScopeSubIndex = scopeSubIndex;
             
             Binder.NodeList.Insert(
                 Compilation.NodeOffset + Compilation.NodeLength,
@@ -1529,21 +1529,21 @@ public ref struct CSharpParserModel
         TextEditorTextSpan variableIdentifierTextSpan,
         VariableDeclarationNode variableDeclarationNode)
     {
-        int scopeOffset = ScopeCurrentSubIndex;
+        int scopeSubIndex = ScopeCurrentSubIndex;
         
         VariableDeclarationNode? matchNode = null;
         int index = Compilation.NodeOffset;
         for (; index < Compilation.NodeOffset + Compilation.NodeLength; index++)
         {
-            var x = Binder.NodeList[index];
+            var node = Binder.NodeList[index];
             
-            if (x.ParentScopeSubIndex == scopeOffset &&
-                x.SyntaxKind == SyntaxKind.VariableDeclarationNode)
+            if (node.ParentScopeSubIndex == scopeSubIndex &&
+                node.SyntaxKind == SyntaxKind.VariableDeclarationNode)
             {
                 if (Binder.CSharpCompilerService.SafeCompareTextSpans(
-                        ResourceUri.Value, variableIdentifierTextSpan, ResourceUri.Value, GetIdentifierTextSpan(x)))
+                        ResourceUri.Value, variableIdentifierTextSpan, ResourceUri.Value, GetIdentifierTextSpan(node)))
                 {
-                    matchNode = (VariableDeclarationNode)x;
+                    matchNode = (VariableDeclarationNode)node;
                     break;
                 }
             }
@@ -1551,7 +1551,7 @@ public ref struct CSharpParserModel
         
         if (index != -1)
         {
-            variableDeclarationNode.ParentScopeSubIndex = scopeOffset;
+            variableDeclarationNode.ParentScopeSubIndex = scopeSubIndex;
             Binder.NodeList[index] = variableDeclarationNode;
         }
     }
@@ -1602,14 +1602,14 @@ public ref struct CSharpParserModel
         labelDeclarationNode = null;
         for (int i = Compilation.NodeOffset; i < Compilation.NodeOffset + Compilation.NodeLength; i++)
         {
-            var x = Binder.NodeList[i];
+            var node = Binder.NodeList[i];
             
-            if (x.ParentScopeSubIndex == declarationScopeSubIndex &&
-                x.SyntaxKind == SyntaxKind.LabelDeclarationNode)
+            if (node.ParentScopeSubIndex == declarationScopeSubIndex &&
+                node.SyntaxKind == SyntaxKind.LabelDeclarationNode)
             {
-                if (Binder.CSharpCompilerService.SafeCompareTextSpans(referenceResourceUri.Value, referenceTextSpan, declarationResourceUri.Value, GetIdentifierTextSpan(x)))
+                if (Binder.CSharpCompilerService.SafeCompareTextSpans(referenceResourceUri.Value, referenceTextSpan, declarationResourceUri.Value, GetIdentifierTextSpan(node)))
                 {
-                    labelDeclarationNode = (LabelDeclarationNode)x;
+                    labelDeclarationNode = (LabelDeclarationNode)node;
                     break;
                 }
             }
@@ -1629,14 +1629,14 @@ public ref struct CSharpParserModel
         LabelDeclarationNode? matchNode = null;
         for (var i = Compilation.NodeOffset; i < Compilation.NodeOffset + Compilation.NodeLength; i++)
         {
-            var x = Binder.NodeList[i];
+            var node = Binder.NodeList[i];
             
-            if (x.ParentScopeSubIndex == scopeSubIndex &&
-                x.SyntaxKind == SyntaxKind.LabelDeclarationNode)
+            if (node.ParentScopeSubIndex == scopeSubIndex &&
+                node.SyntaxKind == SyntaxKind.LabelDeclarationNode)
             {
-                if (Binder.CSharpCompilerService.SafeCompareTextSpans(ResourceUri.Value, labelIdentifierTextSpan, ResourceUri.Value, GetIdentifierTextSpan(x)))
+                if (Binder.CSharpCompilerService.SafeCompareTextSpans(ResourceUri.Value, labelIdentifierTextSpan, ResourceUri.Value, GetIdentifierTextSpan(node)))
                 {
-                    matchNode = (LabelDeclarationNode)x;
+                    matchNode = (LabelDeclarationNode)node;
                     break;
                 }
             }
@@ -1668,14 +1668,14 @@ public ref struct CSharpParserModel
         int index = Compilation.NodeOffset;
         for (; index < Compilation.NodeOffset + Compilation.NodeLength; index++)
         {
-            var x = Binder.NodeList[index];
+            var node = Binder.NodeList[index];
             
-            if (x.ParentScopeSubIndex == scopeSubIndex &&
-                x.SyntaxKind == SyntaxKind.LabelDeclarationNode)
+            if (node.ParentScopeSubIndex == scopeSubIndex &&
+                node.SyntaxKind == SyntaxKind.LabelDeclarationNode)
             {
-                if (Binder.CSharpCompilerService.SafeCompareTextSpans(ResourceUri.Value, referenceTextSpan, ResourceUri.Value, GetIdentifierTextSpan(x)))
+                if (Binder.CSharpCompilerService.SafeCompareTextSpans(ResourceUri.Value, referenceTextSpan, ResourceUri.Value, GetIdentifierTextSpan(node)))
                 {
-                    matchNode = (LabelDeclarationNode)x;
+                    matchNode = (LabelDeclarationNode)node;
                     break;
                 }
             }
