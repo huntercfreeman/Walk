@@ -208,6 +208,7 @@ public enum SyntaxKind : byte
     AmbiguousIdentifierExpressionNode,
     PreprocessorLibraryReferenceStatementNode,
     TypeDefinitionNode,
+    EmptyCodeBlockOwner,
     TypeClauseNode,
     ExplicitCastNode,
     VariableDeclarationNode,
