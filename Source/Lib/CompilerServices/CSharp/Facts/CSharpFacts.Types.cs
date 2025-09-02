@@ -174,6 +174,6 @@ public partial class CSharpFacts
             String,
             Bool,
             Var
-        }.ToList();
+        };
     }
 }
