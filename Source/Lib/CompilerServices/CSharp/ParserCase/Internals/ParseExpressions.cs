@@ -3174,6 +3174,11 @@ public static class ParseExpressions
         		isImplicitOpenCodeBlockTextSpan: false,
         		ownerSyntaxKind: lambdaExpressionNode.SyntaxKind),
             codeBlockOwner: null);
+        /*
+        TODO: Optimize this by clearing the parserModel.Binder.LambdaExpressionNodeChildList after a file is parsed?...
+        ...you can't clear them during a parse due to the chance of recursive lambdas that each have their own variables.
+        But once you've finished parsing a file, you can clear it because this data is being copied to just be a "variable".
+        */
         for (int i = lambdaExpressionNode.IndexLambdaExpressionNodeChildList; i < lambdaExpressionNode.IndexLambdaExpressionNodeChildList + lambdaExpressionNode.CountLambdaExpressionNodeChildList; i++)
         {
             parserModel.BindVariableDeclarationNode(parserModel.Binder.LambdaExpressionNodeChildList[i]);
@@ -3224,9 +3229,6 @@ public static class ParseExpressions
         }
         
         var lambdaScope = parserModel.ScopeCurrent;
-        Console.WriteLine($"OwnerSK:{parserModel.ScopeCurrent.OwnerSyntaxKind}, LSK{lambdaExpressionNode.SyntaxKind}");
-        Console.WriteLine($"SSI:{parserModel.ScopeCurrent.SelfScopeSubIndex}, LSI{lambdaExpressionNode.SelfScopeSubIndex}");
-        Console.WriteLine($"SSI:{parserModel.ScopeCurrent.ParentScopeSubIndex}, LSI{lambdaExpressionNode.ParentScopeSubIndex}");
         CloseLambdaExpressionScope(lambdaExpressionNode, ref parserModel);
     
         var closeTokenIndex = parserModel.TokenWalker.Index;
