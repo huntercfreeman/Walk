@@ -1,8 +1,9 @@
+using System.Reflection;
+using Walk.CompilerServices.CSharp.Facts;
 using Walk.Extensions.CompilerServices.Syntax;
 using Walk.Extensions.CompilerServices.Syntax.Nodes;
 using Walk.Extensions.CompilerServices.Syntax.Nodes.Enums;
 using Walk.Extensions.CompilerServices.Syntax.Nodes.Interfaces;
-using Walk.CompilerServices.CSharp.Facts;
 
 namespace Walk.CompilerServices.CSharp.ParserCase.Internals;
 
@@ -349,16 +350,16 @@ public static class ParseTokens
         		ScopeDirectionKind.Down,
         		scope_StartInclusiveIndex: parserModel.TokenWalker.Current.TextSpan.StartInclusiveIndex,
         		scope_EndExclusiveIndex: -1,
-        		codeBlock_StartInclusiveIndex: parserModel.TokenWalker.Current.TextSpan.StartInclusiveIndex,
+        		codeBlock_StartInclusiveIndex: -1,
         		codeBlock_EndExclusiveIndex: -1,
         		parentScopeSubIndex: parserModel.ScopeCurrentSubIndex,
         		selfScopeSubIndex: parserModel.Compilation.ScopeLength,
-        		nodeSubIndex: parserModel.Compilation.NodeLength,
-        		permitCodeBlockParsing: false,
+        		nodeSubIndex: 0,
+        		permitCodeBlockParsing: true,
         		isImplicitOpenCodeBlockTextSpan: false,
         		returnTypeReference: Walk.CompilerServices.CSharp.Facts.CSharpFacts.Types.Void.ToTypeReference(),
         		ownerSyntaxKind: getterOrSetterNode.SyntaxKind),
-    	    getterOrSetterNode);
+    	    EmptyCodeBlockOwner.Instance);
         
         if (parserModel.TokenWalker.Current.SyntaxKind == SyntaxKind.StatementDelimiterToken)
         {
@@ -391,23 +392,25 @@ public static class ParseTokens
         if (parserModel.ScopeCurrent.IsImplicitOpenCodeBlockTextSpan ||
             parserModel.ScopeCurrent.CodeBlock_StartInclusiveIndex != -1)
         {
-            var arbitraryCodeBlockNode = new ArbitraryCodeBlockNode();
-            
+            var parent = parserModel.ScopeCurrent;
+
             parserModel.RegisterScopeAndOwner(
             	new Scope(
-            		ScopeDirectionKind.Down,
+                    parent.IsDefault()
+                        ? ScopeDirectionKind.Both
+                        : parent.ScopeDirectionKind,
             		scope_StartInclusiveIndex: parserModel.TokenWalker.Current.TextSpan.StartInclusiveIndex,
             		scope_EndExclusiveIndex: -1,
-            		codeBlock_StartInclusiveIndex: parserModel.TokenWalker.Current.TextSpan.StartInclusiveIndex,
+            		codeBlock_StartInclusiveIndex: -1,
             		codeBlock_EndExclusiveIndex: -1,
             		parentScopeSubIndex: parserModel.ScopeCurrentSubIndex,
             		selfScopeSubIndex: parserModel.Compilation.ScopeLength,
-            		nodeSubIndex: parserModel.Compilation.NodeLength,
-            		permitCodeBlockParsing: false,
+            		nodeSubIndex: 0,
+            		permitCodeBlockParsing: true,
             		isImplicitOpenCodeBlockTextSpan: false,
             		returnTypeReference: Walk.CompilerServices.CSharp.Facts.CSharpFacts.Types.Void.ToTypeReference(),
-            		ownerSyntaxKind: arbitraryCodeBlockNode.SyntaxKind),
-        	    arbitraryCodeBlockNode);
+            		ownerSyntaxKind: SyntaxKind.ArbitraryCodeBlockNode),
+        	    EmptyCodeBlockOwner.Instance);
         }
         
         parserModel.SetCurrentScope_IsImplicitOpenCodeBlockTextSpan(false);

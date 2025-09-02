@@ -20,13 +20,13 @@ public static class CSharpParser
         		Walk.Extensions.CompilerServices.Syntax.Nodes.Enums.ScopeDirectionKind.Both,
         		scope_StartInclusiveIndex: 0,
         		scope_EndExclusiveIndex: -1,
-        		codeBlock_StartInclusiveIndex: 0,
+        		codeBlock_StartInclusiveIndex: -1,
         		codeBlock_EndExclusiveIndex: -1,
         		parentScopeSubIndex: -1,
         		selfScopeSubIndex: 0,
         		nodeSubIndex: 0,
-        		permitCodeBlockParsing: false,
-        		isImplicitOpenCodeBlockTextSpan: false,
+        		permitCodeBlockParsing: true,
+        		isImplicitOpenCodeBlockTextSpan: true,
         		returnTypeReference: Walk.CompilerServices.CSharp.Facts.CSharpFacts.Types.Void.ToTypeReference(),
         		ownerSyntaxKind: SyntaxKind.GlobalCodeBlockNode));
         ++compilationUnit.ScopeLength;

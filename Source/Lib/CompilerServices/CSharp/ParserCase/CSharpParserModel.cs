@@ -834,9 +834,7 @@ public ref struct CSharpParserModel
             case SyntaxKind.FunctionDefinitionNode:
             case SyntaxKind.NamespaceStatementNode:
                 scope.NodeSubIndex = Compilation.NodeLength;
-                Binder.NodeList.Insert(
-                    Compilation.NodeOffset + Compilation.NodeLength,
-                    codeBlockOwner);
+                Binder.NodeList.Add(codeBlockOwner);
                 ++Compilation.NodeLength;
                 break;
             default:
@@ -844,9 +842,7 @@ public ref struct CSharpParserModel
                 break;
         }
         
-        Binder.ScopeList.Insert(
-            Compilation.ScopeOffset + Compilation.ScopeLength,
-            scope);
+        Binder.ScopeList.Add(scope);
         ++Compilation.ScopeLength;
     
         ScopeCurrentSubIndex = codeBlockOwner.SelfScopeSubIndex;

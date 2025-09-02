@@ -3163,16 +3163,16 @@ public static class ParseExpressions
         		ScopeDirectionKind.Down,
         		scope_StartInclusiveIndex: openBraceToken.TextSpan.StartInclusiveIndex,
         		scope_EndExclusiveIndex: -1,
-        		codeBlock_StartInclusiveIndex: openBraceToken.TextSpan.StartInclusiveIndex,
+        		codeBlock_StartInclusiveIndex: -1,
         		codeBlock_EndExclusiveIndex: -1,
         		parentScopeSubIndex: parserModel.ScopeCurrentSubIndex,
         		selfScopeSubIndex: parserModel.Compilation.ScopeLength,
-        		nodeSubIndex: parserModel.Compilation.NodeLength,
-        		permitCodeBlockParsing: false,
+        		nodeSubIndex: 0,
+        		permitCodeBlockParsing: true,
         		isImplicitOpenCodeBlockTextSpan: false,
         		returnTypeReference: Walk.CompilerServices.CSharp.Facts.CSharpFacts.Types.Void.ToTypeReference(),
         		ownerSyntaxKind: lambdaExpressionNode.SyntaxKind),
-    	    lambdaExpressionNode);
+    	    EmptyCodeBlockOwner.Instance);
     }
     
     public static void CloseLambdaExpressionScope(LambdaExpressionNode lambdaExpressionNode, ref CSharpParserModel parserModel)
