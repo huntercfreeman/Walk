@@ -4060,12 +4060,12 @@ public static class ParseExpressions
             }
         }
         
-        parserModel.Binder.FunctionParameterEntryList.Add(
-            //invocationNode.IndexFunctionParameterEntryList + invocationNode.CountFunctionParameterEntryList,
-            new FunctionParameterEntry(parserModel.ParameterModifierKind));
+        /*parserModel.Binder.FunctionParameterEntryList.Add(
+            invocationNode.IndexFunctionParameterEntryList + invocationNode.CountFunctionParameterEntryList,
+            new FunctionParameterEntry(parserModel.ParameterModifierKind));*/
         invocationNode.CountFunctionParameterEntryList++;
         
-        if (parserModel.Compilation.CompilationUnitKind == CompilationUnitKind.IndividualFile_AllData)
+        /*if (parserModel.Compilation.CompilationUnitKind == CompilationUnitKind.IndividualFile_AllData)
         {
             if (parserModel.Compilation.FunctionInvocationParameterMetadataOffset == -1)
                 parserModel.Compilation.FunctionInvocationParameterMetadataOffset = parserModel.Binder.FunctionInvocationParameterMetadataList.Count;
@@ -4077,7 +4077,7 @@ public static class ParseExpressions
                     expressionSecondary.ResultTypeReference,
                     parserModel.ParameterModifierKind));
             ++parserModel.Compilation.FunctionInvocationParameterMetadataLength;
-        }
+        }*/
         
         if (expressionSecondary.SyntaxKind == SyntaxKind.VariableReferenceNode)
         {

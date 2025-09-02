@@ -28,13 +28,13 @@ public class ParseFunctions
             
         parserModel.BindFunctionDefinitionNode(functionDefinitionNode);
         
-        bool isFunctionOverloadCase;        // This compilation has not been written to the __CompilationUnitMap yet,        // so this will read the previous compilation of this file.        if (parserModel.TryGetFunctionDefinitionNodeByScope(
+        /*bool isFunctionOverloadCase;        // This compilation has not been written to the __CompilationUnitMap yet,        // so this will read the previous compilation of this file.        if (parserModel.TryGetFunctionDefinitionNodeByScope(
                 parserModel.ResourceUri,
                 parserModel.Compilation,
                 parserModel.ScopeCurrentSubIndex,
                 parserModel.ResourceUri,
                 consumedIdentifierToken.TextSpan,
-                out var existingFunctionDefinitionNode))        {            isFunctionOverloadCase = true;        }        else        {            isFunctionOverloadCase = false;        }        parserModel.RegisterScopeAndOwner(
+                out var existingFunctionDefinitionNode))        {            isFunctionOverloadCase = true;        }        else        {            isFunctionOverloadCase = false;        }*/        parserModel.RegisterScopeAndOwner(
         	new Scope(
         		ScopeDirectionKind.Down,
         		scope_StartInclusiveIndex: parserModel.TokenWalker.Current.TextSpan.StartInclusiveIndex,
@@ -77,13 +77,13 @@ public class ParseFunctions
 
         HandleFunctionArguments(functionDefinitionNode, ref parserModel);
         
-        if (isFunctionOverloadCase)
+        /*if (isFunctionOverloadCase)
         {
             HandleFunctionOverloadDefinition(
                 newNode: functionDefinitionNode,
                 existingNode: existingFunctionDefinitionNode,
                 ref parserModel);
-        }
+        }*/
         
         if (parserModel.TokenWalker.Current.SyntaxKind == SyntaxKind.StatementDelimiterToken)
             parserModel.SetCurrentScope_IsImplicitOpenCodeBlockTextSpan(true);
@@ -91,7 +91,7 @@ public class ParseFunctions
             ParseTokens.MoveToExpressionBody(ref parserModel);
     }
     
-    public static void HandleFunctionOverloadDefinition(
+    /*public static void HandleFunctionOverloadDefinition(
         FunctionDefinitionNode newNode,
         FunctionDefinitionNode existingNode,
         ref CSharpParserModel parserModel)
@@ -228,7 +228,7 @@ public class ParseFunctions
                     existingNode.IndexMethodOverloadDefinition,
                     newNode.SelfScopeSubIndex));
         }
-    }
+    }*/
 
     public static void HandleConstructorDefinition(
         TypeDefinitionNode typeDefinitionNodeCodeBlockOwner,
