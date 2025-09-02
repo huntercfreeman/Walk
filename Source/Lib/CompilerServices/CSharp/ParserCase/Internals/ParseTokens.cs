@@ -343,8 +343,6 @@ public static class ParseTokens
     {
         parserModel.TokenWalker.Consume(); // Consume the 'get' or 'set' contextual keyword.
     
-        var getterOrSetterNode = new GetterOrSetterNode();
-        
         parserModel.RegisterScopeAndOwner(
         	new Scope(
         		ScopeDirectionKind.Down,
@@ -358,7 +356,7 @@ public static class ParseTokens
         		permitCodeBlockParsing: true,
         		isImplicitOpenCodeBlockTextSpan: false,
         		returnTypeReference: Walk.CompilerServices.CSharp.Facts.CSharpFacts.Types.Void.ToTypeReference(),
-        		ownerSyntaxKind: getterOrSetterNode.SyntaxKind),
+        		ownerSyntaxKind: SyntaxKind.GetterOrSetterNode),
     	    EmptyCodeBlockOwner.Instance);
         
         if (parserModel.TokenWalker.Current.SyntaxKind == SyntaxKind.StatementDelimiterToken)
@@ -455,7 +453,7 @@ public static class ParseTokens
         {
             var tuple = parserModel.ParseChildScopeStack.Peek();
             
-            if (tuple.ScopeOffset == parserModel.ScopeCurrentSubIndex)
+            if (tuple.ScopeSubIndex == parserModel.ScopeCurrentSubIndex)
             {
                 tuple = parserModel.ParseChildScopeStack.Pop();
                 tuple.DeferredChildScope.PrepareMainParserLoop(closeBraceTokenIndex, ref parserModel);

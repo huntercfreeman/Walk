@@ -3158,6 +3158,8 @@ public static class ParseExpressions
     
     public static void OpenLambdaExpressionScope(LambdaExpressionNode lambdaExpressionNode, ref SyntaxToken openBraceToken, ref CSharpParserModel parserModel)
     {
+        lambdaExpressionNode.ParentScopeSubIndex = parserModel.ScopeCurrentSubIndex;
+        lambdaExpressionNode.SelfScopeSubIndex = parserModel.Compilation.ScopeLength;
         parserModel.RegisterScopeAndOwner(
         	new Scope(
         		ScopeDirectionKind.Down,

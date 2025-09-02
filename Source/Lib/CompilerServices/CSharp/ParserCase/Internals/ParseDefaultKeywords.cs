@@ -40,7 +40,7 @@ public class ParseDefaultKeywords
         _ = ParseExpressions.ParseExpression(ref parserModel);
         _ = parserModel.TokenWalker.Match(SyntaxKind.ColonToken);
     }
-    // VS: btw
+    
     public static void HandleCatchTokenKeyword(ref CSharpParserModel parserModel)
     {
         _ = parserModel.TokenWalker.Consume(); // catchKeywordToken

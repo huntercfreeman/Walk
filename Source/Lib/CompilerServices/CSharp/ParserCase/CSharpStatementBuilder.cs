@@ -16,15 +16,15 @@ public class CSharpStatementBuilder
 
     public List<SyntaxToken> ChildList { get; } = new();
     public ISyntaxNode MostRecentNode { get; set; }
-    
+
     /// <summary>
     /// Prior to finishing a statement, you must check whether ParseLambdaStatementScopeStack has a child that needs to be parsed.
     /// All currently known cases of finishing a statement will do so by invoking FinishStatement(...),
     /// this method will perform this check internally.'
     ///
-    /// The ScopeOffset is that of the parent which contains the scope that was deferred.
+    /// The ScopeSubIndex is that of the parent which contains the scope that was deferred.
     /// </summary>
-    public Stack<(int ScopeOffset, CSharpDeferredChildScope DeferredChildScope)> ParseLambdaStatementScopeStack { get; } = new();
+    public Stack<(int ScopeSubIndex, CSharpDeferredChildScope DeferredChildScope)> ParseLambdaStatementScopeStack { get; } = new();
     
     /// <summary>Invokes the other overload with index: ^1</summary>
     public bool TryPeek(out SyntaxToken syntax)
@@ -102,7 +102,7 @@ public class CSharpStatementBuilder
         {
             var tuple = ParseLambdaStatementScopeStack.Peek();
             
-            if (tuple.ScopeOffset == parserModel.ScopeCurrentSubIndex)
+            if (tuple.ScopeSubIndex == parserModel.ScopeCurrentSubIndex)
             {
                 tuple = ParseLambdaStatementScopeStack.Pop();
                 tuple.DeferredChildScope.PrepareMainParserLoop(finishTokenIndex, ref parserModel);

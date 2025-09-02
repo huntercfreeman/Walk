@@ -102,9 +102,9 @@ public ref struct CSharpParserModel
     /// <summary>
     /// Prior to closing a statement-codeblock, you must check whether ParseChildScopeStack has a child that needs to be parsed.
     ///
-    /// The ScopeOffset is that of the parent which contains the scope that was deferred.
+    /// The ScopeSubIndex is that of the parent which contains the scope that was deferred.
     /// </summary>
-    public Stack<(int ScopeOffset, CSharpDeferredChildScope DeferredChildScope)> ParseChildScopeStack { get; }
+    public Stack<(int ScopeSubIndex, CSharpDeferredChildScope DeferredChildScope)> ParseChildScopeStack { get; }
     
     /// <summary>
     /// The C# IParserModel implementation will only "short circuit" if the 'SyntaxKind DelimiterSyntaxKind'
@@ -2004,9 +2004,18 @@ public ref struct CSharpParserModel
     
     public readonly void SetCurrentScope_PermitCodeBlockParsing(bool value)
     {
-        var scope = Binder.ScopeList[Compilation.ScopeOffset + ScopeCurrentSubIndex];
-        scope.PermitCodeBlockParsing = value;
-        Binder.ScopeList[Compilation.ScopeOffset + ScopeCurrentSubIndex] = scope;
+        try
+        {
+            var scope = Binder.ScopeList[Compilation.ScopeOffset + ScopeCurrentSubIndex];
+            scope.PermitCodeBlockParsing = value;
+            Binder.ScopeList[Compilation.ScopeOffset + ScopeCurrentSubIndex] = scope;
+        }
+        catch (Exception e)
+        {
+
+            throw;
+        }
+        
     }
     
     public readonly void SetCurrentScope_Scope_EndExclusiveIndex(int endExclusiveIndex)

@@ -93,7 +93,7 @@ public static class CSharpParser
                     var closeBraceTokenIndex = parserModel.TokenWalker.Index;
                     
                     if (parserModel.ParseChildScopeStack.Count > 0 &&
-                        parserModel.ParseChildScopeStack.Peek().ScopeOffset == parserModel.ScopeCurrentSubIndex)
+                        parserModel.ParseChildScopeStack.Peek().ScopeSubIndex == parserModel.ScopeCurrentSubIndex)
                     {
                         parserModel.TokenWalker.SetNullDeferredParsingTuple();
                     }
@@ -157,7 +157,7 @@ public static class CSharpParser
                 {
                     var tuple = parserModel.ParseChildScopeStack.Peek();
                     
-                    if (tuple.ScopeOffset == parserModel.ScopeCurrentSubIndex)
+                    if (tuple.ScopeSubIndex == parserModel.ScopeCurrentSubIndex)
                     {
                         tuple = parserModel.ParseChildScopeStack.Pop();
                         tuple.DeferredChildScope.PrepareMainParserLoop(parserModel.TokenWalker.Index, ref parserModel);
