@@ -3160,7 +3160,7 @@ public static class ParseExpressions
     {
         lambdaExpressionNode.ParentScopeSubIndex = parserModel.ScopeCurrentSubIndex;
         lambdaExpressionNode.SelfScopeSubIndex = parserModel.Compilation.ScopeLength;
-        parserModel.RegisterScopeAndOwner(
+        parserModel.RegisterScope(
         	new Scope(
         		ScopeDirectionKind.Down,
         		scope_StartInclusiveIndex: openBraceToken.TextSpan.StartInclusiveIndex,
@@ -3173,7 +3173,7 @@ public static class ParseExpressions
         		permitCodeBlockParsing: true,
         		isImplicitOpenCodeBlockTextSpan: false,
         		ownerSyntaxKind: lambdaExpressionNode.SyntaxKind),
-    	    EmptyCodeBlockOwner.Instance);
+            codeBlockOwner: null);
     }
     
     public static void CloseLambdaExpressionScope(LambdaExpressionNode lambdaExpressionNode, ref CSharpParserModel parserModel)

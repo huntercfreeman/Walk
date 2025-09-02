@@ -40,6 +40,9 @@ public struct Scope
     public int CodeBlock_EndExclusiveIndex { get; set; }
     public int ParentScopeSubIndex { get; set; }
     public int SelfScopeSubIndex { get; set; }
+    /// <summary>
+    /// When this is '-1', there is no tracked ICodeBlockOwner instance.
+    /// </summary>
     public int NodeSubIndex { get; set; }
     public bool PermitCodeBlockParsing { get; set; }
     public bool IsImplicitOpenCodeBlockTextSpan { get; set; }

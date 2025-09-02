@@ -46,7 +46,7 @@ public class ParseDefaultKeywords
         _ = parserModel.TokenWalker.Consume(); // catchKeywordToken
         _ = parserModel.TokenWalker.Match(SyntaxKind.OpenParenthesisToken);
         
-        parserModel.RegisterScopeAndOwner(
+        parserModel.RegisterScope(
             new Scope(
                 ScopeDirectionKind.Down,
                 scope_StartInclusiveIndex: parserModel.TokenWalker.Current.TextSpan.StartInclusiveIndex,
@@ -55,11 +55,11 @@ public class ParseDefaultKeywords
                 codeBlock_EndExclusiveIndex: -1,
                 parentScopeSubIndex: parserModel.ScopeCurrentSubIndex,
                 selfScopeSubIndex: parserModel.Compilation.ScopeLength,
-                nodeSubIndex: 0,
+                nodeSubIndex: -1,
                 permitCodeBlockParsing: true,
                 isImplicitOpenCodeBlockTextSpan: false,
                 ownerSyntaxKind: SyntaxKind.TryStatementCatchNode),
-            EmptyCodeBlockOwner.Instance);
+            codeBlockOwner: null);
         
         parserModel.ExpressionList.Add((SyntaxKind.CloseParenthesisToken, null));
         _ = ParseExpressions.ParseExpression(ref parserModel);
@@ -121,7 +121,7 @@ public class ParseDefaultKeywords
     {
         _ = parserModel.TokenWalker.Consume(); // doKeywordToken
 
-        parserModel.RegisterScopeAndOwner(
+        parserModel.RegisterScope(
         	new Scope(
         		ScopeDirectionKind.Down,
         		scope_StartInclusiveIndex: parserModel.TokenWalker.Current.TextSpan.StartInclusiveIndex,
@@ -130,11 +130,11 @@ public class ParseDefaultKeywords
         		codeBlock_EndExclusiveIndex: -1,
         		parentScopeSubIndex: parserModel.ScopeCurrentSubIndex,
         		selfScopeSubIndex: parserModel.Compilation.ScopeLength,
-        		nodeSubIndex: 0,
+        		nodeSubIndex: -1,
         		permitCodeBlockParsing: true,
         		isImplicitOpenCodeBlockTextSpan: false,
         		ownerSyntaxKind: SyntaxKind.DoWhileStatementNode),
-    	    EmptyCodeBlockOwner.Instance);
+            codeBlockOwner: null);
         
         if (parserModel.TokenWalker.Current.SyntaxKind != SyntaxKind.OpenBraceToken)
             parserModel.SetCurrentScope_IsImplicitOpenCodeBlockTextSpan(true);
@@ -155,7 +155,7 @@ public class ParseDefaultKeywords
     
         _ = parserModel.TokenWalker.Consume(); // elseTokenKeyword
             
-        parserModel.RegisterScopeAndOwner(
+        parserModel.RegisterScope(
         	new Scope(
         		ScopeDirectionKind.Down,
         		scope_StartInclusiveIndex: parserModel.TokenWalker.Current.TextSpan.StartInclusiveIndex,
@@ -164,11 +164,11 @@ public class ParseDefaultKeywords
         		codeBlock_EndExclusiveIndex: -1,
         		parentScopeSubIndex: parserModel.ScopeCurrentSubIndex,
         		selfScopeSubIndex: parserModel.Compilation.ScopeLength,
-        		nodeSubIndex: 0,
+        		nodeSubIndex: -1,
         		permitCodeBlockParsing: true,
         		isImplicitOpenCodeBlockTextSpan: false,
         		ownerSyntaxKind: SyntaxKind.IfStatementNode),
-    	    EmptyCodeBlockOwner.Instance);
+            codeBlockOwner: null);
         
         if (parserModel.TokenWalker.Current.SyntaxKind != SyntaxKind.OpenBraceToken)
             parserModel.SetCurrentScope_IsImplicitOpenCodeBlockTextSpan(true);
@@ -204,7 +204,7 @@ public class ParseDefaultKeywords
     {
         _ = parserModel.TokenWalker.Consume(); // finallyKeywordToken
 
-        parserModel.RegisterScopeAndOwner(
+        parserModel.RegisterScope(
             new Scope(
                 ScopeDirectionKind.Down,
                 scope_StartInclusiveIndex: parserModel.TokenWalker.Current.TextSpan.StartInclusiveIndex,
@@ -213,11 +213,11 @@ public class ParseDefaultKeywords
                 codeBlock_EndExclusiveIndex: -1,
                 parentScopeSubIndex: parserModel.ScopeCurrentSubIndex,
                 selfScopeSubIndex: parserModel.Compilation.ScopeLength,
-                nodeSubIndex: 0,
+                nodeSubIndex: -1,
                 permitCodeBlockParsing: true,
                 isImplicitOpenCodeBlockTextSpan: false,
                 ownerSyntaxKind: SyntaxKind.TryStatementFinallyNode),
-            EmptyCodeBlockOwner.Instance);
+            codeBlockOwner: null);
 
         if (parserModel.TokenWalker.Current.SyntaxKind != SyntaxKind.OpenBraceToken)
             parserModel.SetCurrentScope_IsImplicitOpenCodeBlockTextSpan(true);
@@ -238,7 +238,7 @@ public class ParseDefaultKeywords
         _ = parserModel.TokenWalker.Consume(); // forKeywordToken
         _ = parserModel.TokenWalker.Match(SyntaxKind.OpenParenthesisToken);
 
-        parserModel.RegisterScopeAndOwner(
+        parserModel.RegisterScope(
         	new Scope(
         		ScopeDirectionKind.Down,
         		scope_StartInclusiveIndex: parserModel.TokenWalker.Current.TextSpan.StartInclusiveIndex,
@@ -247,11 +247,11 @@ public class ParseDefaultKeywords
         		codeBlock_EndExclusiveIndex: -1,
         		parentScopeSubIndex: parserModel.ScopeCurrentSubIndex,
         		selfScopeSubIndex: parserModel.Compilation.ScopeLength,
-        		nodeSubIndex: 0,
+        		nodeSubIndex: -1,
         		permitCodeBlockParsing: true,
         		isImplicitOpenCodeBlockTextSpan: false,
         		ownerSyntaxKind: SyntaxKind.ForStatementNode),
-    	    EmptyCodeBlockOwner.Instance);
+            codeBlockOwner: null);
         
         parserModel.SetCurrentScope_IsImplicitOpenCodeBlockTextSpan(false);
         
@@ -290,7 +290,7 @@ public class ParseDefaultKeywords
         _ = parserModel.TokenWalker.Consume(); // foreachKeywordToken
         _ = parserModel.TokenWalker.Match(SyntaxKind.OpenParenthesisToken);
         
-        parserModel.RegisterScopeAndOwner(
+        parserModel.RegisterScope(
         	new Scope(
         		ScopeDirectionKind.Down,
         		scope_StartInclusiveIndex: parserModel.TokenWalker.Current.TextSpan.StartInclusiveIndex,
@@ -299,11 +299,11 @@ public class ParseDefaultKeywords
         		codeBlock_EndExclusiveIndex: -1,
         		parentScopeSubIndex: parserModel.ScopeCurrentSubIndex,
         		selfScopeSubIndex: parserModel.Compilation.ScopeLength,
-        		nodeSubIndex: 0,
+        		nodeSubIndex: -1,
         		permitCodeBlockParsing: true,
         		isImplicitOpenCodeBlockTextSpan: false,
         		ownerSyntaxKind: SyntaxKind.ForeachStatementNode),
-    	    EmptyCodeBlockOwner.Instance);
+            codeBlockOwner: null);
             
         var successParse = ParseExpressions.TryParseVariableDeclarationNode(ref parserModel, out var variableDeclarationNode);
         if (successParse)
@@ -379,7 +379,7 @@ public class ParseDefaultKeywords
         
         _ = parserModel.TokenWalker.Match(SyntaxKind.CloseParenthesisToken);
         
-        parserModel.RegisterScopeAndOwner(
+        parserModel.RegisterScope(
         	new Scope(
         		ScopeDirectionKind.Down,
         		scope_StartInclusiveIndex: parserModel.TokenWalker.Current.TextSpan.StartInclusiveIndex,
@@ -388,11 +388,11 @@ public class ParseDefaultKeywords
         		codeBlock_EndExclusiveIndex: -1,
         		parentScopeSubIndex: parserModel.ScopeCurrentSubIndex,
         		selfScopeSubIndex: parserModel.Compilation.ScopeLength,
-        		nodeSubIndex: 0,
+        		nodeSubIndex: -1,
         		permitCodeBlockParsing: true,
         		isImplicitOpenCodeBlockTextSpan: false,
         		ownerSyntaxKind: SyntaxKind.LockStatementNode),
-    	    EmptyCodeBlockOwner.Instance);
+            codeBlockOwner: null);
     
         if (parserModel.TokenWalker.Current.SyntaxKind != SyntaxKind.OpenBraceToken)
             parserModel.SetCurrentScope_IsImplicitOpenCodeBlockTextSpan(true);
@@ -493,7 +493,7 @@ public class ParseDefaultKeywords
         
         _ = parserModel.TokenWalker.Match(SyntaxKind.CloseParenthesisToken);
         
-        parserModel.RegisterScopeAndOwner(
+        parserModel.RegisterScope(
         	new Scope(
         		ScopeDirectionKind.Down,
         		scope_StartInclusiveIndex: parserModel.TokenWalker.Current.TextSpan.StartInclusiveIndex,
@@ -502,11 +502,11 @@ public class ParseDefaultKeywords
         		codeBlock_EndExclusiveIndex: -1,
         		parentScopeSubIndex: parserModel.ScopeCurrentSubIndex,
         		selfScopeSubIndex: parserModel.Compilation.ScopeLength,
-        		nodeSubIndex: 0,
+        		nodeSubIndex: -1,
         		permitCodeBlockParsing: true,
         		isImplicitOpenCodeBlockTextSpan: false,
         		ownerSyntaxKind: SyntaxKind.SwitchStatementNode),
-    	    EmptyCodeBlockOwner.Instance);
+            codeBlockOwner: null);
     }
 
     public static void HandleThisTokenKeyword(ref CSharpParserModel parserModel)
@@ -529,7 +529,7 @@ public class ParseDefaultKeywords
     {
         _ = parserModel.TokenWalker.Consume(); // tryKeywordToken
 
-        parserModel.RegisterScopeAndOwner(
+        parserModel.RegisterScope(
         	new Scope(
         		ScopeDirectionKind.Down,
         		scope_StartInclusiveIndex: parserModel.TokenWalker.Current.TextSpan.StartInclusiveIndex,
@@ -538,11 +538,11 @@ public class ParseDefaultKeywords
         		codeBlock_EndExclusiveIndex: -1,
         		parentScopeSubIndex: parserModel.ScopeCurrentSubIndex,
         		selfScopeSubIndex: parserModel.Compilation.ScopeLength,
-        		nodeSubIndex: 0,
+        		nodeSubIndex: -1,
         		permitCodeBlockParsing: true,
         		isImplicitOpenCodeBlockTextSpan: false,
         		ownerSyntaxKind: SyntaxKind.TryStatementTryNode),
-    	    EmptyCodeBlockOwner.Instance);
+            codeBlockOwner: null);
         
         if (parserModel.TokenWalker.Current.SyntaxKind != SyntaxKind.OpenBraceToken)
             parserModel.SetCurrentScope_IsImplicitOpenCodeBlockTextSpan(true);
@@ -622,7 +622,7 @@ public class ParseDefaultKeywords
             return;
         }*/
         
-        parserModel.RegisterScopeAndOwner(
+        parserModel.RegisterScope(
         	new Scope(
         		ScopeDirectionKind.Down,
         		scope_StartInclusiveIndex: parserModel.TokenWalker.Current.TextSpan.StartInclusiveIndex,
@@ -631,11 +631,11 @@ public class ParseDefaultKeywords
         		codeBlock_EndExclusiveIndex: -1,
         		parentScopeSubIndex: parserModel.ScopeCurrentSubIndex,
         		selfScopeSubIndex: parserModel.Compilation.ScopeLength,
-        		nodeSubIndex: 0,
+        		nodeSubIndex: -1,
         		permitCodeBlockParsing: true,
         		isImplicitOpenCodeBlockTextSpan: false,
         		ownerSyntaxKind: SyntaxKind.WhileStatementNode),
-    	    EmptyCodeBlockOwner.Instance);
+            codeBlockOwner: null);
         
         if (parserModel.TokenWalker.Current.SyntaxKind != SyntaxKind.OpenBraceToken)
             parserModel.SetCurrentScope_IsImplicitOpenCodeBlockTextSpan(true);
@@ -742,7 +742,7 @@ public class ParseDefaultKeywords
 
         _ = parserModel.TokenWalker.Match(SyntaxKind.CloseParenthesisToken);
 
-        parserModel.RegisterScopeAndOwner(
+        parserModel.RegisterScope(
         	new Scope(
         		ScopeDirectionKind.Down,
         		scope_StartInclusiveIndex: parserModel.TokenWalker.Current.TextSpan.StartInclusiveIndex,
@@ -751,11 +751,11 @@ public class ParseDefaultKeywords
         		codeBlock_EndExclusiveIndex: -1,
         		parentScopeSubIndex: parserModel.ScopeCurrentSubIndex,
         		selfScopeSubIndex: parserModel.Compilation.ScopeLength,
-        		nodeSubIndex: 0,
+        		nodeSubIndex: -1,
         		permitCodeBlockParsing: true,
         		isImplicitOpenCodeBlockTextSpan: false,
         		ownerSyntaxKind: SyntaxKind.IfStatementNode),
-    	    EmptyCodeBlockOwner.Instance);
+            codeBlockOwner: null);
         
         if (parserModel.TokenWalker.Current.SyntaxKind != SyntaxKind.OpenBraceToken)
             parserModel.SetCurrentScope_IsImplicitOpenCodeBlockTextSpan(true);
@@ -792,7 +792,7 @@ public class ParseDefaultKeywords
     {
         _ = parserModel.TokenWalker.Consume(); // openParenthesisToken
 
-        parserModel.RegisterScopeAndOwner(
+        parserModel.RegisterScope(
         	new Scope(
         		ScopeDirectionKind.Down,
         		scope_StartInclusiveIndex: parserModel.TokenWalker.Current.TextSpan.StartInclusiveIndex,
@@ -801,11 +801,11 @@ public class ParseDefaultKeywords
         		codeBlock_EndExclusiveIndex: -1,
         		parentScopeSubIndex: parserModel.ScopeCurrentSubIndex,
         		selfScopeSubIndex: parserModel.Compilation.ScopeLength,
-        		nodeSubIndex: 0,
+        		nodeSubIndex: -1,
         		permitCodeBlockParsing: true,
         		isImplicitOpenCodeBlockTextSpan: false,
         		ownerSyntaxKind: SyntaxKind.UsingStatementCodeBlockNode),
-    	    EmptyCodeBlockOwner.Instance);
+            codeBlockOwner: null);
         
         var successParse = ParseExpressions.TryParseVariableDeclarationNode(ref parserModel, out var variableDeclarationNode);
         if (successParse)
@@ -992,7 +992,7 @@ public class ParseDefaultKeywords
         
         parserModel.StatementBuilder.MostRecentNode = typeDefinitionNode;
             
-        parserModel.RegisterScopeAndOwner(
+        parserModel.RegisterScope(
         	new Scope(
         		ScopeDirectionKind.Both,
         		scope_StartInclusiveIndex: parserModel.TokenWalker.Current.TextSpan.StartInclusiveIndex,
@@ -1280,7 +1280,7 @@ public class ParseDefaultKeywords
 
         parserModel.SetCurrentNamespaceStatementNode(namespaceStatementNode);
         
-        parserModel.RegisterScopeAndOwner(
+        parserModel.RegisterScope(
         	new Scope(
         		ScopeDirectionKind.Both,
         		scope_StartInclusiveIndex: parserModel.TokenWalker.Current.TextSpan.StartInclusiveIndex,

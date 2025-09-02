@@ -343,7 +343,7 @@ public static class ParseTokens
     {
         parserModel.TokenWalker.Consume(); // Consume the 'get' or 'set' contextual keyword.
     
-        parserModel.RegisterScopeAndOwner(
+        parserModel.RegisterScope(
         	new Scope(
         		ScopeDirectionKind.Down,
         		scope_StartInclusiveIndex: parserModel.TokenWalker.Current.TextSpan.StartInclusiveIndex,
@@ -356,7 +356,7 @@ public static class ParseTokens
         		permitCodeBlockParsing: true,
         		isImplicitOpenCodeBlockTextSpan: false,
         		ownerSyntaxKind: SyntaxKind.GetterOrSetterNode),
-    	    EmptyCodeBlockOwner.Instance);
+            codeBlockOwner: null);
         
         if (parserModel.TokenWalker.Current.SyntaxKind == SyntaxKind.StatementDelimiterToken)
         {
@@ -391,7 +391,7 @@ public static class ParseTokens
         {
             var parent = parserModel.ScopeCurrent;
 
-            parserModel.RegisterScopeAndOwner(
+            parserModel.RegisterScope(
             	new Scope(
                     parent.IsDefault()
                         ? ScopeDirectionKind.Both
@@ -406,7 +406,7 @@ public static class ParseTokens
             		permitCodeBlockParsing: true,
             		isImplicitOpenCodeBlockTextSpan: false,
             		ownerSyntaxKind: SyntaxKind.ArbitraryCodeBlockNode),
-        	    EmptyCodeBlockOwner.Instance);
+            codeBlockOwner: null);
         }
         
         parserModel.SetCurrentScope_IsImplicitOpenCodeBlockTextSpan(false);
@@ -604,11 +604,11 @@ public static class ParseTokens
     
         if (parserModel.ScopeCurrent.OwnerSyntaxKind == SyntaxKind.NamespaceStatementNode)
         {
-            var namespaceStatementNode =
-                (NamespaceStatementNode)
-                parserModel.Binder.NodeList[
-                    parserModel.Compilation.NodeOffset +
-                    parserModel.ScopeCurrent.NodeSubIndex];
+            Console.WriteLine(parserModel.ScopeCurrent.NodeSubIndex);
+        
+            var namespaceStatementNode = (NamespaceStatementNode)parserModel.Binder.NodeList[
+                parserModel.Compilation.NodeOffset +
+                parserModel.ScopeCurrent.NodeSubIndex];
                 
             parserModel.SetCurrentScope_CodeBlock_EndExclusiveIndex(statementDelimiterToken.TextSpan.EndExclusiveIndex);
             parserModel.AddNamespaceToCurrentScope(namespaceStatementNode.IdentifierToken.TextSpan);

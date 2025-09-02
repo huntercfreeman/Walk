@@ -34,7 +34,7 @@ public class ParseFunctions
                 parserModel.ScopeCurrentSubIndex,
                 parserModel.ResourceUri,
                 consumedIdentifierToken.TextSpan,
-                out var existingFunctionDefinitionNode))        {            isFunctionOverloadCase = true;        }        else        {            isFunctionOverloadCase = false;        }*/        parserModel.RegisterScopeAndOwner(
+                out var existingFunctionDefinitionNode))        {            isFunctionOverloadCase = true;        }        else        {            isFunctionOverloadCase = false;        }*/        parserModel.RegisterScope(
         	new Scope(
         		ScopeDirectionKind.Down,
         		scope_StartInclusiveIndex: parserModel.TokenWalker.Current.TextSpan.StartInclusiveIndex,
@@ -249,7 +249,7 @@ public class ParseFunctions
     
         parserModel.BindConstructorDefinitionIdentifierToken(consumedIdentifierToken);
         
-        parserModel.RegisterScopeAndOwner(
+        parserModel.RegisterScope(
         	new Scope(
         		ScopeDirectionKind.Down,
         		scope_StartInclusiveIndex: parserModel.TokenWalker.Current.TextSpan.StartInclusiveIndex,

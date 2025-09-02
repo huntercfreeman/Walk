@@ -89,9 +89,6 @@ public ref struct CSharpParserModel
         Compilation.SymbolOffset = Binder.SymbolList.Count;
         
         Compilation.NodeOffset = Binder.NodeList.Count;
-
-        binder.NodeList.Add(EmptyExpressionNode.Empty);
-        ++compilationUnit.NodeLength;
     }
     
     public TokenWalker TokenWalker { get; }
@@ -807,18 +804,10 @@ public ref struct CSharpParserModel
         }
     }
 
-    /// <summary>
-    /// If the 'codeBlockBuilder.ScopeIndexKey' is null then a scope will be instantiated
-    /// added to the list of scopes. The 'codeBlockBuilder.ScopeIndexKey' will then be set
-    /// to the instantiated scope's 'IndexKey'. As well, the current scope index key will be set to the
-    /// instantiated scope's 'IndexKey'.
-    /// 
-    /// Also will update the 'CurrentCodeBlockBuilder'.
-    /// </summary>
-    public void RegisterScopeAndOwner(Scope scope, ICodeBlockOwner codeBlockOwner)
+    public void RegisterScope(Scope scope, ICodeBlockOwner codeBlockOwner)
     {
-        codeBlockOwner.ParentScopeSubIndex = ScopeCurrentSubIndex;
-        codeBlockOwner.SelfScopeSubIndex = Compilation.ScopeLength;
+        scope.ParentScopeSubIndex = ScopeCurrentSubIndex;
+        scope.SelfScopeSubIndex = Compilation.ScopeLength;
         
         var parent = ScopeCurrent;
         var parentScopeDirection = parent.IsDefault()
@@ -827,27 +816,39 @@ public ref struct CSharpParserModel
         if (parentScopeDirection == ScopeDirectionKind.Both)
             scope.PermitCodeBlockParsing = false;
         
-        switch (scope.OwnerSyntaxKind)
+        scope.NodeSubIndex = -1;
+        
+        if (codeBlockOwner is not null)
         {
-            case SyntaxKind.TypeDefinitionNode:
-            case SyntaxKind.ConstructorDefinitionNode:
-            case SyntaxKind.FunctionDefinitionNode:
-            case SyntaxKind.NamespaceStatementNode:
-                scope.NodeSubIndex = Compilation.NodeLength;
-                Binder.NodeList.Add(codeBlockOwner);
-                ++Compilation.NodeLength;
-                break;
-            default:
-                scope.NodeSubIndex = 0;
-                break;
+            codeBlockOwner.ParentScopeSubIndex = scope.ParentScopeSubIndex;
+            codeBlockOwner.SelfScopeSubIndex = scope.SelfScopeSubIndex;
+            
+            switch (scope.OwnerSyntaxKind)
+            {
+                case SyntaxKind.TypeDefinitionNode:
+                case SyntaxKind.NamespaceStatementNode:
+                case SyntaxKind.ConstructorDefinitionNode:
+                case SyntaxKind.FunctionDefinitionNode:
+                    scope.NodeSubIndex = Compilation.NodeLength;
+                    Binder.NodeList.Add(codeBlockOwner);
+                    ++Compilation.NodeLength;
+                    break;
+                default:
+                    scope.NodeSubIndex = -1;
+                    break;
+            }
+            OnBoundScopeCreatedAndSetAsCurrent(codeBlockOwner, Compilation);
         }
         
         Binder.ScopeList.Add(scope);
         ++Compilation.ScopeLength;
     
-        ScopeCurrentSubIndex = codeBlockOwner.SelfScopeSubIndex;
+        ScopeCurrentSubIndex = scope.SelfScopeSubIndex;
         
-        OnBoundScopeCreatedAndSetAsCurrent(codeBlockOwner, Compilation);
+        if (codeBlockOwner is not null)
+        {
+            OnBoundScopeCreatedAndSetAsCurrent(codeBlockOwner, Compilation);
+        }
     }
 
     public readonly void AddNamespaceToCurrentScope(TextEditorTextSpan textSpan)

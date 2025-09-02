@@ -24,7 +24,7 @@ public static class CSharpParser
         		codeBlock_EndExclusiveIndex: -1,
         		parentScopeSubIndex: -1,
         		selfScopeSubIndex: 0,
-        		nodeSubIndex: 0,
+        		nodeSubIndex: -1,
         		permitCodeBlockParsing: true,
         		isImplicitOpenCodeBlockTextSpan: true,
         		ownerSyntaxKind: SyntaxKind.GlobalCodeBlockNode));
