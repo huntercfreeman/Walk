@@ -18,7 +18,6 @@ public struct Scope
         int nodeSubIndex,
         bool permitCodeBlockParsing,
         bool isImplicitOpenCodeBlockTextSpan,
-        TypeReference returnTypeReference,
         SyntaxKind ownerSyntaxKind)
     {
         ScopeDirectionKind = scopeDirectionKind;
@@ -31,7 +30,6 @@ public struct Scope
         NodeSubIndex = nodeSubIndex;
         PermitCodeBlockParsing = permitCodeBlockParsing;
         IsImplicitOpenCodeBlockTextSpan = isImplicitOpenCodeBlockTextSpan;
-        ReturnTypeReference = returnTypeReference;
         OwnerSyntaxKind = ownerSyntaxKind;
     }
     
@@ -45,7 +43,6 @@ public struct Scope
     public int NodeSubIndex { get; set; }
     public bool PermitCodeBlockParsing { get; set; }
     public bool IsImplicitOpenCodeBlockTextSpan { get; set; }
-    public TypeReference ReturnTypeReference { get; set; }
     public SyntaxKind OwnerSyntaxKind { get; set; }
     
     public bool IsDefault()

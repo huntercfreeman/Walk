@@ -46,7 +46,6 @@ public class ParseFunctions
         		nodeSubIndex: parserModel.Compilation.NodeLength,
         		permitCodeBlockParsing: true,
         		isImplicitOpenCodeBlockTextSpan: false,
-        		returnTypeReference: Walk.CompilerServices.CSharp.Facts.CSharpFacts.Types.Void.ToTypeReference(),
         		ownerSyntaxKind: functionDefinitionNode.SyntaxKind),
     	    functionDefinitionNode);
     
@@ -59,10 +58,7 @@ public class ParseFunctions
             ParseExpressions.ParseGenericParameterNode_Start(
                 functionDefinitionNode, ref openAngleBracketToken, ref parserModel);
             
-            parserModel.TryParseExpressionSyntaxKindList.Add(SyntaxKind.FunctionDefinitionNode);
-            _ = ParseExpressions.TryParseExpression(ref parserModel, out _);
-
-            if (parserModel.TokenWalker.Current.SyntaxKind != SyntaxKind.CloseAngleBracketToken &&
+            parserModel.TryParseExpressionSyntaxKindList.Add(SyntaxKind.FunctionDefinitionNode);            _ = ParseExpressions.TryParseExpression(ref parserModel, out _);            if (parserModel.TokenWalker.Current.SyntaxKind != SyntaxKind.CloseAngleBracketToken &&
                 parserModel.TokenWalker.Next.SyntaxKind == SyntaxKind.CloseAngleBracketToken)
             {
                 _ = parserModel.TokenWalker.Consume();
@@ -265,7 +261,6 @@ public class ParseFunctions
         		nodeSubIndex: parserModel.Compilation.NodeLength,
         		permitCodeBlockParsing: true,
         		isImplicitOpenCodeBlockTextSpan: false,
-        		returnTypeReference: Walk.CompilerServices.CSharp.Facts.CSharpFacts.Types.Void.ToTypeReference(),
         		ownerSyntaxKind: constructorDefinitionNode.SyntaxKind),
     	    constructorDefinitionNode);
         

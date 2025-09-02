@@ -3172,7 +3172,6 @@ public static class ParseExpressions
         		nodeSubIndex: 0,
         		permitCodeBlockParsing: true,
         		isImplicitOpenCodeBlockTextSpan: false,
-        		returnTypeReference: Walk.CompilerServices.CSharp.Facts.CSharpFacts.Types.Void.ToTypeReference(),
         		ownerSyntaxKind: lambdaExpressionNode.SyntaxKind),
     	    EmptyCodeBlockOwner.Instance);
     }

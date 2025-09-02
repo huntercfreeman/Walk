@@ -58,7 +58,6 @@ public class ParseDefaultKeywords
                 nodeSubIndex: 0,
                 permitCodeBlockParsing: true,
                 isImplicitOpenCodeBlockTextSpan: false,
-                returnTypeReference: Walk.CompilerServices.CSharp.Facts.CSharpFacts.Types.Void.ToTypeReference(),
                 ownerSyntaxKind: SyntaxKind.TryStatementCatchNode),
             EmptyCodeBlockOwner.Instance);
         
@@ -134,7 +133,6 @@ public class ParseDefaultKeywords
         		nodeSubIndex: 0,
         		permitCodeBlockParsing: true,
         		isImplicitOpenCodeBlockTextSpan: false,
-        		returnTypeReference: Walk.CompilerServices.CSharp.Facts.CSharpFacts.Types.Void.ToTypeReference(),
         		ownerSyntaxKind: SyntaxKind.DoWhileStatementNode),
     	    EmptyCodeBlockOwner.Instance);
         
@@ -169,7 +167,6 @@ public class ParseDefaultKeywords
         		nodeSubIndex: 0,
         		permitCodeBlockParsing: true,
         		isImplicitOpenCodeBlockTextSpan: false,
-        		returnTypeReference: Walk.CompilerServices.CSharp.Facts.CSharpFacts.Types.Void.ToTypeReference(),
         		ownerSyntaxKind: SyntaxKind.IfStatementNode),
     	    EmptyCodeBlockOwner.Instance);
         
@@ -219,7 +216,6 @@ public class ParseDefaultKeywords
                 nodeSubIndex: 0,
                 permitCodeBlockParsing: true,
                 isImplicitOpenCodeBlockTextSpan: false,
-                returnTypeReference: Walk.CompilerServices.CSharp.Facts.CSharpFacts.Types.Void.ToTypeReference(),
                 ownerSyntaxKind: SyntaxKind.TryStatementFinallyNode),
             EmptyCodeBlockOwner.Instance);
 
@@ -254,7 +250,6 @@ public class ParseDefaultKeywords
         		nodeSubIndex: 0,
         		permitCodeBlockParsing: true,
         		isImplicitOpenCodeBlockTextSpan: false,
-        		returnTypeReference: Walk.CompilerServices.CSharp.Facts.CSharpFacts.Types.Void.ToTypeReference(),
         		ownerSyntaxKind: SyntaxKind.ForStatementNode),
     	    EmptyCodeBlockOwner.Instance);
         
@@ -307,7 +302,6 @@ public class ParseDefaultKeywords
         		nodeSubIndex: 0,
         		permitCodeBlockParsing: true,
         		isImplicitOpenCodeBlockTextSpan: false,
-        		returnTypeReference: Walk.CompilerServices.CSharp.Facts.CSharpFacts.Types.Void.ToTypeReference(),
         		ownerSyntaxKind: SyntaxKind.ForeachStatementNode),
     	    EmptyCodeBlockOwner.Instance);
             
@@ -397,7 +391,6 @@ public class ParseDefaultKeywords
         		nodeSubIndex: 0,
         		permitCodeBlockParsing: true,
         		isImplicitOpenCodeBlockTextSpan: false,
-        		returnTypeReference: Walk.CompilerServices.CSharp.Facts.CSharpFacts.Types.Void.ToTypeReference(),
         		ownerSyntaxKind: SyntaxKind.LockStatementNode),
     	    EmptyCodeBlockOwner.Instance);
     
@@ -512,7 +505,6 @@ public class ParseDefaultKeywords
         		nodeSubIndex: 0,
         		permitCodeBlockParsing: true,
         		isImplicitOpenCodeBlockTextSpan: false,
-        		returnTypeReference: Walk.CompilerServices.CSharp.Facts.CSharpFacts.Types.Void.ToTypeReference(),
         		ownerSyntaxKind: SyntaxKind.SwitchStatementNode),
     	    EmptyCodeBlockOwner.Instance);
     }
@@ -549,7 +541,6 @@ public class ParseDefaultKeywords
         		nodeSubIndex: 0,
         		permitCodeBlockParsing: true,
         		isImplicitOpenCodeBlockTextSpan: false,
-        		returnTypeReference: Walk.CompilerServices.CSharp.Facts.CSharpFacts.Types.Void.ToTypeReference(),
         		ownerSyntaxKind: SyntaxKind.TryStatementTryNode),
     	    EmptyCodeBlockOwner.Instance);
         
@@ -643,7 +634,6 @@ public class ParseDefaultKeywords
         		nodeSubIndex: 0,
         		permitCodeBlockParsing: true,
         		isImplicitOpenCodeBlockTextSpan: false,
-        		returnTypeReference: Walk.CompilerServices.CSharp.Facts.CSharpFacts.Types.Void.ToTypeReference(),
         		ownerSyntaxKind: SyntaxKind.WhileStatementNode),
     	    EmptyCodeBlockOwner.Instance);
         
@@ -764,7 +754,6 @@ public class ParseDefaultKeywords
         		nodeSubIndex: 0,
         		permitCodeBlockParsing: true,
         		isImplicitOpenCodeBlockTextSpan: false,
-        		returnTypeReference: Walk.CompilerServices.CSharp.Facts.CSharpFacts.Types.Void.ToTypeReference(),
         		ownerSyntaxKind: SyntaxKind.IfStatementNode),
     	    EmptyCodeBlockOwner.Instance);
         
@@ -815,7 +804,6 @@ public class ParseDefaultKeywords
         		nodeSubIndex: 0,
         		permitCodeBlockParsing: true,
         		isImplicitOpenCodeBlockTextSpan: false,
-        		returnTypeReference: Walk.CompilerServices.CSharp.Facts.CSharpFacts.Types.Void.ToTypeReference(),
         		ownerSyntaxKind: SyntaxKind.UsingStatementCodeBlockNode),
     	    EmptyCodeBlockOwner.Instance);
         
@@ -1016,7 +1004,6 @@ public class ParseDefaultKeywords
         		nodeSubIndex: parserModel.Compilation.NodeLength,
         		permitCodeBlockParsing: true,
         		isImplicitOpenCodeBlockTextSpan: false,
-        		returnTypeReference: Walk.CompilerServices.CSharp.Facts.CSharpFacts.Types.Void.ToTypeReference(),
         		ownerSyntaxKind: typeDefinitionNode.SyntaxKind),
     	    typeDefinitionNode);
         
@@ -1305,7 +1292,6 @@ public class ParseDefaultKeywords
         		nodeSubIndex: parserModel.Compilation.NodeLength,
         		permitCodeBlockParsing: true,
         		isImplicitOpenCodeBlockTextSpan: false,
-        		returnTypeReference: Walk.CompilerServices.CSharp.Facts.CSharpFacts.Types.Void.ToTypeReference(),
         		ownerSyntaxKind: namespaceStatementNode.SyntaxKind),
     	    namespaceStatementNode);
         

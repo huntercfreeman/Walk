@@ -27,7 +27,6 @@ public static class CSharpParser
         		nodeSubIndex: 0,
         		permitCodeBlockParsing: true,
         		isImplicitOpenCodeBlockTextSpan: true,
-        		returnTypeReference: Walk.CompilerServices.CSharp.Facts.CSharpFacts.Types.Void.ToTypeReference(),
         		ownerSyntaxKind: SyntaxKind.GlobalCodeBlockNode));
         ++compilationUnit.ScopeLength;
         

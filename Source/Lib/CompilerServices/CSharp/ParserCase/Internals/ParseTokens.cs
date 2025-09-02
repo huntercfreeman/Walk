@@ -355,7 +355,6 @@ public static class ParseTokens
         		nodeSubIndex: 0,
         		permitCodeBlockParsing: true,
         		isImplicitOpenCodeBlockTextSpan: false,
-        		returnTypeReference: Walk.CompilerServices.CSharp.Facts.CSharpFacts.Types.Void.ToTypeReference(),
         		ownerSyntaxKind: SyntaxKind.GetterOrSetterNode),
     	    EmptyCodeBlockOwner.Instance);
         
@@ -406,7 +405,6 @@ public static class ParseTokens
             		nodeSubIndex: 0,
             		permitCodeBlockParsing: true,
             		isImplicitOpenCodeBlockTextSpan: false,
-            		returnTypeReference: Walk.CompilerServices.CSharp.Facts.CSharpFacts.Types.Void.ToTypeReference(),
             		ownerSyntaxKind: SyntaxKind.ArbitraryCodeBlockNode),
         	    EmptyCodeBlockOwner.Instance);
         }
