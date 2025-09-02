@@ -3174,6 +3174,10 @@ public static class ParseExpressions
         		isImplicitOpenCodeBlockTextSpan: false,
         		ownerSyntaxKind: lambdaExpressionNode.SyntaxKind),
             codeBlockOwner: null);
+        for (int i = lambdaExpressionNode.IndexLambdaExpressionNodeChildList; i < lambdaExpressionNode.IndexLambdaExpressionNodeChildList + lambdaExpressionNode.CountLambdaExpressionNodeChildList; i++)
+        {
+            parserModel.BindVariableDeclarationNode(parserModel.Binder.LambdaExpressionNodeChildList[i]);
+        }
     }
     
     public static void CloseLambdaExpressionScope(LambdaExpressionNode lambdaExpressionNode, ref CSharpParserModel parserModel)
@@ -3220,6 +3224,9 @@ public static class ParseExpressions
         }
         
         var lambdaScope = parserModel.ScopeCurrent;
+        Console.WriteLine($"OwnerSK:{parserModel.ScopeCurrent.OwnerSyntaxKind}, LSK{lambdaExpressionNode.SyntaxKind}");
+        Console.WriteLine($"SSI:{parserModel.ScopeCurrent.SelfScopeSubIndex}, LSI{lambdaExpressionNode.SelfScopeSubIndex}");
+        Console.WriteLine($"SSI:{parserModel.ScopeCurrent.ParentScopeSubIndex}, LSI{lambdaExpressionNode.ParentScopeSubIndex}");
         CloseLambdaExpressionScope(lambdaExpressionNode, ref parserModel);
     
         var closeTokenIndex = parserModel.TokenWalker.Index;

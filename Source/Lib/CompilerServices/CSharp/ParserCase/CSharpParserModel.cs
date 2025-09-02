@@ -981,13 +981,6 @@ public ref struct CSharpParserModel
 
                 BindNamespaceStatementNode((NamespaceStatementNode)codeBlockOwner);
                 return;
-            case SyntaxKind.LambdaExpressionNode:
-                var lambdaExpressionNode = (LambdaExpressionNode)codeBlockOwner;
-                for (int i = lambdaExpressionNode.IndexLambdaExpressionNodeChildList; i < lambdaExpressionNode.IndexLambdaExpressionNodeChildList + lambdaExpressionNode.CountLambdaExpressionNodeChildList; i++)
-                {
-                    BindVariableDeclarationNode(Binder.LambdaExpressionNodeChildList[i]);
-                }
-                return;
             case SyntaxKind.TypeDefinitionNode:
             
                 BindTypeDefinitionNode((TypeDefinitionNode)codeBlockOwner, true);
