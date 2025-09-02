@@ -1955,7 +1955,14 @@ public sealed class CSharpCompilerService : IExtendedCompilerService
         if (__CSharpBinder.__CompilationUnitMap.TryGetValue(resourceUri, out var compilationUnit))
         {
             var scope = __CSharpBinder.GetScopeByPositionIndex(compilationUnit, positionIndex);
-            return (scope, (ICodeBlockOwner)__CSharpBinder.NodeList[compilationUnit.NodeOffset + scope.NodeSubIndex]);
+            if (scope.NodeSubIndex != -1)
+            {
+                return (scope, (ICodeBlockOwner)__CSharpBinder.NodeList[compilationUnit.NodeOffset + scope.NodeSubIndex]);
+            }
+            else
+            {
+                return (scope, null);
+            }
         }
         
         return default;

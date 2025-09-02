@@ -604,8 +604,6 @@ public static class ParseTokens
     
         if (parserModel.ScopeCurrent.OwnerSyntaxKind == SyntaxKind.NamespaceStatementNode)
         {
-            Console.WriteLine(parserModel.ScopeCurrent.NodeSubIndex);
-        
             var namespaceStatementNode = (NamespaceStatementNode)parserModel.Binder.NodeList[
                 parserModel.Compilation.NodeOffset +
                 parserModel.ScopeCurrent.NodeSubIndex];

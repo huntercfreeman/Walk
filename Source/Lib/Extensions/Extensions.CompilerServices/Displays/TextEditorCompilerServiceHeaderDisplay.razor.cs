@@ -134,7 +134,7 @@ public partial class TextEditorCompilerServiceHeaderDisplay : ComponentBase, ITe
                 resourceUri,
                 modelModifier.GetPositionIndex(viewModelModifier));
             
-            if (codeBlockTuple.CodeBlockOwner is null)
+            if (codeBlockTuple.Scope.IsDefault())
                 return;
     
             TextEditorTextSpan textSpanStart;
