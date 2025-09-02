@@ -34,11 +34,11 @@ public class ParseDefaultKeywords
 
     public static void HandleCaseTokenKeyword(ref CSharpParserModel parserModel)
     {
-        var caseKeyword = parserModel.TokenWalker.Consume();
-        
+        _ = parserModel.TokenWalker.Consume(); // caseKeyword
+
         parserModel.ExpressionList.Add((SyntaxKind.ColonToken, null));
-        var expressionNode = ParseExpressions.ParseExpression(ref parserModel);
-        var colonToken = parserModel.TokenWalker.Match(SyntaxKind.ColonToken);
+        _ = ParseExpressions.ParseExpression(ref parserModel);
+        _ = parserModel.TokenWalker.Match(SyntaxKind.ColonToken);
     }
 
     public static void HandleCatchTokenKeyword(ref CSharpParserModel parserModel)
@@ -70,11 +70,8 @@ public class ParseDefaultKeywords
         
         parserModel.ExpressionList.Add((SyntaxKind.CloseParenthesisToken, null));
         var expressionNode = ParseExpressions.ParseExpression(ref parserModel);
-        
-        var closeParenthesisToken = parserModel.TokenWalker.Match(SyntaxKind.CloseParenthesisToken);
-    
-        TryStatementNode? tryStatementNode = null;
-        
+        _ = parserModel.TokenWalker.Match(SyntaxKind.CloseParenthesisToken);
+
         if (expressionNode.SyntaxKind == SyntaxKind.VariableDeclarationNode)
         {
             var variableDeclarationNode = (VariableDeclarationNode)expressionNode;
@@ -177,7 +174,6 @@ public class ParseDefaultKeywords
         }
     
         var elseTokenKeyword = parserModel.TokenWalker.Consume();
-        
         var ifStatementNode = new IfStatementNode(elseTokenKeyword);
             
         parserModel.RegisterScopeAndOwner(
@@ -831,8 +827,8 @@ public class ParseDefaultKeywords
         {
             parserModel.Return_BinaryExpressionNode((BinaryExpressionNode)expression);
         }
-        
-        var closeParenthesisToken = parserModel.TokenWalker.Match(SyntaxKind.CloseParenthesisToken);
+
+        _ = parserModel.TokenWalker.Match(SyntaxKind.CloseParenthesisToken);
 
         var ifStatementNode = new IfStatementNode(ifTokenKeyword);
         
@@ -885,8 +881,8 @@ public class ParseDefaultKeywords
     
     public static void HandleUsingCodeBlockOwner(ref SyntaxToken usingKeywordToken, ref CSharpParserModel parserModel)
     {
-        var openParenthesisToken = parserModel.TokenWalker.Consume();
-        
+        _ = parserModel.TokenWalker.Consume(); // openParenthesisToken
+
         var usingStatementNode = new UsingStatementCodeBlockNode(usingKeywordToken);
             
         parserModel.RegisterScopeAndOwner(
@@ -933,9 +929,9 @@ public class ParseDefaultKeywords
             parserModel.ExpressionList.Add((SyntaxKind.CloseParenthesisToken, null));
             _ = ParseExpressions.ParseExpression(ref parserModel);
         }
-        
-        var closeParenthesisToken = parserModel.TokenWalker.Match(SyntaxKind.CloseParenthesisToken);
-        
+
+        _ = parserModel.TokenWalker.Match(SyntaxKind.CloseParenthesisToken);
+
         if (parserModel.TokenWalker.Current.SyntaxKind != SyntaxKind.OpenBraceToken)
             parserModel.SetCurrentScope_IsImplicitOpenCodeBlockTextSpan(true);
     }
@@ -1020,16 +1016,16 @@ public class ParseDefaultKeywords
         {
             if (parserModel.TokenWalker.Current.SyntaxKind == SyntaxKind.ClassTokenKeyword)
             {
-                var classKeywordToken = parserModel.TokenWalker.Consume();
+                _ = parserModel.TokenWalker.Consume(); // classKeywordToken
                 storageModifierKind = StorageModifierKind.RecordClass;
             }
             else if (parserModel.TokenWalker.Current.SyntaxKind == SyntaxKind.StructTokenKeyword)
             {
-                var structKeywordToken = parserModel.TokenWalker.Consume();
+                _ = parserModel.TokenWalker.Consume(); // structKeywordToken
                 storageModifierKind = StorageModifierKind.RecordStruct;
             }
         }
-    
+
         // Given: public class MyClass<T> { }
         // Then: MyClass
         SyntaxToken identifierToken;
@@ -1148,17 +1144,17 @@ public class ParseDefaultKeywords
                                 
                                 for (int i = previousCompilationUnit.ScopeOffset; i < previousCompilationUnit.ScopeOffset + previousCompilationUnit.ScopeLength; i++)
                                 {
-                                    var x = parserModel.Binder.ScopeList[i];
+                                    var scope = parserModel.Binder.ScopeList[i];
                                     
-                                    if (x.ParentScopeSubIndex == previousParent.SelfScopeSubIndex &&
-                                        x.OwnerSyntaxKind == SyntaxKind.TypeDefinitionNode &&
+                                    if (scope.ParentScopeSubIndex == previousParent.SelfScopeSubIndex &&
+                                        scope.OwnerSyntaxKind == SyntaxKind.TypeDefinitionNode &&
                                         binder.GetIdentifierText(
-                                                parserModel.Binder.NodeList[previousCompilationUnit.NodeOffset + x.NodeSubIndex],
+                                                parserModel.Binder.NodeList[previousCompilationUnit.NodeOffset + scope.NodeSubIndex],
                                                 parserModel.ResourceUri,
                                                 previousCompilationUnit) ==
                                             binder.GetIdentifierText(typeDefinitionNode, parserModel.ResourceUri, compilation))
                                     {
-                                        previousNode = parserModel.Binder.NodeList[previousCompilationUnit.NodeOffset + x.NodeSubIndex];
+                                        previousNode = parserModel.Binder.NodeList[previousCompilationUnit.NodeOffset + scope.NodeSubIndex];
                                         break;
                                     }
                                 }
@@ -1255,7 +1251,7 @@ public class ParseDefaultKeywords
         if (parserModel.TokenWalker.Current.SyntaxKind == SyntaxKind.WhereTokenContextualKeyword)
         {
             parserModel.ExpressionList.Add((SyntaxKind.OpenBraceToken, null));
-            var expressionNode = ParseExpressions.ParseExpression(ref parserModel);
+            _ = ParseExpressions.ParseExpression(ref parserModel);
         }
         
         if (parserModel.TokenWalker.Current.SyntaxKind != SyntaxKind.OpenBraceToken)
@@ -1400,7 +1396,7 @@ public class ParseDefaultKeywords
 
     public static void HandleReturnTokenKeyword(ref CSharpParserModel parserModel)
     {
-        var returnKeywordToken = parserModel.TokenWalker.Consume();
+        _ = parserModel.TokenWalker.Consume(); // returnKeywordToken
         var expressionNode = ParseExpressions.ParseExpression(ref parserModel);
         
         if (expressionNode.SyntaxKind == SyntaxKind.VariableReferenceNode)
@@ -1419,9 +1415,5 @@ public class ParseDefaultKeywords
         {
             parserModel.Return_BinaryExpressionNode((BinaryExpressionNode)expressionNode);
         }
-        
-        // var returnStatementNode = new ReturnStatementNode(returnKeywordToken, expressionNode);
-        
-        // parserModel.StatementBuilder.ChildList.Add(returnStatementNode);
     }
 }

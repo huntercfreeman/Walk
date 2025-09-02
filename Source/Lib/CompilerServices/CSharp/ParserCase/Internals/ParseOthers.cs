@@ -126,12 +126,7 @@ public static class ParseOthers
     /// </summary>
     public static void HandleLabelDeclaration(ref CSharpParserModel parserModel)
     {
-        var labelDeclarationNode = new LabelDeclarationNode(parserModel.TokenWalker.Current);
-        
-        parserModel.BindLabelDeclarationNode(labelDeclarationNode);
-            
-        var labelReferenceNode = new LabelReferenceNode(labelDeclarationNode.IdentifierToken);
-        
+        parserModel.BindLabelDeclarationNode(new LabelDeclarationNode(parserModel.TokenWalker.Current));
         parserModel.TokenWalker.Consume(); // Consume 'NameableToken'
         parserModel.TokenWalker.Consume(); // Consume 'ColonToken'
         return;

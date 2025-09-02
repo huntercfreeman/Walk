@@ -60,10 +60,8 @@ public class ParseFunctions
                 functionDefinitionNode, ref openAngleBracketToken, ref parserModel);
             
             parserModel.TryParseExpressionSyntaxKindList.Add(SyntaxKind.FunctionDefinitionNode);
-            var successGenericParametersListingNode = ParseExpressions.TryParseExpression(
-                ref parserModel,
-                out var expressionNode);
-            
+            _ = ParseExpressions.TryParseExpression(ref parserModel, out _);
+
             if (parserModel.TokenWalker.Current.SyntaxKind != SyntaxKind.CloseAngleBracketToken &&
                 parserModel.TokenWalker.Next.SyntaxKind == SyntaxKind.CloseAngleBracketToken)
             {
@@ -279,14 +277,10 @@ public class ParseFunctions
             // Constructor invokes some other constructor as well
             // 'this(...)' or 'base(...)'
             
-            SyntaxToken keywordToken;
-            
             if (parserModel.TokenWalker.Current.SyntaxKind == SyntaxKind.ThisTokenKeyword)
-                keywordToken = parserModel.TokenWalker.Consume();
+                _ = parserModel.TokenWalker.Consume();
             else if (parserModel.TokenWalker.Current.SyntaxKind == SyntaxKind.BaseTokenKeyword)
-                keywordToken = parserModel.TokenWalker.Consume();
-            else
-                keywordToken = default;
+                _ = parserModel.TokenWalker.Consume();
             
             while (!parserModel.TokenWalker.IsEof)
             {

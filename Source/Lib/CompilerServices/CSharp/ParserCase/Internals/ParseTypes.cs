@@ -37,7 +37,7 @@ public static class ParseTypes
 
             if (SyntaxKind.CommaToken == parserModel.TokenWalker.Current.SyntaxKind)
             {
-                var commaToken = parserModel.TokenWalker.Consume();
+                _ = parserModel.TokenWalker.Consume(); // commaToken
 
                 // TODO: Track comma tokens?
                 //

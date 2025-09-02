@@ -405,11 +405,11 @@ public static class UtilityApi
     {
         if (token.SyntaxKind == SyntaxKind.IdentifierToken)
         {
-            return (SyntaxToken)token;
+            return token;
         }
         else if (IsContextualKeywordSyntaxKind(token.SyntaxKind))
         {
-            var keywordContextualToken = (SyntaxToken)token;
+            var keywordContextualToken = token;
             return new SyntaxToken(SyntaxKind.IdentifierToken, keywordContextualToken.TextSpan);
         }
         else

@@ -18,9 +18,9 @@ internal static class TokenWalkerExtensionMethods
         var openTokenIndex = tokenWalker.Index - 1;
 
         var openBraceCounter = 1;
-        
+
         int closeTokenIndex;
-        
+
         if (deferredScope.IsImplicitOpenCodeBlockTextSpan)
         {
             while (true)
@@ -35,7 +35,7 @@ internal static class TokenWalkerExtensionMethods
             }
     
             closeTokenIndex = tokenWalker.Index;
-            var statementDelimiterToken = tokenWalker.Match(SyntaxKind.StatementDelimiterToken);
+            _ = tokenWalker.Match(SyntaxKind.StatementDelimiterToken);
         }
         else
         {
@@ -58,7 +58,7 @@ internal static class TokenWalkerExtensionMethods
             }
     
             closeTokenIndex = tokenWalker.Index;
-            var closeBraceToken = tokenWalker.Match(SyntaxKind.CloseBraceToken);
+            _ = tokenWalker.Match(SyntaxKind.CloseBraceToken);
         }
 
         if (parserModel.Compilation.CompilationUnitKind == CompilationUnitKind.SolutionWide_DefinitionsOnly &&

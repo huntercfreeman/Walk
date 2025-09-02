@@ -142,10 +142,9 @@ public static class ParseTokens
             variableKind = VariableKind.Field;
         }
         
-        ((VariableDeclarationNode)variableDeclarationNode).VariableKind = variableKind;
+        variableDeclarationNode.VariableKind = variableKind;
         
         parserModel.BindVariableDeclarationNode(variableDeclarationNode);
-        // parserModel.CurrentCodeBlockBuilder.AddChild(variableDeclarationNode);
         parserModel.StatementBuilder.MostRecentNode = variableDeclarationNode;
         
         if (parserModel.TokenWalker.Current.SyntaxKind == SyntaxKind.EqualsCloseAngleBracketToken)
@@ -194,7 +193,7 @@ public static class ParseTokens
             
             if (parserModel.TokenWalker.Current.SyntaxKind == SyntaxKind.EqualsToken)
             {
-                ParseTokens.MoveToHandleVariableDeclarationNode(variableDeclarationNode, ref parserModel);
+                MoveToHandleVariableDeclarationNode(variableDeclarationNode, ref parserModel);
             }
             else if (parserModel.TokenWalker.Current.SyntaxKind == SyntaxKind.CommaToken)
             {
@@ -274,12 +273,12 @@ public static class ParseTokens
     
     public static void ParsePropertyDefinition(VariableDeclarationNode variableDeclarationNode, ref CSharpParserModel parserModel)
     {
-        var openBraceToken = parserModel.TokenWalker.Consume();
-        
+        _ = parserModel.TokenWalker.Consume(); // openBraceToken
+
         var openBraceCounter = 1;
-        
+
         bool consumed;
-        
+
         while (true)
         {
             consumed = false;
@@ -367,7 +366,7 @@ public static class ParseTokens
         }
         else if (parserModel.TokenWalker.Current.SyntaxKind == SyntaxKind.EqualsCloseAngleBracketToken)
         {
-            ParseTokens.MoveToExpressionBody(ref parserModel);
+            MoveToExpressionBody(ref parserModel);
         }
         else if (parserModel.TokenWalker.Current.SyntaxKind == SyntaxKind.OpenBraceToken)
         {
@@ -375,7 +374,7 @@ public static class ParseTokens
             //if (deferredParsingOccurred)
             //    break;
             
-            ParseTokens.ParseOpenBraceToken(ref parserModel);
+            ParseOpenBraceToken(ref parserModel);
         }
     }
     
@@ -511,8 +510,8 @@ public static class ParseTokens
 
     public static void ParseOpenSquareBracketToken(ref CSharpParserModel parserModel)
     {
-        var openSquareBracketToken = parserModel.TokenWalker.Consume();
-    
+        _ = parserModel.TokenWalker.Consume(); // openSquareBracketToken
+
         if (!parserModel.StatementBuilder.StatementIsEmpty)
         {
             /*compilationUnit.DiagnosticBag.ReportTodoException(
@@ -552,8 +551,7 @@ public static class ParseTokens
             _ = parserModel.TokenWalker.Consume();
         }
 
-        var closeTokenIndex = parserModel.TokenWalker.Index;
-        var closeSquareBracketToken = parserModel.TokenWalker.Match(SyntaxKind.CloseSquareBracketToken);
+        _ = parserModel.TokenWalker.Match(SyntaxKind.CloseSquareBracketToken);
     }
 
     public static void ParseEqualsToken(ref CSharpParserModel parserModel)

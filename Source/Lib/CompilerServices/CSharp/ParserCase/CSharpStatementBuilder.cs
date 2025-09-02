@@ -99,26 +99,6 @@ public class CSharpStatementBuilder
         MostRecentNode = Walk.Extensions.CompilerServices.Syntax.Nodes.EmptyExpressionNode.Empty;
         ChildList.Clear();
         
-        /*if (ChildList.Count != 0)
-        {
-            var statementSyntax = ChildList[^1];
-            
-            ISyntax codeBlockBuilderSyntax;
-            
-            if (parserModel.CurrentCodeBlockBuilder.ChildList.Count == 0)
-                codeBlockBuilderSyntax = EmptyExpressionNode.Empty;
-            else
-                codeBlockBuilderSyntax = parserModel.CurrentCodeBlockBuilder.ChildList[^1];
-
-            if (!Object.ReferenceEquals(statementSyntax, codeBlockBuilderSyntax) &&
-                !Object.ReferenceEquals(statementSyntax, parserModel.CurrentCodeBlockBuilder.CodeBlockOwner))
-            {
-                parserModel.CurrentCodeBlockBuilder.AddChild(statementSyntax);
-            }
-            
-            ChildList.Clear();
-        }*/
-        
         if (ParseLambdaStatementScopeStack.Count > 0)
         {
             var tuple = ParseLambdaStatementScopeStack.Peek();
