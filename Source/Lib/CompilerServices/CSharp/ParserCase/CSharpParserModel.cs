@@ -899,7 +899,7 @@ public ref struct CSharpParserModel
         }*/
         
         SetCurrentScope_Scope_EndExclusiveIndex(textSpan.EndExclusiveIndex);
-        ScopeCurrentSubIndex = Binder.ScopeList[ScopeCurrentSubIndex].ParentScopeSubIndex;
+        ScopeCurrentSubIndex = ScopeCurrent.ParentScopeSubIndex;
     }
 
     /// <summary>
