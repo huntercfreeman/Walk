@@ -160,11 +160,13 @@ public ref struct CSharpParserModel
     public ArgumentModifierKind ArgumentModifierKind { get; set; } = ArgumentModifierKind.None;
     
     public IExpressionNode ExpressionPrimary { get; set; }
-    
+
+    public readonly Scope ScopeCurrent => Binder.ScopeList[Compilation.ScopeOffset + ScopeCurrentSubIndex];
+
     //public static int POOL_BinaryExpressionNode_HIT { get; set; }
     //public static int POOL_BinaryExpressionNode_MISS { get; set; }
     //public static int POOL_BinaryExpressionNode_RETURN { get; set; }
-    
+
     /// <summary>
     /// It is expected that any invoker of this method will immediately set the returned BinaryExpressionNode instance's:
     /// - TODO

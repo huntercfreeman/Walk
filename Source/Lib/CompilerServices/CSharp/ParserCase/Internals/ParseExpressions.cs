@@ -2849,7 +2849,7 @@ public static class ParseExpressions
                         
                         var nameToken = identifierToken;
                         
-                        if (parserModel.Binder.ScopeList[parserModel.Compilation.ScopeOffset + parserModel.ScopeCurrentSubIndex].OwnerSyntaxKind == SyntaxKind.TypeDefinitionNode &&
+                        if (parserModel.ScopeCurrent.OwnerSyntaxKind == SyntaxKind.TypeDefinitionNode &&
                             parserModel.TokenWalker.Next.SyntaxKind == SyntaxKind.MemberAccessToken)
                         {
                             parserModel.ParserContextKind = CSharpParserContextKind.None;
@@ -3218,7 +3218,7 @@ public static class ParseExpressions
             _ = parserModel.TokenWalker.Consume();
         }
         
-        var lambdaScope = parserModel.Binder.ScopeList[parserModel.Compilation.ScopeOffset + parserModel.ScopeCurrentSubIndex];
+        var lambdaScope = parserModel.ScopeCurrent;
         CloseLambdaExpressionScope(lambdaExpressionNode, ref parserModel);
     
         var closeTokenIndex = parserModel.TokenWalker.Index;

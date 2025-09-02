@@ -792,8 +792,8 @@ public class ParseDefaultKeywords
         {
             HandleUsingCodeBlockOwner(ref usingKeywordToken, ref parserModel);
         }
-        else if (parserModel.Binder.ScopeList[parserModel.Compilation.ScopeOffset + parserModel.ScopeCurrentSubIndex].OwnerSyntaxKind == SyntaxKind.GlobalCodeBlockNode ||
-                 parserModel.Binder.ScopeList[parserModel.Compilation.ScopeOffset + parserModel.ScopeCurrentSubIndex].OwnerSyntaxKind == SyntaxKind.NamespaceStatementNode)
+        else if (parserModel.ScopeCurrent.OwnerSyntaxKind == SyntaxKind.GlobalCodeBlockNode ||
+                 parserModel.ScopeCurrent.OwnerSyntaxKind == SyntaxKind.NamespaceStatementNode)
         {
             var namespaceIdentifierToken = ParseOthers.HandleNamespaceIdentifier(ref parserModel, isNamespaceStatement: false);
     
