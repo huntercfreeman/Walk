@@ -21,14 +21,28 @@
 	
 	<div style="justify-content: space-between; display: flex;">
 		<div title="ICodeBlockOwner">
-			@{ var codeBlockOwnerLocal = _codeBlockOwner; }
+			@{
+			    // These change within a background task.
+			    var codeBlockOwnerLocal = _codeBlockOwner;
+			    var syntaxKind = _syntaxKind;
+		    }
 			
 			@if (codeBlockOwnerLocal is null)
 			{
-				<text>
-					@IconBlankFragment.Render(iconDriver)
-					global
-				</text>
+			    <text>@IconBlankFragment.Render(iconDriver)</text>
+				
+			    switch (syntaxKind)
+			    {
+			        case SyntaxKind.IfStatementNode:
+			            <text>IfStatementNode</text>
+			            break;
+		            case SyntaxKind.WhileStatementNode:
+		                <text>WhileStatementNode</text>
+		                break;
+	                default:
+	                    <text>global</text>
+	                    break;
+			    }
 			}
 			else
 			{

@@ -6,6 +6,7 @@ using Walk.TextEditor.RazorLib.TextEditors.Models.Internals;
 using Walk.TextEditor.RazorLib.Exceptions;
 using Walk.TextEditor.RazorLib.Lexers.Models;
 using Walk.TextEditor.RazorLib.Decorations.Models;
+using Walk.Extensions.CompilerServices.Syntax;
 using Walk.Extensions.CompilerServices.Syntax.Nodes.Interfaces;
 
 namespace Walk.Extensions.CompilerServices.Displays;
@@ -26,6 +27,7 @@ public partial class TextEditorCompilerServiceHeaderDisplay : ComponentBase, ITe
     private int _columnIndexPrevious = -1;
     
     private ICodeBlockOwner _codeBlockOwner;
+    private SyntaxKind _syntaxKind = SyntaxKind.GlobalCodeBlockNode;
     private bool _shouldRender = false;
     
     private bool _showDefaultToolbar = false;
@@ -188,9 +190,11 @@ public partial class TextEditorCompilerServiceHeaderDisplay : ComponentBase, ITe
                 var upperLine = modelModifier.GetLineInformation(upperLineIndexInclusive);
             }
             
-            if (_codeBlockOwner != codeBlockTuple.CodeBlockOwner)
+            if (_codeBlockOwner != codeBlockTuple.CodeBlockOwner ||
+                _syntaxKind != codeBlockTuple.Scope.OwnerSyntaxKind)
             {
                 _codeBlockOwner = codeBlockTuple.CodeBlockOwner;
+                _syntaxKind = codeBlockTuple.Scope.OwnerSyntaxKind;
                 _shouldRender = true;
             }
             
