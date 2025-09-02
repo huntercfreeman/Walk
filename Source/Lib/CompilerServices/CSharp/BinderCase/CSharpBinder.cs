@@ -623,12 +623,12 @@ public class CSharpBinder
         
         for (int i = compilationUnit.NodeOffset; i < compilationUnit.NodeOffset + compilationUnit.NodeLength; i++)
         {
-            var x = NodeList[i];
-            if (x.ParentScopeSubIndex == scopeSubIndex &&
-                x.SyntaxKind == SyntaxKind.TypeDefinitionNode &&
-                GetIdentifierText(x, resourceUri, compilationUnit) == typeIdentifierText)
+            var node = NodeList[i];
+            if (node.ParentScopeSubIndex == scopeSubIndex &&
+                node.SyntaxKind == SyntaxKind.TypeDefinitionNode &&
+                GetIdentifierText(node, resourceUri, compilationUnit) == typeIdentifierText)
             {
-                typeDefinitionNode = (TypeDefinitionNode)x;
+                typeDefinitionNode = (TypeDefinitionNode)node;
                 break;
             }
         }
@@ -703,13 +703,13 @@ public class CSharpBinder
         
         for (int i = compilationUnit.NodeOffset; i < compilationUnit.NodeOffset + compilationUnit.NodeLength; i++)
         {
-            var x = NodeList[i];
+            var node = NodeList[i];
             
-            if (x.ParentScopeSubIndex == scopeSubIndex &&
-                x.SyntaxKind == SyntaxKind.FunctionDefinitionNode &&
-                GetIdentifierText(x, resourceUri, compilationUnit) == functionIdentifierText)
+            if (node.ParentScopeSubIndex == scopeSubIndex &&
+                node.SyntaxKind == SyntaxKind.FunctionDefinitionNode &&
+                GetIdentifierText(node, resourceUri, compilationUnit) == functionIdentifierText)
             {
-                functionDefinitionNode = (FunctionDefinitionNode)x;
+                functionDefinitionNode = (FunctionDefinitionNode)node;
                 break;
             }
         }
@@ -964,13 +964,13 @@ public class CSharpBinder
         
         for (int i = compilationUnit.NodeOffset; i < compilationUnit.NodeOffset + compilationUnit.NodeLength; i++)
         {
-            var x = NodeList[i];
+            var node = NodeList[i];
             
-            if (x.ParentScopeSubIndex == scopeSubIndex &&
-                x.SyntaxKind == SyntaxKind.VariableDeclarationNode &&
-                GetIdentifierText(x, resourceUri, compilationUnit) == variableIdentifierText)
+            if (node.ParentScopeSubIndex == scopeSubIndex &&
+                node.SyntaxKind == SyntaxKind.VariableDeclarationNode &&
+                GetIdentifierText(node, resourceUri, compilationUnit) == variableIdentifierText)
             {
-                matchNode = (VariableDeclarationNode)x;
+                matchNode = (VariableDeclarationNode)node;
                 break;
             }
         }
@@ -1048,13 +1048,13 @@ public class CSharpBinder
         
         for (int i = compilationUnit.NodeOffset; i < compilationUnit.NodeOffset + compilationUnit.NodeLength; i++)
         {
-            var x = NodeList[i];
+            var node = NodeList[i];
             
-            if (x.ParentScopeSubIndex == scopeSubIndex &&
-                x.SyntaxKind == SyntaxKind.LabelDeclarationNode &&
-                GetIdentifierText(x, resourceUri, compilationUnit) == labelIdentifierText)
+            if (node.ParentScopeSubIndex == scopeSubIndex &&
+                node.SyntaxKind == SyntaxKind.LabelDeclarationNode &&
+                GetIdentifierText(node, resourceUri, compilationUnit) == labelIdentifierText)
             {
-                matchNode = (LabelDeclarationNode)x;
+                matchNode = (LabelDeclarationNode)node;
             }
         }
     
@@ -1150,7 +1150,7 @@ public class CSharpBinder
                              out var functionDefinitionNode)
                          && functionDefinitionNode is not null)
                 {
-                    if (functionDefinitionNode.IndexMethodOverloadDefinition != -1 &&
+                    /*if (functionDefinitionNode.IndexMethodOverloadDefinition != -1 &&
                         compilationUnit.CompilationUnitKind == Walk.TextEditor.RazorLib.CompilerServices.CompilationUnitKind.IndividualFile_AllData &&
                         compilationUnit.FunctionInvocationParameterMetadataOffset != -1 &&
                         compilationUnit.FunctionInvocationParameterMetadataLength != 0 &&
@@ -1210,7 +1210,7 @@ public class CSharpBinder
                                 }
                             }
                         }
-                    }
+                    }*/
                 
                     return functionDefinitionNode;
                 }
@@ -1689,14 +1689,14 @@ public class CSharpBinder
         
         for (int i = compilationUnit.NodeOffset; i < compilationUnit.NodeOffset + compilationUnit.NodeLength; i++)
         {
-            var x = NodeList[i];
+            var node = NodeList[i];
             
-            if (x.ParentScopeSubIndex == typeDefinitionNode.SelfScopeSubIndex &&
-                (x.SyntaxKind == SyntaxKind.TypeDefinitionNode ||
-                 x.SyntaxKind == SyntaxKind.FunctionDefinitionNode ||
-                 x.SyntaxKind == SyntaxKind.VariableDeclarationNode))
+            if (node.ParentScopeSubIndex == typeDefinitionNode.SelfScopeSubIndex &&
+                (node.SyntaxKind == SyntaxKind.TypeDefinitionNode ||
+                 node.SyntaxKind == SyntaxKind.FunctionDefinitionNode ||
+                 node.SyntaxKind == SyntaxKind.VariableDeclarationNode))
             {
-                syntaxNodeList.Add(x);
+                syntaxNodeList.Add(node);
             }
         }
         
@@ -1902,10 +1902,10 @@ public class CSharpBinder
         
         for (int i = compilationUnit.NodeOffset; i < compilationUnit.NodeOffset + compilationUnit.NodeLength; i++)
         {
-            var x = NodeList[i];
+            var node = NodeList[i];
             
-            if (x.ParentScopeSubIndex == namespaceStatementNode.SelfScopeSubIndex && x.SyntaxKind == SyntaxKind.TypeDefinitionNode)
-                typeDefinitionNodeList.Add((TypeDefinitionNode)x);
+            if (node.ParentScopeSubIndex == namespaceStatementNode.SelfScopeSubIndex && node.SyntaxKind == SyntaxKind.TypeDefinitionNode)
+                typeDefinitionNodeList.Add((TypeDefinitionNode)node);
         }
 
         return typeDefinitionNodeList;
@@ -1921,7 +1921,7 @@ public class CSharpBinder
     public IEnumerable<TypeDefinitionNode> GetTopLevelTypeDefinitionNodes_NamespaceGroup(NamespaceGroup namespaceGroup)
     {
         return namespaceGroup.NamespaceStatementNodeList
-            .SelectMany(x => GetTopLevelTypeDefinitionNodes_NamespaceStatementNode(x));
+            .SelectMany(GetTopLevelTypeDefinitionNodes_NamespaceStatementNode);
     }
     
     private readonly List<TypeDefinitionNode> _getTopLevelTypeDefinitionNodes = new();
