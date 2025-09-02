@@ -8,20 +8,20 @@ public struct CSharpDeferredChildScope
     public CSharpDeferredChildScope(
         int openTokenIndex,
         int closeTokenIndex,
-        int scopeOffset)
+        int scopeSubIndex)
     {
         OpenTokenIndex = openTokenIndex;
         CloseTokenIndex = closeTokenIndex;
-        ScopeOffset = scopeOffset;
+        ScopeSubIndex = scopeSubIndex;
     }
     
     public int OpenTokenIndex { get; }
     public int CloseTokenIndex { get; }
-    public int ScopeOffset { get; }
+    public int ScopeSubIndex { get; }
     
     public readonly void PrepareMainParserLoop(int tokenIndexToRestore, ref CSharpParserModel parserModel)
     {
-        parserModel.ScopeCurrentSubIndex = ScopeOffset;
+        parserModel.ScopeCurrentSubIndex = ScopeSubIndex;
 
         Scope scope = default;
 
