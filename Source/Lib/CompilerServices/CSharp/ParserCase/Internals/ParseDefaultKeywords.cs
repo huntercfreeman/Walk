@@ -43,14 +43,8 @@ public class ParseDefaultKeywords
 
     public static void HandleCatchTokenKeyword(ref CSharpParserModel parserModel)
     {
-        var catchKeywordToken = parserModel.TokenWalker.Consume();
-        var openParenthesisToken = parserModel.TokenWalker.Match(SyntaxKind.OpenParenthesisToken);
-        
-        var catchNode = new TryStatementCatchNode(
-            // parent: null,
-            catchKeywordToken,
-            openParenthesisToken,
-            closeParenthesisToken: default);
+        _ = parserModel.TokenWalker.Consume(); // catchKeywordToken
+        _ = parserModel.TokenWalker.Match(SyntaxKind.OpenParenthesisToken);
         
         parserModel.RegisterScopeAndOwner(
             new Scope(
@@ -65,19 +59,13 @@ public class ParseDefaultKeywords
                 permitCodeBlockParsing: true,
                 isImplicitOpenCodeBlockTextSpan: false,
                 returnTypeReference: Walk.CompilerServices.CSharp.Facts.CSharpFacts.Types.Void.ToTypeReference(),
-                ownerSyntaxKind: catchNode.SyntaxKind),
+                ownerSyntaxKind: SyntaxKind.TryStatementCatchNode),
             EmptyCodeBlockOwner.Instance);
         
         parserModel.ExpressionList.Add((SyntaxKind.CloseParenthesisToken, null));
-        var expressionNode = ParseExpressions.ParseExpression(ref parserModel);
+        _ = ParseExpressions.ParseExpression(ref parserModel);
         _ = parserModel.TokenWalker.Match(SyntaxKind.CloseParenthesisToken);
 
-        if (expressionNode.SyntaxKind == SyntaxKind.VariableDeclarationNode)
-        {
-            var variableDeclarationNode = (VariableDeclarationNode)expressionNode;
-            catchNode.VariableDeclarationNode = variableDeclarationNode;
-        }
-        
         if (parserModel.TokenWalker.Current.SyntaxKind == SyntaxKind.WhenTokenContextualKeyword)
         {
             _ = parserModel.TokenWalker.Consume(); // WhenTokenContextualKeyword

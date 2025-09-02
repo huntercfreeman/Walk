@@ -820,7 +820,7 @@ public ref struct CSharpParserModel
         codeBlockOwner.ParentScopeSubIndex = ScopeCurrentSubIndex;
         codeBlockOwner.SelfScopeSubIndex = Compilation.ScopeLength;
         
-        var parent = Binder.ScopeList[Compilation.ScopeOffset + ScopeCurrentSubIndex];
+        var parent = ScopeCurrent;
         var parentScopeDirection = parent.IsDefault()
             ? ScopeDirectionKind.Both
             : parent.ScopeDirectionKind;
@@ -986,13 +986,6 @@ public ref struct CSharpParserModel
                 {
                     BindVariableDeclarationNode(Binder.LambdaExpressionNodeChildList[i]);
                 }
-                return;
-            case SyntaxKind.TryStatementCatchNode:
-                var tryStatementCatchNode = (TryStatementCatchNode)codeBlockOwner;
-            
-                if (tryStatementCatchNode.VariableDeclarationNode is not null)
-                    BindVariableDeclarationNode(tryStatementCatchNode.VariableDeclarationNode);
-                    
                 return;
             case SyntaxKind.TypeDefinitionNode:
             
