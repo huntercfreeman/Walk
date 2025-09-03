@@ -2,7 +2,6 @@ using Microsoft.Extensions.DependencyInjection;
 using Walk.Common.RazorLib.Installations.Models;
 using Walk.Ide.RazorLib;
 using Walk.Ide.RazorLib.AppDatas.Models;
-using Walk.Ide.RazorLib.Installations.Models;
 
 namespace Walk.Extensions.DotNet.Installations.Models;
 

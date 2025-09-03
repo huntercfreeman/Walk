@@ -7,7 +7,6 @@ using Walk.Common.RazorLib.Dialogs.Models;
 using Walk.Common.RazorLib.Dynamics.Models;
 using Walk.Common.RazorLib.FileSystems.Models;
 using Walk.Common.RazorLib.Keys.Models;
-using Walk.Common.RazorLib.Notifications.Models;
 using Walk.Common.RazorLib.Reactives.Models;
 using Walk.Common.RazorLib.TreeViews.Models;
 using Walk.CompilerServices.DotNetSolution;
@@ -23,7 +22,6 @@ using Walk.Extensions.DotNet.Nugets.Models;
 using Walk.Extensions.DotNet.TestExplorers.Models;
 using Walk.CompilerServices.Xml;
 using Walk.Ide.RazorLib;
-using Walk.Ide.RazorLib.Shareds.Models;
 using Walk.Ide.RazorLib.Terminals.Models;
 using Walk.TextEditor.RazorLib;
 using Walk.TextEditor.RazorLib.BackgroundTasks.Models;
@@ -336,62 +334,63 @@ public partial class DotNetService
                         cSharpCompilerService.__CSharpBinder.ClearAllCompilationUnits();
                     }
 
-                    ParseSolution(editContext, dotNetSolutionModel.Key, CompilationUnitKind.SolutionWide_DefinitionsOnly, tokenBuilder, formattedBuilder);
-
-
-
-                    // Get the indices that the first 'ParseSolution' resides at.
-                    // Then after the second 'ParseSolution' clear the first 'ParseSolution'.
-                    // Then iterate over every compilationUnit and modify their indices by the amount removed.
-                    //
-
-                    int countDiagnosticList;
-                    int countSymbolList;
-                    int countFunctionInvocationParameterMetadataList;
-                    int countCodeBlockOwnerList;
-                    int countNodeList;
-
-                    if (cSharpCompilerService is not null)
+                    var successParseSolution = ParseSolution(editContext, dotNetSolutionModel.Key, CompilationUnitKind.SolutionWide_DefinitionsOnly, tokenBuilder, formattedBuilder);
+                    if (successParseSolution)
                     {
-                        countDiagnosticList = cSharpCompilerService.__CSharpBinder.DiagnosticList.Count;
-                        countSymbolList = cSharpCompilerService.__CSharpBinder.SymbolList.Count;
-                        countFunctionInvocationParameterMetadataList = cSharpCompilerService.__CSharpBinder.FunctionInvocationParameterMetadataList.Count;
-                        countCodeBlockOwnerList = cSharpCompilerService.__CSharpBinder.CodeBlockOwnerList.Count;
-                        countNodeList = cSharpCompilerService.__CSharpBinder.NodeList.Count;
-                    }
-                    else
-                    {
-                        countDiagnosticList = 0;
-                        countSymbolList = 0;
-                        countFunctionInvocationParameterMetadataList = 0;
-                        countCodeBlockOwnerList = 0;
-                        countNodeList = 0;
-                    }
+                        // Get the indices that the first 'ParseSolution' resides at.
+                        // Then after the second 'ParseSolution' clear the first 'ParseSolution'.
+                        // Then iterate over every compilationUnit and modify their indices by the amount removed.
+                        //
 
-                    ParseSolution(editContext, dotNetSolutionModel.Key, CompilationUnitKind.SolutionWide_MinimumLocalsData, tokenBuilder, formattedBuilder);
+                        int countDiagnosticList;
+                        int countSymbolList;
+                        int countFunctionInvocationParameterMetadataList;
+                        int countScopeList;
+                        int countNodeList;
 
-                    cSharpCompilerService.__CSharpBinder.DiagnosticList.RemoveRange(0, countDiagnosticList);
-                    cSharpCompilerService.__CSharpBinder.SymbolList.RemoveRange(0, countSymbolList);
-                    cSharpCompilerService.__CSharpBinder.FunctionInvocationParameterMetadataList.RemoveRange(0, countFunctionInvocationParameterMetadataList);
-                    cSharpCompilerService.__CSharpBinder.CodeBlockOwnerList.RemoveRange(0, countCodeBlockOwnerList);
-                    cSharpCompilerService.__CSharpBinder.NodeList.RemoveRange(0, countNodeList);
+                        if (cSharpCompilerService is not null)
+                        {
+                            countDiagnosticList = cSharpCompilerService.__CSharpBinder.DiagnosticList.Count;
+                            countSymbolList = cSharpCompilerService.__CSharpBinder.SymbolList.Count;
+                            countFunctionInvocationParameterMetadataList = cSharpCompilerService.__CSharpBinder.FunctionInvocationParameterMetadataList.Count;
+                            countScopeList = cSharpCompilerService.__CSharpBinder.ScopeList.Count;
+                            countNodeList = cSharpCompilerService.__CSharpBinder.NodeList.Count;
+                        }
+                        else
+                        {
+                            countDiagnosticList = 0;
+                            countSymbolList = 0;
+                            countFunctionInvocationParameterMetadataList = 0;
+                            countScopeList = 0;
+                            countNodeList = 0;
+                        }
 
-                    foreach (var compilationUnitKvp in cSharpCompilerService.__CSharpBinder.__CompilationUnitMap)
-                    {
-                        var compilationUnit = compilationUnitKvp.Value;
+                        successParseSolution = ParseSolution(editContext, dotNetSolutionModel.Key, CompilationUnitKind.SolutionWide_MinimumLocalsData, tokenBuilder, formattedBuilder);
 
-                        compilationUnit.IndexDiagnosticList -= countDiagnosticList;
-                        compilationUnit.IndexSymbolList -= countSymbolList;
-                        compilationUnit.IndexFunctionInvocationParameterMetadataList -= countFunctionInvocationParameterMetadataList;
-                        compilationUnit.IndexCodeBlockOwnerList -= countCodeBlockOwnerList;
-                        compilationUnit.IndexNodeList -= countNodeList;
+                        if (successParseSolution)
+                        {
+                            cSharpCompilerService.__CSharpBinder.DiagnosticList.RemoveRange(0, countDiagnosticList);
+                            cSharpCompilerService.__CSharpBinder.SymbolList.RemoveRange(0, countSymbolList);
+                            cSharpCompilerService.__CSharpBinder.FunctionInvocationParameterMetadataList.RemoveRange(0, countFunctionInvocationParameterMetadataList);
+                            cSharpCompilerService.__CSharpBinder.ScopeList.RemoveRange(0, countScopeList);
+                            cSharpCompilerService.__CSharpBinder.NodeList.RemoveRange(0, countNodeList);
 
-                        cSharpCompilerService.__CSharpBinder.__CompilationUnitMap[compilationUnitKvp.Key] = compilationUnit;
+                            foreach (var compilationUnitKvp in cSharpCompilerService.__CSharpBinder.__CompilationUnitMap)
+                            {
+                                var compilationUnit = compilationUnitKvp.Value;
+
+                                compilationUnit.DiagnosticOffset -= countDiagnosticList;
+                                compilationUnit.SymbolOffset -= countSymbolList;
+                                compilationUnit.FunctionInvocationParameterMetadataOffset -= countFunctionInvocationParameterMetadataList;
+                                compilationUnit.ScopeOffset -= countScopeList;
+                                compilationUnit.NodeOffset -= countNodeList;
+
+                                cSharpCompilerService.__CSharpBinder.__CompilationUnitMap[compilationUnitKvp.Key] = compilationUnit;
+                            }
+                        }
                     }
 
                     IdeService.TextEditorService.EditContext_GetText_Clear();
-
-                    
                 }
                 finally
                 {
@@ -737,7 +736,7 @@ public partial class DotNetService
         }
     }
 
-    private void ParseSolution(
+    private bool ParseSolution(
         TextEditorEditContext editContext,
         Key<DotNetSolutionModel> dotNetSolutionModelKey,
         CompilationUnitKind compilationUnitKind,
@@ -750,7 +749,7 @@ public partial class DotNetService
             x => x.Key == dotNetSolutionModelKey);
 
         if (dotNetSolutionModel is null)
-            return;
+            return false;
 
         var cancellationTokenSource = new CancellationTokenSource();
         var cancellationToken = cancellationTokenSource.Token;
@@ -821,6 +820,8 @@ public partial class DotNetService
 
             progressBarModel.SetProgress(1, $"Finished parsing: {dotNetSolutionModel.AbsolutePath.Name}", string.Empty);
             progressBarModel.Dispose();
+
+            return true;
         }
         catch (Exception e)
         {
@@ -831,6 +832,8 @@ public partial class DotNetService
 
             progressBarModel.SetProgress(currentProgress, e.ToString());
             progressBarModel.Dispose();
+
+            return false;
         }
         finally
         {

@@ -16,7 +16,7 @@ public sealed class UnaryExpressionNode : IExpressionNode
     public UnaryOperatorNode UnaryOperatorNode { get; }
     public TypeReference ResultTypeReference => UnaryOperatorNode.ResultTypeReference;
 
-    public int Unsafe_ParentIndexKey { get; set; }
+    public int ParentScopeSubIndex { get; set; }
     public bool IsFabricated { get; init; }
     public SyntaxKind SyntaxKind => SyntaxKind.UnaryExpressionNode;
 }

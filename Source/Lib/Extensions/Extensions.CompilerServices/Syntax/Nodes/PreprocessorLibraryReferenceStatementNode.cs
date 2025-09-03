@@ -13,7 +13,7 @@ public sealed class PreprocessorLibraryReferenceStatementNode : ISyntaxNode
     public SyntaxToken IncludeDirectiveSyntaxToken { get; }
     public SyntaxToken LibraryReferenceSyntaxToken { get; }
 
-    public int Unsafe_ParentIndexKey { get; set; }
+    public int ParentScopeSubIndex { get; set; }
     public bool IsFabricated { get; init; }
     public SyntaxKind SyntaxKind => SyntaxKind.PreprocessorLibraryReferenceStatementNode;
 }

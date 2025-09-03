@@ -1,5 +1,4 @@
 using Walk.Extensions.CompilerServices.Syntax;
-using Walk.TextEditor.RazorLib.Exceptions;
 
 namespace Walk.Extensions.CompilerServices.Utility;
 
@@ -26,7 +25,7 @@ public class TokenWalker
         if (tokenList.Count > 0 &&
             tokenList[tokenList.Count - 1].SyntaxKind != SyntaxKind.EndOfFileToken)
         {
-            throw new WalkTextEditorException($"The last token must be 'SyntaxKind.EndOfFileToken'.");
+            throw new Walk.TextEditor.RazorLib.Exceptions.WalkTextEditorException($"The last token must be 'SyntaxKind.EndOfFileToken'.");
         }
 #endif
 
@@ -116,8 +115,7 @@ public class TokenWalker
     {
         if (Current.SyntaxKind == expectedSyntaxKind)
             return Consume();
-        else
-            return this.FabricateToken(expectedSyntaxKind);
+        else            return this.FabricateToken(expectedSyntaxKind);
     }
 
     /// <summary>
@@ -155,7 +153,7 @@ public class TokenWalker
         if (tokenList.Count > 0 &&
             tokenList[tokenList.Count - 1].SyntaxKind != SyntaxKind.EndOfFileToken)
         {
-            throw new WalkTextEditorException($"The last token must be 'SyntaxKind.EndOfFileToken'.");
+            throw new Walk.TextEditor.RazorLib.Exceptions.WalkTextEditorException($"The last token must be 'SyntaxKind.EndOfFileToken'.");
         }
 #endif
         TokenList = tokenList;

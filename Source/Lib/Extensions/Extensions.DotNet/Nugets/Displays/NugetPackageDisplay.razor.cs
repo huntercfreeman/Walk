@@ -1,8 +1,6 @@
 using Microsoft.AspNetCore.Components;
 using Walk.Common.RazorLib;
-using Walk.Common.RazorLib.Notifications.Models;
 using Walk.Common.RazorLib.Keys.Models;
-using Walk.Ide.RazorLib;
 using Walk.Ide.RazorLib.Terminals.Models;
 using Walk.Extensions.DotNet.DotNetSolutions.Models;
 using Walk.Extensions.DotNet.Nugets.Models;

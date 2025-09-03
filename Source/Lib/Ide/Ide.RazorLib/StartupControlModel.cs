@@ -1,6 +1,4 @@
 using Walk.Common.RazorLib.FileSystems.Models;
-using Walk.Ide.RazorLib.Terminals.Models;
-using Walk.Ide.RazorLib.Shareds.Models;
 
 namespace Walk.Ide.RazorLib;
 

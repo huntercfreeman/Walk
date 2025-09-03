@@ -20,7 +20,7 @@ public sealed class TryStatementNode : ISyntaxNode
 
     public ScopeDirectionKind ScopeDirectionKind => ScopeDirectionKind.Down;
 
-    public int Unsafe_ParentIndexKey { get; set; }
+    public int ParentScopeSubIndex { get; set; }
     public bool IsFabricated { get; init; }
     public SyntaxKind SyntaxKind => SyntaxKind.TryStatementNode;
 }

@@ -1,5 +1,4 @@
 using Walk.Extensions.CompilerServices.Syntax;
-using Walk.Extensions.CompilerServices.Syntax.Nodes.Interfaces;
 
 namespace Walk.CompilerServices.CSharp.ParserCase;
 
@@ -16,14 +15,14 @@ public class CSharpStatementBuilder
                                     MostRecentNode == Walk.Extensions.CompilerServices.Syntax.Nodes.EmptyExpressionNode.Empty;
 
     public List<SyntaxToken> ChildList { get; } = new();
-    public ISyntaxNode MostRecentNode { get; set; }
-    
-    /// <summary>
+    public ISyntaxNode MostRecentNode { get; set; }    /// <summary>
     /// Prior to finishing a statement, you must check whether ParseLambdaStatementScopeStack has a child that needs to be parsed.
     /// All currently known cases of finishing a statement will do so by invoking FinishStatement(...),
-    /// this method will perform this check internally.
+    /// this method will perform this check internally.'
+    ///
+    /// The ScopeSubIndex is that of the parent which contains the scope that was deferred.
     /// </summary>
-    public Stack<(ICodeBlockOwner CodeBlockOwner, CSharpDeferredChildScope DeferredChildScope)> ParseLambdaStatementScopeStack { get; } = new();
+    public Stack<(int ScopeSubIndex, CSharpDeferredChildScope DeferredChildScope)> ParseLambdaStatementScopeStack { get; } = new();
     
     /// <summary>Invokes the other overload with index: ^1</summary>
     public bool TryPeek(out SyntaxToken syntax)
@@ -97,31 +96,11 @@ public class CSharpStatementBuilder
         MostRecentNode = Walk.Extensions.CompilerServices.Syntax.Nodes.EmptyExpressionNode.Empty;
         ChildList.Clear();
         
-        /*if (ChildList.Count != 0)
-        {
-            var statementSyntax = ChildList[^1];
-            
-            ISyntax codeBlockBuilderSyntax;
-            
-            if (parserModel.CurrentCodeBlockBuilder.ChildList.Count == 0)
-                codeBlockBuilderSyntax = EmptyExpressionNode.Empty;
-            else
-                codeBlockBuilderSyntax = parserModel.CurrentCodeBlockBuilder.ChildList[^1];
-
-            if (!Object.ReferenceEquals(statementSyntax, codeBlockBuilderSyntax) &&
-                !Object.ReferenceEquals(statementSyntax, parserModel.CurrentCodeBlockBuilder.CodeBlockOwner))
-            {
-                parserModel.CurrentCodeBlockBuilder.AddChild(statementSyntax);
-            }
-            
-            ChildList.Clear();
-        }*/
-        
         if (ParseLambdaStatementScopeStack.Count > 0)
         {
             var tuple = ParseLambdaStatementScopeStack.Peek();
             
-            if (Object.ReferenceEquals(tuple.CodeBlockOwner, parserModel.CurrentCodeBlockOwner))
+            if (tuple.ScopeSubIndex == parserModel.ScopeCurrentSubIndex)
             {
                 tuple = ParseLambdaStatementScopeStack.Pop();
                 tuple.DeferredChildScope.PrepareMainParserLoop(finishTokenIndex, ref parserModel);

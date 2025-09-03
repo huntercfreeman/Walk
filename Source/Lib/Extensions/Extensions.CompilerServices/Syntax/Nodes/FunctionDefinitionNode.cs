@@ -21,7 +21,6 @@ public sealed class FunctionDefinitionNode : ICodeBlockOwner, IFunctionDefinitio
         int indexFunctionArgumentEntryList,
         int countFunctionArgumentEntryList,
         SyntaxToken closeParenthesisToken,
-        CodeBlock codeBlock,
         ResourceUri resourceUri)
     {
         AccessModifierKind = accessModifierKind;
@@ -41,7 +40,6 @@ public sealed class FunctionDefinitionNode : ICodeBlockOwner, IFunctionDefinitio
     }
 
     public AccessModifierKind AccessModifierKind { get; }
-    public TypeReference ReturnTypeReference { get; }
     public SyntaxToken FunctionIdentifierToken { get; }
     
     public SyntaxToken OpenAngleBracketToken { get; set; }
@@ -56,28 +54,14 @@ public sealed class FunctionDefinitionNode : ICodeBlockOwner, IFunctionDefinitio
     public ResourceUri ResourceUri { get; set; }
     public int IndexMethodOverloadDefinition { get; set; } = -1;
 
-    // ICodeBlockOwner properties.
-    public ScopeDirectionKind ScopeDirectionKind => ScopeDirectionKind.Down;
-    public int Scope_StartInclusiveIndex { get; set; } = -1;
-    public int Scope_EndExclusiveIndex { get; set; } = -1;
-    public int CodeBlock_StartInclusiveIndex { get; set; } = -1;
-    public int CodeBlock_EndExclusiveIndex { get; set; } = -1;
-    public int Unsafe_ParentIndexKey { get; set; } = -1;
-    public int Unsafe_SelfIndexKey { get; set; } = -1;
-    public bool PermitCodeBlockParsing { get; set; } = true;
-    public bool IsImplicitOpenCodeBlockTextSpan { get; set; }
+    public int ParentScopeSubIndex { get; set; } = -1;
+    public int SelfScopeSubIndex { get; set; } = -1;
 
     public bool IsFabricated { get; init; }
     public SyntaxKind SyntaxKind => SyntaxKind.FunctionDefinitionNode;
     
-    TypeReference IExpressionNode.ResultTypeReference => TypeFacts.Pseudo.ToTypeReference();
-    
     public bool IsParsingGenericParameters { get; set; }
     
-    #region ICodeBlockOwner_Methods
-    public TypeReference GetReturnTypeReference()
-    {
-        return ReturnTypeReference;
-    }
-    #endregion
+    TypeReference IExpressionNode.ResultTypeReference => TypeFacts.Pseudo.ToTypeReference();
+    public TypeReference ReturnTypeReference { get; set; }
 }

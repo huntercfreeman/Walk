@@ -24,33 +24,30 @@ public class ParseFunctions
             indexFunctionArgumentEntryList: -1,
             countFunctionArgumentEntryList: 0,
             closeParenthesisToken: default,
-            default,
             parserModel.ResourceUri);
             
         parserModel.BindFunctionDefinitionNode(functionDefinitionNode);
         
-        bool isFunctionOverloadCase;
-
-        // This compilation has not been written to the __CompilationUnitMap yet,
-        // so this will read the previous compilation of this file.
-        if (parserModel.TryGetFunctionDefinitionNodeByScope(
+        /*bool isFunctionOverloadCase;        // This compilation has not been written to the __CompilationUnitMap yet,        // so this will read the previous compilation of this file.        if (parserModel.TryGetFunctionDefinitionNodeByScope(
                 parserModel.ResourceUri,
                 parserModel.Compilation,
-                parserModel.CurrentCodeBlockOwner.Unsafe_SelfIndexKey,
+                parserModel.ScopeCurrentSubIndex,
                 parserModel.ResourceUri,
                 consumedIdentifierToken.TextSpan,
-                out var existingFunctionDefinitionNode))
-        {
-            isFunctionOverloadCase = true;
-        }
-        else
-        {
-            isFunctionOverloadCase = false;
-        }
-
-        parserModel.NewScopeAndBuilderFromOwner(
-            functionDefinitionNode,
-            parserModel.TokenWalker.Current.TextSpan);
+                out var existingFunctionDefinitionNode))        {            isFunctionOverloadCase = true;        }        else        {            isFunctionOverloadCase = false;        }*/        parserModel.RegisterScope(
+        	new Scope(
+        		ScopeDirectionKind.Down,
+        		scope_StartInclusiveIndex: parserModel.TokenWalker.Current.TextSpan.StartInclusiveIndex,
+        		scope_EndExclusiveIndex: -1,
+        		codeBlock_StartInclusiveIndex: -1,
+        		codeBlock_EndExclusiveIndex: -1,
+        		parentScopeSubIndex: parserModel.ScopeCurrentSubIndex,
+        		selfScopeSubIndex: parserModel.Compilation.ScopeLength,
+        		nodeSubIndex: parserModel.Compilation.NodeLength,
+        		permitCodeBlockParsing: true,
+        		isImplicitOpenCodeBlockTextSpan: false,
+        		ownerSyntaxKind: functionDefinitionNode.SyntaxKind),
+    	    functionDefinitionNode);
     
         if (parserModel.TokenWalker.Current.SyntaxKind == SyntaxKind.OpenAngleBracketToken)
         {
@@ -61,12 +58,7 @@ public class ParseFunctions
             ParseExpressions.ParseGenericParameterNode_Start(
                 functionDefinitionNode, ref openAngleBracketToken, ref parserModel);
             
-            parserModel.TryParseExpressionSyntaxKindList.Add(SyntaxKind.FunctionDefinitionNode);
-            var successGenericParametersListingNode = ParseExpressions.TryParseExpression(
-                ref parserModel,
-                out var expressionNode);
-            
-            if (parserModel.TokenWalker.Current.SyntaxKind != SyntaxKind.CloseAngleBracketToken &&
+            parserModel.TryParseExpressionSyntaxKindList.Add(SyntaxKind.FunctionDefinitionNode);            _ = ParseExpressions.TryParseExpression(ref parserModel, out _);            if (parserModel.TokenWalker.Current.SyntaxKind != SyntaxKind.CloseAngleBracketToken &&
                 parserModel.TokenWalker.Next.SyntaxKind == SyntaxKind.CloseAngleBracketToken)
             {
                 _ = parserModel.TokenWalker.Consume();
@@ -79,21 +71,21 @@ public class ParseFunctions
 
         HandleFunctionArguments(functionDefinitionNode, ref parserModel);
         
-        if (isFunctionOverloadCase)
+        /*if (isFunctionOverloadCase)
         {
             HandleFunctionOverloadDefinition(
                 newNode: functionDefinitionNode,
                 existingNode: existingFunctionDefinitionNode,
                 ref parserModel);
-        }
+        }*/
         
         if (parserModel.TokenWalker.Current.SyntaxKind == SyntaxKind.StatementDelimiterToken)
-            parserModel.CurrentCodeBlockOwner.IsImplicitOpenCodeBlockTextSpan = true;
+            parserModel.SetCurrentScope_IsImplicitOpenCodeBlockTextSpan(true);
         else if (parserModel.TokenWalker.Current.SyntaxKind == SyntaxKind.EqualsCloseAngleBracketToken)
             ParseTokens.MoveToExpressionBody(ref parserModel);
     }
     
-    public static void HandleFunctionOverloadDefinition(
+    /*public static void HandleFunctionOverloadDefinition(
         FunctionDefinitionNode newNode,
         FunctionDefinitionNode existingNode,
         ref CSharpParserModel parserModel)
@@ -125,17 +117,25 @@ public class ParseFunctions
             {
                 existingWasFound = false;
                 
-                if (existingNode.Unsafe_ParentIndexKey < previousCompilationUnit.CountCodeBlockOwnerList)
+                if (existingNode.ParentScopeSubIndex < previousCompilationUnit.ScopeLength)
                 {
-                    var previousParent = parserModel.Binder.CodeBlockOwnerList[previousCompilationUnit.IndexCodeBlockOwnerList + existingNode.Unsafe_ParentIndexKey];
-                    var currentParent = parserModel.GetParent(newNode, parserModel.Compilation);
+                    var previousParent = parserModel.Binder.ScopeList[previousCompilationUnit.ScopeOffset + existingNode.ParentScopeSubIndex];
+                    var currentParent = parserModel.GetParent(newNode.ParentScopeSubIndex, parserModel.Compilation);
                     
-                    if (currentParent.SyntaxKind == previousParent.SyntaxKind)
+                    if (currentParent.OwnerSyntaxKind == previousParent.OwnerSyntaxKind)
                     {
-                        var currentParentIdentifierText = parserModel.Binder.GetIdentifierText(currentParent, parserModel.ResourceUri, parserModel.Compilation);
+                        var currentParentIdentifierText = parserModel.Binder.GetIdentifierText(
+                            parserModel.Binder.NodeList[parserModel.Compilation.NodeOffset + currentParent.NodeSubIndex],
+                            parserModel.ResourceUri,
+                            parserModel.Compilation);
+                            
+                        var previousParentIdentifierText = parserModel.Binder.GetIdentifierText(
+                            parserModel.Binder.NodeList[previousCompilationUnit.NodeOffset + previousParent.NodeSubIndex],
+                            parserModel.ResourceUri,
+                            previousCompilationUnit);
                         
                         if (currentParentIdentifierText is not null &&
-                            currentParentIdentifierText == parserModel.Binder.GetIdentifierText(previousParent, parserModel.ResourceUri, previousCompilationUnit))
+                            currentParentIdentifierText == previousParentIdentifierText)
                         {
                             // All the existing entires will be "emptied"
                             // so don't both with checking whether the arguments are the same here.
@@ -149,17 +149,21 @@ public class ParseFunctions
                             
                             ISyntaxNode? previousNode = null;
                             
-                            for (int indexPreviousNode = previousCompilationUnit.IndexCodeBlockOwnerList;
-                                 indexPreviousNode < previousCompilationUnit.IndexCodeBlockOwnerList + previousCompilationUnit.CountCodeBlockOwnerList;
+                            for (int indexPreviousNode = previousCompilationUnit.ScopeOffset;
+                                 indexPreviousNode < previousCompilationUnit.ScopeOffset + previousCompilationUnit.ScopeLength;
                                  indexPreviousNode++)
                             {
-                                var x = parserModel.Binder.CodeBlockOwnerList[indexPreviousNode];
+                                var x = parserModel.Binder.ScopeList[indexPreviousNode];
                                 
-                                if (x.Unsafe_ParentIndexKey == previousParent.Unsafe_SelfIndexKey &&
-                                    x.SyntaxKind == SyntaxKind.FunctionDefinitionNode &&
-                                    binder.GetIdentifierText(x, parserModel.ResourceUri, previousCompilationUnit) == binder.GetIdentifierText(existingNode, parserModel.ResourceUri, compilation))
+                                if (x.ParentScopeSubIndex == previousParent.SelfScopeSubIndex &&
+                                    x.OwnerSyntaxKind == SyntaxKind.FunctionDefinitionNode &&
+                                    binder.GetIdentifierText(
+                                            parserModel.Binder.NodeList[previousCompilationUnit.NodeOffset + x.NodeSubIndex],
+                                            parserModel.ResourceUri,
+                                            previousCompilationUnit) ==
+                                        binder.GetIdentifierText(existingNode, parserModel.ResourceUri, compilation))
                                 {
-                                    previousNode = x;
+                                    previousNode = parserModel.Binder.NodeList[previousCompilationUnit.NodeOffset + x.NodeSubIndex];
                                     break;
                                 }
                             }
@@ -174,7 +178,7 @@ public class ParseFunctions
                                     existingWasFound = true;
                                     
                                     var entry = parserModel.Binder.MethodOverloadDefinitionList[existingNode.IndexMethodOverloadDefinition];
-                                    entry.ScopeIndexKey = existingNode.Unsafe_SelfIndexKey;
+                                    entry.ScopeIndexKey = existingNode.SelfScopeSubIndex;
                                     parserModel.Binder.MethodOverloadDefinitionList[existingNode.IndexMethodOverloadDefinition] = entry;
                                 }
                             }
@@ -189,7 +193,7 @@ public class ParseFunctions
                 parserModel.Binder.MethodOverloadDefinitionList.Add(new MethodOverloadDefinitionEntry(
                     parserModel.ResourceUri,
                     parserModel.Binder.MethodOverloadDefinitionList.Count,
-                    existingNode.Unsafe_SelfIndexKey));
+                    existingNode.SelfScopeSubIndex));
             }
         }
         
@@ -205,7 +209,7 @@ public class ParseFunctions
                 parserModel.Binder.MethodOverloadDefinitionList[i] = new MethodOverloadDefinitionEntry(
                     parserModel.ResourceUri,
                     existingNode.IndexMethodOverloadDefinition,
-                    newNode.Unsafe_SelfIndexKey);
+                    newNode.SelfScopeSubIndex);
             }
         }
         
@@ -216,9 +220,9 @@ public class ParseFunctions
                 new MethodOverloadDefinitionEntry(
                     parserModel.ResourceUri,
                     existingNode.IndexMethodOverloadDefinition,
-                    newNode.Unsafe_SelfIndexKey));
+                    newNode.SelfScopeSubIndex));
         }
-    }
+    }*/
 
     public static void HandleConstructorDefinition(
         TypeDefinitionNode typeDefinitionNodeCodeBlockOwner,
@@ -239,16 +243,26 @@ public class ParseFunctions
             indexFunctionArgumentEntryList: -1,
             countFunctionArgumentEntryList: 0,
             closeParenthesisToken: default,
-            default,
             parserModel.ResourceUri);
         
         parserModel.Return_TypeClauseNode(typeClauseNode);
     
         parserModel.BindConstructorDefinitionIdentifierToken(consumedIdentifierToken);
         
-        parserModel.NewScopeAndBuilderFromOwner(
-            constructorDefinitionNode,
-            parserModel.TokenWalker.Current.TextSpan);
+        parserModel.RegisterScope(
+        	new Scope(
+        		ScopeDirectionKind.Down,
+        		scope_StartInclusiveIndex: parserModel.TokenWalker.Current.TextSpan.StartInclusiveIndex,
+        		scope_EndExclusiveIndex: -1,
+        		codeBlock_StartInclusiveIndex: -1,
+        		codeBlock_EndExclusiveIndex: -1,
+        		parentScopeSubIndex: parserModel.ScopeCurrentSubIndex,
+        		selfScopeSubIndex: parserModel.Compilation.ScopeLength,
+        		nodeSubIndex: parserModel.Compilation.NodeLength,
+        		permitCodeBlockParsing: true,
+        		isImplicitOpenCodeBlockTextSpan: false,
+        		ownerSyntaxKind: constructorDefinitionNode.SyntaxKind),
+    	    constructorDefinitionNode);
         
         HandleFunctionArguments(constructorDefinitionNode, ref parserModel);
 
@@ -258,14 +272,10 @@ public class ParseFunctions
             // Constructor invokes some other constructor as well
             // 'this(...)' or 'base(...)'
             
-            SyntaxToken keywordToken;
-            
             if (parserModel.TokenWalker.Current.SyntaxKind == SyntaxKind.ThisTokenKeyword)
-                keywordToken = parserModel.TokenWalker.Consume();
+                _ = parserModel.TokenWalker.Consume();
             else if (parserModel.TokenWalker.Current.SyntaxKind == SyntaxKind.BaseTokenKeyword)
-                keywordToken = parserModel.TokenWalker.Consume();
-            else
-                keywordToken = default;
+                _ = parserModel.TokenWalker.Consume();
             
             while (!parserModel.TokenWalker.IsEof)
             {

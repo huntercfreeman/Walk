@@ -1,7 +1,6 @@
 using Walk.Common.RazorLib;
 using Walk.Common.RazorLib.Commands.Models;
 using Walk.Common.RazorLib.TreeViews.Models;
-using Walk.Common.RazorLib.Notifications.Models;
 using Walk.TextEditor.RazorLib;
 
 namespace Walk.Extensions.DotNet.TestExplorers.Models;

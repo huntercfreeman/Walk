@@ -24,27 +24,32 @@ public struct CSharpCompilationUnit : IExtendedCompilationUnit, ICompilerService
     public CompilationUnitKind CompilationUnitKind { get; }
 
     /// <summary>Set this index in the CSharpParserModel constructor</summary>
-    public int IndexDiagnosticList { get; set; }
-    public int CountDiagnosticList { get; set; }
+    public int DiagnosticOffset { get; set; }
+    public int DiagnosticLength { get; set; }
     
     /// <summary>Set this index in the CSharpParserModel constructor</summary>
-    public int IndexSymbolList { get; set; }
-    public int CountSymbolList { get; set; }
+    public int SymbolOffset { get; set; }
+    public int SymbolLength { get; set; }
     
     /// <summary>This needs to initialize to -1 to signify there are no entries in the pooled list.</summary>
-    public int IndexFunctionInvocationParameterMetadataList { get; set; } = -1;
-    public int CountFunctionInvocationParameterMetadataList { get; set; }
+    public int FunctionInvocationParameterMetadataOffset { get; set; } = -1;
+    public int FunctionInvocationParameterMetadataLength { get; set; }
+    
+    /// <summary>
+    /// The starting index within CSharpBinder.ScopeList that this compilation unit's scope entries reside.
+    /// </summary>
+    public int ScopeOffset { get; set; }
+    /// <summary>
+    /// The count of contiguous entries within CSharpBinder.ScopeList that correspond to this compilation unit.
+    /// </summary>
+    public int ScopeLength { get; set; }
     
     /// <summary>Set this index in the CSharpParserModel constructor</summary>
-    public int IndexCodeBlockOwnerList { get; set; }
-    public int CountCodeBlockOwnerList { get; set; }
-    
-    /// <summary>Set this index in the CSharpParserModel constructor</summary>
-    public int IndexNodeList { get; set; }
-    public int CountNodeList { get; set; }
+    public int NodeOffset { get; set; }
+    public int NodeLength { get; set; }
 
-    public int IndexNamespaceContributionList { get; set; }
-    public int CountNamespaceContributionList { get; set; }
+    public int NamespaceContributionOffset { get; set; }
+    public int NamespaceContributionLength { get; set; }
     
     public bool IsDefault() => CompilationUnitKind == CompilationUnitKind.None;
 }

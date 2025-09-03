@@ -1,4 +1,3 @@
-using System.Reflection;
 using System.Text;
 using Walk.Common.RazorLib.Dropdowns.Models;
 using Walk.Common.RazorLib.FileSystems.Models;
@@ -865,7 +864,7 @@ public sealed class CSharpCompilerService : IExtendedCompilerService
             var resource = GetResource(virtualizationResult.Model.PersistentState.ResourceUri);
             var compilationUnitLocal = (CSharpCompilationUnit)resource.CompilationUnit;
             
-            var symbols = __CSharpBinder.SymbolList.Skip(compilationUnitLocal.IndexSymbolList).Take(compilationUnitLocal.CountSymbolList).ToList();
+            var symbols = __CSharpBinder.SymbolList.Skip(compilationUnitLocal.SymbolOffset).Take(compilationUnitLocal.SymbolLength).ToList();
             // var diagnostics = compilationUnitLocal.DiagnosticList;
             
             Symbol foundSymbol = default;
@@ -1019,7 +1018,7 @@ public sealed class CSharpCompilerService : IExtendedCompilerService
                             if (__CSharpBinder.__CompilationUnitMap.TryGetValue(typeReference.ExplicitDefinitionResourceUri, out innerCompilationUnit))
                             {
                                 innerResourceUri = typeReference.ExplicitDefinitionResourceUri;
-                                symbols = __CSharpBinder.SymbolList.Skip(innerCompilationUnit.IndexSymbolList).Take(innerCompilationUnit.CountSymbolList).ToList();
+                                symbols = __CSharpBinder.SymbolList.Skip(innerCompilationUnit.SymbolOffset).Take(innerCompilationUnit.SymbolLength).ToList();
                             }
                         }
                         
@@ -1327,7 +1326,7 @@ public sealed class CSharpCompilerService : IExtendedCompilerService
 
         if (!foundMatch)
         {
-            for (int i = compilationUnitLocal.IndexSymbolList; i < compilationUnitLocal.IndexSymbolList + compilationUnitLocal.CountSymbolList; i++)
+            for (int i = compilationUnitLocal.SymbolOffset; i < compilationUnitLocal.SymbolOffset + compilationUnitLocal.SymbolLength; i++)
             {
                 var symbol = __CSharpBinder.SymbolList[i];
                 
@@ -1513,7 +1512,7 @@ public sealed class CSharpCompilerService : IExtendedCompilerService
         var resource = GetResource(modelModifier.PersistentState.ResourceUri);
         var compilationUnitLocal = (CSharpCompilationUnit)resource.CompilationUnit;
         
-        var symbolList = __CSharpBinder.SymbolList.Skip(compilationUnitLocal.IndexSymbolList).Take(compilationUnitLocal.CountSymbolList).ToList();
+        var symbolList = __CSharpBinder.SymbolList.Skip(compilationUnitLocal.SymbolOffset).Take(compilationUnitLocal.SymbolLength).ToList();
         var foundSymbol = default(Symbol);
         
         foreach (var symbol in symbolList)
@@ -1650,7 +1649,7 @@ public sealed class CSharpCompilerService : IExtendedCompilerService
                     siblingFileStringList.Add(
                         (
                             __CSharpBinder.PartialTypeDefinitionList[positionExclusive].ResourceUri.Value,
-                            __CSharpBinder.PartialTypeDefinitionList[positionExclusive].ScopeIndexKey
+                            __CSharpBinder.PartialTypeDefinitionList[positionExclusive].ScopeSubIndex
                         ));
                     positionExclusive++;
                 }
@@ -1684,12 +1683,12 @@ public sealed class CSharpCompilerService : IExtendedCompilerService
                         {
                             ISyntaxNode? otherTypeDefinitionNode = null;
                             
-                            for (int i = innerCompilationUnit.IndexCodeBlockOwnerList; i < innerCompilationUnit.IndexCodeBlockOwnerList + innerCompilationUnit.CountCodeBlockOwnerList; i++)
+                            for (int i = innerCompilationUnit.NodeOffset; i < innerCompilationUnit.NodeOffset + innerCompilationUnit.NodeLength; i++)
                             {
-                                var x = __CSharpBinder.CodeBlockOwnerList[i];
+                                var x = __CSharpBinder.NodeList[i];
                                 
                                 if (x.SyntaxKind == SyntaxKind.TypeDefinitionNode &&
-                                    ((TypeDefinitionNode)x).Unsafe_SelfIndexKey == tuple.ScopeIndexKey)
+                                    ((TypeDefinitionNode)x).SelfScopeSubIndex == tuple.ScopeIndexKey)
                                 {
                                     otherTypeDefinitionNode = x;
                                     break;
@@ -1853,7 +1852,7 @@ public sealed class CSharpCompilerService : IExtendedCompilerService
                     modelModifier,
                     lexerOutput.SyntaxTokenList.Select(x => x.TextSpan)
                         .Concat(lexerOutput.MiscTextSpanList)
-                        .Concat(__CSharpBinder.SymbolList.Skip(cSharpCompilationUnit.IndexSymbolList).Take(cSharpCompilationUnit.CountSymbolList).Select(x => x.TextSpan)));
+                        .Concat(__CSharpBinder.SymbolList.Skip(cSharpCompilationUnit.SymbolOffset).Take(cSharpCompilationUnit.SymbolLength).Select(x => x.TextSpan)));
             }
 
             _currentFileBeingParsedTuple = (null, null);
@@ -1951,12 +1950,22 @@ public sealed class CSharpCompilerService : IExtendedCompilerService
         return null;
     }
 
-    public ICodeBlockOwner? GetScopeByPositionIndex(ResourceUri resourceUri, int positionIndex)
+    public (Scope Scope, ICodeBlockOwner? CodeBlockOwner) GetCodeBlockTupleByPositionIndex(ResourceUri resourceUri, int positionIndex)
     {
         if (__CSharpBinder.__CompilationUnitMap.TryGetValue(resourceUri, out var compilationUnit))
-            return __CSharpBinder.GetScopeByPositionIndex(compilationUnit, positionIndex);
+        {
+            var scope = __CSharpBinder.GetScopeByPositionIndex(compilationUnit, positionIndex);
+            if (scope.NodeSubIndex != -1)
+            {
+                return (scope, (ICodeBlockOwner)__CSharpBinder.NodeList[compilationUnit.NodeOffset + scope.NodeSubIndex]);
+            }
+            else
+            {
+                return (scope, null);
+            }
+        }
         
-        return null;
+        return default;
     }
     
     public List<AutocompleteEntry>? OBSOLETE_GetAutocompleteEntries(string word, TextEditorTextSpan textSpan, TextEditorVirtualizationResult virtualizationResult)
@@ -1966,7 +1975,7 @@ public sealed class CSharpCompilerService : IExtendedCompilerService
             
         var boundScope = __CSharpBinder.GetScope(compilationUnit, textSpan);
 
-        if (boundScope is null)
+        if (boundScope.IsDefault())
             return null;
         
         var autocompleteEntryList = new List<AutocompleteEntry>();
@@ -2069,10 +2078,10 @@ public sealed class CSharpCompilerService : IExtendedCompilerService
         }
         else
         {
-            while (targetScope is not null)
+            while (!targetScope.IsDefault())
             {
                 autocompleteEntryList.AddRange(
-                    __CSharpBinder.GetVariableDeclarationNodesByScope(virtualizationResult.Model.PersistentState.ResourceUri, compilationUnit, targetScope.Unsafe_SelfIndexKey)
+                    __CSharpBinder.GetVariableDeclarationNodesByScope(virtualizationResult.Model.PersistentState.ResourceUri, compilationUnit, targetScope.SelfScopeSubIndex)
                     .Select(x => __CSharpBinder.GetIdentifierText(x, virtualizationResult.Model.PersistentState.ResourceUri, compilationUnit))
                     .ToArray()
                     .Where(x => x?.Contains(word, StringComparison.InvariantCulture) ?? false)
@@ -2087,7 +2096,7 @@ public sealed class CSharpCompilerService : IExtendedCompilerService
                     }));
     
                 autocompleteEntryList.AddRange(
-                    __CSharpBinder.GetFunctionDefinitionNodesByScope(compilationUnit, targetScope.Unsafe_SelfIndexKey)
+                    __CSharpBinder.GetFunctionDefinitionNodesByScope(compilationUnit, targetScope.SelfScopeSubIndex)
                     .Select(x => x.FunctionIdentifierToken.TextSpan.GetText(virtualizationResult.Model.GetAllText(), _textEditorService))
                     .ToArray()
                     .Where(x => x.Contains(word, StringComparison.InvariantCulture))
@@ -2101,10 +2110,10 @@ public sealed class CSharpCompilerService : IExtendedCompilerService
                             null);
                     }));
     
-                if (targetScope.Unsafe_ParentIndexKey == -1)
+                if (targetScope.ParentScopeSubIndex == -1)
                     targetScope = default;
                 else
-                    targetScope = __CSharpBinder.GetScopeByScopeIndexKey(compilationUnit, targetScope.Unsafe_ParentIndexKey);
+                    targetScope = __CSharpBinder.GetScopeByOffset(compilationUnit, targetScope.ParentScopeSubIndex);
             }
         
             var allTypeDefinitions = __CSharpBinder.AllTypeDefinitions;

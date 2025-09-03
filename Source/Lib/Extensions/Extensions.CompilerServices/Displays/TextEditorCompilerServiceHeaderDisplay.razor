@@ -21,14 +21,67 @@
 	
 	<div style="justify-content: space-between; display: flex;">
 		<div title="ICodeBlockOwner">
-			@{ var codeBlockOwnerLocal = _codeBlockOwner; }
+			@{
+			    // These change within a background task.
+			    var codeBlockOwnerLocal = _codeBlockOwner;
+			    var syntaxKind = _syntaxKind;
+		    }
 			
 			@if (codeBlockOwnerLocal is null)
 			{
-				<text>
-					@IconBlankFragment.Render(iconDriver)
-					global
-				</text>
+			    <text>@IconBlankFragment.Render(iconDriver)</text>
+				
+			    switch (syntaxKind)
+			    {
+			        case SyntaxKind.IfStatementNode:
+			            <text>IfStatementNode</text>
+			            break;
+		            case SyntaxKind.WhileStatementNode:
+		                <text>WhileStatementNode</text>
+		                break;
+		            case SyntaxKind.ForStatementNode:
+		                <text>ForStatementNode</text>
+		                break;
+		            case SyntaxKind.ForeachStatementNode:
+		                <text>ForeachStatementNode</text>
+		                break;
+		            case SyntaxKind.SwitchStatementNode:
+		                <text>SwitchStatementNode</text>
+		                break;
+		            case SyntaxKind.DoWhileStatementNode:
+		                <text>DoWhileStatementNode</text>
+		                break;
+		            case SyntaxKind.TryStatementCatchNode:
+		                <text>TryStatementCatchNode</text>
+		                break;
+		            case SyntaxKind.TryStatementFinallyNode:
+		                <text>TryStatementFinallyNode</text>
+		                break;
+		            case SyntaxKind.LockStatementNode:
+		                <text>LockStatementNode</text>
+		                break;
+		            case SyntaxKind.TryStatementTryNode:
+		                <text>TryStatementTryNode</text>
+		                break;
+		            case SyntaxKind.UsingStatementCodeBlockNode:
+		                <text>UsingStatementCodeBlockNode</text>
+		                break;
+		            case SyntaxKind.LambdaExpressionNode:
+		                <text>LambdaExpressionNode</text>
+		                break;
+		            case SyntaxKind.GetterOrSetterNode:
+		                <text>GetterOrSetterNode</text>
+		                break;
+		            case SyntaxKind.ArbitraryCodeBlockNode:
+		                <text>ArbitraryCodeBlockNode</text>
+		                break;
+		            case SyntaxKind.GlobalCodeBlockNode:
+		                <text>GlobalCodeBlockNode</text>
+		                break;
+	                default:
+	                    <text>???</text>
+	                    break;
+			    }
 			}
 			else
 			{

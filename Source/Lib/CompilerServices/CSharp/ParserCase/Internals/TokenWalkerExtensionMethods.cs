@@ -1,7 +1,6 @@
 using Walk.TextEditor.RazorLib.CompilerServices;
 using Walk.Extensions.CompilerServices.Utility;
 using Walk.Extensions.CompilerServices.Syntax;
-using Walk.Extensions.CompilerServices.Syntax.Nodes;
 
 namespace Walk.CompilerServices.CSharp.ParserCase.Internals;
 
@@ -12,17 +11,13 @@ internal static class TokenWalkerExtensionMethods
         ref CSharpParserModel parserModel)
     {
         // Pop off the 'TypeDefinitionNode', then push it back on when later dequeued.
-        var deferredCodeBlockBuilder = parserModel.CurrentCodeBlockOwner;
+        var deferredScope = parserModel.ScopeCurrent;
         
-        parserModel.CurrentCodeBlockOwner = parserModel.GetParent(deferredCodeBlockBuilder, parserModel.Compilation);
+        parserModel.ScopeCurrentSubIndex = deferredScope.ParentScopeSubIndex;
 
         var openTokenIndex = tokenWalker.Index - 1;
 
-        var openBraceCounter = 1;
-        
-        int closeTokenIndex;
-        
-        if (deferredCodeBlockBuilder.IsImplicitOpenCodeBlockTextSpan)
+        var openBraceCounter = 1;        int closeTokenIndex;        if (deferredScope.IsImplicitOpenCodeBlockTextSpan)
         {
             while (true)
             {
@@ -35,8 +30,7 @@ internal static class TokenWalkerExtensionMethods
                 _ = tokenWalker.Consume();
             }
     
-            closeTokenIndex = tokenWalker.Index;
-            var statementDelimiterToken = tokenWalker.Match(SyntaxKind.StatementDelimiterToken);
+            closeTokenIndex = tokenWalker.Index;            _ = tokenWalker.Match(SyntaxKind.StatementDelimiterToken);
         }
         else
         {
@@ -58,24 +52,23 @@ internal static class TokenWalkerExtensionMethods
                 _ = tokenWalker.Consume();
             }
     
-            closeTokenIndex = tokenWalker.Index;
-            var closeBraceToken = tokenWalker.Match(SyntaxKind.CloseBraceToken);
+            closeTokenIndex = tokenWalker.Index;            _ = tokenWalker.Match(SyntaxKind.CloseBraceToken);
         }
 
         if (parserModel.Compilation.CompilationUnitKind == CompilationUnitKind.SolutionWide_DefinitionsOnly &&
-            deferredCodeBlockBuilder.SyntaxKind == SyntaxKind.FunctionDefinitionNode ||
-            deferredCodeBlockBuilder.SyntaxKind == SyntaxKind.ArbitraryCodeBlockNode)
+            (deferredScope.OwnerSyntaxKind == SyntaxKind.FunctionDefinitionNode ||
+             deferredScope.OwnerSyntaxKind == SyntaxKind.ArbitraryCodeBlockNode))
         {
             return;
         }
         
         parserModel.ParseChildScopeStack.Push(
             (
-                parserModel.CurrentCodeBlockOwner,
+                parserModel.ScopeCurrentSubIndex,
                 new CSharpDeferredChildScope(
                     openTokenIndex,
                     closeTokenIndex,
-                    deferredCodeBlockBuilder)
+                    deferredScope.SelfScopeSubIndex)
             ));
     }
 }

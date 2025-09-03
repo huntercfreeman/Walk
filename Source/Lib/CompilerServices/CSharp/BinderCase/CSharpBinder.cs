@@ -45,7 +45,7 @@ public class CSharpBinder
     
     public NamespaceStatementNode TopLevelNamespaceStatementNode => _topLevelNamespaceStatementNode;
     
-    public Stack<(ICodeBlockOwner CodeBlockOwner, CSharpDeferredChildScope DeferredChildScope)> CSharpParserModel_ParseChildScopeStack { get; } = new();
+    public Stack<(int ScopeSubIndex, CSharpDeferredChildScope DeferredChildScope)> CSharpParserModel_ParseChildScopeStack { get; } = new();
     public List<(SyntaxKind DelimiterSyntaxKind, IExpressionNode? ExpressionNode)> CSharpParserModel_ExpressionList { get; set; } = new();
     public List<SyntaxKind> CSharpParserModel_TryParseExpressionSyntaxKindList { get; } = new();
     public HashSet<string> CSharpParserModel_ClearedPartialDefinitionHashSet { get; } = new();
@@ -70,7 +70,7 @@ public class CSharpBinder
     public List<Walk.TextEditor.RazorLib.CompilerServices.TextEditorDiagnostic> DiagnosticList { get; } = new();
     public List<Symbol> SymbolList { get; } = new();
     public List<ISyntaxNode> NodeList { get; } = new();
-    public List<ICodeBlockOwner> CodeBlockOwnerList { get; } = new();
+    public List<Scope> ScopeList { get; } = new();
 
     /// <summary>
     /// This list is used within TextEditorEditContext and for the lexers to re-use by clearing it prior to starting the lexing.
@@ -149,7 +149,6 @@ public class CSharpBinder
         _topLevelNamespaceStatementNode = new NamespaceStatementNode(
             new(SyntaxKind.UnrecognizedTokenKeyword, new(0, 0, 0)),
             new(SyntaxKind.IdentifierToken, new(0, 0, 0)),
-            new CodeBlock(Array.Empty<ISyntax>()),
             ResourceUri.Empty);
 
         _namespaceGroupList.Add(
@@ -408,7 +407,7 @@ public class CSharpBinder
     {
         if (__CompilationUnitMap.TryGetValue(resourceUri, out var previousCompilationUnit))
         {
-            for (int i = previousCompilationUnit.IndexNamespaceContributionList + previousCompilationUnit.CountNamespaceContributionList - 1; i >= previousCompilationUnit.IndexNamespaceContributionList; i--)
+            for (int i = previousCompilationUnit.NamespaceContributionOffset + previousCompilationUnit.NamespaceContributionLength - 1; i >= previousCompilationUnit.NamespaceContributionOffset; i--)
             {
                 var namespaceContributionEntry = NamespaceContributionList[i];
                 
@@ -484,7 +483,7 @@ public class CSharpBinder
         DiagnosticList.Clear();
         SymbolList.Clear();
         FunctionInvocationParameterMetadataList.Clear();
-        CodeBlockOwnerList.Clear();
+        ScopeList.Clear();
         NodeList.Clear();
     }
     
@@ -514,19 +513,19 @@ public class CSharpBinder
         throw new NotImplementedException();
     }
 
-    public ICodeBlockOwner? GetScope(CSharpCompilationUnit compilationUnit, TextEditorTextSpan textSpan)
+    public Scope GetScope(CSharpCompilationUnit compilationUnit, TextEditorTextSpan textSpan)
     {
         return GetScopeByPositionIndex(compilationUnit, textSpan.StartInclusiveIndex);
     }
     
-    public ICodeBlockOwner? GetScopeByPositionIndex(CSharpCompilationUnit compilationUnit, int positionIndex)
+    public Scope GetScopeByPositionIndex(CSharpCompilationUnit compilationUnit, int positionIndex)
     {
         var min = int.MaxValue;
-        ICodeBlockOwner? codeBlockOwner = null;
+        var selfScopeSubIndex = -1;
         
-        for (int i = compilationUnit.IndexCodeBlockOwnerList; i < compilationUnit.IndexCodeBlockOwnerList + compilationUnit.CountCodeBlockOwnerList; i++)
+        for (int i = compilationUnit.ScopeOffset; i < compilationUnit.ScopeOffset + compilationUnit.ScopeLength; i++)
         {
-            var scope = CodeBlockOwnerList[i];
+            var scope = ScopeList[i];
             
             if (scope.Scope_StartInclusiveIndex <= positionIndex &&
                 // Global Scope awkwardly has '-1' ending index exclusive (2023-10-15)
@@ -536,42 +535,40 @@ public class CSharpBinder
                 if (distance < min)
                 {
                     min = distance;
-                    codeBlockOwner = scope;
+                    selfScopeSubIndex = scope.SelfScopeSubIndex;
                 }
             }
         }
     
-        return codeBlockOwner;
+        if (selfScopeSubIndex == -1)
+            return default;
+        else
+            return ScopeList[compilationUnit.ScopeOffset + selfScopeSubIndex];
     }
 
-    public ICodeBlockOwner? GetScopeByScopeIndexKey(CSharpCompilationUnit compilationUnit, int scopeIndexKey)
+    public Scope GetScopeByOffset(CSharpCompilationUnit compilationUnit, int scopeSubIndex)
     {
-        if (scopeIndexKey < 0)
-            return null;
+        if (scopeSubIndex < 0)
+            return default;
 
-        if (scopeIndexKey < compilationUnit.CountCodeBlockOwnerList)
-        {
-            var isValid = true;
-
-            if (isValid)
-                return CodeBlockOwnerList[compilationUnit.IndexCodeBlockOwnerList + scopeIndexKey];
-        }
+        if (scopeSubIndex < compilationUnit.ScopeLength)
+            return ScopeList[compilationUnit.ScopeOffset + scopeSubIndex];
         
-        return null;
+        return default;
     }
     
     public TypeDefinitionNode[] GetTypeDefinitionNodesByScope(
         CSharpCompilationUnit compilationUnit,
-        int scopeIndexKey)
+        int scopeSubIndex)
     {
         var typeDefinitionNodeList = new List<TypeDefinitionNode>();
     
-        for (int i = compilationUnit.IndexCodeBlockOwnerList; i < compilationUnit.IndexCodeBlockOwnerList + compilationUnit.CountCodeBlockOwnerList; i++)
+        for (int i = compilationUnit.NodeOffset; i < compilationUnit.NodeOffset + compilationUnit.NodeLength; i++)
         {
-            var kvp = CodeBlockOwnerList[i];
+            var node = NodeList[i];
             
-            if (kvp.Unsafe_ParentIndexKey == scopeIndexKey && kvp.SyntaxKind == SyntaxKind.TypeDefinitionNode)
-                typeDefinitionNodeList.Add((TypeDefinitionNode)kvp);
+            if (node.ParentScopeSubIndex == scopeSubIndex && node.SyntaxKind == SyntaxKind.TypeDefinitionNode)
+                typeDefinitionNodeList.Add((TypeDefinitionNode)node);
         }
         
         return typeDefinitionNodeList.ToArray();
@@ -585,29 +582,29 @@ public class CSharpBinder
     public bool TryGetTypeDefinitionHierarchically(
         ResourceUri resourceUri,
         CSharpCompilationUnit compilationUnit,
-        int initialScopeIndexKey,
+        int initialScopeSubIndex,
         string identifierText,
         out TypeDefinitionNode? typeDefinitionNode)
     {
-        var localScope = GetScopeByScopeIndexKey(compilationUnit, initialScopeIndexKey);
+        var localScope = GetScopeByOffset(compilationUnit, initialScopeSubIndex);
 
-        while (localScope is not null)
+        while (!localScope.IsDefault())
         {
             if (TryGetTypeDefinitionNodeByScope(
                     resourceUri,
                     compilationUnit,
-                    localScope.Unsafe_SelfIndexKey,
+                    localScope.SelfScopeSubIndex,
                     identifierText,
                     out typeDefinitionNode))
             {
                 return true;
             }
 
-            if (localScope.Unsafe_ParentIndexKey == -1)
+            if (localScope.ParentScopeSubIndex == -1)
                 localScope = default;
             else
             {
-                localScope = GetScopeByScopeIndexKey(compilationUnit, localScope.Unsafe_ParentIndexKey);
+                localScope = GetScopeByOffset(compilationUnit, localScope.ParentScopeSubIndex);
             }
         }
 
@@ -618,20 +615,20 @@ public class CSharpBinder
     public bool TryGetTypeDefinitionNodeByScope(
         ResourceUri resourceUri,
         CSharpCompilationUnit compilationUnit,
-        int scopeIndexKey,
+        int scopeSubIndex,
         string typeIdentifierText,
         out TypeDefinitionNode typeDefinitionNode)
     {
         typeDefinitionNode = null;
         
-        for (int i = compilationUnit.IndexCodeBlockOwnerList; i < compilationUnit.IndexCodeBlockOwnerList + compilationUnit.CountCodeBlockOwnerList; i++)
+        for (int i = compilationUnit.NodeOffset; i < compilationUnit.NodeOffset + compilationUnit.NodeLength; i++)
         {
-            var x = CodeBlockOwnerList[i];
-            if (x.Unsafe_ParentIndexKey == scopeIndexKey &&
-                x.SyntaxKind == SyntaxKind.TypeDefinitionNode &&
-                GetIdentifierText(x, resourceUri, compilationUnit) == typeIdentifierText)
+            var node = NodeList[i];
+            if (node.ParentScopeSubIndex == scopeSubIndex &&
+                node.SyntaxKind == SyntaxKind.TypeDefinitionNode &&
+                GetIdentifierText(node, resourceUri, compilationUnit) == typeIdentifierText)
             {
-                typeDefinitionNode = (TypeDefinitionNode)x;
+                typeDefinitionNode = (TypeDefinitionNode)node;
                 break;
             }
         }
@@ -644,16 +641,16 @@ public class CSharpBinder
     
     public FunctionDefinitionNode[] GetFunctionDefinitionNodesByScope(
         CSharpCompilationUnit compilationUnit,
-        int scopeIndexKey)
+        int scopeSubIndex)
     {
         List<FunctionDefinitionNode> functionDefinitionNodeList = new();
     
-        for (int i = compilationUnit.IndexCodeBlockOwnerList; i < compilationUnit.IndexCodeBlockOwnerList + compilationUnit.CountCodeBlockOwnerList; i++)
+        for (int i = compilationUnit.NodeOffset; i < compilationUnit.NodeOffset + compilationUnit.NodeLength; i++)
         {
-            var kvp = CodeBlockOwnerList[i];
+            var node = NodeList[i];
             
-            if (kvp.Unsafe_ParentIndexKey == scopeIndexKey && kvp.SyntaxKind == SyntaxKind.FunctionDefinitionNode)
-                functionDefinitionNodeList.Add((FunctionDefinitionNode)kvp);
+            if (node.ParentScopeSubIndex == scopeSubIndex && node.SyntaxKind == SyntaxKind.FunctionDefinitionNode)
+                functionDefinitionNodeList.Add((FunctionDefinitionNode)node);
         }
         
         return functionDefinitionNodeList.ToArray();
@@ -667,28 +664,28 @@ public class CSharpBinder
     public bool TryGetFunctionHierarchically(
         ResourceUri resourceUri,
         CSharpCompilationUnit compilationUnit,
-        int initialScopeIndexKey,
+        int initialScopeSubIndex,
         string identifierText,
         out FunctionDefinitionNode? functionDefinitionNode)
     {
-        var localScope = GetScopeByScopeIndexKey(compilationUnit, initialScopeIndexKey);
+        var localScope = GetScopeByOffset(compilationUnit, initialScopeSubIndex);
 
-        while (localScope is not null)
+        while (!localScope.IsDefault())
         {
             if (TryGetFunctionDefinitionNodeByScope(
                     resourceUri,
                     compilationUnit,
-                    localScope.Unsafe_SelfIndexKey,
+                    localScope.SelfScopeSubIndex,
                     identifierText,
                     out functionDefinitionNode))
             {
                 return true;
             }
 
-            if (localScope.Unsafe_ParentIndexKey == -1)
+            if (localScope.ParentScopeSubIndex == -1)
                 localScope = default;
             else
-                localScope = GetScopeByScopeIndexKey(compilationUnit, localScope.Unsafe_ParentIndexKey);
+                localScope = GetScopeByOffset(compilationUnit, localScope.ParentScopeSubIndex);
         }
 
         functionDefinitionNode = null;
@@ -698,21 +695,21 @@ public class CSharpBinder
     public bool TryGetFunctionDefinitionNodeByScope(
         ResourceUri resourceUri,
         CSharpCompilationUnit compilationUnit,
-        int scopeIndexKey,
+        int scopeSubIndex,
         string functionIdentifierText,
         out FunctionDefinitionNode functionDefinitionNode)
     {
         functionDefinitionNode = null;
         
-        for (int i = compilationUnit.IndexCodeBlockOwnerList; i < compilationUnit.IndexCodeBlockOwnerList + compilationUnit.CountCodeBlockOwnerList; i++)
+        for (int i = compilationUnit.NodeOffset; i < compilationUnit.NodeOffset + compilationUnit.NodeLength; i++)
         {
-            var x = CodeBlockOwnerList[i];
+            var node = NodeList[i];
             
-            if (x.Unsafe_ParentIndexKey == scopeIndexKey &&
-                x.SyntaxKind == SyntaxKind.FunctionDefinitionNode &&
-                GetIdentifierText(x, resourceUri, compilationUnit) == functionIdentifierText)
+            if (node.ParentScopeSubIndex == scopeSubIndex &&
+                node.SyntaxKind == SyntaxKind.FunctionDefinitionNode &&
+                GetIdentifierText(node, resourceUri, compilationUnit) == functionIdentifierText)
             {
-                functionDefinitionNode = (FunctionDefinitionNode)x;
+                functionDefinitionNode = (FunctionDefinitionNode)node;
                 break;
             }
         }
@@ -726,26 +723,26 @@ public class CSharpBinder
     public IEnumerable<VariableDeclarationNode> GetVariableDeclarationNodesByScope(
         ResourceUri resourceUri,
         CSharpCompilationUnit compilationUnit,
-        int scopeIndexKey,
+        int scopeSubIndex,
         List<VariableDeclarationNode>? variableDeclarationNodeList = null)
     {
         var isRecursive = variableDeclarationNodeList is not null;
         variableDeclarationNodeList ??= new List<VariableDeclarationNode>();
         
-        for (int i = compilationUnit.IndexNodeList; i < compilationUnit.IndexNodeList + compilationUnit.CountNodeList; i++)
+        for (int i = compilationUnit.NodeOffset; i < compilationUnit.NodeOffset + compilationUnit.NodeLength; i++)
         {
-            var kvp = NodeList[i];
+            var node = NodeList[i];
             
-            if (kvp.Unsafe_ParentIndexKey == scopeIndexKey && kvp.SyntaxKind == SyntaxKind.VariableDeclarationNode)
-                variableDeclarationNodeList.Add((VariableDeclarationNode)kvp);
+            if (node.ParentScopeSubIndex == scopeSubIndex && node.SyntaxKind == SyntaxKind.VariableDeclarationNode)
+                variableDeclarationNodeList.Add((VariableDeclarationNode)node);
         }
 
-        if (!isRecursive && scopeIndexKey < compilationUnit.CountCodeBlockOwnerList)
+        if (!isRecursive && scopeSubIndex < compilationUnit.ScopeLength)
         {
-            var codeBlockOwner = CodeBlockOwnerList[compilationUnit.IndexCodeBlockOwnerList + scopeIndexKey];
-            if (codeBlockOwner.SyntaxKind == SyntaxKind.TypeDefinitionNode)
+            var node = NodeList[compilationUnit.NodeOffset + ScopeList[compilationUnit.ScopeOffset + scopeSubIndex].NodeSubIndex];
+            if (node.SyntaxKind == SyntaxKind.TypeDefinitionNode)
             {
-                var typeDefinitionNode = (TypeDefinitionNode)codeBlockOwner;
+                var typeDefinitionNode = (TypeDefinitionNode)node;
                 if (typeDefinitionNode.IndexPartialTypeDefinition != -1)
                 {
                     int positionExclusive = typeDefinitionNode.IndexPartialTypeDefinition;
@@ -755,7 +752,7 @@ public class CSharpBinder
                         {
                             CSharpCompilationUnit innerCompilationUnit;
                             
-                            if (PartialTypeDefinitionList[positionExclusive].ScopeIndexKey != -1)
+                            if (PartialTypeDefinitionList[positionExclusive].ScopeSubIndex != -1)
                             {
                                 if (PartialTypeDefinitionList[positionExclusive].ResourceUri != resourceUri)
                                 {
@@ -771,11 +768,11 @@ public class CSharpBinder
                                 
                                 if (!innerCompilationUnit.IsDefault())
                                 {
-                                    var innerScopeIndexKey = PartialTypeDefinitionList[positionExclusive].ScopeIndexKey;
+                                    var innerScopeSubIndex = PartialTypeDefinitionList[positionExclusive].ScopeSubIndex;
                                     GetVariableDeclarationNodesByScope(
                                         PartialTypeDefinitionList[positionExclusive].ResourceUri,
                                         innerCompilationUnit,
-                                        innerScopeIndexKey,
+                                        innerScopeSubIndex,
                                         variableDeclarationNodeList);
                                 }
                             }
@@ -817,29 +814,29 @@ public class CSharpBinder
                 
                     if (identifierText is not null)
                     {
-                        var innerScopeIndexKey = scopeIndexKey;
+                        var innerScopeSubIndex = scopeSubIndex;
                         if (typeDefinitionNode.InheritedTypeReference.ExplicitDefinitionResourceUri != resourceUri &&
                             typeDefinitionNode.InheritedTypeReference.ExplicitDefinitionTextSpan != default)
                         {
                             var scope = GetScopeByPositionIndex(innerCompilationUnit, typeDefinitionNode.InheritedTypeReference.ExplicitDefinitionTextSpan.StartInclusiveIndex);
-                            if (scope is not null)
+                            if (!scope.IsDefault())
                             {
-                                innerScopeIndexKey = scope.Unsafe_SelfIndexKey;
+                                innerScopeSubIndex = scope.SelfScopeSubIndex;
                             }
                         }
                     
                         if (TryGetTypeDefinitionHierarchically(
                                 innerResourceUri,
                                 innerCompilationUnit,
-                                innerScopeIndexKey,
+                                innerScopeSubIndex,
                                 identifierText,
                                 out var inheritedTypeDefinitionNode))
                         {
-                            innerScopeIndexKey = inheritedTypeDefinitionNode.Unsafe_SelfIndexKey;
+                            innerScopeSubIndex = inheritedTypeDefinitionNode.SelfScopeSubIndex;
                             GetVariableDeclarationNodesByScope(
                                 typeDefinitionNode.InheritedTypeReference.ExplicitDefinitionResourceUri,
                                 innerCompilationUnit,
-                                innerScopeIndexKey,
+                                innerScopeSubIndex,
                                 variableDeclarationNodeList);
                         }
                     }
@@ -858,28 +855,28 @@ public class CSharpBinder
     public bool TryGetVariableDeclarationHierarchically(
         ResourceUri resourceUri,
         CSharpCompilationUnit compilationUnit,
-        int initialScopeIndexKey,
+        int initialScopeSubIndex,
         string identifierText,
         out VariableDeclarationNode? variableDeclarationStatementNode)
     {
-        var localScope = GetScopeByScopeIndexKey(compilationUnit, initialScopeIndexKey);
+        var localScope = GetScopeByOffset(compilationUnit, initialScopeSubIndex);
 
-        while (localScope is not null)
+        while (!localScope.IsDefault())
         {
             if (TryGetVariableDeclarationNodeByScope(
                     resourceUri,
                     compilationUnit,
-                    localScope.Unsafe_SelfIndexKey,
+                    localScope.SelfScopeSubIndex,
                     identifierText,
                     out variableDeclarationStatementNode))
             {
                 return true;
             }
 
-            if (localScope.Unsafe_ParentIndexKey == -1)
+            if (localScope.ParentScopeSubIndex == -1)
                 localScope = default;
             else
-                localScope = GetScopeByScopeIndexKey(compilationUnit, localScope.Unsafe_ParentIndexKey);
+                localScope = GetScopeByOffset(compilationUnit, localScope.ParentScopeSubIndex);
         }
 
         variableDeclarationStatementNode = null;
@@ -889,7 +886,7 @@ public class CSharpBinder
     public bool TryGetVariableDeclarationByPartialType(
         ResourceUri resourceUri,
         CSharpCompilationUnit compilationUnit,
-        int scopeIndexKey,
+        int scopeSubIndex,
         string variableIdentifierText,
         TypeDefinitionNode typeDefinitionNode,
         out VariableDeclarationNode variableDeclarationNode)
@@ -904,7 +901,7 @@ public class CSharpBinder
                     CSharpCompilationUnit innerCompilationUnit;
                     ResourceUri innerResourceUri;
                     
-                    if (PartialTypeDefinitionList[positionExclusive].ScopeIndexKey != -1)
+                    if (PartialTypeDefinitionList[positionExclusive].ScopeSubIndex != -1)
                     {
                         if (PartialTypeDefinitionList[positionExclusive].ResourceUri != resourceUri)
                         {
@@ -927,7 +924,7 @@ public class CSharpBinder
                         
                         if (!innerCompilationUnit.IsDefault())
                         {
-                            var innerScopeIndexKey = PartialTypeDefinitionList[positionExclusive].ScopeIndexKey;
+                            var innerScopeIndexKey = PartialTypeDefinitionList[positionExclusive].ScopeSubIndex;
                         
                             if (TryGetVariableDeclarationNodeByScope(
                                     innerResourceUri,
@@ -958,38 +955,38 @@ public class CSharpBinder
     public bool TryGetVariableDeclarationNodeByScope(
         ResourceUri resourceUri,
         CSharpCompilationUnit compilationUnit,
-        int scopeIndexKey,
+        int scopeSubIndex,
         string variableIdentifierText,
         out VariableDeclarationNode variableDeclarationNode,
         bool isRecursive = false)
     {
         VariableDeclarationNode? matchNode = null;
         
-        for (int i = compilationUnit.IndexNodeList; i < compilationUnit.IndexNodeList + compilationUnit.CountNodeList; i++)
+        for (int i = compilationUnit.NodeOffset; i < compilationUnit.NodeOffset + compilationUnit.NodeLength; i++)
         {
-            var x = NodeList[i];
+            var node = NodeList[i];
             
-            if (x.Unsafe_ParentIndexKey == scopeIndexKey &&
-                x.SyntaxKind == SyntaxKind.VariableDeclarationNode &&
-                GetIdentifierText(x, resourceUri, compilationUnit) == variableIdentifierText)
+            if (node.ParentScopeSubIndex == scopeSubIndex &&
+                node.SyntaxKind == SyntaxKind.VariableDeclarationNode &&
+                GetIdentifierText(node, resourceUri, compilationUnit) == variableIdentifierText)
             {
-                matchNode = (VariableDeclarationNode)x;
+                matchNode = (VariableDeclarationNode)node;
                 break;
             }
         }
         
         if (matchNode is null)
         {
-            var codeBlockOwner = CodeBlockOwnerList[compilationUnit.IndexCodeBlockOwnerList + scopeIndexKey];
-            if (!isRecursive && codeBlockOwner.SyntaxKind == SyntaxKind.TypeDefinitionNode)
+            var scope = ScopeList[compilationUnit.ScopeOffset + scopeSubIndex];
+            if (!isRecursive && scope.OwnerSyntaxKind == SyntaxKind.TypeDefinitionNode)
             {
-                var typeDefinitionNode = (TypeDefinitionNode)codeBlockOwner;
+                var typeDefinitionNode = (TypeDefinitionNode)NodeList[compilationUnit.NodeOffset + scope.NodeSubIndex];
                 if (typeDefinitionNode.IndexPartialTypeDefinition != -1)
                 {
                     if (TryGetVariableDeclarationByPartialType(
                         resourceUri,
                         compilationUnit,
-                        scopeIndexKey,
+                        scopeSubIndex,
                         variableIdentifierText,
                         typeDefinitionNode,
                         out variableDeclarationNode))
@@ -1012,28 +1009,28 @@ public class CSharpBinder
     public bool TryGetLabelDeclarationHierarchically(
         ResourceUri resourceUri,
         CSharpCompilationUnit compilationUnit,
-        int initialScopeIndexKey,
+        int initialScopeSubIndex,
         string identifierText,
         out LabelDeclarationNode? labelDeclarationNode)
     {
-        var localScope = GetScopeByScopeIndexKey(compilationUnit, initialScopeIndexKey);
+        var localScope = GetScopeByOffset(compilationUnit, initialScopeSubIndex);
 
-        while (localScope is not null)
+        while (!localScope.IsDefault())
         {
             if (TryGetLabelDeclarationNodeByScope(
                     resourceUri,
                     compilationUnit,
-                    localScope.Unsafe_SelfIndexKey,
+                    localScope.SelfScopeSubIndex,
                     identifierText,
                     out labelDeclarationNode))
             {
                 return true;
             }
 
-            if (localScope.Unsafe_ParentIndexKey == -1)
+            if (localScope.ParentScopeSubIndex == -1)
                 localScope = default;
             else
-                localScope = GetScopeByScopeIndexKey(compilationUnit, localScope.Unsafe_ParentIndexKey);
+                localScope = GetScopeByOffset(compilationUnit, localScope.ParentScopeSubIndex);
         }
 
         labelDeclarationNode = null;
@@ -1043,21 +1040,21 @@ public class CSharpBinder
     public bool TryGetLabelDeclarationNodeByScope(
         ResourceUri resourceUri,
         CSharpCompilationUnit compilationUnit,
-        int scopeIndexKey,
+        int scopeSubIndex,
         string labelIdentifierText,
         out LabelDeclarationNode labelDeclarationNode)
     {
         LabelDeclarationNode? matchNode = null;
         
-        for (int i = compilationUnit.IndexNodeList; i < compilationUnit.IndexNodeList + compilationUnit.CountNodeList; i++)
+        for (int i = compilationUnit.NodeOffset; i < compilationUnit.NodeOffset + compilationUnit.NodeLength; i++)
         {
-            var x = NodeList[i];
+            var node = NodeList[i];
             
-            if (x.Unsafe_ParentIndexKey == scopeIndexKey &&
-                x.SyntaxKind == SyntaxKind.LabelDeclarationNode &&
-                GetIdentifierText(x, resourceUri, compilationUnit) == labelIdentifierText)
+            if (node.ParentScopeSubIndex == scopeSubIndex &&
+                node.SyntaxKind == SyntaxKind.LabelDeclarationNode &&
+                GetIdentifierText(node, resourceUri, compilationUnit) == labelIdentifierText)
             {
-                matchNode = (LabelDeclarationNode)x;
+                matchNode = (LabelDeclarationNode)node;
             }
         }
     
@@ -1107,7 +1104,7 @@ public class CSharpBinder
     {
         var scope = GetScope(compilationUnit, textSpan);
 
-        if (scope is null)
+        if (scope.IsDefault())
             return null;
 
         var externalSyntaxKind = SyntaxKind.VariableDeclarationNode;
@@ -1127,7 +1124,7 @@ public class CSharpBinder
                     TryGetVariableDeclarationHierarchically(
                         resourceUri,
                         compilationUnit,
-                        scope.Unsafe_SelfIndexKey,
+                        scope.SelfScopeSubIndex,
                         text,
                         out var variableDeclarationStatementNode)
                     && variableDeclarationStatementNode is not null)
@@ -1148,20 +1145,20 @@ public class CSharpBinder
                     TryGetFunctionHierarchically(
                              resourceUri,
                              compilationUnit,
-                             scope.Unsafe_SelfIndexKey,
+                             scope.SelfScopeSubIndex,
                              text,
                              out var functionDefinitionNode)
                          && functionDefinitionNode is not null)
                 {
-                    if (functionDefinitionNode.IndexMethodOverloadDefinition != -1 &&
+                    /*if (functionDefinitionNode.IndexMethodOverloadDefinition != -1 &&
                         compilationUnit.CompilationUnitKind == Walk.TextEditor.RazorLib.CompilerServices.CompilationUnitKind.IndividualFile_AllData &&
-                        compilationUnit.IndexFunctionInvocationParameterMetadataList != -1 &&
-                        compilationUnit.CountFunctionInvocationParameterMetadataList != 0 &&
+                        compilationUnit.FunctionInvocationParameterMetadataOffset != -1 &&
+                        compilationUnit.FunctionInvocationParameterMetadataLength != 0 &&
                         symbol is not null)
                     {
                         var functionParameterList = new List<FunctionInvocationParameterMetadata>();
                         
-                        for (int i = compilationUnit.IndexFunctionInvocationParameterMetadataList; i < compilationUnit.IndexFunctionInvocationParameterMetadataList + compilationUnit.CountFunctionInvocationParameterMetadataList; i++)
+                        for (int i = compilationUnit.FunctionInvocationParameterMetadataOffset; i < compilationUnit.FunctionInvocationParameterMetadataOffset + compilationUnit.FunctionInvocationParameterMetadataLength; i++)
                         {
                             var entry = FunctionInvocationParameterMetadataList[i];
                             if (entry.IdentifierStartInclusiveIndex == symbol.Value.TextSpan.StartInclusiveIndex)
@@ -1176,7 +1173,8 @@ public class CSharpBinder
                             
                             if (__CompilationUnitMap.TryGetValue(entry.ResourceUri, out var innerCompilationUnit))
                             {
-                                var innerFunctionDefinitionNode = (FunctionDefinitionNode)CodeBlockOwnerList[innerCompilationUnit.IndexCodeBlockOwnerList + entry.ScopeIndexKey];
+                                var innerFunctionDefinitionNode = 
+                                    (FunctionDefinitionNode)NodeList[innerCompilationUnit.NodeOffset + ScopeList[innerCompilationUnit.ScopeOffset + entry.ScopeIndexKey].NodeSubIndex];
                                 
                                 if (innerFunctionDefinitionNode.CountFunctionArgumentEntryList == functionParameterList.Count)
                                 {
@@ -1212,7 +1210,7 @@ public class CSharpBinder
                                 }
                             }
                         }
-                    }
+                    }*/
                 
                     return functionDefinitionNode;
                 }
@@ -1230,7 +1228,7 @@ public class CSharpBinder
                 if (TryGetTypeDefinitionHierarchically(
                              resourceUri,
                              compilationUnit,
-                             scope.Unsafe_SelfIndexKey,
+                             scope.SelfScopeSubIndex,
                              text,
                              out var typeDefinitionNode) &&
                          typeDefinitionNode is not null)
@@ -1419,7 +1417,7 @@ public class CSharpBinder
             {
                 if (TryGetVariableDeclarationHierarchically(
                         compilationUnit,
-                        codeBlockOwner.Unsafe_SelfIndexKey,
+                        codeBlockOwner.SelfIndexKey,
                         foundSymbol.Value.TextSpan.GetText(compilationUnit.SourceText, TextEditorService),
                         out var variableDeclarationStatementNode)
                     && variableDeclarationStatementNode is not null)
@@ -1681,7 +1679,7 @@ public class CSharpBinder
     
     public IEnumerable<ISyntaxNode> GetMemberList_TypeDefinitionNode(TypeDefinitionNode typeDefinitionNode)
     {
-        if (typeDefinitionNode.Unsafe_SelfIndexKey == -1 ||
+        if (typeDefinitionNode.SelfScopeSubIndex == -1 ||
             !__CompilationUnitMap.TryGetValue(typeDefinitionNode.ResourceUri, out var compilationUnit))
         {
             return Array.Empty<ISyntaxNode>();
@@ -1689,26 +1687,16 @@ public class CSharpBinder
         
         var syntaxNodeList = new List<ISyntaxNode>();
         
-        for (int i = compilationUnit.IndexCodeBlockOwnerList; i < compilationUnit.IndexCodeBlockOwnerList + compilationUnit.CountCodeBlockOwnerList; i++)
+        for (int i = compilationUnit.NodeOffset; i < compilationUnit.NodeOffset + compilationUnit.NodeLength; i++)
         {
-            var x = CodeBlockOwnerList[i];
-        
-            if (x.Unsafe_ParentIndexKey == typeDefinitionNode.Unsafe_SelfIndexKey &&
-                (x.SyntaxKind == SyntaxKind.TypeDefinitionNode ||
-                 x.SyntaxKind == SyntaxKind.FunctionDefinitionNode))
-            {
-                syntaxNodeList.Add(x);
-            }
-        }
-        
-        for (int i = compilationUnit.IndexNodeList; i < compilationUnit.IndexNodeList + compilationUnit.CountNodeList; i++)
-        {
-            var x = NodeList[i];
+            var node = NodeList[i];
             
-            if (x.Unsafe_ParentIndexKey == typeDefinitionNode.Unsafe_SelfIndexKey &&
-                x.SyntaxKind == SyntaxKind.VariableDeclarationNode)
+            if (node.ParentScopeSubIndex == typeDefinitionNode.SelfScopeSubIndex &&
+                (node.SyntaxKind == SyntaxKind.TypeDefinitionNode ||
+                 node.SyntaxKind == SyntaxKind.FunctionDefinitionNode ||
+                 node.SyntaxKind == SyntaxKind.VariableDeclarationNode))
             {
-                syntaxNodeList.Add(x);
+                syntaxNodeList.Add(node);
             }
         }
         
@@ -1730,7 +1718,7 @@ public class CSharpBinder
                     CSharpCompilationUnit innerCompilationUnit;
                     ResourceUri innerResourceUri;
                     
-                    if (PartialTypeDefinitionList[positionExclusive].ScopeIndexKey != -1)
+                    if (PartialTypeDefinitionList[positionExclusive].ScopeSubIndex != -1)
                     {
                         if (PartialTypeDefinitionList[positionExclusive].ResourceUri != typeDefinitionNode.ResourceUri)
                         {
@@ -1753,26 +1741,16 @@ public class CSharpBinder
                         
                         if (!innerCompilationUnit.IsDefault())
                         {
-                            var innerScopeIndexKey = PartialTypeDefinitionList[positionExclusive].ScopeIndexKey;
+                            var innerScopeSubIndex = PartialTypeDefinitionList[positionExclusive].ScopeSubIndex;
                             
-                            for (int i = innerCompilationUnit.IndexCodeBlockOwnerList; i < innerCompilationUnit.IndexCodeBlockOwnerList + innerCompilationUnit.CountCodeBlockOwnerList; i++)
-                            {
-                                var x = CodeBlockOwnerList[i];
-                                
-                                if (x.Unsafe_ParentIndexKey == innerScopeIndexKey &&
-                                    (x.SyntaxKind == SyntaxKind.TypeDefinitionNode ||
-                                     x.SyntaxKind == SyntaxKind.FunctionDefinitionNode))
-                                {
-                                    syntaxNodeList.Add(x);
-                                }
-                            }
-                            
-                            for (int i = innerCompilationUnit.IndexNodeList; i < innerCompilationUnit.IndexNodeList + innerCompilationUnit.CountNodeList; i++)
+                            for (int i = innerCompilationUnit.NodeOffset; i < innerCompilationUnit.NodeOffset + innerCompilationUnit.NodeLength; i++)
                             {
                                 var x = NodeList[i];
                                 
-                                if (x.Unsafe_ParentIndexKey == innerScopeIndexKey &&
-                                    x.SyntaxKind == SyntaxKind.VariableDeclarationNode)
+                                if (x.ParentScopeSubIndex == innerScopeSubIndex &&
+                                    (x.SyntaxKind == SyntaxKind.TypeDefinitionNode ||
+                                     x.SyntaxKind == SyntaxKind.FunctionDefinitionNode ||
+                                     x.SyntaxKind == SyntaxKind.VariableDeclarationNode))
                                 {
                                     syntaxNodeList.Add(x);
                                 }
@@ -1798,30 +1776,20 @@ public class CSharpBinder
     {
         _getMemberList.Clear();
     
-        if (typeDefinitionNode.Unsafe_SelfIndexKey == -1 ||
+        if (typeDefinitionNode.SelfScopeSubIndex == -1 ||
             !__CompilationUnitMap.TryGetValue(typeDefinitionNode.ResourceUri, out var compilationUnit))
         {
             return _getMemberList;
         }
         
-        for (int i = compilationUnit.IndexCodeBlockOwnerList; i < compilationUnit.IndexCodeBlockOwnerList + compilationUnit.CountCodeBlockOwnerList; i++)
-        {
-            var codeBlockOwner = CodeBlockOwnerList[i];
-            
-            if (codeBlockOwner.Unsafe_ParentIndexKey == typeDefinitionNode.Unsafe_SelfIndexKey &&
-                (codeBlockOwner.SyntaxKind == SyntaxKind.TypeDefinitionNode ||
-                 codeBlockOwner.SyntaxKind == SyntaxKind.FunctionDefinitionNode))
-            {
-                _getMemberList.Add(codeBlockOwner);
-            }
-        }
-
-        for (int i = compilationUnit.IndexNodeList; i < compilationUnit.IndexNodeList + compilationUnit.CountNodeList; i++)
+        for (int i = compilationUnit.NodeOffset; i < compilationUnit.NodeOffset + compilationUnit.NodeLength; i++)
         {
             var node = NodeList[i];
             
-            if (node.Unsafe_ParentIndexKey == typeDefinitionNode.Unsafe_SelfIndexKey &&
-                node.SyntaxKind == SyntaxKind.VariableDeclarationNode)
+            if (node.ParentScopeSubIndex == typeDefinitionNode.SelfScopeSubIndex &&
+                (node.SyntaxKind == SyntaxKind.TypeDefinitionNode ||
+                 node.SyntaxKind == SyntaxKind.FunctionDefinitionNode ||
+                 node.SyntaxKind == SyntaxKind.VariableDeclarationNode))
             {
                 _getMemberList.Add(node);
             }
@@ -1846,7 +1814,7 @@ public class CSharpBinder
                     CSharpCompilationUnit innerCompilationUnit;
                     ResourceUri innerResourceUri;
                     
-                    if (PartialTypeDefinitionList[positionExclusive].ScopeIndexKey != -1)
+                    if (PartialTypeDefinitionList[positionExclusive].ScopeSubIndex != -1)
                     {
                         if (PartialTypeDefinitionList[positionExclusive].ResourceUri != typeDefinitionNode.ResourceUri)
                         {
@@ -1870,35 +1838,24 @@ public class CSharpBinder
                         if (!innerCompilationUnit.IsDefault())
                         {
                             var partialTypeDefinition = PartialTypeDefinitionList[positionExclusive];
-                            var innerScopeIndexKey = partialTypeDefinition.ScopeIndexKey;
+                            var innerScopeSubIndex = partialTypeDefinition.ScopeSubIndex;
                             
-                            if (partialTypeDefinition.ScopeIndexKey < innerCompilationUnit.CountCodeBlockOwnerList)
+                            if (partialTypeDefinition.ScopeSubIndex < innerCompilationUnit.ScopeLength)
                             {
-                                var innerCodeBlockOwner = CodeBlockOwnerList[innerCompilationUnit.IndexCodeBlockOwnerList + partialTypeDefinition.ScopeIndexKey];
+                                var innerCodeBlockOwner = NodeList[innerCompilationUnit.NodeOffset + ScopeList[innerCompilationUnit.ScopeOffset + partialTypeDefinition.ScopeSubIndex].NodeSubIndex];
                                 
                                 if (innerCodeBlockOwner.SyntaxKind == SyntaxKind.TypeDefinitionNode)
                                 {
                                     var innerTypeDefinitionNode = (TypeDefinitionNode)innerCodeBlockOwner;
                                 
-                                    // TODO: Don't duplicate this.
-                                    for (int i = innerCompilationUnit.IndexCodeBlockOwnerList; i < innerCompilationUnit.IndexCodeBlockOwnerList + innerCompilationUnit.CountCodeBlockOwnerList; i++)
-                                    {
-                                        var codeBlockOwner = CodeBlockOwnerList[i];
-                                    
-                                        if (codeBlockOwner.Unsafe_ParentIndexKey == innerScopeIndexKey &&
-                                            (codeBlockOwner.SyntaxKind == SyntaxKind.TypeDefinitionNode ||
-                                             codeBlockOwner.SyntaxKind == SyntaxKind.FunctionDefinitionNode))
-                                        {
-                                            _getMemberList.Add(codeBlockOwner);
-                                        }
-                                    }
-                                    
-                                    for (int i = innerCompilationUnit.IndexNodeList; i < innerCompilationUnit.IndexNodeList + innerCompilationUnit.CountNodeList; i++)
+                                    for (int i = innerCompilationUnit.NodeOffset; i < innerCompilationUnit.NodeOffset + innerCompilationUnit.NodeLength; i++)
                                     {
                                         var node = NodeList[i];
                                         
-                                        if (node.Unsafe_ParentIndexKey == innerScopeIndexKey &&
-                                            node.SyntaxKind == SyntaxKind.VariableDeclarationNode)
+                                        if (node.ParentScopeSubIndex == innerScopeSubIndex &&
+                                            (node.SyntaxKind == SyntaxKind.TypeDefinitionNode ||
+                                             node.SyntaxKind == SyntaxKind.FunctionDefinitionNode ||
+                                             node.SyntaxKind == SyntaxKind.VariableDeclarationNode))
                                         {
                                             _getMemberList.Add(node);
                                         }
@@ -1935,7 +1892,7 @@ public class CSharpBinder
     /// </summary>
     public IEnumerable<TypeDefinitionNode> GetTopLevelTypeDefinitionNodes_NamespaceStatementNode(NamespaceStatementNode namespaceStatementNode)
     {
-        if (namespaceStatementNode.Unsafe_SelfIndexKey == -1 ||
+        if (namespaceStatementNode.SelfScopeSubIndex == -1 ||
             !__CompilationUnitMap.TryGetValue(namespaceStatementNode.ResourceUri, out var compilationUnit))
         {
             return Array.Empty<TypeDefinitionNode>();
@@ -1943,12 +1900,12 @@ public class CSharpBinder
 
         var typeDefinitionNodeList = new List<TypeDefinitionNode>();
         
-        for (int i = compilationUnit.IndexCodeBlockOwnerList; i < compilationUnit.IndexCodeBlockOwnerList + compilationUnit.CountCodeBlockOwnerList; i++)
+        for (int i = compilationUnit.NodeOffset; i < compilationUnit.NodeOffset + compilationUnit.NodeLength; i++)
         {
-            var x = CodeBlockOwnerList[i];
+            var node = NodeList[i];
             
-            if (x.Unsafe_ParentIndexKey == namespaceStatementNode.Unsafe_SelfIndexKey && x.SyntaxKind == SyntaxKind.TypeDefinitionNode)
-                typeDefinitionNodeList.Add((TypeDefinitionNode)x);
+            if (node.ParentScopeSubIndex == namespaceStatementNode.SelfScopeSubIndex && node.SyntaxKind == SyntaxKind.TypeDefinitionNode)
+                typeDefinitionNodeList.Add((TypeDefinitionNode)node);
         }
 
         return typeDefinitionNodeList;
@@ -1964,7 +1921,7 @@ public class CSharpBinder
     public IEnumerable<TypeDefinitionNode> GetTopLevelTypeDefinitionNodes_NamespaceGroup(NamespaceGroup namespaceGroup)
     {
         return namespaceGroup.NamespaceStatementNodeList
-            .SelectMany(x => GetTopLevelTypeDefinitionNodes_NamespaceStatementNode(x));
+            .SelectMany(GetTopLevelTypeDefinitionNodes_NamespaceStatementNode);
     }
     
     private readonly List<TypeDefinitionNode> _getTopLevelTypeDefinitionNodes = new();
@@ -1980,18 +1937,18 @@ public class CSharpBinder
             _getTopLevelTypeDefinitionNodes.Clear();
         }
     
-        if (namespaceStatementNode.Unsafe_SelfIndexKey == -1 ||
+        if (namespaceStatementNode.SelfScopeSubIndex == -1 ||
             !__CompilationUnitMap.TryGetValue(namespaceStatementNode.ResourceUri, out var compilationUnit))
         {
             return _getTopLevelTypeDefinitionNodes;
         }
 
-        for (int i = compilationUnit.IndexCodeBlockOwnerList; i < compilationUnit.IndexCodeBlockOwnerList + compilationUnit.CountCodeBlockOwnerList; i++)
+        for (int i = compilationUnit.NodeOffset; i < compilationUnit.NodeOffset + compilationUnit.NodeLength; i++)
         {
-            var codeBlockOwner = CodeBlockOwnerList[i];
+            var node = NodeList[i];
         
-            if (codeBlockOwner.Unsafe_ParentIndexKey == namespaceStatementNode.Unsafe_SelfIndexKey && codeBlockOwner.SyntaxKind == SyntaxKind.TypeDefinitionNode)
-                _getTopLevelTypeDefinitionNodes.Add((TypeDefinitionNode)codeBlockOwner);
+            if (node.ParentScopeSubIndex == namespaceStatementNode.SelfScopeSubIndex && node.SyntaxKind == SyntaxKind.TypeDefinitionNode)
+                _getTopLevelTypeDefinitionNodes.Add((TypeDefinitionNode)node);
         }
         
         return _getTopLevelTypeDefinitionNodes;

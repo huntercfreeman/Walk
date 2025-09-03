@@ -113,23 +113,10 @@ public sealed class TypeDefinitionNode : ICodeBlockOwner, IFunctionDefinitionNod
     /// </summary>
     public string EncompassingNamespaceIdentifierString { get; set; }
     
-    /// <summary>
-    /// Any files that contain a reference to this TypeDefinitionNode should
-    /// have their ResourceUri in this.
-    /// </summary>
-    // FindAllReferences
-    // public HashSet<ResourceUri>? ReferenceHashSet { get; set; }
-
     // ICodeBlockOwner properties.
     public ScopeDirectionKind ScopeDirectionKind => ScopeDirectionKind.Both;
-    public int Scope_StartInclusiveIndex { get; set; } = -1;
-    public int Scope_EndExclusiveIndex { get; set; } = -1;
-    public int CodeBlock_StartInclusiveIndex { get; set; } = -1;
-    public int CodeBlock_EndExclusiveIndex { get; set; } = -1;
-    public int Unsafe_ParentIndexKey { get; set; } = -1;
-    public int Unsafe_SelfIndexKey { get; set; } = -1;
-    public bool PermitCodeBlockParsing { get; set; } = true;
-    public bool IsImplicitOpenCodeBlockTextSpan { get; set; }
+    public int ParentScopeSubIndex { get; set; } = -1;
+    public int SelfScopeSubIndex { get; set; } = -1;
 
     public bool IsKeywordType { get; init; }
     
@@ -138,13 +125,6 @@ public sealed class TypeDefinitionNode : ICodeBlockOwner, IFunctionDefinitionNod
     /// ...generic parameters. They currently use 'ParseTypes.HandleGenericArguments(...);'
     /// </summary>
     public bool IsParsingGenericParameters { get; set; }
-
-    #region ICodeBlockOwner_Methods
-    public TypeReference GetReturnTypeReference()
-    {
-        return TypeFacts.Empty.ToTypeReference();
-    }
-    #endregion
 
     public ICodeBlockOwner SetInheritedTypeReference(TypeReference typeReference)
     {

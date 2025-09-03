@@ -7,14 +7,14 @@ public struct PartialTypeDefinitionEntry
     public PartialTypeDefinitionEntry(
         ResourceUri resourceUri,
         int indexStartGroup,
-        int scopeIndexKey)
+        int scopeOffset)
     {
         ResourceUri = resourceUri;
         IndexStartGroup = indexStartGroup;
-        ScopeIndexKey = scopeIndexKey;
+        ScopeSubIndex = scopeOffset;
     }
 
     public ResourceUri ResourceUri { get; set; }
     public int IndexStartGroup { get; set; }
-    public int ScopeIndexKey { get; set; }
+    public int ScopeSubIndex { get; set; }
 }

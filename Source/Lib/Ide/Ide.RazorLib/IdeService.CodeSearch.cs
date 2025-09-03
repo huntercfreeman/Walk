@@ -6,7 +6,6 @@ using Walk.Common.RazorLib.Reactives.Models;
 using Walk.Common.RazorLib.TreeViews.Models;
 using Walk.Ide.RazorLib.CodeSearches.Models;
 using Walk.TextEditor.RazorLib.Decorations.Models;
-using Walk.TextEditor.RazorLib.Installations.Models;
 using Walk.TextEditor.RazorLib.Lexers.Models;
 using Walk.TextEditor.RazorLib.TextEditors.Models;
 

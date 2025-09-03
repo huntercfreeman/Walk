@@ -7,7 +7,6 @@ using Walk.Common.RazorLib.Dropdowns.Models;
 using Walk.Common.RazorLib.Menus.Models;
 using Walk.Common.RazorLib.Menus.Displays;
 using Walk.Common.RazorLib.FileSystems.Models;
-using Walk.Common.RazorLib.Notifications.Models;
 using Walk.Common.RazorLib.Keymaps.Models;
 using Walk.TextEditor.RazorLib.Groups.Models;
 using Walk.TextEditor.RazorLib.JavaScriptObjects.Models;
@@ -16,7 +15,6 @@ using Walk.TextEditor.RazorLib.TextEditors.Models;
 using Walk.TextEditor.RazorLib.TextEditors.Models.Internals;
 using Walk.TextEditor.RazorLib.Characters.Models;
 using Walk.TextEditor.RazorLib.Lexers.Models;
-using Walk.TextEditor.RazorLib.Installations.Models;
 using Walk.TextEditor.RazorLib.Events.Models;
 
 namespace Walk.TextEditor.RazorLib.Commands.Models.Defaults;

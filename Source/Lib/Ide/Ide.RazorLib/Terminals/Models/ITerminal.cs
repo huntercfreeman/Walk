@@ -1,6 +1,5 @@
 using CliWrap.EventStream;
 using Walk.Common.RazorLib.Keys.Models;
-using Walk.Common.RazorLib.Keys.Models;
 using Walk.TextEditor.RazorLib.TextEditors.Models;
 using Walk.TextEditor.RazorLib.Lexers.Models;
 

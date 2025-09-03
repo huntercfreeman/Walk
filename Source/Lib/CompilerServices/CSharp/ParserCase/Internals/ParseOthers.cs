@@ -1,4 +1,3 @@
-using System.Reflection;
 using Walk.Extensions.CompilerServices.Syntax;
 using Walk.Extensions.CompilerServices.Syntax.Nodes;
 using Walk.TextEditor.RazorLib.CompilerServices;
@@ -75,12 +74,12 @@ public static class ParseOthers
                     if (parserModel.Compilation.CompilationUnitKind == CompilationUnitKind.IndividualFile_AllData)
                     {
                         parserModel.Binder.SymbolList.Insert(
-                            parserModel.Compilation.IndexSymbolList + parserModel.Compilation.CountSymbolList,
+                            parserModel.Compilation.SymbolOffset + parserModel.Compilation.SymbolLength,
                             new Symbol(
                                 SyntaxKind.NamespaceSymbol,
                                 parserModel.GetNextSymbolId(),
                                 textSpan));
-                        ++parserModel.Compilation.CountSymbolList;
+                        ++parserModel.Compilation.SymbolLength;
                     }
                 
                     if (isNamespaceStatement)
@@ -111,12 +110,12 @@ public static class ParseOthers
             return default;
             
         parserModel.Binder.SymbolList.Insert(
-            parserModel.Compilation.IndexSymbolList + parserModel.Compilation.CountSymbolList,
+            parserModel.Compilation.SymbolOffset + parserModel.Compilation.SymbolLength,
             new Symbol(
                 SyntaxKind.NamespaceSymbol,
                 parserModel.GetNextSymbolId(),
                 textSpan));
-        ++parserModel.Compilation.CountSymbolList;
+        ++parserModel.Compilation.SymbolLength;
 
         return new SyntaxToken(SyntaxKind.IdentifierToken, textSpan);
     }
@@ -127,12 +126,7 @@ public static class ParseOthers
     /// </summary>
     public static void HandleLabelDeclaration(ref CSharpParserModel parserModel)
     {
-        var labelDeclarationNode = new LabelDeclarationNode(parserModel.TokenWalker.Current);
-        
-        parserModel.BindLabelDeclarationNode(labelDeclarationNode);
-            
-        var labelReferenceNode = new LabelReferenceNode(labelDeclarationNode.IdentifierToken);
-        
+        parserModel.BindLabelDeclarationNode(new LabelDeclarationNode(parserModel.TokenWalker.Current));
         parserModel.TokenWalker.Consume(); // Consume 'NameableToken'
         parserModel.TokenWalker.Consume(); // Consume 'ColonToken'
         return;

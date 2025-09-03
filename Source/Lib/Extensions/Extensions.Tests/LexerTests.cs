@@ -2,7 +2,6 @@ using Walk.CompilerServices.CSharp.BinderCase;
 using Walk.CompilerServices.CSharp.CompilerServiceCase;
 using Walk.CompilerServices.CSharp.LexerCase;
 using Walk.CompilerServices.CSharp.ParserCase;
-using Walk.Extensions.CompilerServices.Syntax;
 using Walk.TextEditor.RazorLib;
 using Walk.TextEditor.RazorLib.CompilerServices;
 using Walk.TextEditor.RazorLib.Lexers.Models;

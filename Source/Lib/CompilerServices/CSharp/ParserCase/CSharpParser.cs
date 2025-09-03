@@ -11,14 +11,24 @@ public static class CSharpParser
 {
     public static void Parse(Walk.TextEditor.RazorLib.Lexers.Models.ResourceUri resourceUri, ref CSharpCompilationUnit compilationUnit, CSharpBinder binder, ref CSharpLexerOutput lexerOutput)
     {
-        compilationUnit.IndexCodeBlockOwnerList = binder.CodeBlockOwnerList.Count;
-        compilationUnit.IndexNodeList = binder.NodeList.Count;
-        compilationUnit.IndexNamespaceContributionList = binder.NamespaceContributionList.Count;
+        compilationUnit.ScopeOffset = binder.ScopeList.Count;
+        compilationUnit.NamespaceContributionOffset = binder.NamespaceContributionList.Count;
 
-        binder.CodeBlockOwnerList.Insert(
-            compilationUnit.IndexCodeBlockOwnerList + compilationUnit.CountCodeBlockOwnerList,
-            binder.GlobalCodeBlockNode);
-        ++compilationUnit.CountCodeBlockOwnerList;
+        binder.ScopeList.Insert(
+            compilationUnit.ScopeOffset + compilationUnit.ScopeLength,
+            new Scope(
+        		Walk.Extensions.CompilerServices.Syntax.Nodes.Enums.ScopeDirectionKind.Both,
+        		scope_StartInclusiveIndex: 0,
+        		scope_EndExclusiveIndex: -1,
+        		codeBlock_StartInclusiveIndex: -1,
+        		codeBlock_EndExclusiveIndex: -1,
+        		parentScopeSubIndex: -1,
+        		selfScopeSubIndex: 0,
+        		nodeSubIndex: -1,
+        		permitCodeBlockParsing: true,
+        		isImplicitOpenCodeBlockTextSpan: true,
+        		ownerSyntaxKind: SyntaxKind.GlobalCodeBlockNode));
+        ++compilationUnit.ScopeLength;
         
         var parserModel = new CSharpParserModel(
             binder,
@@ -82,7 +92,7 @@ public static class CSharpParser
                     var closeBraceTokenIndex = parserModel.TokenWalker.Index;
                     
                     if (parserModel.ParseChildScopeStack.Count > 0 &&
-                        parserModel.ParseChildScopeStack.Peek().CodeBlockOwner == parserModel.CurrentCodeBlockOwner)
+                        parserModel.ParseChildScopeStack.Peek().ScopeSubIndex == parserModel.ScopeCurrentSubIndex)
                     {
                         parserModel.TokenWalker.SetNullDeferredParsingTuple();
                     }
@@ -146,7 +156,7 @@ public static class CSharpParser
                 {
                     var tuple = parserModel.ParseChildScopeStack.Peek();
                     
-                    if (Object.ReferenceEquals(tuple.CodeBlockOwner, parserModel.CurrentCodeBlockOwner))
+                    if (tuple.ScopeSubIndex == parserModel.ScopeCurrentSubIndex)
                     {
                         tuple = parserModel.ParseChildScopeStack.Pop();
                         tuple.DeferredChildScope.PrepareMainParserLoop(parserModel.TokenWalker.Index, ref parserModel);
@@ -185,7 +195,7 @@ public static class CSharpParser
             parserModel.TokenWalker.ConsumeCounterReset();
         }
 
-        if (parserModel.GetParent(parserModel.CurrentCodeBlockOwner, compilationUnit) is not null)
+        if (!parserModel.GetParent(parserModel.ScopeCurrent.ParentScopeSubIndex, compilationUnit).IsDefault())
             parserModel.CloseScope(parserModel.TokenWalker.Current.TextSpan); // The current token here would be the EOF token.
 
         parserModel.Binder.FinalizeCompilationUnit(parserModel.ResourceUri, compilationUnit);
