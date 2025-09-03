@@ -3240,9 +3240,15 @@ public static class ParseExpressions
         var closeTokenIndex = parserModel.TokenWalker.Index;
         _ = parserModel.TokenWalker.Match(SyntaxKind.CloseBraceToken);
 
+        var nonLambdaScopeParentSubIndex = parserModel.ScopeCurrentSubIndex;
+        while (parserModel.Binder.ScopeList[parserModel.Compilation.ScopeOffset + nonLambdaScopeParentSubIndex].OwnerSyntaxKind == SyntaxKind.LambdaExpressionNode)
+        {
+            nonLambdaScopeParentSubIndex = parserModel.Binder.ScopeList[parserModel.Compilation.ScopeOffset + nonLambdaScopeParentSubIndex].ParentScopeSubIndex;
+        }
+
         parserModel.StatementBuilder.ParseLambdaStatementScopeStack.Push(
             (
-                parserModel.ScopeCurrentSubIndex,
+                nonLambdaScopeParentSubIndex,
                 new CSharpDeferredChildScope(
                     openTokenIndex,
                     closeTokenIndex,
