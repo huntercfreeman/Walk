@@ -23,7 +23,6 @@ public sealed class TypeDefinitionNode : ICodeBlockOwner, IFunctionDefinitionNod
         int countFunctionArgumentEntryList,
         SyntaxToken closeParenthesisToken,
         TypeReference inheritedTypeReference,
-        string namespaceName,
         ResourceUri resourceUri)
     {
         AccessModifierKind = accessModifierKind;
@@ -41,7 +40,6 @@ public sealed class TypeDefinitionNode : ICodeBlockOwner, IFunctionDefinitionNod
         CountFunctionArgumentEntryList = countFunctionArgumentEntryList;
         CloseParenthesisToken = closeParenthesisToken;
         InheritedTypeReference = inheritedTypeReference;
-        NamespaceName = namespaceName;
         ResourceUri = resourceUri;
     }
 
@@ -78,7 +76,6 @@ public sealed class TypeDefinitionNode : ICodeBlockOwner, IFunctionDefinitionNod
     /// Then: 'IPerson' is the <see cref="InheritedTypeClauseNode"/>
     /// </summary>
     public TypeReference InheritedTypeReference { get; private set; }
-    public string NamespaceName { get; }
     /// <summary>
     /// 'string.Empty' is used as a special case to store language primitives,
     /// since 'string.Empty' is not a valid 'ResourceUri' for the 'TextEditorService'.

@@ -968,7 +968,6 @@ public class ParseDefaultKeywords
             countFunctionArgumentEntryList: 0,
             closeParenthesisToken: default,
             inheritedTypeReference: TypeFacts.NotApplicable.ToTypeReference(),
-            namespaceName: parserModel.GetTextSpanText(parserModel.CurrentNamespaceStatementNode.IdentifierToken.TextSpan),
             parserModel.ResourceUri);
         
         if (typeDefinitionNode.HasPartialModifier)

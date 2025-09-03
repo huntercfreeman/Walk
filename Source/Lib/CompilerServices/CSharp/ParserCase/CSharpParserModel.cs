@@ -1021,7 +1021,6 @@ public ref struct CSharpParserModel
                                 countFunctionArgumentEntryList: 0,
                                 closeParenthesisToken: default,
                                 inheritedTypeReference: TypeFacts.NotApplicable.ToTypeReference(),
-                                string.Empty,
                                 ResourceUri));
                     }
                 }

@@ -1222,7 +1222,7 @@ public sealed class CSharpCompilerService : IExtendedCompilerService
                 
                 if (allTypeDefinitions.TryGetValue(typeClauseNode.TypeIdentifierToken.TextSpan.GetText(modelModifier.GetAllText(), _textEditorService), out var typeDefinitionNode))
                 {
-                    var usingStatementText = $"using {typeDefinitionNode.NamespaceName};";
+                    var usingStatementText = $"using NamespaceName_WasHere;";
                         
                     menuOptionList.Add(new MenuOptionRecord(
                         $"Copy: {usingStatementText}",
