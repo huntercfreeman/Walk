@@ -107,11 +107,6 @@ public sealed class TypeDefinitionNode : ICodeBlockOwner, IFunctionDefinitionNod
     public SyntaxKind SyntaxKind => SyntaxKind.TypeDefinitionNode;
     
     TypeReference IExpressionNode.ResultTypeReference => TypeFacts.Pseudo.ToTypeReference();
-
-    /// <summary>
-    /// TODO: Where is this used? ('NamespaceName' already exists and seems to be the one to keep).
-    /// </summary>
-    public string EncompassingNamespaceIdentifierString { get; set; }
     
     // ICodeBlockOwner properties.
     public ScopeDirectionKind ScopeDirectionKind => ScopeDirectionKind.Both;
