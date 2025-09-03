@@ -1998,18 +1998,9 @@ public ref struct CSharpParserModel
     
     public readonly void SetCurrentScope_PermitCodeBlockParsing(bool value)
     {
-        try
-        {
-            var scope = Binder.ScopeList[Compilation.ScopeOffset + ScopeCurrentSubIndex];
-            scope.PermitCodeBlockParsing = value;
-            Binder.ScopeList[Compilation.ScopeOffset + ScopeCurrentSubIndex] = scope;
-        }
-        catch (Exception e)
-        {
-
-            throw;
-        }
-        
+        var scope = Binder.ScopeList[Compilation.ScopeOffset + ScopeCurrentSubIndex];
+        scope.PermitCodeBlockParsing = value;
+        Binder.ScopeList[Compilation.ScopeOffset + ScopeCurrentSubIndex] = scope;
     }
     
     public readonly void SetCurrentScope_Scope_EndExclusiveIndex(int endExclusiveIndex)
