@@ -17,11 +17,7 @@ internal static class TokenWalkerExtensionMethods
 
         var openTokenIndex = tokenWalker.Index - 1;
 
-        var openBraceCounter = 1;
-
-        int closeTokenIndex;
-
-        if (deferredScope.IsImplicitOpenCodeBlockTextSpan)
+        var openBraceCounter = 1;        int closeTokenIndex;        if (deferredScope.IsImplicitOpenCodeBlockTextSpan)
         {
             while (true)
             {
@@ -34,8 +30,7 @@ internal static class TokenWalkerExtensionMethods
                 _ = tokenWalker.Consume();
             }
     
-            closeTokenIndex = tokenWalker.Index;
-            _ = tokenWalker.Match(SyntaxKind.StatementDelimiterToken);
+            closeTokenIndex = tokenWalker.Index;            _ = tokenWalker.Match(SyntaxKind.StatementDelimiterToken);
         }
         else
         {
@@ -57,13 +52,12 @@ internal static class TokenWalkerExtensionMethods
                 _ = tokenWalker.Consume();
             }
     
-            closeTokenIndex = tokenWalker.Index;
-            _ = tokenWalker.Match(SyntaxKind.CloseBraceToken);
+            closeTokenIndex = tokenWalker.Index;            _ = tokenWalker.Match(SyntaxKind.CloseBraceToken);
         }
 
         if (parserModel.Compilation.CompilationUnitKind == CompilationUnitKind.SolutionWide_DefinitionsOnly &&
-            deferredScope.OwnerSyntaxKind == SyntaxKind.FunctionDefinitionNode ||
-            deferredScope.OwnerSyntaxKind == SyntaxKind.ArbitraryCodeBlockNode)
+            (deferredScope.OwnerSyntaxKind == SyntaxKind.FunctionDefinitionNode ||
+             deferredScope.OwnerSyntaxKind == SyntaxKind.ArbitraryCodeBlockNode))
         {
             return;
         }
