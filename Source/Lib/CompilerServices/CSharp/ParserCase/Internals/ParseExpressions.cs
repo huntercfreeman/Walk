@@ -3194,7 +3194,7 @@ public static class ParseExpressions
     public static void CloseLambdaExpressionScope(LambdaExpressionNode lambdaExpressionNode, ref CSharpParserModel parserModel)
     {
         var closeBraceToken = new SyntaxToken(SyntaxKind.CloseBraceToken, parserModel.TokenWalker.Current.TextSpan);        
-        parserModel.CloseScope(closeBraceToken.TextSpan);
+        parserModel.CloseScope(closeBraceToken.TextSpan, isStatementLoop: false);
     }
     
     /// <summary>

@@ -878,11 +878,13 @@ public ref struct CSharpParserModel
         }
     }
 
-    public void CloseScope(TextEditorTextSpan textSpan)
+    public void CloseScope(TextEditorTextSpan textSpan, bool isStatementLoop = true)
     {
         // Check if it is the global scope, if so return early.
         if (ScopeCurrentSubIndex == 0)
             return;
+            
+        var originalScope = ScopeCurrent.OwnerSyntaxKind;
         
         /*if (Compilation.CompilationUnitKind == CompilationUnitKind.SolutionWide_MinimumLocalsData &&
             (CurrentCodeBlockOwner.SyntaxKind == SyntaxKind.FunctionDefinitionNode ||
@@ -897,6 +899,18 @@ public ref struct CSharpParserModel
         
         SetCurrentScope_Scope_EndExclusiveIndex(textSpan.EndExclusiveIndex);
         ScopeCurrentSubIndex = ScopeCurrent.ParentScopeSubIndex;
+        
+        if (isStatementLoop &&
+            originalScope == SyntaxKind.LambdaExpressionNode &&
+            ScopeCurrent.OwnerSyntaxKind == SyntaxKind.LambdaExpressionNode)
+        {
+            var nonLambdaScopeParentSubIndex = ScopeCurrentSubIndex;
+            while (Binder.ScopeList[Compilation.ScopeOffset + nonLambdaScopeParentSubIndex].OwnerSyntaxKind == SyntaxKind.LambdaExpressionNode)
+            {
+                nonLambdaScopeParentSubIndex = Binder.ScopeList[Compilation.ScopeOffset + nonLambdaScopeParentSubIndex].ParentScopeSubIndex;
+            }
+            ScopeCurrentSubIndex = nonLambdaScopeParentSubIndex;
+        }
     }
 
     /// <summary>
