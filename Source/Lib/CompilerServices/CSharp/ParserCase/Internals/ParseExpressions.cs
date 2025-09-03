@@ -2245,6 +2245,8 @@ public static class ParseExpressions
         
         switch (token.SyntaxKind)
         {
+            case SyntaxKind.OpenParenthesisToken:
+                return EmptyMergeToken(EmptyExpressionNode.Empty, ref parserModel);
             case SyntaxKind.CloseParenthesisToken:
                 explicitCastNode.CloseParenthesisToken = token;
                 return explicitCastNode;
