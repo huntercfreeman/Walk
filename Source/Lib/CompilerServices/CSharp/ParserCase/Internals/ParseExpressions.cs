@@ -3152,6 +3152,10 @@ public static class ParseExpressions
         {
             parserModel.ExpressionList.Add((SyntaxKind.EndOfFileToken, lambdaExpressionNode));
             OpenLambdaExpressionScope(lambdaExpressionNode, ref openBraceToken, ref parserModel);
+            if (parserModel.TokenWalker.Current.SyntaxKind == SyntaxKind.EqualsCloseAngleBracketToken)
+            {
+                _ = parserModel.TokenWalker.Consume(); // EqualsCloseAngleBracketToken
+            }
             return EmptyExpressionNode.Empty;
         }
     }
@@ -3936,8 +3940,6 @@ public static class ParseExpressions
             openBraceToken = new SyntaxToken(SyntaxKind.OpenBraceToken, parserModel.TokenWalker.Current.TextSpan);
         
         var resultExpression = ParseLambdaExpressionNode(lambdaExpressionNode, ref openBraceToken, ref parserModel);
-        
-        _ = parserModel.TokenWalker.Consume(); // EqualsCloseAngleBracketToken
         
         return resultExpression;
     }
