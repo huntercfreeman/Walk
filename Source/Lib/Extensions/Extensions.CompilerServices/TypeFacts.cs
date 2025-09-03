@@ -65,7 +65,6 @@ public static class TypeFacts
         countFunctionArgumentEntryList: 0,
         closeParenthesisToken: default,
         inheritedTypeReference: _notApplicableTypeReference,
-        string.Empty,
         ResourceUri.Empty
         // FindAllReferences
         // , referenceHashSet: new()
@@ -93,7 +92,6 @@ public static class TypeFacts
         countFunctionArgumentEntryList: 0,
         closeParenthesisToken: default,
         inheritedTypeReference: _notApplicableTypeReference,
-        string.Empty,
         ResourceUri.Empty
         // FindAllReferences
         // , referenceHashSet: new()
@@ -138,7 +136,6 @@ public static class TypeFacts
         countFunctionArgumentEntryList: 0,
         closeParenthesisToken: default,
         inheritedTypeReference: _notApplicableTypeReference,
-        string.Empty,
         ResourceUri.Empty
         // FindAllReferences
         // , referenceHashSet: new()

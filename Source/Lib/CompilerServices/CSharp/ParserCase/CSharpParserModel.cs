@@ -785,14 +785,11 @@ public ref struct CSharpParserModel
     public readonly void BindTypeDefinitionNode(TypeDefinitionNode typeDefinitionNode, bool shouldOverwrite = false)
     {
         var typeIdentifierText = Binder.CSharpCompilerService.SafeGetText(ResourceUri.Value, typeDefinitionNode.TypeIdentifierToken.TextSpan);
-        var currentNamespaceStatementText = Binder.CSharpCompilerService.SafeGetText(ResourceUri.Value, CurrentNamespaceStatementNode.IdentifierToken.TextSpan);
             
-        if (typeIdentifierText is null || currentNamespaceStatementText is null)
+        if (typeIdentifierText is null)
         {
             return;
         }
-
-        typeDefinitionNode.EncompassingNamespaceIdentifierString = currentNamespaceStatementText;
 
         var success = Binder._allTypeDefinitions.TryAdd(typeIdentifierText, typeDefinitionNode);
         if (!success)
@@ -1024,7 +1021,6 @@ public ref struct CSharpParserModel
                                 countFunctionArgumentEntryList: 0,
                                 closeParenthesisToken: default,
                                 inheritedTypeReference: TypeFacts.NotApplicable.ToTypeReference(),
-                                string.Empty,
                                 ResourceUri));
                     }
                 }

@@ -50,7 +50,6 @@ public partial class CSharpFacts
             countFunctionArgumentEntryList: 0,
             closeParenthesisToken: default,
             TypeFacts.NotApplicable.ToTypeReference(),
-            string.Empty,
             ResourceUri.Empty)
             {
                 IsKeywordType = true
@@ -72,7 +71,6 @@ public partial class CSharpFacts
             countFunctionArgumentEntryList: 0,
             closeParenthesisToken: default,
             TypeFacts.NotApplicable.ToTypeReference(),
-            string.Empty,
             ResourceUri.Empty)
             {
                 IsKeywordType = true
@@ -94,7 +92,6 @@ public partial class CSharpFacts
             countFunctionArgumentEntryList: 0,
             closeParenthesisToken: default,
             TypeFacts.NotApplicable.ToTypeReference(),
-            string.Empty,
             ResourceUri.Empty)
             {
                 IsKeywordType = true
@@ -116,7 +113,6 @@ public partial class CSharpFacts
             countFunctionArgumentEntryList: 0,
             closeParenthesisToken: default,
             TypeFacts.NotApplicable.ToTypeReference(),
-            string.Empty,
             ResourceUri.Empty)
             {
                 IsKeywordType = true
@@ -138,7 +134,6 @@ public partial class CSharpFacts
             countFunctionArgumentEntryList: 0,
             closeParenthesisToken: default,
             TypeFacts.NotApplicable.ToTypeReference(),
-            string.Empty,
             ResourceUri.Empty)
             {
                 IsKeywordType = true
@@ -160,7 +155,6 @@ public partial class CSharpFacts
             countFunctionArgumentEntryList: 0,
             closeParenthesisToken: default,
             TypeFacts.NotApplicable.ToTypeReference(),
-            string.Empty,
             ResourceUri.Empty)
             {
                 IsKeywordType = true
