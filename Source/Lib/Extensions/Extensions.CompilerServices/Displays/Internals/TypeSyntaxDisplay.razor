@@ -40,9 +40,9 @@
 		var typeDefinitionMetadata = syntaxViewModelLocal.ExtendedCompilerService.TypeDefinitionValueList[typeDefinitionNode.MetaIndex];
 	
 		var prefixBuilder = new StringBuilder();
-		prefixBuilder.Append(typeDefinitionNode.AccessModifierKind.ToString().ToLower());
+		prefixBuilder.Append(typeDefinitionMetadata.AccessModifierKind.ToString().ToLower());
 		prefixBuilder.Append(' ');
-		prefixBuilder.Append(typeDefinitionNode.StorageModifierKind.ToString().ToLower());
+		prefixBuilder.Append(typeDefinitionMetadata.StorageModifierKind.ToString().ToLower());
 		
 		prefixText = prefixBuilder.ToString();
 		prefixTextCssClass = "di_keyword";

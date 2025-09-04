@@ -18,7 +18,7 @@
 	string? text;
 	string? textCssClass;
 	SyntaxNodeValue variableDeclarationNode;
-	SyntaxNodeValue variableDeclarationMetadata;
+	VariableDeclarationValue variableDeclarationMetadata;
 	
 	if (syntaxViewModelLocal.DefinitionNode.IsDefault() && syntaxViewModelLocal.TargetNode.IsDefault() && syntaxViewModelLocal.TargetSymbol.IsDefault())
 	{
@@ -30,16 +30,16 @@
 	else if (!syntaxViewModelLocal.DefinitionNode.IsDefault() && syntaxViewModelLocal.DefinitionNode.SyntaxKind == SyntaxKind.VariableDeclarationNode)
 	{
 		variableDeclarationNode = syntaxViewModelLocal.DefinitionNode;
-		variableDeclarationMetadata = syntaxViewModelLocal.ExtendedCompilerService.;
+		variableDeclarationMetadata = syntaxViewModelLocal.ExtendedCompilerService.VariableDeclarationValueList[variableDeclarationNode.MetaIndex];
 		
 		prefixText = string.Empty;
-		text = syntaxViewModelLocal.GetIdentifierText(variableDeclarationNode);
+		text = syntaxViewModelLocal.GetTextFromTextSpan(variableDeclarationNode.IdentifierToken.TextSpan);
 		
-		if (variableDeclarationNode.VariableKind == VariableKind.Field)
+		if (variableDeclarationMetadata.VariableKind == VariableKind.Field)
 			textCssClass = "di_te_field";
-		else if (variableDeclarationNode.VariableKind == VariableKind.Property)
+		else if (variableDeclarationMetadata.VariableKind == VariableKind.Property)
 			textCssClass = "di_te_property";
-		else if (variableDeclarationNode.VariableKind == VariableKind.EnumMember)
+		else if (variableDeclarationMetadata.VariableKind == VariableKind.EnumMember)
 			textCssClass = "di_te_property";
 		else
 			textCssClass = "di_variable";
@@ -49,7 +49,7 @@
 	else if (!syntaxViewModelLocal.TargetNode.IsDefault() && syntaxViewModelLocal.TargetNode.SyntaxKind == SyntaxKind.VariableReferenceNode)
 	{
 		prefixText = "(reference)";
-		text = syntaxViewModelLocal.GetIdentifierText(syntaxViewModelLocal.TargetNode);
+		text = syntaxViewModelLocal.GetTextFromTextSpan(syntaxViewModelLocal.TargetNode.IdentifierToken.TextSpan);
 		textCssClass = "di_variable";
 		variableDeclarationNode = default;
 	}
@@ -81,7 +81,7 @@
     		</span>
     	}
     	
-    	@if (variableDeclarationNode is not null)
+    	@if (!variableDeclarationMetadata.IsDefault())
     	{
     		var syntaxViewModel = new SyntaxViewModel(
     		    SyntaxViewModel.ExtendedCompilerService,
@@ -91,7 +91,7 @@
     			targetNode: default,
     			definitionNode: default,
     			depth: syntaxViewModelLocal.Depth + 1);
-        	<TypeSyntaxDisplay SyntaxViewModel="syntaxViewModel" TypeReference="variableDeclarationNode.TypeReference"/>
+        	<TypeSyntaxDisplay SyntaxViewModel="syntaxViewModel" TypeReference="variableDeclarationMetadata.ResultTypeReference"/>
         	<text>&nbsp;</text>
         }
         else
@@ -114,14 +114,14 @@
     		</span>
     	}
     	
-    	@if (variableDeclarationNode is not null && variableDeclarationNode.VariableKind == VariableKind.Property)
+    	@if (!variableDeclarationMetadata.IsDefault() && variableDeclarationMetadata.VariableKind == VariableKind.Property)
         {
         	<span>
             	{
             	
             	<text><span class="di_keyword"> get</span>;</text>
             	
-            	@if (variableDeclarationNode.HasSetter)
+            	@if (variableDeclarationMetadata.HasSetter)
             	{
             		<text><span class="di_keyword"> set</span>;</text>
             	}

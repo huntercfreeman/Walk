@@ -13,4 +13,9 @@ public struct VariableDeclarationValue
 
     public VariableKind VariableKind { get; set; }
     public TypeReference ResultTypeReference { get; set; }
+    
+    public bool IsDefault()
+    {
+        return ResultTypeReference.IsDefault();
+    }
 }
