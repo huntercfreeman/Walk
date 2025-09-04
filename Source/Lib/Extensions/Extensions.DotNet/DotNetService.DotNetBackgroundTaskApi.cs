@@ -335,6 +335,17 @@ public partial class DotNetService
 
                 try
                 {
+                    for (int i = 0; i < 100; i++)
+                    {
+                        cSharpCompilerService.__CSharpBinder.Pool_TemporaryLocalVariableDeclarationNode_Queue.Enqueue(
+                            new VariableDeclarationNode(
+                                typeReference: default,
+                                identifierToken: default,
+                                VariableKind.Local,
+                                isInitialized: false,
+                                resourceUri: default));
+                    }
+                
                     cSharpCompilerService.__CSharpBinder.ClearAllCompilationUnits();
 
                     var successParseSolution = ParseSolution(editContext, dotNetSolutionModel.Key, CompilationUnitKind.SolutionWide_DefinitionsOnly, tokenBuilder, formattedBuilder);
@@ -391,20 +402,6 @@ public partial class DotNetService
                     //
                     // If you do the clearing after every file in the first too then you don't have to worry about any odd off variable declarations local
                     // that get through then you re-use the local node when pooling.
-                    
-                    var countLocals = 0;
-                    
-                    foreach (var node in cSharpCompilerService.__CSharpBinder.NodeList)
-                    {
-                        if (node.SyntaxKind == SyntaxKind.VariableDeclarationNode)
-                        {
-                            var variableDeclarationNode = (VariableDeclarationNode)node;
-                            if (variableDeclarationNode.VariableKind == VariableKind.Local)
-                                ++countLocals;
-                        }
-                    }
-                    
-                    Console.WriteLine(countLocals);
                 }
                 finally
                 {
@@ -414,6 +411,8 @@ public partial class DotNetService
 
                         cSharpCompilerService.Clear_MAIN_StreamReaderTupleCache();
                         cSharpCompilerService.Clear_BACKUP_StreamReaderTupleCache();
+                        
+                        cSharpCompilerService.__CSharpBinder.Pool_TemporaryLocalVariableDeclarationNode_Queue.Clear();
                     }
                 }
                 return ValueTask.CompletedTask;
@@ -963,6 +962,20 @@ public partial class DotNetService
                         {
                             removeCount++;
                             compilerService.__CSharpBinder.NodeList.RemoveAt(i);
+                            
+                            variableDeclarationNode.TypeReference = default;
+                            variableDeclarationNode.IdentifierToken = default;
+                            variableDeclarationNode.VariableKind = VariableKind.Local;
+                            variableDeclarationNode.IsInitialized = false;
+                            variableDeclarationNode.ResourceUri = default;
+                            variableDeclarationNode.HasGetter = default;
+                            variableDeclarationNode.GetterIsAutoImplemented = default;
+                            variableDeclarationNode.HasSetter = default;
+                            variableDeclarationNode.SetterIsAutoImplemented = default;
+                            variableDeclarationNode.ParentScopeSubIndex = default;
+                            variableDeclarationNode._isFabricated = default;
+                            
+                            compilerService.__CSharpBinder.Pool_TemporaryLocalVariableDeclarationNode_Queue.Enqueue(variableDeclarationNode);
                         }
                     }
                 }

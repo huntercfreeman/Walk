@@ -1,3 +1,4 @@
+using Walk.TextEditor.RazorLib.CompilerServices;
 using Walk.Extensions.CompilerServices.Syntax;
 using Walk.Extensions.CompilerServices.Syntax.Nodes;
 using Walk.Extensions.CompilerServices.Syntax.Nodes.Enums;
@@ -15,12 +16,27 @@ public static class ParseVariables
     {
         VariableDeclarationNode variableDeclarationNode;
 
-        variableDeclarationNode = new VariableDeclarationNode(
-            new TypeReference(consumedTypeClauseNode),
-            consumedIdentifierToken,
-            variableKind,
-            false,
-            parserModel.ResourceUri);
+        if ((parserModel.Compilation.CompilationUnitKind == CompilationUnitKind.SolutionWide_DefinitionsOnly ||
+            parserModel.Compilation.CompilationUnitKind == CompilationUnitKind.SolutionWide_MinimumLocalsData) &&
+            variableKind == VariableKind.Local)
+        {
+            variableDeclarationNode = parserModel.Rent_TemporaryLocalVariableDeclarationNode();
+            variableDeclarationNode.TypeReference = new TypeReference(consumedTypeClauseNode);
+            variableDeclarationNode.IdentifierToken = consumedIdentifierToken;
+            variableDeclarationNode.VariableKind = variableKind;
+            variableDeclarationNode.IsInitialized = false;
+            variableDeclarationNode.ResourceUri = parserModel.ResourceUri;
+            variableDeclarationNode._isFabricated = false;
+        }
+        else
+        {
+            variableDeclarationNode = new VariableDeclarationNode(
+                new TypeReference(consumedTypeClauseNode),
+                consumedIdentifierToken,
+                variableKind,
+                false,
+                parserModel.ResourceUri);
+        }
         
         parserModel.Return_TypeClauseNode(consumedTypeClauseNode);
         

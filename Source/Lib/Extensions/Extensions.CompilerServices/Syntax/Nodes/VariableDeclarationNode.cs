@@ -20,9 +20,9 @@ public sealed class VariableDeclarationNode : IExpressionNode
         ResourceUri = resourceUri;
     }
 
-    public TypeReference TypeReference { get; private set; }
+    public TypeReference TypeReference { get; set; }
 
-    public SyntaxToken IdentifierToken { get; }
+    public SyntaxToken IdentifierToken { get; set; }
     /// <summary>
     /// TODO: Remove the 'set;' on this property
     /// </summary>
@@ -49,7 +49,12 @@ public sealed class VariableDeclarationNode : IExpressionNode
     TypeReference IExpressionNode.ResultTypeReference => TypeFacts.Pseudo.ToTypeReference();
 
     public int ParentScopeSubIndex { get; set; }
-    public bool IsFabricated { get; init; }
+    public bool _isFabricated;
+    public bool IsFabricated
+    {
+        get => _isFabricated;
+        init => _isFabricated = value;
+    }
     public SyntaxKind SyntaxKind => SyntaxKind.VariableDeclarationNode;
 
     public VariableDeclarationNode SetImplicitTypeReference(TypeReference typeReference)

@@ -160,9 +160,9 @@ public ref struct CSharpParserModel
 
     public readonly Scope ScopeCurrent => Binder.ScopeList[Compilation.ScopeOffset + ScopeCurrentSubIndex];
 
-    //public static int POOL_BinaryExpressionNode_HIT { get; set; }
-    //public static int POOL_BinaryExpressionNode_MISS { get; set; }
-    //public static int POOL_BinaryExpressionNode_RETURN { get; set; }
+    public static int POOL_HIT { get; set; }
+    public static int POOL_MISS { get; set; }
+    public static int POOL_RETURN { get; set; }
 
     /// <summary>
     /// It is expected that any invoker of this method will immediately set the returned BinaryExpressionNode instance's:
@@ -173,11 +173,9 @@ public ref struct CSharpParserModel
     {
         if (Binder.Pool_BinaryExpressionNode_Queue.TryDequeue(out var binaryExpressionNode))
         {
-            //++POOL_BinaryExpressionNode_HIT;
             return binaryExpressionNode;
         }
         
-        //++POOL_BinaryExpressionNode_MISS;
         return new BinaryExpressionNode(
             leftOperandTypeReference: default,
             operatorToken: default,
@@ -192,7 +190,6 @@ public ref struct CSharpParserModel
     /// </summary>
     public readonly void Return_BinaryExpressionNode(BinaryExpressionNode binaryExpressionNode)
     {
-        //++POOL_BinaryExpressionNode_RETURN;
         binaryExpressionNode._isFabricated = false;
     
         binaryExpressionNode.LeftOperandTypeReference = default;
@@ -250,6 +247,52 @@ public ref struct CSharpParserModel
         typeClauseNode.ExplicitDefinitionResourceUri = default;
     
         Binder.Pool_TypeClauseNode_Queue.Enqueue(typeClauseNode);
+    }
+    
+    /// <summary>
+    /// It is expected that any invoker of this method will immediately set the returned TemporaryLocalVariableDeclarationNode instance's:
+    /// - TODO
+    /// Thus, the Return_TemporaryLocalVariableDeclarationNode(...) method will NOT clear that property's state.
+    /// </summary>
+    public readonly VariableDeclarationNode Rent_TemporaryLocalVariableDeclarationNode()
+    {
+        if (Binder.Pool_TemporaryLocalVariableDeclarationNode_Queue.TryDequeue(out var variableDeclarationNode))
+        {
+            ++POOL_HIT;
+            return variableDeclarationNode;
+        }
+        
+        ++POOL_MISS;
+        return new VariableDeclarationNode(
+            typeReference: CSharpFacts.Types.Var.ToTypeReference(),
+            identifierToken: default,
+            VariableKind.Local,
+            isInitialized: false,
+            ResourceUri);
+    }
+    
+    /// <summary>
+    /// It is expected that any invoker of this method will immediately set the returned TemporaryLocalVariableDeclarationNode instance's:
+    /// - TODO
+    /// Thus, the Return_TemporaryLocalVariableDeclarationNode(...) method will NOT clear that property's state.
+    /// </summary>
+    public readonly void Return_TemporaryLocalVariableDeclarationNode(VariableDeclarationNode variableDeclarationNode)
+    {
+        ++POOL_RETURN;
+        
+        variableDeclarationNode.TypeReference = default;
+        variableDeclarationNode.IdentifierToken = default;
+        variableDeclarationNode.VariableKind = VariableKind.Local;
+        variableDeclarationNode.IsInitialized = false;
+        variableDeclarationNode.ResourceUri = default;
+        variableDeclarationNode.HasGetter = default;
+        variableDeclarationNode.GetterIsAutoImplemented = default;
+        variableDeclarationNode.HasSetter = default;
+        variableDeclarationNode.SetterIsAutoImplemented = default;
+        variableDeclarationNode.ParentScopeSubIndex = default;
+        variableDeclarationNode._isFabricated = default;
+    
+        Binder.Pool_TemporaryLocalVariableDeclarationNode_Queue.Enqueue(variableDeclarationNode);
     }
     
     /// <summary>
@@ -654,16 +697,30 @@ public ref struct CSharpParserModel
         }
         else
         {
-            variableDeclarationNode = new VariableDeclarationNode(
-                CSharpFacts.Types.Var.ToTypeReference(),
-                variableIdentifierToken,
-                VariableKind.Local,
-                false,
-                ResourceUri)
+            if (Compilation.CompilationUnitKind == CompilationUnitKind.SolutionWide_DefinitionsOnly ||
+                Compilation.CompilationUnitKind == CompilationUnitKind.SolutionWide_MinimumLocalsData)
             {
-                IsFabricated = true,
-            };
-
+                variableDeclarationNode = Rent_TemporaryLocalVariableDeclarationNode();
+                variableDeclarationNode.TypeReference = CSharpFacts.Types.Var.ToTypeReference();
+                variableDeclarationNode.IdentifierToken = variableIdentifierToken;
+                variableDeclarationNode.VariableKind = VariableKind.Local;
+                variableDeclarationNode.IsInitialized = false;
+                variableDeclarationNode.ResourceUri = ResourceUri;
+                variableDeclarationNode._isFabricated = true;
+            }
+            else
+            {
+                variableDeclarationNode = new VariableDeclarationNode(
+                    CSharpFacts.Types.Var.ToTypeReference(),
+                    variableIdentifierToken,
+                    VariableKind.Local,
+                    false,
+                    ResourceUri)
+                {
+                    IsFabricated = true,
+                };
+            }
+            
             variableReferenceNode = Rent_VariableReferenceNode();
             variableReferenceNode.VariableIdentifierToken = variableIdentifierToken;
             variableReferenceNode.VariableDeclarationNode = variableDeclarationNode;

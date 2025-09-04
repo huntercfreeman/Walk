@@ -75,6 +75,10 @@ public class CSharpBinder
 
     public char[] KeywordCheckBuffer { get; } = new char[10];
     
+    internal const int POOL_TEMPORARY_LOCAL_VARIABLE_DECLARATION_NODE_MAX_COUNT = 3;
+    /// <summary>This is only safe to use while parsing</summary>
+    public readonly Queue<VariableDeclarationNode> Pool_TemporaryLocalVariableDeclarationNode_Queue = new();
+    
     internal const int POOL_BINARY_EXPRESSION_NODE_MAX_COUNT = 3;
     /// <summary>This is only safe to use while parsing</summary>
     internal readonly Queue<BinaryExpressionNode> Pool_BinaryExpressionNode_Queue = new();

@@ -5,6 +5,7 @@ using Walk.Extensions.CompilerServices.Syntax;
 using Walk.Extensions.CompilerServices.Syntax.Nodes;
 using Walk.Extensions.CompilerServices.Syntax.Nodes.Enums;
 using Walk.Extensions.CompilerServices.Syntax.Nodes.Interfaces;
+using Walk.TextEditor.RazorLib.CompilerServices;
 using Walk.TextEditor.RazorLib.Decorations.Models;
 using Walk.TextEditor.RazorLib.Exceptions;
 using Walk.TextEditor.RazorLib.Lexers.Models;
@@ -2866,12 +2867,26 @@ public static class ParseExpressions
                             nameToken = parserModel.Binder.GetNameToken(expressionNode);
                         }
                         
-                        variableDeclarationNode = new VariableDeclarationNode(
-                            new TypeReference(typeClauseNode),
-                            nameToken,
-                            VariableKind.Local,
-                            false,
-                            parserModel.ResourceUri);
+                        if (parserModel.Compilation.CompilationUnitKind == CompilationUnitKind.SolutionWide_DefinitionsOnly ||
+                            parserModel.Compilation.CompilationUnitKind == CompilationUnitKind.SolutionWide_MinimumLocalsData)
+                        {
+                            variableDeclarationNode = parserModel.Rent_TemporaryLocalVariableDeclarationNode();
+                            variableDeclarationNode.TypeReference = new TypeReference(typeClauseNode);
+                            variableDeclarationNode.IdentifierToken = nameToken;
+                            variableDeclarationNode.VariableKind = VariableKind.Local;
+                            variableDeclarationNode.IsInitialized = false;
+                            variableDeclarationNode.ResourceUri = parserModel.ResourceUri;
+                            variableDeclarationNode._isFabricated = false;
+                        }
+                        else
+                        {
+                            variableDeclarationNode = new VariableDeclarationNode(
+                                new TypeReference(typeClauseNode),
+                                nameToken,
+                                VariableKind.Local,
+                                false,
+                                parserModel.ResourceUri);
+                        }
                         parserModel.Return_TypeClauseNode(typeClauseNode);
                     }
                     else
@@ -2889,6 +2904,7 @@ public static class ParseExpressions
                         }
                         else
                         {
+                            // TODO: Why is typeClauseNode not returned here, but it is in the other conditional branches?
                             variableDeclarationNode = ParseVariables.HandleVariableDeclarationExpression(
                                 typeClauseNode,
                                 identifierToken,
