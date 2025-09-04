@@ -58,7 +58,7 @@
 		{
 			var constructorDefinitionNode = syntaxViewModelLocal.DefinitionNode;
 			var constructorDefinitionMetadata = syntaxViewModelLocal.ExtendedCompilerService.ConstructorDefinitionValueList[constructorDefinitionNode.MetaIndex];
-			returnTypeClauseNode = constructorDefinitionNode.ReturnTypeReference;
+			returnTypeClauseNode = constructorDefinitionMetadata.ReturnTypeReference;
 			returnTypeClauseNodeText = null;
 			methodName = null;
 			hasGenericParameterListing = false;
@@ -83,7 +83,7 @@
 		
 		if (syntaxViewModelLocal.TargetNode.SyntaxKind == SyntaxKind.FunctionInvocationNode)
 		{
-			var functionInvocationNode = (FunctionInvocationNode)syntaxViewModelLocal.TargetNode;
+			var functionInvocationNode = syntaxViewModelLocal.TargetNode;
 			returnTypeClauseNode = functionInvocationNode.ResultTypeReference;
 			returnTypeClauseNodeText = null;
 			methodName = syntaxViewModelLocal.GetIdentifierText(functionInvocationNode);
