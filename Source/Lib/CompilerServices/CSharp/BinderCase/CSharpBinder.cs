@@ -70,6 +70,7 @@ public class CSharpBinder
     public List<SyntaxNodeValue> NodeList { get; } = new();
     public List<TypeDefinitionValue> TypeDefinitionValueList { get; } = new();
     public List<FunctionDefinitionValue> FunctionDefinitionValueList { get; } = new();
+    public List<VariableDeclarationValue> VariableDeclarationValueList { get; } = new();
 
     /// <summary>
     /// This list is used within TextEditorEditContext and for the lexers to re-use by clearing it prior to starting the lexing.

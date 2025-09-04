@@ -327,7 +327,7 @@ public ref struct CSharpParserModel
     /// </summary>
     public readonly void Return_VariableReferenceNode(VariableReferenceNode variableReferenceNode)
     {
-        variableReferenceNode.VariableDeclarationNode = default;
+        variableReferenceNode.ResultTypeReference = TypeFacts.Empty.ToTypeReference();
         variableReferenceNode._isFabricated = false;
     
         Binder.Pool_VariableReferenceNode_Queue.Enqueue(variableReferenceNode);
@@ -689,6 +689,7 @@ public ref struct CSharpParserModel
         bool shouldCreateSymbol = true)
     {
         VariableReferenceNode? variableReferenceNode;
+        TypeReference typeReference;
 
         if (TryGetVariableDeclarationHierarchically(
                 ResourceUri,
@@ -698,40 +699,18 @@ public ref struct CSharpParserModel
                 variableIdentifierToken.TextSpan,
                 out var variableDeclarationNode))
         {
-            variableReferenceNode = Rent_VariableReferenceNode();
-            variableReferenceNode.VariableIdentifierToken = variableIdentifierToken;
-            variableReferenceNode.VariableDeclarationNode = variableDeclarationNode;
+            
+            var variableReferenceMetadata = Binder.VariableDeclarationValueList[variableDeclarationNode.MetaIndex];
+            typeReference = variableReferenceMetadata.ResultTypeReference;
         }
         else
         {
-            if (Compilation.CompilationUnitKind == CompilationUnitKind.SolutionWide_DefinitionsOnly ||
-                Compilation.CompilationUnitKind == CompilationUnitKind.SolutionWide_MinimumLocalsData)
-            {
-                variableDeclarationNode = Rent_TemporaryLocalVariableDeclarationNode();
-                variableDeclarationNode.TypeReference = CSharpFacts.Types.Var.ToTypeReference();
-                variableDeclarationNode.IdentifierToken = variableIdentifierToken;
-                variableDeclarationNode.VariableKind = VariableKind.Local;
-                variableDeclarationNode.IsInitialized = false;
-                variableDeclarationNode.ResourceUri = ResourceUri;
-                variableDeclarationNode._isFabricated = true;
-            }
-            else
-            {
-                variableDeclarationNode = new VariableDeclarationNode(
-                    CSharpFacts.Types.Var.ToTypeReference(),
-                    variableIdentifierToken,
-                    VariableKind.Local,
-                    false,
-                    ResourceUri)
-                {
-                    IsFabricated = true,
-                };
-            }
-            
-            variableReferenceNode = Rent_VariableReferenceNode();
-            variableReferenceNode.VariableIdentifierToken = variableIdentifierToken;
-            variableReferenceNode.VariableDeclarationNode = variableDeclarationNode;
+            typeReference = CSharpFacts.Types.Var.ToTypeReference();
         }
+        
+        variableReferenceNode = Rent_VariableReferenceNode();
+        variableReferenceNode.VariableIdentifierToken = variableIdentifierToken;
+        variableReferenceNode.ResultTypeReference = typeReference;
 
         if (shouldCreateSymbol)
             CreateVariableSymbol(variableReferenceNode.VariableIdentifierToken, variableDeclarationNode.VariableKind);
@@ -1579,7 +1558,7 @@ public ref struct CSharpParserModel
     
     public bool TryAddVariableDeclarationNodeByScope(
         TextEditorTextSpan variableIdentifierTextSpan,
-        SyntaxNodeValue variableDeclarationNode)
+        VariableDeclarationNode variableDeclarationNode)
     {
         var scopeSubIndex = ScopeCurrentSubIndex;
 
@@ -1602,6 +1581,19 @@ public ref struct CSharpParserModel
         if (matchNode.IsDefault())
         {
             variableDeclarationNode.ParentScopeSubIndex = scopeSubIndex;
+            
+            var variableDeclarationNodeValue = new SyntaxNodeValue(
+                variableDeclarationNode.IdentifierToken,
+                variableDeclarationNode.ResourceUri,
+                variableDeclarationNode.IsFabricated,
+                variableDeclarationNode.SyntaxKind,
+                variableDeclarationNode.ParentScopeSubIndex,
+                variableDeclarationNode.SelfScopeSubIndex,
+                metaIndex: Binder.VariableDefinitionValueList.Count);
+            
+            Binder.VariableDefinitionValueList.Add(new VariableDeclarationValue(
+                variableDeclarationNode.VariableKind,
+                variableDeclarationNode.ResultTypeReference));
             
             Binder.NodeList.Insert(
                 Compilation.NodeOffset + Compilation.NodeLength,
