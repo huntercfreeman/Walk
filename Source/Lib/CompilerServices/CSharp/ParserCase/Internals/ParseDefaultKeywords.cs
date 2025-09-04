@@ -1043,7 +1043,7 @@ public class ParseDefaultKeywords
                                 // TODO: Cannot use ref, out, or in...
                                 var compilation = parserModel.Compilation;
                                 
-                                ISyntaxNode? previousNode = null;
+                                SyntaxNodeValue previousNode = default;
                                 
                                 for (int i = previousCompilationUnit.ScopeOffset; i < previousCompilationUnit.ScopeOffset + previousCompilationUnit.ScopeLength; i++)
                                 {
@@ -1061,10 +1061,11 @@ public class ParseDefaultKeywords
                                     }
                                 }
                                 
-                                if (previousNode is not null)
+                                if (!previousNode.IsDefault())
                                 {
-                                    var previousTypeDefinitionNode = (TypeDefinitionNode)previousNode;
-                                    typeDefinitionNode.IndexPartialTypeDefinition = previousTypeDefinitionNode.IndexPartialTypeDefinition;
+                                    var previousTypeDefinitionNode = previousNode;
+                                    var previousTypeDefinitionMetadata = parserModel.Binder.TypeDefinitionValueList[previousTypeDefinitionNode.MetaIndex];
+                                    typeDefinitionNode.IndexPartialTypeDefinition = previousTypeDefinitionMetadata.IndexPartialTypeDefinition;
                                 }
                             }
                         }
@@ -1237,10 +1238,12 @@ public class ParseDefaultKeywords
                         
                         if (parserModel.Binder.__CompilationUnitMap.TryGetValue(partialTypeDefinitionEntry.ResourceUri, out var innerCompilationUnit))
                         {
-                            var innerTypeDefinitionNode = (TypeDefinitionNode)parserModel.Binder.NodeList[
+                            var innerTypeDefinitionNode = parserModel.Binder.NodeList[
                                 innerCompilationUnit.NodeOffset +
                                 parserModel.Binder.ScopeList[innerCompilationUnit.ScopeOffset + partialTypeDefinitionEntry.ScopeSubIndex].NodeSubIndex];
-                            innerTypeDefinitionNode.IndexPartialTypeDefinition = partialTypeDefinitionEntry.IndexStartGroup + 1;
+                            var innerTypeDefinitionMetadata = parserModel.Binder.TypeDefinitionValueList[innerTypeDefinitionNode.MetaIndex];
+                            innerTypeDefinitionMetadata.IndexPartialTypeDefinition = partialTypeDefinitionEntry.IndexStartGroup + 1;
+                            parserModel.Binder.TypeDefinitionValueList[innerTypeDefinitionNode.MetaIndex] = innerTypeDefinitionMetadata;
                         }
                     }
                     

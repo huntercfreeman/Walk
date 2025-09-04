@@ -1594,11 +1594,11 @@ public ref struct CSharpParserModel
                 variableDeclarationNode.SyntaxKind,
                 variableDeclarationNode.ParentScopeSubIndex,
                 -1,
-                metaIndex: Binder.VariableDefinitionValueList.Count);
+                metaIndex: Binder.VariableDeclarationValueList.Count);
             
-            Binder.VariableDefinitionValueList.Add(new VariableDeclarationValue(
+            Binder.VariableDeclarationValueList.Add(new VariableDeclarationValue(
                 variableDeclarationNode.VariableKind,
-                variableDeclarationNode.ResultTypeReference));
+                variableDeclarationNode.TypeReference));
             
             Binder.NodeList.Insert(
                 Compilation.NodeOffset + Compilation.NodeLength,

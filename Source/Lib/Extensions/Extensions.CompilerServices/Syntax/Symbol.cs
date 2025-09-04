@@ -56,4 +56,9 @@ public record struct Symbol
     public string SymbolKindString => SyntaxKind.ToString();
 
     public SyntaxKind SyntaxKind { get; }
+    
+    public bool IsDefault()
+    {
+        return SyntaxKind == SyntaxKind.NotApplicable;
+    }
 }

@@ -944,7 +944,7 @@ public sealed class CSharpCompilerService : IExtendedCompilerService
                             
                             if (namespaceGroup.ConstructorWasInvoked)
                             {
-                                foreach (var typeDefinitionNode in __CSharpBinder.GetTopLevelTypeDefinitionNodes_NamespaceGroup(namespaceGroup).Where(x => x.TypeIdentifierToken.TextSpan.GetText(virtualizationResult.Model.GetAllText(), _textEditorService).Contains(filteringWord)).Take(5))
+                                foreach (var typeDefinitionNode in __CSharpBinder.GetTopLevelTypeDefinitionNodes_NamespaceGroup(namespaceGroup).Where(x => x.IdentifierToken.TextSpan.GetText(virtualizationResult.Model.GetAllText(), _textEditorService).Contains(filteringWord)).Take(5))
                                 {
                                     var resourceUriValue = virtualizationResult.Model.PersistentState.ResourceUri.Value;
 
@@ -1937,13 +1937,13 @@ public sealed class CSharpCompilerService : IExtendedCompilerService
     /// The option argument 'symbol' can be provided if available. It might provide additional information to the method's implementation
     /// that is necessary to find certain nodes (ones that are in a separate file are most common to need a symbol to find).
     /// </summary>
-    public ISyntaxNode? GetDefinitionNode(TextEditorTextSpan textSpan, ResourceUri resourceUri, ICompilerServiceResource compilerServiceResource, Symbol? symbol = null)
+    public SyntaxNodeValue GetDefinitionNode(TextEditorTextSpan textSpan, ResourceUri resourceUri, ICompilerServiceResource compilerServiceResource, Symbol? symbol = null)
     {
         if (symbol is null)
             return null;
         
         if (__CSharpBinder.__CompilationUnitMap.TryGetValue(resourceUri, out var compilationUnit))
-            return __CSharpBinder.GetDefinitionNode(resourceUri, compilationUnit, textSpan, symbol.Value.SyntaxKind, symbol);
+            return __CSharpBinder.GetDefinitionNodeValue(resourceUri, compilationUnit, textSpan, symbol.Value.SyntaxKind, symbol);
         
         return null;
     }

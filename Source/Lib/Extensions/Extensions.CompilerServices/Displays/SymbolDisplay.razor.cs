@@ -110,7 +110,7 @@ public partial class SymbolDisplay : ComponentBase
     ///
     /// Otherwise, ask the IBinder for the definition node:
     /// </summary>
-    public static ISyntaxNode? GetDefinitionNode(TextEditorService textEditorService, Symbol symbolLocal, ISyntaxNode targetNode, ResourceUri resourceUri)
+    public static SyntaxNodeValue GetDefinitionNode(TextEditorService textEditorService, Symbol symbolLocal, ISyntaxNode targetNode, ResourceUri resourceUri)
     {
         try
         {
@@ -131,12 +131,12 @@ public partial class SymbolDisplay : ComponentBase
             var extendedCompilerService = (IExtendedCompilerService)textEditorModel.PersistentState.CompilerService;
             var compilerServiceResource = extendedCompilerService.GetResource(textEditorModel.PersistentState.ResourceUri);
     
-            return extendedCompilerService.GetDefinitionNode(symbolLocal.TextSpan, textEditorModel.PersistentState.ResourceUri, compilerServiceResource, symbolLocal);
+            return extendedCompilerService.GetDefinitionNodeValue(symbolLocal.TextSpan, textEditorModel.PersistentState.ResourceUri, compilerServiceResource, symbolLocal);
         }
         catch (Exception e)
         {
             Console.WriteLine(e);
-            return null;
+            return default;
         }
     }
 }

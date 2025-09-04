@@ -15,7 +15,7 @@
 	
 	ResourceUri resourceUri;
 	
-	if (definitionNode is null)
+	if (definitionNode.IsDefault())
 	{
     	resourceUri = ResourceUri;
 	}
@@ -24,15 +24,15 @@
 	    switch (definitionNode.SyntaxKind)
     	{
     	    case SyntaxKind.VariableDeclarationNode:
-            	var variableDeclarationNode = (VariableDeclarationNode)definitionNode;
+            	var variableDeclarationNode = definitionNode;
             	resourceUri = variableDeclarationNode.ResourceUri;
             	break;
             case SyntaxKind.FunctionDefinitionNode:
-            	var functionDefinitionNode = (FunctionDefinitionNode)definitionNode;
+            	var functionDefinitionNode = definitionNode;
             	resourceUri = functionDefinitionNode.ResourceUri;
             	break;
             case SyntaxKind.TypeDefinitionNode:
-            	var innerTypeDefinitionNode = (TypeDefinitionNode)definitionNode;
+            	var innerTypeDefinitionNode = definitionNode;
             	resourceUri = innerTypeDefinitionNode.ResourceUri;
             	break;
     	    default:

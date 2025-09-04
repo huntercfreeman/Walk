@@ -1955,7 +1955,7 @@ public class CSharpBinder
     /// This is to say that, any type definitions which are nested, would not
     /// be in this collection.
     /// </summary>
-    public IEnumerable<TypeDefinitionNode> GetTopLevelTypeDefinitionNodes_NamespaceGroup(NamespaceGroup namespaceGroup)
+    public IEnumerable<SyntaxNodeValue> GetTopLevelTypeDefinitionNodes_NamespaceGroup(NamespaceGroup namespaceGroup)
     {
         return namespaceGroup.NamespaceStatementNodeList
             .SelectMany(GetTopLevelTypeDefinitionNodes_NamespaceStatementNode);
