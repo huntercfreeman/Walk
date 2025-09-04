@@ -25,6 +25,7 @@ public interface IExtendedCompilerService : ICompilerService
     public IReadOnlyList<TypeDefinitionValue> TypeDefinitionValueList { get; }
     public IReadOnlyList<FunctionDefinitionValue> FunctionDefinitionValueList { get; }
     public IReadOnlyList<VariableDeclarationValue> VariableDeclarationValueList { get; }
+    public IReadOnlyList<ConstructorDefinitionValue> ConstructorDefinitionValueList { get; }
 
     public ISyntaxNode? GetSyntaxNode(int positionIndex, ResourceUri resourceUri, ICompilerServiceResource? compilerServiceResource);
     public SyntaxNodeValue GetDefinitionNodeValue(TextEditorTextSpan textSpan, ResourceUri resourceUri, ICompilerServiceResource compilerServiceResource, Symbol? symbol = null);

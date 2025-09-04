@@ -6,13 +6,20 @@ public struct VariableDeclarationValue
 {
     public VariableDeclarationValue(
         VariableKind variableKind,
-        TypeReference resultTypeReference)
+        TypeReference resultTypeReference,
+        bool hasSetter,
+        bool hasGetter)
     {
         VariableKind = variableKind;
+        ResultTypeReference = resultTypeReference;
+        HasSetter = hasSetter;
+        HasGetter = hasGetter;
     }
 
     public VariableKind VariableKind { get; set; }
     public TypeReference ResultTypeReference { get; set; }
+    public bool HasSetter { get; set; }
+    public bool HasGetter { get; set; }
     
     public bool IsDefault()
     {

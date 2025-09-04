@@ -46,7 +46,7 @@
 		
 		prefixText = prefixBuilder.ToString();
 		prefixTextCssClass = "di_keyword";
-		text = syntaxViewModelLocal.GetIdentifierText(typeDefinitionNode);
+		text = syntaxViewModelLocal.GetTextFromTextSpan(typeDefinitionNode.IdentifierToken.TextSpan);
 		syntaxHighlightingClassCssString = "di_type";
 		hasGenericParameterListing = typeDefinitionMetadata.OpenAngleBracketToken.ConstructorWasInvoked;
 		hasQuestionMark = null;

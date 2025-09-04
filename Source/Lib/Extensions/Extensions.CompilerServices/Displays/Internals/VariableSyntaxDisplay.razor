@@ -26,6 +26,7 @@
 		text = null;
 		textCssClass = "di_variable";
 		variableDeclarationNode = default;
+		variableDeclarationMetadata = default;
 	}
 	else if (!syntaxViewModelLocal.DefinitionNode.IsDefault() && syntaxViewModelLocal.DefinitionNode.SyntaxKind == SyntaxKind.VariableDeclarationNode)
 	{
@@ -52,6 +53,7 @@
 		text = syntaxViewModelLocal.GetTextFromTextSpan(syntaxViewModelLocal.TargetNode.IdentifierToken.TextSpan);
 		textCssClass = "di_variable";
 		variableDeclarationNode = default;
+		variableDeclarationMetadata = default;
 	}
 	else if (!syntaxViewModelLocal.TargetSymbol.IsDefault() &&
 			 (syntaxViewModelLocal.TargetSymbol.SyntaxKind == SyntaxKind.VariableSymbol ||
@@ -63,6 +65,7 @@
 		text = syntaxViewModelLocal.GetTextFromTextSpan(syntaxViewModelLocal.TargetSymbol.TextSpan);
 		textCssClass = "di_variable";
 		variableDeclarationNode = default;
+		variableDeclarationMetadata = default;
 	}
 	else
 	{
@@ -70,6 +73,7 @@
 		text = null;
 		textCssClass = "di_variable";
 		variableDeclarationNode = default;
+		variableDeclarationMetadata = default;
 	}
     
     <span>

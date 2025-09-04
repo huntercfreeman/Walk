@@ -70,6 +70,7 @@ public class CSharpBinder
     public List<SyntaxNodeValue> NodeList { get; } = new();
     public List<TypeDefinitionValue> TypeDefinitionValueList { get; } = new();
     public List<FunctionDefinitionValue> FunctionDefinitionValueList { get; } = new();
+    public List<ConstructorDefinitionValue> ConstructorDefinitionValueList { get; } = new();
     public List<VariableDeclarationValue> VariableDeclarationValueList { get; } = new();
 
     /// <summary>

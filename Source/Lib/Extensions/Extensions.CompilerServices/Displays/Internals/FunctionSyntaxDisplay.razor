@@ -44,23 +44,26 @@
 		
 		if (syntaxViewModelLocal.DefinitionNode.SyntaxKind == SyntaxKind.FunctionDefinitionNode)
 		{
-			var functionDefinitionNode = (FunctionDefinitionNode)syntaxViewModelLocal.DefinitionNode;
-			returnTypeClauseNode = functionDefinitionNode.ReturnTypeReference;
+			var functionDefinitionNode = syntaxViewModelLocal.DefinitionNode;
+			var functionDefinitionMetadata = syntaxViewModelLocal.ExtendedCompilerService.FunctionDefinitionValueList[functionDefinitionNode.MetaIndex];
+			
+			returnTypeClauseNode = functionDefinitionMetadata.ReturnTypeReference;
 			returnTypeClauseNodeText = null;
-			methodName = syntaxViewModelLocal.GetIdentifierText(functionDefinitionNode);
-			hasGenericParameterListing = functionDefinitionNode.OpenAngleBracketToken.ConstructorWasInvoked;
-			indexFunctionArgumentEntryList = functionDefinitionNode.IndexFunctionArgumentEntryList;
-			countFunctionArgumentEntryList = functionDefinitionNode.CountFunctionArgumentEntryList;
+			methodName = syntaxViewModelLocal.GetTextFromTextSpan(functionDefinitionNode.IdentifierToken.TextSpan);
+			hasGenericParameterListing = functionDefinitionMetadata.OpenAngleBracketToken.ConstructorWasInvoked;
+			indexFunctionArgumentEntryList = functionDefinitionMetadata.IndexFunctionArgumentEntryList;
+			countFunctionArgumentEntryList = functionDefinitionMetadata.CountFunctionArgumentEntryList;
 		}
 		else if (syntaxViewModelLocal.DefinitionNode.SyntaxKind == SyntaxKind.ConstructorDefinitionNode)
 		{
-			var constructorDefinitionNode = (ConstructorDefinitionNode)syntaxViewModelLocal.DefinitionNode;
+			var constructorDefinitionNode = syntaxViewModelLocal.DefinitionNode;
+			var constructorDefinitionMetadata = syntaxViewModelLocal.ExtendedCompilerService.ConstructorDefinitionValueList[constructorDefinitionNode.MetaIndex];
 			returnTypeClauseNode = constructorDefinitionNode.ReturnTypeReference;
 			returnTypeClauseNodeText = null;
 			methodName = null;
 			hasGenericParameterListing = false;
-			indexFunctionArgumentEntryList = constructorDefinitionNode.IndexFunctionArgumentEntryList;
-			countFunctionArgumentEntryList = constructorDefinitionNode.CountFunctionArgumentEntryList;
+			indexFunctionArgumentEntryList = constructorDefinitionMetadata.IndexFunctionArgumentEntryList;
+			countFunctionArgumentEntryList = constructorDefinitionMetadata.CountFunctionArgumentEntryList;
 		}
 		else
 		{
