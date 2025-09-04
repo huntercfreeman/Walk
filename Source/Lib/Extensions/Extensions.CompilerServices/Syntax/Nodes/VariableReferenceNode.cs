@@ -9,7 +9,7 @@ public sealed class VariableReferenceNode : IExpressionNode
         VariableDeclarationNode variableDeclarationNode)
     {
         VariableIdentifierToken = variableIdentifierToken;
-        VariableDeclarationNode = variableDeclarationNode;
+        ResultTypeReference = variableDeclarationNode.TypeReference;
     }
     
     public VariableReferenceNode(VariableReference variableReference)
@@ -22,22 +22,8 @@ public sealed class VariableReferenceNode : IExpressionNode
     public bool _isFabricated;
 
     public SyntaxToken VariableIdentifierToken { get; set; }
-    /// <summary>
-    /// The <see cref="VariableDeclarationNode"/> is null when the variable is undeclared
-    ///
-    /// TODO: Do not store the VariableDeclarationNode
-    /// </summary>
-    public VariableDeclarationNode VariableDeclarationNode { get; set; }
-    public TypeReference ResultTypeReference
-    {
-        get
-        {
-            if (VariableDeclarationNode is null)
-                return TypeFacts.Empty.ToTypeReference();
-            
-            return VariableDeclarationNode.TypeReference;
-        }
-    }
+    public TypeReference TypeReference { get; set; }
+    public TypeReference ResultTypeReference { get; set; } = TypeFacts.Empty.ToTypeReference();
 
     public bool IsFabricated
     {

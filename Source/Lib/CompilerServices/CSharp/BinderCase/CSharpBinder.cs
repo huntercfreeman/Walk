@@ -69,6 +69,7 @@ public class CSharpBinder
     
     public List<SyntaxNodeValue> NodeList { get; } = new();
     public List<TypeDefinitionValue> TypeDefinitionValueList { get; } = new();
+    public List<FunctionDefinitionValue> FunctionDefinitionValueList { get; } = new();
 
     /// <summary>
     /// This list is used within TextEditorEditContext and for the lexers to re-use by clearing it prior to starting the lexing.
@@ -1338,7 +1339,7 @@ public class CSharpBinder
             }
         }
 
-        return null;
+        return default;
     }
     
     private bool ArgumentModifierEqualsParameterModifier(ArgumentModifierKind argumentModifier, ParameterModifierKind parameterModifier)
@@ -1812,21 +1813,35 @@ public class CSharpBinder
         }
     }
     
+    public IEnumerable<ISyntaxNode> GetMemberList_TypeDefinitionNode(SyntaxNodeValue typeDefinitionNode)
+    {
+        var typeDefinitionMetadata = TypeDefinitionValueList[typeDefinitionNode.MetaIndex];
+        return GetMemberList_TypeDefinitionNode(typeDefinitionNode.ResourceUri, typeDefinitionNode.SelfScopeSubIndex, typeDefinitionMetadata.IndexPartialTypeDefinition);
+    }
+    
     public IEnumerable<ISyntaxNode> GetMemberList_TypeDefinitionNode(TypeDefinitionNode typeDefinitionNode)
     {
-        if (typeDefinitionNode.SelfScopeSubIndex == -1 ||
-            !__CompilationUnitMap.TryGetValue(typeDefinitionNode.ResourceUri, out var compilationUnit))
+        return GetMemberList_TypeDefinitionNode(typeDefinitionNode.ResourceUri, typeDefinitionNode.SelfScopeSubIndex, typeDefinitionNode.IndexPartialTypeDefinition);
+    }
+    
+    public IEnumerable<SyntaxNodeValue> GetMemberList_TypeDefinitionNode(
+        ResourceUri typeDefinitionResourceUri,
+        int typeDefinitionSelfScopeSubIndex,
+        int typeDefinitionIndexPartialTypeDefinition)
+    {
+        if (typeDefinitionSelfScopeSubIndex == -1 ||
+            !__CompilationUnitMap.TryGetValue(typeDefinitionResourceUri, out var compilationUnit))
         {
-            return Array.Empty<ISyntaxNode>();
+            return Array.Empty<SyntaxNodeValue>();
         }
         
-        var syntaxNodeList = new List<ISyntaxNode>();
+        var syntaxNodeList = new List<SyntaxNodeValue>();
         
         for (int i = compilationUnit.NodeOffset; i < compilationUnit.NodeOffset + compilationUnit.NodeLength; i++)
         {
             var node = NodeList[i];
             
-            if (node.ParentScopeSubIndex == typeDefinitionNode.SelfScopeSubIndex &&
+            if (node.ParentScopeSubIndex == typeDefinitionSelfScopeSubIndex &&
                 (node.SyntaxKind == SyntaxKind.TypeDefinitionNode ||
                  node.SyntaxKind == SyntaxKind.FunctionDefinitionNode ||
                  node.SyntaxKind == SyntaxKind.VariableDeclarationNode))
@@ -1843,19 +1858,19 @@ public class CSharpBinder
             }
         }*/
         
-        if (typeDefinitionNode.IndexPartialTypeDefinition != -1)
+        if (typeDefinitionIndexPartialTypeDefinition != -1)
         {
-            int positionExclusive = typeDefinitionNode.IndexPartialTypeDefinition;
+            int positionExclusive = typeDefinitionIndexPartialTypeDefinition;
             while (positionExclusive < PartialTypeDefinitionList.Count)
             {
-                if (PartialTypeDefinitionList[positionExclusive].IndexStartGroup == typeDefinitionNode.IndexPartialTypeDefinition)
+                if (PartialTypeDefinitionList[positionExclusive].IndexStartGroup == typeDefinitionIndexPartialTypeDefinition)
                 {
                     CSharpCompilationUnit innerCompilationUnit;
                     ResourceUri innerResourceUri;
                     
                     if (PartialTypeDefinitionList[positionExclusive].ScopeSubIndex != -1)
                     {
-                        if (PartialTypeDefinitionList[positionExclusive].ResourceUri != typeDefinitionNode.ResourceUri)
+                        if (PartialTypeDefinitionList[positionExclusive].ResourceUri != typeDefinitionResourceUri)
                         {
                             if (__CompilationUnitMap.TryGetValue(PartialTypeDefinitionList[positionExclusive].ResourceUri, out var temporaryCompilationUnit))
                             {
@@ -1871,7 +1886,7 @@ public class CSharpBinder
                         else
                         {
                             innerCompilationUnit = compilationUnit;
-                            innerResourceUri = typeDefinitionNode.ResourceUri;
+                            innerResourceUri = typeDefinitionResourceUri;
                         }
                         
                         if (!innerCompilationUnit.IsDefault())
@@ -1905,9 +1920,9 @@ public class CSharpBinder
         return syntaxNodeList;
     }
     
-    private readonly List<ISyntaxNode> _getMemberList = new();
+    private readonly List<SyntaxNodeValue> _getMemberList = new();
     
-    internal List<ISyntaxNode> Internal_GetMemberList_TypeDefinitionNode(TypeDefinitionNode typeDefinitionNode)
+    internal List<SyntaxNodeValue> Internal_GetMemberList_TypeDefinitionNode(TypeDefinitionNode typeDefinitionNode)
     {
         _getMemberList.Clear();
     
@@ -2025,22 +2040,22 @@ public class CSharpBinder
     /// <see cref="GetTopLevelTypeDefinitionNodes"/> provides a collection
     /// which contains all top level type definitions of the <see cref="NamespaceStatementNode"/>.
     /// </summary>
-    public IEnumerable<TypeDefinitionNode> GetTopLevelTypeDefinitionNodes_NamespaceStatementNode(NamespaceStatementNode namespaceStatementNode)
+    public IEnumerable<SyntaxNodeValue> GetTopLevelTypeDefinitionNodes_NamespaceStatementNode(NamespaceStatementNode namespaceStatementNode)
     {
         if (namespaceStatementNode.SelfScopeSubIndex == -1 ||
             !__CompilationUnitMap.TryGetValue(namespaceStatementNode.ResourceUri, out var compilationUnit))
         {
-            return Array.Empty<TypeDefinitionNode>();
+            return Array.Empty<SyntaxNodeValue>();
         }
 
-        var typeDefinitionNodeList = new List<TypeDefinitionNode>();
+        var typeDefinitionNodeList = new List<SyntaxNodeValue>();
         
         for (int i = compilationUnit.NodeOffset; i < compilationUnit.NodeOffset + compilationUnit.NodeLength; i++)
         {
             var node = NodeList[i];
             
             if (node.ParentScopeSubIndex == namespaceStatementNode.SelfScopeSubIndex && node.SyntaxKind == SyntaxKind.TypeDefinitionNode)
-                typeDefinitionNodeList.Add((TypeDefinitionNode)node);
+                typeDefinitionNodeList.Add((SyntaxNodeValue)node);
         }
 
         return typeDefinitionNodeList;

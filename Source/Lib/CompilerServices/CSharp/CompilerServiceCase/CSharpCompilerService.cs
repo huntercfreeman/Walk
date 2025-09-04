@@ -1046,8 +1046,7 @@ public sealed class CSharpCompilerService : IExtendedCompilerService
                             
                             if (!maybeTypeDefinitionNode.IsDefault() && maybeTypeDefinitionNode.SyntaxKind == SyntaxKind.TypeDefinitionNode)
                             {
-                                var typeDefinitionNode = (TypeDefinitionNode)maybeTypeDefinitionNode;
-                                var memberList = __CSharpBinder.GetMemberList_TypeDefinitionNode(typeDefinitionNode);
+                                var memberList = __CSharpBinder.GetMemberList_TypeDefinitionNode(maybeTypeDefinitionNode);
                                 ISyntaxNode? foundDefinitionNode = null;
                                 
                                 foreach (var member in memberList.Where(x => __CSharpBinder.GetIdentifierText(x, innerResourceUri, innerCompilationUnit)?.Contains(filteringWord) ?? false).Take(25))

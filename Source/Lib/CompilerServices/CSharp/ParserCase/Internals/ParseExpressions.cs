@@ -1035,7 +1035,7 @@ public static class ParseExpressions
         
         var typeClauseNode = UtilityApi.ConvertTokenToTypeClauseNode(ref token, ref parserModel);
         
-        if (typeDefinitionNode is not null)
+        if (!typeDefinitionNode.IsDefault() is not null)
         {
             typeClauseNode.ExplicitDefinitionTextSpan = typeDefinitionNode.TypeIdentifierToken.TextSpan;
             typeClauseNode.ExplicitDefinitionResourceUri = typeDefinitionNode.ResourceUri;
