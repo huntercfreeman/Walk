@@ -643,7 +643,7 @@ public class CSharpBinder
             var node = NodeList[i];
             if (node.ParentScopeSubIndex == scopeSubIndex &&
                 node.SyntaxKind == SyntaxKind.TypeDefinitionNode &&
-                GetIdentifierText(node.ResourceUri, node.IdentifierToken.TextSpan, compilationUnit) == typeIdentifierText)
+                CSharpCompilerService.UnsafeGetText(node.ResourceUri.Value, node.IdentifierToken.TextSpan) == typeIdentifierText)
             {
                 typeDefinitionNode = node;
                 break;
@@ -725,7 +725,7 @@ public class CSharpBinder
             
             if (node.ParentScopeSubIndex == scopeSubIndex &&
                 node.SyntaxKind == SyntaxKind.FunctionDefinitionNode &&
-                GetIdentifierText(node.ResourceUri, node.IdentifierToken.TextSpan, compilationUnit) == functionIdentifierText)
+                CSharpCompilerService.UnsafeGetText(node.ResourceUri.Value, node.IdentifierToken.TextSpan) == functionIdentifierText)
             {
                 functionDefinitionNode = node;
                 break;
@@ -989,7 +989,7 @@ public class CSharpBinder
             
             if (node.ParentScopeSubIndex == scopeSubIndex &&
                 node.SyntaxKind == SyntaxKind.VariableDeclarationNode &&
-                GetIdentifierText(node.ResourceUri, node.IdentifierToken.TextSpan, compilationUnit) == variableIdentifierText)
+                CSharpCompilerService.UnsafeGetText(node.ResourceUri.Value, node.IdentifierToken.TextSpan) == variableIdentifierText)
             {
                 matchNode = node;
                 break;
@@ -1074,7 +1074,7 @@ public class CSharpBinder
             
             if (node.ParentScopeSubIndex == scopeSubIndex &&
                 node.SyntaxKind == SyntaxKind.LabelDeclarationNode &&
-                GetIdentifierText(node.ResourceUri, node.IdentifierToken.TextSpan, compilationUnit) == labelIdentifierText)
+                CSharpCompilerService.UnsafeGetText(node.ResourceUri.Value, node.IdentifierToken.TextSpan) == labelIdentifierText)
             {
                 matchNode = node;
             }
@@ -1673,120 +1673,6 @@ public class CSharpBinder
         }
     }
     
-    /// <summary>
-    /// Probably can delete the other overload that takes a node.
-    ///
-    /// I'm making changes for NodeList to hold a struct instead of ISyntaxNode.
-    /// </summary>
-    public string GetIdentifierText(ResourceUri resourceUri, TextEditorTextSpan textSpan, CSharpCompilationUnit compilationUnit)
-    {
-        string sourceText;
-        string resourceUriValue;
-    
-        switch (node.SyntaxKind)
-        {
-            case SyntaxKind.TypeDefinitionNode:
-            {
-                var typeDefinitionNode = (TypeDefinitionNode)node;
-                if (typeDefinitionNode.ResourceUri == resourceUri)
-                {
-                    resourceUriValue = resourceUri.Value;
-                }
-                else
-                {
-                    if (__CompilationUnitMap.TryGetValue(typeDefinitionNode.ResourceUri, out var innerCompilationUnit))
-                        resourceUriValue = typeDefinitionNode.ResourceUri.Value;
-                    else
-                        return string.Empty;
-                }
-                return CSharpCompilerService.UnsafeGetText(resourceUriValue, typeDefinitionNode.TypeIdentifierToken.TextSpan);
-            }
-            case SyntaxKind.TypeClauseNode:
-            {
-                var typeClauseNode = (TypeClauseNode)node;
-                if (typeClauseNode.ExplicitDefinitionResourceUri == resourceUri)
-                {
-                    resourceUriValue = resourceUri.Value;
-                }
-                else
-                {
-                    if (__CompilationUnitMap.TryGetValue(typeClauseNode.ExplicitDefinitionResourceUri, out var innerCompilationUnit))
-                        resourceUriValue = typeClauseNode.ExplicitDefinitionResourceUri.Value;
-                    else
-                        return string.Empty;
-                }
-                return CSharpCompilerService.UnsafeGetText(resourceUriValue, typeClauseNode.TypeIdentifierToken.TextSpan);
-            }
-            case SyntaxKind.FunctionDefinitionNode:
-            {
-                var functionDefinitionNode = (FunctionDefinitionNode)node;
-                if (functionDefinitionNode.ResourceUri == resourceUri)
-                {
-                    resourceUriValue = resourceUri.Value;
-                }
-                else
-                {
-                    if (__CompilationUnitMap.TryGetValue(functionDefinitionNode.ResourceUri, out var innerCompilationUnit))
-                        resourceUriValue = functionDefinitionNode.ResourceUri.Value;
-                    else
-                        return string.Empty;
-                }
-                return CSharpCompilerService.UnsafeGetText(resourceUriValue, functionDefinitionNode.FunctionIdentifierToken.TextSpan);
-            }
-            case SyntaxKind.FunctionInvocationNode:
-            {
-                var functionInvocationNode = (FunctionInvocationNode)node;
-                if (functionInvocationNode.ResourceUri == resourceUri)
-                {
-                    resourceUriValue = resourceUri.Value;
-                }
-                else
-                {
-                    if (__CompilationUnitMap.TryGetValue(functionInvocationNode.ResourceUri, out var innerCompilationUnit))
-                        resourceUriValue = functionInvocationNode.ResourceUri.Value;
-                    else
-                        return string.Empty;
-                }
-                return CSharpCompilerService.UnsafeGetText(resourceUriValue, functionInvocationNode.FunctionInvocationIdentifierToken.TextSpan);
-            }
-            case SyntaxKind.VariableDeclarationNode:
-            {
-                var variableDeclarationNode = (VariableDeclarationNode)node;
-                if (variableDeclarationNode.ResourceUri == resourceUri)
-                {
-                    resourceUriValue = resourceUri.Value;
-                }
-                else
-                {
-                    if (__CompilationUnitMap.TryGetValue(variableDeclarationNode.ResourceUri, out var innerCompilationUnit))
-                        resourceUriValue = variableDeclarationNode.ResourceUri.Value;
-                    else
-                        return string.Empty;
-                }
-                return CSharpCompilerService.UnsafeGetText(resourceUriValue, variableDeclarationNode.IdentifierToken.TextSpan);
-            }
-            case SyntaxKind.VariableReferenceNode:
-            {
-                var variableReferenceNode = (VariableReferenceNode)node;
-                return CSharpCompilerService.UnsafeGetText(resourceUri.Value, variableReferenceNode.VariableIdentifierToken.TextSpan);
-            }
-            case SyntaxKind.LabelDeclarationNode:
-            {
-                var labelDeclarationNode = (LabelDeclarationNode)node;
-                return CSharpCompilerService.UnsafeGetText(resourceUri.Value, labelDeclarationNode.IdentifierToken.TextSpan);
-            }
-            case SyntaxKind.LabelReferenceNode:
-            {
-                var labelReferenceNode = (LabelReferenceNode)node;
-                return CSharpCompilerService.UnsafeGetText(resourceUri.Value, labelReferenceNode.IdentifierToken.TextSpan);
-            }
-            default:
-            {
-                return string.Empty;
-            }
-        }
-    }
-    
     public SyntaxToken GetNameToken(ISyntaxNode node)
     {
         switch (node.SyntaxKind)
@@ -1814,13 +1700,13 @@ public class CSharpBinder
         }
     }
     
-    public IEnumerable<ISyntaxNode> GetMemberList_TypeDefinitionNode(SyntaxNodeValue typeDefinitionNode)
+    public IEnumerable<SyntaxNodeValue> GetMemberList_TypeDefinitionNode(SyntaxNodeValue typeDefinitionNode)
     {
         var typeDefinitionMetadata = TypeDefinitionValueList[typeDefinitionNode.MetaIndex];
         return GetMemberList_TypeDefinitionNode(typeDefinitionNode.ResourceUri, typeDefinitionNode.SelfScopeSubIndex, typeDefinitionMetadata.IndexPartialTypeDefinition);
     }
     
-    public IEnumerable<ISyntaxNode> GetMemberList_TypeDefinitionNode(TypeDefinitionNode typeDefinitionNode)
+    public IEnumerable<SyntaxNodeValue> GetMemberList_TypeDefinitionNode(TypeDefinitionNode typeDefinitionNode)
     {
         return GetMemberList_TypeDefinitionNode(typeDefinitionNode.ResourceUri, typeDefinitionNode.SelfScopeSubIndex, typeDefinitionNode.IndexPartialTypeDefinition);
     }
@@ -1997,7 +1883,7 @@ public class CSharpBinder
                                 
                                 if (innerCodeBlockOwner.SyntaxKind == SyntaxKind.TypeDefinitionNode)
                                 {
-                                    var innerTypeDefinitionNode = (TypeDefinitionNode)innerCodeBlockOwner;
+                                    var innerTypeDefinitionNode = innerCodeBlockOwner;
                                 
                                     for (int i = innerCompilationUnit.NodeOffset; i < innerCompilationUnit.NodeOffset + innerCompilationUnit.NodeLength; i++)
                                     {

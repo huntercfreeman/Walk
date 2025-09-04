@@ -690,6 +690,7 @@ public ref struct CSharpParserModel
     {
         VariableReferenceNode? variableReferenceNode;
         TypeReference typeReference;
+        VariableKind variableKind;
 
         if (TryGetVariableDeclarationHierarchically(
                 ResourceUri,
@@ -702,10 +703,12 @@ public ref struct CSharpParserModel
             
             var variableReferenceMetadata = Binder.VariableDeclarationValueList[variableDeclarationNode.MetaIndex];
             typeReference = variableReferenceMetadata.ResultTypeReference;
+            variableKind = variableReferenceMetadata.VariableKind;
         }
         else
         {
             typeReference = CSharpFacts.Types.Var.ToTypeReference();
+            variableKind = VariableKind.Local;
         }
         
         variableReferenceNode = Rent_VariableReferenceNode();
@@ -713,7 +716,7 @@ public ref struct CSharpParserModel
         variableReferenceNode.ResultTypeReference = typeReference;
 
         if (shouldCreateSymbol)
-            CreateVariableSymbol(variableReferenceNode.VariableIdentifierToken, variableDeclarationNode.VariableKind);
+            CreateVariableSymbol(variableReferenceNode.VariableIdentifierToken, variableKind);
             
         return variableReferenceNode;
     }
@@ -1379,13 +1382,14 @@ public ref struct CSharpParserModel
         int declarationScopeSubIndex,
         ResourceUri referenceResourceUri,
         TextEditorTextSpan referenceTextSpan,
-        TypeDefinitionNode typeDefinitionNode,
+        SyntaxNodeValue typeDefinitionNode,
         out SyntaxNodeValue variableDeclarationNode)
     {
-        int positionExclusive = typeDefinitionNode.IndexPartialTypeDefinition;
+        var typeDefinitionMetadata = Binder.TypeDefinitionValueList[typeDefinitionNode.MetaIndex];
+        int positionExclusive = typeDefinitionMetadata.IndexPartialTypeDefinition;
         while (positionExclusive < Binder.PartialTypeDefinitionList.Count)
         {
-            if (Binder.PartialTypeDefinitionList[positionExclusive].IndexStartGroup == typeDefinitionNode.IndexPartialTypeDefinition)
+            if (Binder.PartialTypeDefinitionList[positionExclusive].IndexStartGroup == typeDefinitionMetadata.IndexPartialTypeDefinition)
             {
                 CSharpCompilationUnit innerCompilationUnit;
                 ResourceUri innerResourceUri;
@@ -1473,8 +1477,9 @@ public ref struct CSharpParserModel
             
             if (!isRecursive && scope.OwnerSyntaxKind == SyntaxKind.TypeDefinitionNode)
             {
-                var typeDefinitionNode = (TypeDefinitionNode)Binder.NodeList[declarationCompilationUnit.NodeOffset + scope.NodeSubIndex];
-                if (typeDefinitionNode.IndexPartialTypeDefinition != -1)
+                var typeDefinitionNode = Binder.NodeList[declarationCompilationUnit.NodeOffset + scope.NodeSubIndex];
+                var typeDefinitionMetadata = Binder.TypeDefinitionValueList[typeDefinitionNode.MetaIndex];
+                if (typeDefinitionMetadata.IndexPartialTypeDefinition != -1)
                 {
                     if (TryGetVariableDeclarationByPartialType(
                             declarationResourceUri,
@@ -1489,24 +1494,24 @@ public ref struct CSharpParserModel
                     }
                 }
                 
-                if (!typeDefinitionNode.InheritedTypeReference.IsDefault())
+                if (!typeDefinitionMetadata.InheritedTypeReference.IsDefault())
                 {
                     TextEditorTextSpan typeDefinitionTextSpan;
                     CSharpCompilationUnit typeDefinitionCompilationUnit;
                     ResourceUri typeDefinitionResourceUri;
                     
-                    if (typeDefinitionNode.InheritedTypeReference.ExplicitDefinitionResourceUri == referenceResourceUri)
+                    if (typeDefinitionMetadata.InheritedTypeReference.ExplicitDefinitionResourceUri == referenceResourceUri)
                     {
                         typeDefinitionCompilationUnit = Compilation;
                         typeDefinitionResourceUri = referenceResourceUri;
-                        typeDefinitionTextSpan = typeDefinitionNode.InheritedTypeReference.TypeIdentifierToken.TextSpan;
+                        typeDefinitionTextSpan = typeDefinitionMetadata.InheritedTypeReference.TypeIdentifierToken.TextSpan;
                     }
                     else
                     {
-                        if (Binder.__CompilationUnitMap.TryGetValue(typeDefinitionNode.InheritedTypeReference.ExplicitDefinitionResourceUri, out typeDefinitionCompilationUnit))
+                        if (Binder.__CompilationUnitMap.TryGetValue(typeDefinitionMetadata.InheritedTypeReference.ExplicitDefinitionResourceUri, out typeDefinitionCompilationUnit))
                         {
-                            typeDefinitionTextSpan = typeDefinitionNode.InheritedTypeReference.TypeIdentifierToken.TextSpan;
-                            typeDefinitionResourceUri = typeDefinitionNode.InheritedTypeReference.ExplicitDefinitionResourceUri;
+                            typeDefinitionTextSpan = typeDefinitionMetadata.InheritedTypeReference.TypeIdentifierToken.TextSpan;
+                            typeDefinitionResourceUri = typeDefinitionMetadata.InheritedTypeReference.ExplicitDefinitionResourceUri;
                         }
                         else
                         {
@@ -1572,7 +1577,7 @@ public ref struct CSharpParserModel
                 if (Binder.CSharpCompilerService.SafeCompareTextSpans(
                         ResourceUri.Value, variableIdentifierTextSpan, ResourceUri.Value, node.IdentifierToken.TextSpan))
                 {
-                    matchNode = (VariableDeclarationNode)node;
+                    matchNode = node;
                     break;
                 }
             }
@@ -1588,7 +1593,7 @@ public ref struct CSharpParserModel
                 variableDeclarationNode.IsFabricated,
                 variableDeclarationNode.SyntaxKind,
                 variableDeclarationNode.ParentScopeSubIndex,
-                variableDeclarationNode.SelfScopeSubIndex,
+                -1,
                 metaIndex: Binder.VariableDefinitionValueList.Count);
             
             Binder.VariableDefinitionValueList.Add(new VariableDeclarationValue(

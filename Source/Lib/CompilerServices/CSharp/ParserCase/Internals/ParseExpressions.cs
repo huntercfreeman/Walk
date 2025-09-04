@@ -1035,9 +1035,9 @@ public static class ParseExpressions
         
         var typeClauseNode = UtilityApi.ConvertTokenToTypeClauseNode(ref token, ref parserModel);
         
-        if (!typeDefinitionNode.IsDefault() is not null)
+        if (!typeDefinitionNode.IsDefault())
         {
-            typeClauseNode.ExplicitDefinitionTextSpan = typeDefinitionNode.TypeIdentifierToken.TextSpan;
+            typeClauseNode.ExplicitDefinitionTextSpan = typeDefinitionNode.IdentifierToken.TextSpan;
             typeClauseNode.ExplicitDefinitionResourceUri = typeDefinitionNode.ResourceUri;
         }
         else
@@ -1062,12 +1062,12 @@ public static class ParseExpressions
             ++parserModel.Compilation.SymbolLength;
             
             if (parserModel.Binder.SymbolIdToExternalTextSpanMap.TryGetValue(parserModel.ResourceUri.Value, out var symbolIdToExternalTextSpanMap) &&
-                typeDefinitionNode is not null &&
+                !typeDefinitionNode.IsDefault() &&
                 typeClauseNode.ExplicitDefinitionResourceUri != parserModel.ResourceUri)
             {
                 symbolIdToExternalTextSpanMap.TryAdd(
                     symbolId,
-                    (typeDefinitionNode.ResourceUri, typeDefinitionNode.TypeIdentifierToken.TextSpan.StartInclusiveIndex));
+                    (typeDefinitionNode.ResourceUri, typeDefinitionNode.IdentifierToken.TextSpan.StartInclusiveIndex));
             }
         }
         

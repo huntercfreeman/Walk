@@ -985,8 +985,7 @@ public sealed class CSharpCompilerService : IExtendedCompilerService
                     if (definitionNode.SyntaxKind == SyntaxKind.VariableReferenceNode)
                     {
                         var variableReferenceNode = (VariableReferenceNode)definitionNode;
-                        if (variableReferenceNode.VariableDeclarationNode is not null)
-                            typeReference = variableReferenceNode.VariableDeclarationNode.TypeReference;
+                        typeReference = variableReferenceNode.TypeReference;
                     }
                     else if (definitionNode.SyntaxKind == SyntaxKind.VariableDeclarationNode)
                     {
@@ -1049,14 +1048,14 @@ public sealed class CSharpCompilerService : IExtendedCompilerService
                                 var memberList = __CSharpBinder.GetMemberList_TypeDefinitionNode(maybeTypeDefinitionNode);
                                 ISyntaxNode? foundDefinitionNode = null;
                                 
-                                foreach (var member in memberList.Where(x => __CSharpBinder.GetIdentifierText(x, innerResourceUri, innerCompilationUnit)?.Contains(filteringWord) ?? false).Take(25))
+                                foreach (var member in memberList.Where(x => UnsafeGetText(innerResourceUri.Value, x.IdentifierToken.TextSpan)?.Contains(filteringWord) ?? false).Take(25))
                                 {
                                     switch (member.SyntaxKind)
                                     {
                                         case SyntaxKind.VariableDeclarationNode:
                                         {
                                             string resourceUriValue;
-                                            var variableDeclarationNode = (VariableDeclarationNode)member;
+                                            var variableDeclarationNode = member;
                                             
                                             if (variableDeclarationNode.ResourceUri != innerResourceUri)
                                             {
@@ -1080,7 +1079,7 @@ public sealed class CSharpCompilerService : IExtendedCompilerService
                                         {
                                             string sourceText;
                                             string resourceUriValue;
-                                            var functionDefinitionNode = (FunctionDefinitionNode)member;
+                                            var functionDefinitionNode = member;
                                             
                                             if (functionDefinitionNode.ResourceUri != innerResourceUri)
                                             {
@@ -1095,18 +1094,18 @@ public sealed class CSharpCompilerService : IExtendedCompilerService
                                             }
                                             
                                             autocompleteEntryList.Add(new AutocompleteEntry(
-                                                UnsafeGetText(resourceUriValue, functionDefinitionNode.FunctionIdentifierToken.TextSpan) ?? string.Empty,
+                                                UnsafeGetText(resourceUriValue, functionDefinitionNode.IdentifierToken.TextSpan) ?? string.Empty,
                                                 AutocompleteEntryKind.Function,
-                                                () => MemberAutocomplete(UnsafeGetText(resourceUriValue, functionDefinitionNode.FunctionIdentifierToken.TextSpan) ?? string.Empty, filteringWord, virtualizationResult.Model.PersistentState.ResourceUri, virtualizationResult.ViewModel.PersistentState.ViewModelKey)));
+                                                () => MemberAutocomplete(UnsafeGetText(resourceUriValue, functionDefinitionNode.IdentifierToken.TextSpan) ?? string.Empty, filteringWord, virtualizationResult.Model.PersistentState.ResourceUri, virtualizationResult.ViewModel.PersistentState.ViewModelKey)));
                                             break;
                                         }
                                         case SyntaxKind.TypeDefinitionNode:
                                         {
-                                            var innerTypeDefinitionNode = (TypeDefinitionNode)member;
+                                            var innerTypeDefinitionNode = member;
                                             autocompleteEntryList.Add(new AutocompleteEntry(
-                                                UnsafeGetText(innerResourceUri.Value, innerTypeDefinitionNode.TypeIdentifierToken.TextSpan) ?? string.Empty,
+                                                UnsafeGetText(innerResourceUri.Value, innerTypeDefinitionNode.IdentifierToken.TextSpan) ?? string.Empty,
                                                 AutocompleteEntryKind.Type,
-                                                () => MemberAutocomplete(UnsafeGetText(innerResourceUri.Value, innerTypeDefinitionNode.TypeIdentifierToken.TextSpan) ?? string.Empty, filteringWord, virtualizationResult.Model.PersistentState.ResourceUri, virtualizationResult.ViewModel.PersistentState.ViewModelKey)));
+                                                () => MemberAutocomplete(UnsafeGetText(innerResourceUri.Value, innerTypeDefinitionNode.IdentifierToken.TextSpan) ?? string.Empty, filteringWord, virtualizationResult.Model.PersistentState.ResourceUri, virtualizationResult.ViewModel.PersistentState.ViewModelKey)));
                                             break;
                                         }
                                     }

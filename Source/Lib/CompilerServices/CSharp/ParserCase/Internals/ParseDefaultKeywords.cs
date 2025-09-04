@@ -980,9 +980,10 @@ public class ParseDefaultKeywords
                     parserModel.ScopeCurrentSubIndex,
                     parserModel.ResourceUri,
                     identifierToken.TextSpan,
-                    out TypeDefinitionNode? previousTypeDefinitionNode))
+                    out SyntaxNodeValue previousTypeDefinitionNode))
             {
-                typeDefinitionNode.IndexPartialTypeDefinition = previousTypeDefinitionNode.IndexPartialTypeDefinition;
+                var typeDefinitionMetadata = parserModel.Binder.TypeDefinitionValueList[previousTypeDefinitionNode.MetaIndex];
+                typeDefinitionNode.IndexPartialTypeDefinition = typeDefinitionMetadata.IndexPartialTypeDefinition;
             }
         }
         
@@ -1021,15 +1022,13 @@ public class ParseDefaultKeywords
                         
                         if (currentParent.OwnerSyntaxKind == previousParent.OwnerSyntaxKind)
                         {
-                            var currentParentIdentifierText = parserModel.Binder.GetIdentifierText(
-                                parserModel.Binder.NodeList[parserModel.Compilation.NodeOffset + currentParent.NodeSubIndex],
-                                parserModel.ResourceUri,
-                                parserModel.Compilation);
+                            var currentParentIdentifierText = parserModel.Binder.CSharpCompilerService.SafeGetText(
+                                parserModel.Binder.NodeList[parserModel.Compilation.NodeOffset + currentParent.NodeSubIndex].ResourceUri.Value,
+                                parserModel.Binder.NodeList[parserModel.Compilation.NodeOffset + currentParent.NodeSubIndex].IdentifierToken.TextSpan);
                             
-                            var previousParentIdentifierText = parserModel.Binder.GetIdentifierText(
-                                parserModel.Binder.NodeList[previousCompilationUnit.NodeOffset + previousParent.NodeSubIndex],
-                                parserModel.ResourceUri,
-                                previousCompilationUnit);
+                            var previousParentIdentifierText = parserModel.Binder.CSharpCompilerService.SafeGetText(
+                                parserModel.Binder.NodeList[previousCompilationUnit.NodeOffset + previousParent.NodeSubIndex].ResourceUri.Value,
+                                parserModel.Binder.NodeList[previousCompilationUnit.NodeOffset + previousParent.NodeSubIndex].IdentifierToken.TextSpan);
                             
                             if (currentParentIdentifierText is not null &&
                                 currentParentIdentifierText == previousParentIdentifierText)
@@ -1052,10 +1051,9 @@ public class ParseDefaultKeywords
                                     
                                     if (scope.ParentScopeSubIndex == previousParent.SelfScopeSubIndex &&
                                         scope.OwnerSyntaxKind == SyntaxKind.TypeDefinitionNode &&
-                                        binder.GetIdentifierText(
-                                                parserModel.Binder.NodeList[previousCompilationUnit.NodeOffset + scope.NodeSubIndex],
-                                                parserModel.ResourceUri,
-                                                previousCompilationUnit) ==
+                                        binder.CSharpCompilerService.SafeGetText(
+                                                parserModel.Binder.NodeList[previousCompilationUnit.NodeOffset + scope.NodeSubIndex].ResourceUri.Value,
+                                                parserModel.Binder.NodeList[previousCompilationUnit.NodeOffset + scope.NodeSubIndex].IdentifierToken.TextSpan) ==
                                             binder.GetIdentifierText(typeDefinitionNode, parserModel.ResourceUri, compilation))
                                     {
                                         previousNode = parserModel.Binder.NodeList[previousCompilationUnit.NodeOffset + scope.NodeSubIndex];
