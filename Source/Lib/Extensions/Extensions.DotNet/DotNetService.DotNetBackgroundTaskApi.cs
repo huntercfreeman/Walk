@@ -335,7 +335,7 @@ public partial class DotNetService
 
                 try
                 {
-                    for (int i = 0; i < 100; i++)
+                    for (int i = 0; i < 10; i++)
                     {
                         cSharpCompilerService.__CSharpBinder.Pool_TemporaryLocalVariableDeclarationNode_Queue.Enqueue(
                             new VariableDeclarationNode(

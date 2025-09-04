@@ -160,9 +160,9 @@ public ref struct CSharpParserModel
 
     public readonly Scope ScopeCurrent => Binder.ScopeList[Compilation.ScopeOffset + ScopeCurrentSubIndex];
 
-    public static int POOL_HIT { get; set; }
+    /*public static int POOL_HIT { get; set; }
     public static int POOL_MISS { get; set; }
-    public static int POOL_RETURN { get; set; }
+    public static int POOL_RETURN { get; set; }*/
 
     /// <summary>
     /// It is expected that any invoker of this method will immediately set the returned BinaryExpressionNode instance's:
@@ -258,11 +258,9 @@ public ref struct CSharpParserModel
     {
         if (Binder.Pool_TemporaryLocalVariableDeclarationNode_Queue.TryDequeue(out var variableDeclarationNode))
         {
-            ++POOL_HIT;
             return variableDeclarationNode;
         }
         
-        ++POOL_MISS;
         return new VariableDeclarationNode(
             typeReference: CSharpFacts.Types.Var.ToTypeReference(),
             identifierToken: default,
@@ -278,8 +276,6 @@ public ref struct CSharpParserModel
     /// </summary>
     public readonly void Return_TemporaryLocalVariableDeclarationNode(VariableDeclarationNode variableDeclarationNode)
     {
-        ++POOL_RETURN;
-        
         variableDeclarationNode.TypeReference = default;
         variableDeclarationNode.IdentifierToken = default;
         variableDeclarationNode.VariableKind = VariableKind.Local;
