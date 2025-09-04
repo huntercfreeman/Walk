@@ -784,21 +784,31 @@ public ref struct CSharpParserModel
     
     public readonly void BindTypeDefinitionNode(TypeDefinitionNode typeDefinitionNode, bool shouldOverwrite = false)
     {
-        var typeIdentifierText = Binder.CSharpCompilerService.SafeGetText(ResourceUri.Value, typeDefinitionNode.TypeIdentifierToken.TextSpan);
-            
-        if (typeIdentifierText is null)
+        // ResourceUri.Value
+        // typeDefinitionNode.TypeIdentifierToken.TextSpan
+        
+        var findTuple = Binder.TypeDefinition_FindRange(typeDefinitionNode.TypeIdentifierToken.TextSpan);
+        bool shouldInsert = true;
+        
+        for (int i = findTuple.StartIndex; i < findTuple.EndIndex; i++)
         {
-            return;
-        }
-
-        var success = Binder._allTypeDefinitions.TryAdd(typeIdentifierText, typeDefinitionNode);
-        if (!success)
-        {
-            var entryFromAllTypeDefinitions = Binder._allTypeDefinitions[typeIdentifierText];
+            var node = Binder.AllTypeDefinitionList[i];
             
-            if (shouldOverwrite || entryFromAllTypeDefinitions.IsFabricated)
-                Binder._allTypeDefinitions[typeIdentifierText] = typeDefinitionNode;
+            if (Binder.CSharpCompilerService.SafeCompareTextSpans(
+                ResourceUri.Value,
+                typeDefinitionNode.TypeIdentifierToken.TextSpan,
+                node.ResourceUri.Value,
+                node.TypeIdentifierToken.TextSpan))
+            {
+                shouldInsert = false;
+                if (shouldOverwrite || node.IsFabricated)
+                    Binder.AllTypeDefinitionList[i] = typeDefinitionNode;
+                break;
+            }
         }
+        
+        if (shouldInsert)
+            Binder.AllTypeDefinitionList.Insert(findTuple.InsertionIndex, typeDefinitionNode);
     }
 
     public void RegisterScope(Scope scope, ICodeBlockOwner codeBlockOwner)

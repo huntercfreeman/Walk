@@ -1214,7 +1214,7 @@ public sealed class CSharpCompilerService : IExtendedCompilerService
         }
         else
         {
-            if (syntaxNode.SyntaxKind == SyntaxKind.TypeClauseNode)
+            /*if (syntaxNode.SyntaxKind == SyntaxKind.TypeClauseNode)
             {
                 var allTypeDefinitions = __CSharpBinder.AllTypeDefinitions;
                 
@@ -1241,12 +1241,12 @@ public sealed class CSharpCompilerService : IExtendedCompilerService
                 }
             }
             else
-            {
+            {*/
                 menuOptionList.Add(new MenuOptionRecord(
                     syntaxNode.SyntaxKind.ToString(),
                     MenuOptionKind.Other,
                     onClickFunc: async _ => {}));
-            }
+            /*}*/
         }
         
         MenuRecord menu;
@@ -2116,9 +2116,9 @@ public sealed class CSharpCompilerService : IExtendedCompilerService
                     targetScope = __CSharpBinder.GetScopeByOffset(compilationUnit, targetScope.ParentScopeSubIndex);
             }
         
-            var allTypeDefinitions = __CSharpBinder.AllTypeDefinitions;
+            var allTypeDefinitions = __CSharpBinder.AllTypeDefinitionList;
     
-            autocompleteEntryList.AddRange(
+            /*autocompleteEntryList.AddRange(
                 allTypeDefinitions
                 .Where(x => x.Key.Contains(word, StringComparison.InvariantCulture))
                 .Distinct()
@@ -2128,75 +2128,8 @@ public sealed class CSharpCompilerService : IExtendedCompilerService
                     return new AutocompleteEntry(
                         x.Key,
                         AutocompleteEntryKind.Type,
-                        () =>
-                        {
-                            // TODO: The namespace code is buggy at the moment.
-                            //       It is annoying how this keeps adding the wrong namespace.
-                            //       Just have it do nothing for now. (2024-08-24)
-                            // ===============================================================
-                            /*if (boundScope.EncompassingNamespaceStatementNode.IdentifierToken.TextSpan.GetText() == x.Key.NamespaceIdentifier ||
-                                boundScope.CurrentUsingStatementNodeList.Any(usn => usn.NamespaceIdentifier.TextSpan.GetText() == x.Key.NamespaceIdentifier))
-                            {
-                                return Task.CompletedTask;
-                            }
-    
-                            _textEditorService.PostUnique(
-                                "Add using statement",
-                                editContext =>
-                                {
-                                    var modelModifier = editContext.GetModelModifier(textSpan.ResourceUri);
-    
-                                    if (modelModifier is null)
-                                        return Task.CompletedTask;
-    
-                                    var viewModelList = _textEditorService.ModelApi.GetViewModelsOrEmpty(textSpan.ResourceUri);
-    
-                                    var cursor = new TextEditorCursor(0, 0, true);
-                                    var cursorModifierBag = new CursorModifierBagTextEditor(
-                                        Key<TextEditorViewModel>.Empty,
-                                        new List<TextEditorCursorModifier> { new(cursor) });
-    
-                                    var textToInsert = $"using {x.Key.NamespaceIdentifier};\n";
-    
-                                    modelModifier.Insert(
-                                        textToInsert,
-                                        cursorModifierBag,
-                                        cancellationToken: CancellationToken.None);
-    
-                                    foreach (var unsafeViewModel in viewModelList)
-                                    {
-                                        var viewModelModifier = editContext.GetViewModelModifier(unsafeViewModel.ViewModelKey);
-                                        var viewModelCursorModifierBag = editContext.GetCursorModifierBag(viewModelModifier);
-    
-                                        if (viewModelModifier is null || viewModelCursorModifierBag is null)
-                                            continue;
-    
-                                        foreach (var cursorModifier in viewModelCursorModifierBag.List)
-                                        {
-                                            for (int i = 0; i < textToInsert.Length; i++)
-                                            {
-                                                _textEditorService.ViewModelApi.MoveCursor(
-                                                    new KeyboardEventArgs
-                                                    {
-                                                        Key = KeyboardKeyFacts.MovementKeys.ARROW_RIGHT,
-                                                    },
-                                                    editContext,
-                                                    modelModifier,
-                                                    viewModelModifier,
-                                                    viewModelCursorModifierBag);
-                                            }
-                                        }
-    
-                                        editContext.TextEditorService.ModelApi.ApplySyntaxHighlighting(
-                                            editContext,
-                                            modelModifier);
-                                    }
-    
-                                    return Task.CompletedTask;
-                                });*/
-                            return Task.CompletedTask;
-                        });
-                }));
+                        sideEffectFunc: null);
+                }));*/
         }
         
         /*foreach (var namespaceGroupKvp in __CSharpBinder.NamespacePrefixTree.__Root.Children.Where(x => x.Key.Contains(word)).Take(5))
