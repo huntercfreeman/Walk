@@ -249,10 +249,13 @@ public static class ParseTokens
             parserModel.StatementBuilder.MostRecentNode = typeClauseNode;
         }
         else if (parserModel.ScopeCurrent.OwnerSyntaxKind == SyntaxKind.TypeDefinitionNode &&
-                 parserModel.Binder.NodeList[parserModel.Compilation.NodeOffset + parserModel.ScopeCurrent.NodeSubIndex] is TypeDefinitionNode typeDefinitionNode &&
+                 parserModel.Binder.NodeList[parserModel.Compilation.NodeOffset + parserModel.ScopeCurrent.NodeSubIndex].SyntaxKind == SyntaxKind.TypeDefinitionNode &&
                  UtilityApi.IsConvertibleToIdentifierToken(typeClauseNode.TypeIdentifierToken.SyntaxKind) &&
                  parserModel.TokenWalker.Current.SyntaxKind == SyntaxKind.OpenParenthesisToken &&
-                 parserModel.GetTextSpanText(typeDefinitionNode.TypeIdentifierToken.TextSpan) == parserModel.GetTextSpanText(typeClauseNode.TypeIdentifierToken.TextSpan))
+                 parserModel.Binder.NodeList[parserModel.Compilation.NodeOffset + parserModel.ScopeCurrent.NodeSubIndex].IdentifierToken.TextSpan.CharIntSum ==
+                     typeClauseNode.TypeIdentifierToken.TextSpan.CharIntSum &&
+                 parserModel.GetTextSpanText(parserModel.Binder.NodeList[parserModel.Compilation.NodeOffset + parserModel.ScopeCurrent.NodeSubIndex].IdentifierToken.TextSpan) ==
+                     parserModel.GetTextSpanText(typeClauseNode.TypeIdentifierToken.TextSpan))
         {
             // ConstructorDefinitionNode
             
@@ -260,7 +263,7 @@ public static class ParseTokens
             var identifierToken = UtilityApi.ConvertToIdentifierToken(ref typeClauseToken, ref parserModel);
             
             ParseFunctions.HandleConstructorDefinition(
-                typeDefinitionNode,
+                typeDefinitionIdentifierToken: parserModel.Binder.NodeList[parserModel.Compilation.NodeOffset + parserModel.ScopeCurrent.NodeSubIndex].IdentifierToken,
                 identifierToken,
                 ref parserModel);
         }
@@ -604,7 +607,7 @@ public static class ParseTokens
     
         if (parserModel.ScopeCurrent.OwnerSyntaxKind == SyntaxKind.NamespaceStatementNode)
         {
-            var namespaceStatementNode = (NamespaceStatementNode)parserModel.Binder.NodeList[
+            var namespaceStatementNode = parserModel.Binder.NodeList[
                 parserModel.Compilation.NodeOffset +
                 parserModel.ScopeCurrent.NodeSubIndex];
                 

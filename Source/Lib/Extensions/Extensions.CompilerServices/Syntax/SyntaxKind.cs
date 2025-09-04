@@ -6,6 +6,8 @@ namespace Walk.Extensions.CompilerServices.Syntax;
 public enum SyntaxKind : byte
 {
     // Used to avoid nullable SyntaxToken(s).
+    //
+    // Keep NotApplicable at 0
     NotApplicable,
     NotProvided,
 

@@ -114,7 +114,7 @@ public ref struct CSharpParserModel
     /// </summary>
     public List<(SyntaxKind DelimiterSyntaxKind, IExpressionNode? ExpressionNode)> ExpressionList { get; set; }
     
-    public List<TypeDefinitionNode> ExternalTypeDefinitionList { get; }
+    public List<SyntaxNodeValue> ExternalTypeDefinitionList { get; }
     
     public IExpressionNode? NoLongerRelevantExpressionNode { get; set; }
     public List<SyntaxKind> TryParseExpressionSyntaxKindList { get; }
@@ -883,6 +883,60 @@ public ref struct CSharpParserModel
             codeBlockOwner.ParentScopeSubIndex = scope.ParentScopeSubIndex;
             codeBlockOwner.SelfScopeSubIndex = scope.SelfScopeSubIndex;
             
+            SyntaxNodeValue nodeValue = default;
+            
+            switch (scope.OwnerSyntaxKind)
+            {
+                case SyntaxKind.TypeDefinitionNode:
+                    var typeDefinitionNode = (TypeDefinitionNode)codeBlockOwner;
+                    
+                    nodeValue = new SyntaxNodeValue(
+                        typeDefinitionNode.TypeIdentifierToken,
+                        typeDefinitionNode.ResourceUri,
+                        typeDefinitionNode.IsFabricated,
+                        typeDefinitionNode.SyntaxKind,
+                        typeDefinitionNode.ParentScopeSubIndex,
+                        typeDefinitionNode.SelfScopeSubIndex,
+                        Binder.TypeDefinitionValueList.Count);
+                    Binder.TypeDefinitionValueList.Add(new TypeDefinitionValue(
+                        typeDefinitionNode.IndexPartialTypeDefinition,
+                        typeDefinitionNode.InheritedTypeReference));
+                    
+                    
+                    break;
+                case SyntaxKind.NamespaceStatementNode:
+                    var namespaceStatementNode = (NamespaceStatementNode)codeBlockOwner;
+                    nodeValue = new SyntaxNodeValue(
+                        namespaceStatementNode.IdentifierToken,
+                        namespaceStatementNode.ResourceUri,
+                        namespaceStatementNode.IsFabricated,
+                        namespaceStatementNode.SyntaxKind,
+                        namespaceStatementNode.ParentScopeSubIndex,
+                        namespaceStatementNode.SelfScopeSubIndex);
+                    break;
+                case SyntaxKind.ConstructorDefinitionNode:
+                    var constructorDefinitionNode = (ConstructorDefinitionNode)codeBlockOwner;
+                    nodeValue = new SyntaxNodeValue(
+                        constructorDefinitionNode.FunctionIdentifier,
+                        constructorDefinitionNode.ResourceUri,
+                        constructorDefinitionNode.IsFabricated,
+                        constructorDefinitionNode.SyntaxKind,
+                        constructorDefinitionNode.ParentScopeSubIndex,
+                        constructorDefinitionNode.SelfScopeSubIndex);
+                    break;
+                case SyntaxKind.FunctionDefinitionNode:
+                    var functionDefinitionNode = (FunctionDefinitionNode)codeBlockOwner;
+                    nodeValue = new SyntaxNodeValue(
+                        functionDefinitionNode.FunctionIdentifierToken,
+                        functionDefinitionNode.ResourceUri,
+                        functionDefinitionNode.IsFabricated,
+                        functionDefinitionNode.SyntaxKind,
+                        functionDefinitionNode.ParentScopeSubIndex,
+                        functionDefinitionNode.SelfScopeSubIndex);
+                    break;
+                default:
+                    break;
+            }
             switch (scope.OwnerSyntaxKind)
             {
                 case SyntaxKind.TypeDefinitionNode:
@@ -890,7 +944,7 @@ public ref struct CSharpParserModel
                 case SyntaxKind.ConstructorDefinitionNode:
                 case SyntaxKind.FunctionDefinitionNode:
                     scope.NodeSubIndex = Compilation.NodeLength;
-                    Binder.NodeList.Add(codeBlockOwner);
+                    Binder.NodeList.Add(nodeValue);
                     ++Compilation.NodeLength;
                     break;
                 default:
@@ -1115,7 +1169,7 @@ public ref struct CSharpParserModel
         int definitionInitialScopeSubIndex,
         ResourceUri referenceResourceUri,
         TextEditorTextSpan referenceTextSpan,
-        out TypeDefinitionNode? typeDefinitionNode)
+        out SyntaxNodeValue typeDefinitionNode)
     {
         var localScope = Binder.GetScopeByOffset(definitionCompilationUnit, definitionInitialScopeSubIndex);
 
@@ -1140,7 +1194,7 @@ public ref struct CSharpParserModel
             }
         }
 
-        typeDefinitionNode = null;
+        typeDefinitionNode = default;
         return false;
     }
     
@@ -1150,9 +1204,9 @@ public ref struct CSharpParserModel
         int definitionScopeSubIndex,
         ResourceUri referenceResourceUri,
         TextEditorTextSpan referenceTextSpan,
-        out TypeDefinitionNode? typeDefinitionNode)
+        out SyntaxNodeValue typeDefinitionNode)
     {
-        typeDefinitionNode = null;
+        typeDefinitionNode = default;
         
         for (int i = definitionCompilationUnit.NodeOffset; i < definitionCompilationUnit.NodeOffset + definitionCompilationUnit.NodeLength; i++)
         {
@@ -1161,28 +1215,28 @@ public ref struct CSharpParserModel
                 node.SyntaxKind == SyntaxKind.TypeDefinitionNode)
             {
                 if (Binder.CSharpCompilerService.SafeCompareTextSpans(
-                        referenceResourceUri.Value, referenceTextSpan, definitionResourceUri.Value, GetIdentifierTextSpan(node)))
+                        referenceResourceUri.Value, referenceTextSpan, definitionResourceUri.Value, node.IdentifierToken.TextSpan))
                 {
-                    typeDefinitionNode = (TypeDefinitionNode)node;
+                    typeDefinitionNode = node;
                     break;
                 }
             }
         }
         
-        if (typeDefinitionNode is null)
+        if (typeDefinitionNode.IsDefault())
         {
             if (definitionScopeSubIndex == 0)
             {
                 foreach (var externalDefinitionNode in ExternalTypeDefinitionList)
                 {
                     if (Binder.CSharpCompilerService.SafeCompareTextSpans(
-                            referenceResourceUri.Value, referenceTextSpan, externalDefinitionNode.ResourceUri.Value, GetIdentifierTextSpan(externalDefinitionNode)))
+                            referenceResourceUri.Value, referenceTextSpan, externalDefinitionNode.ResourceUri.Value, externalDefinitionNode.IdentifierToken))
                     {
                         typeDefinitionNode = externalDefinitionNode;
                         break;
                     }
                 }
-                if (typeDefinitionNode is not null)
+                if (!typeDefinitionNode.IsDefault())
                 {
                     return true;
                 }
@@ -1196,23 +1250,6 @@ public ref struct CSharpParserModel
         }
     }
     
-    public readonly FunctionDefinitionNode[] GetFunctionDefinitionNodesByScope(
-        CSharpCompilationUnit compilationUnit,
-        int scopeSubIndex)
-    {
-        List<FunctionDefinitionNode> functionDefinitionNodeList = new();
-    
-        for (int i = compilationUnit.NodeOffset; i < compilationUnit.NodeOffset + compilationUnit.NodeLength; i++)
-        {
-            var node = Binder.NodeList[i];
-            
-            if (node.ParentScopeSubIndex == scopeSubIndex && node.SyntaxKind == SyntaxKind.FunctionDefinitionNode)
-                functionDefinitionNodeList.Add((FunctionDefinitionNode)node);
-        }
-        
-        return functionDefinitionNodeList.ToArray();
-    }
-
     /// <summary>
     /// 'definition...' argument name pattern:
     /// This implies the "presumed" value. The invoker must provide a
@@ -1269,9 +1306,9 @@ public ref struct CSharpParserModel
         int definitionScopeSubIndex,
         ResourceUri referenceResourceUri,
         TextEditorTextSpan referenceTextSpan,
-        out FunctionDefinitionNode functionDefinitionNode)
+        out SyntaxNodeValue functionDefinitionNode)
     {
-        functionDefinitionNode = null;
+        functionDefinitionNode = default;
         
         for (int i = definitionCompilationUnit.NodeOffset; i < definitionCompilationUnit.NodeOffset + definitionCompilationUnit.NodeLength; i++)
         {
@@ -1280,15 +1317,15 @@ public ref struct CSharpParserModel
             if (node.ParentScopeSubIndex == definitionScopeSubIndex &&
                 node.SyntaxKind == SyntaxKind.FunctionDefinitionNode)
             {
-                if (Binder.CSharpCompilerService.SafeCompareTextSpans(referenceResourceUri.Value, referenceTextSpan, definitionResourceUri.Value, GetIdentifierTextSpan(node)))
+                if (Binder.CSharpCompilerService.SafeCompareTextSpans(referenceResourceUri.Value, referenceTextSpan, definitionResourceUri.Value, node.IdentifierToken.TextSpan))
                 {
-                    functionDefinitionNode = (FunctionDefinitionNode)node;
+                    functionDefinitionNode = node;
                     break;
                 }
             }
         }
         
-        if (functionDefinitionNode is null)
+        if (functionDefinitionNode.IsDefault())
             return false;
         else
             return true;

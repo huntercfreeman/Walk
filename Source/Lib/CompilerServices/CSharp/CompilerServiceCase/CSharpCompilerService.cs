@@ -1037,14 +1037,14 @@ public sealed class CSharpCompilerService : IExtendedCompilerService
                         
                         if (innerFoundSymbol != default)
                         {
-                            var maybeTypeDefinitionNode = __CSharpBinder.GetDefinitionNode(
+                            var maybeTypeDefinitionNode = __CSharpBinder.GetDefinitionNodeValue(
                                 innerResourceUri,
                                 innerCompilationUnit,
                                 innerFoundSymbol.TextSpan,
                                 syntaxKind: innerFoundSymbol.SyntaxKind,
                                 symbol: innerFoundSymbol);
                             
-                            if (maybeTypeDefinitionNode is not null && maybeTypeDefinitionNode.SyntaxKind == SyntaxKind.TypeDefinitionNode)
+                            if (!maybeTypeDefinitionNode.IsDefault() && maybeTypeDefinitionNode.SyntaxKind == SyntaxKind.TypeDefinitionNode)
                             {
                                 var typeDefinitionNode = (TypeDefinitionNode)maybeTypeDefinitionNode;
                                 var memberList = __CSharpBinder.GetMemberList_TypeDefinitionNode(typeDefinitionNode);
@@ -1688,7 +1688,7 @@ public sealed class CSharpCompilerService : IExtendedCompilerService
                                 var x = __CSharpBinder.NodeList[i];
                                 
                                 if (x.SyntaxKind == SyntaxKind.TypeDefinitionNode &&
-                                    ((TypeDefinitionNode)x).SelfScopeSubIndex == tuple.ScopeIndexKey)
+                                    x.SelfScopeSubIndex == tuple.ScopeIndexKey)
                                 {
                                     otherTypeDefinitionNode = x;
                                     break;
@@ -2082,7 +2082,6 @@ public sealed class CSharpCompilerService : IExtendedCompilerService
             {
                 autocompleteEntryList.AddRange(
                     __CSharpBinder.GetVariableDeclarationNodesByScope(virtualizationResult.Model.PersistentState.ResourceUri, compilationUnit, targetScope.SelfScopeSubIndex)
-                    .Select(x => __CSharpBinder.GetIdentifierText(x, virtualizationResult.Model.PersistentState.ResourceUri, compilationUnit))
                     .ToArray()
                     .Where(x => x?.Contains(word, StringComparison.InvariantCulture) ?? false)
                     .Distinct()
@@ -2096,8 +2095,7 @@ public sealed class CSharpCompilerService : IExtendedCompilerService
                     }));
     
                 autocompleteEntryList.AddRange(
-                    __CSharpBinder.GetFunctionDefinitionNodesByScope(compilationUnit, targetScope.SelfScopeSubIndex)
-                    .Select(x => x.FunctionIdentifierToken.TextSpan.GetText(virtualizationResult.Model.GetAllText(), _textEditorService))
+                    __CSharpBinder.GetFunctionDefinitionNamesByScope(virtualizationResult.Model.PersistentState.ResourceUri, compilationUnit, targetScope.SelfScopeSubIndex)
                     .ToArray()
                     .Where(x => x.Contains(word, StringComparison.InvariantCulture))
                     .Distinct()

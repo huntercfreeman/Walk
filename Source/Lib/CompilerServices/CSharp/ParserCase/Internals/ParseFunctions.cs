@@ -225,12 +225,12 @@ public class ParseFunctions
     }*/
 
     public static void HandleConstructorDefinition(
-        TypeDefinitionNode typeDefinitionNodeCodeBlockOwner,
+        SyntaxToken typeDefinitionIdentifierToken,
         SyntaxToken consumedIdentifierToken,
         ref CSharpParserModel parserModel)
     {
         var typeClauseNode = parserModel.Rent_TypeClauseNode();
-        typeClauseNode.TypeIdentifierToken = typeDefinitionNodeCodeBlockOwner.TypeIdentifierToken;
+        typeClauseNode.TypeIdentifierToken = typeDefinitionIdentifierToken;
 
         var constructorDefinitionNode = new ConstructorDefinitionNode(
             new TypeReference(typeClauseNode),
