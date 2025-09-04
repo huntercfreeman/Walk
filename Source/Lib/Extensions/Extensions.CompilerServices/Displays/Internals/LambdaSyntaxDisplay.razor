@@ -18,31 +18,31 @@
 	string? text;
 	VariableDeclarationNode? variableDeclarationNode;
 	
-	if (syntaxViewModelLocal.DefinitionNode is null && syntaxViewModelLocal.TargetNode is null && syntaxViewModelLocal.TargetSymbol.IsDefault())
+	if (syntaxViewModelLocal.DefinitionNode.IsDefault() && syntaxViewModelLocal.TargetNode.IsDefault() && syntaxViewModelLocal.TargetSymbol.IsDefault())
 	{
 		prefixText = "(null)";
 		text = null;
 		variableDeclarationNode = null;
 	}
-	else if (syntaxViewModelLocal.DefinitionNode is not null && syntaxViewModelLocal.DefinitionNode.SyntaxKind == SyntaxKind.VariableDeclarationNode)
+	else if (!syntaxViewModelLocal.DefinitionNode.IsDefault() && syntaxViewModelLocal.DefinitionNode.SyntaxKind == SyntaxKind.VariableDeclarationNode)
 	{
 		prefixText = "(definition)";
-		text = syntaxViewModelLocal.GetIdentifierText(syntaxViewModelLocal.DefinitionNode);
+		text = syntaxViewModelLocal.GetTextFromTextSpan(syntaxViewModelLocal.DefinitionNode.IdentifierToken.TextSpan);
 		variableDeclarationNode = null;
 	}
-	else if (syntaxViewModelLocal.TargetNode is not null && syntaxViewModelLocal.TargetNode.SyntaxKind == SyntaxKind.VariableReferenceNode)
+	else if (!syntaxViewModelLocal.TargetNode.IsDefault() && syntaxViewModelLocal.TargetNode.SyntaxKind == SyntaxKind.VariableReferenceNode)
 	{
 		prefixText = "(reference)";
-		text = syntaxViewModelLocal.GetIdentifierText(syntaxViewModelLocal.TargetNode);
+		text = syntaxViewModelLocal.GetTextFromTextSpan(syntaxViewModelLocal.TargetNode.IdentifierToken.TextSpan);
 		variableDeclarationNode = null;
 	}
-	else if (syntaxViewModelLocal.TargetSymbol is not null &&
-			 (syntaxViewModelLocal.TargetSymbol.Value.SyntaxKind == SyntaxKind.VariableSymbol ||
-			  	syntaxViewModelLocal.TargetSymbol.Value.SyntaxKind == SyntaxKind.FieldSymbol ||
-			  	syntaxViewModelLocal.TargetSymbol.Value.SyntaxKind == SyntaxKind.PropertySymbol))
+	else if (!syntaxViewModelLocal.TargetSymbol.IsDefault() &&
+			 (syntaxViewModelLocal.TargetSymbol.SyntaxKind == SyntaxKind.VariableSymbol ||
+			  	syntaxViewModelLocal.TargetSymbol.SyntaxKind == SyntaxKind.FieldSymbol ||
+			  	syntaxViewModelLocal.TargetSymbol.SyntaxKind == SyntaxKind.PropertySymbol))
 	{
 		prefixText = "(symbol)";
-		text = syntaxViewModelLocal.GetTextFromTextSpan(syntaxViewModelLocal.TargetSymbol.Value.TextSpan);
+		text = syntaxViewModelLocal.GetTextFromTextSpan(syntaxViewModelLocal.TargetSymbol.TextSpan);
 		variableDeclarationNode = null;
 	}
 	else

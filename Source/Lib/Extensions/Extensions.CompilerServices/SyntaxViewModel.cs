@@ -33,8 +33,8 @@ public struct SyntaxViewModel
         TextEditorService textEditorService,
         ResourceUri resourceUri,
         Symbol targetSymbol,
-        SyntaxViewModel targetNode,
-        SyntaxViewModel definitionNode,
+        SyntaxNodeValue targetNode,
+        SyntaxNodeValue definitionNode,
         int depth)
     {
         ExtendedCompilerService = extendedCompilerService;
@@ -97,7 +97,7 @@ public struct SyntaxViewModel
     
     public Task HandleOnClick(TextEditorService textEditorService, SyntaxKind syntaxKindExpected)
     {
-        if (DefinitionNode is null || DefinitionNode.SyntaxKind != syntaxKindExpected)
+        if (DefinitionNode.IsDefault() || DefinitionNode.SyntaxKind != syntaxKindExpected)
             return Task.CompletedTask;
         
         var resourceUri = ResourceUri;

@@ -19,16 +19,17 @@
 	string? textCssClass;
 	VariableDeclarationNode? variableDeclarationNode;
 	
-	if (syntaxViewModelLocal.DefinitionNode is null && syntaxViewModelLocal.TargetNode is null && syntaxViewModelLocal.TargetSymbol is null)
+	if (syntaxViewModelLocal.DefinitionNode.IsDefault() && syntaxViewModelLocal.TargetNode.IsDefault() && syntaxViewModelLocal.TargetSymbol.IsDefault())
 	{
 		prefixText = "(null)";
 		text = null;
 		textCssClass = "di_variable";
 		variableDeclarationNode = null;
 	}
-	else if (syntaxViewModelLocal.DefinitionNode is not null && syntaxViewModelLocal.DefinitionNode.SyntaxKind == SyntaxKind.VariableDeclarationNode)
+	else if (!syntaxViewModelLocal.DefinitionNode.IsDefault() && syntaxViewModelLocal.DefinitionNode.SyntaxKind == SyntaxKind.VariableDeclarationNode)
 	{
-		variableDeclarationNode = (VariableDeclarationNode)syntaxViewModelLocal.DefinitionNode;
+		variableDeclarationNode = syntaxViewModelLocal.DefinitionNode;
+		var variableDeclarationMetadata = syntaxViewModelLocal.ExtendedCompilerService.;
 		
 		prefixText = string.Empty;
 		text = syntaxViewModelLocal.GetIdentifierText(variableDeclarationNode);
@@ -44,21 +45,21 @@
 		
 		// 'variableDeclarationNode' was set at the start of code block.
 	}
-	else if (syntaxViewModelLocal.TargetNode is not null && syntaxViewModelLocal.TargetNode.SyntaxKind == SyntaxKind.VariableReferenceNode)
+	else if (!syntaxViewModelLocal.TargetNode.IsDefault() && syntaxViewModelLocal.TargetNode.SyntaxKind == SyntaxKind.VariableReferenceNode)
 	{
 		prefixText = "(reference)";
 		text = syntaxViewModelLocal.GetIdentifierText(syntaxViewModelLocal.TargetNode);
 		textCssClass = "di_variable";
 		variableDeclarationNode = null;
 	}
-	else if (syntaxViewModelLocal.TargetSymbol is not null &&
-			 (syntaxViewModelLocal.TargetSymbol.Value.SyntaxKind == SyntaxKind.VariableSymbol ||
-			  	syntaxViewModelLocal.TargetSymbol.Value.SyntaxKind == SyntaxKind.FieldSymbol ||
-			  	syntaxViewModelLocal.TargetSymbol.Value.SyntaxKind == SyntaxKind.PropertySymbol ||
-			  	syntaxViewModelLocal.TargetSymbol.Value.SyntaxKind == SyntaxKind.EnumMemberSymbol))
+	else if (!syntaxViewModelLocal.TargetSymbol.IsDefault() &&
+			 (syntaxViewModelLocal.TargetSymbol.SyntaxKind == SyntaxKind.VariableSymbol ||
+			  	syntaxViewModelLocal.TargetSymbol.SyntaxKind == SyntaxKind.FieldSymbol ||
+			  	syntaxViewModelLocal.TargetSymbol.SyntaxKind == SyntaxKind.PropertySymbol ||
+			  	syntaxViewModelLocal.TargetSymbol.SyntaxKind == SyntaxKind.EnumMemberSymbol))
 	{
 		prefixText = "(symbol)";
-		text = syntaxViewModelLocal.GetTextFromTextSpan(syntaxViewModelLocal.TargetSymbol.Value.TextSpan);
+		text = syntaxViewModelLocal.GetTextFromTextSpan(syntaxViewModelLocal.TargetSymbol.TextSpan);
 		textCssClass = "di_variable";
 		variableDeclarationNode = null;
 	}
@@ -85,9 +86,9 @@
     		    SyntaxViewModel.ExtendedCompilerService,
     		    SyntaxViewModel.TextEditorService,
     		    SyntaxViewModel.ResourceUri,
-    			targetSymbol: null,
-    			targetNode: null,
-    			definitionNode: null,
+    			targetSymbol: default,
+    			targetNode: default,
+    			definitionNode: default,
     			depth: syntaxViewModelLocal.Depth + 1);
         	<TypeSyntaxDisplay SyntaxViewModel="syntaxViewModel" TypeReference="variableDeclarationNode.TypeReference"/>
         	<text>&nbsp;</text>
