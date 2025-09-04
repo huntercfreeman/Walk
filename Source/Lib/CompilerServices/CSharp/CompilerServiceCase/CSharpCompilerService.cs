@@ -121,6 +121,10 @@ public sealed class CSharpCompilerService : IExtendedCompilerService
     public IReadOnlyList<GenericParameterEntry> GenericParameterEntryList => __CSharpBinder.GenericParameterEntryList;
     public IReadOnlyList<FunctionParameterEntry> FunctionParameterEntryList => __CSharpBinder.FunctionParameterEntryList;
     public IReadOnlyList<FunctionArgumentEntry> FunctionArgumentEntryList => __CSharpBinder.FunctionArgumentEntryList;
+    
+    public IReadOnlyList<TypeDefinitionValue> TypeDefinitionValueList => __CSharpBinder.TypeDefinitionValueList;
+    public IReadOnlyList<FunctionDefinitionValue> FunctionDefinitionValueList => __CSharpBinder.FunctionDefinitionValueList;
+    public IReadOnlyList<VariableDeclarationValue> VariableDeclarationValueList => __CSharpBinder.VariableDeclarationValueList;
 
     public void RegisterResource(ResourceUri resourceUri, bool shouldTriggerResourceWasModified)
     {

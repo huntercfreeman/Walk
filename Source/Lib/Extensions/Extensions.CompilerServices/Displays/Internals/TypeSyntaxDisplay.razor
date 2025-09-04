@@ -36,7 +36,8 @@
 	}
 	else if (!syntaxViewModelLocal.DefinitionNode.IsDefault() && syntaxViewModelLocal.DefinitionNode.SyntaxKind == SyntaxKind.TypeDefinitionNode)
 	{
-		var typeDefinitionNode = (TypeDefinitionNode)syntaxViewModelLocal.DefinitionNode;
+		var typeDefinitionNode = syntaxViewModelLocal.DefinitionNode;
+		var typeDefinitionMetadata = syntaxViewModelLocal.ExtendedCompilerService.TypeDefinitionValueList[typeDefinitionNode.MetaIndex];
 	
 		var prefixBuilder = new StringBuilder();
 		prefixBuilder.Append(typeDefinitionNode.AccessModifierKind.ToString().ToLower());
@@ -47,7 +48,7 @@
 		prefixTextCssClass = "di_keyword";
 		text = syntaxViewModelLocal.GetIdentifierText(typeDefinitionNode);
 		syntaxHighlightingClassCssString = "di_type";
-		hasGenericParameterListing = typeDefinitionNode.OpenAngleBracketToken.ConstructorWasInvoked;
+		hasGenericParameterListing = typeDefinitionMetadata.OpenAngleBracketToken.ConstructorWasInvoked;
 		hasQuestionMark = null;
 		arrayRank = 0;
 	}

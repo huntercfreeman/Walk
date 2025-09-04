@@ -17,19 +17,20 @@
 	string? prefixText;
 	string? text;
 	string? textCssClass;
-	VariableDeclarationNode? variableDeclarationNode;
+	SyntaxNodeValue variableDeclarationNode;
+	SyntaxNodeValue variableDeclarationMetadata;
 	
 	if (syntaxViewModelLocal.DefinitionNode.IsDefault() && syntaxViewModelLocal.TargetNode.IsDefault() && syntaxViewModelLocal.TargetSymbol.IsDefault())
 	{
 		prefixText = "(null)";
 		text = null;
 		textCssClass = "di_variable";
-		variableDeclarationNode = null;
+		variableDeclarationNode = default;
 	}
 	else if (!syntaxViewModelLocal.DefinitionNode.IsDefault() && syntaxViewModelLocal.DefinitionNode.SyntaxKind == SyntaxKind.VariableDeclarationNode)
 	{
 		variableDeclarationNode = syntaxViewModelLocal.DefinitionNode;
-		// var variableDeclarationMetadata = syntaxViewModelLocal.ExtendedCompilerService.;
+		variableDeclarationMetadata = syntaxViewModelLocal.ExtendedCompilerService.;
 		
 		prefixText = string.Empty;
 		text = syntaxViewModelLocal.GetIdentifierText(variableDeclarationNode);
@@ -50,7 +51,7 @@
 		prefixText = "(reference)";
 		text = syntaxViewModelLocal.GetIdentifierText(syntaxViewModelLocal.TargetNode);
 		textCssClass = "di_variable";
-		variableDeclarationNode = null;
+		variableDeclarationNode = default;
 	}
 	else if (!syntaxViewModelLocal.TargetSymbol.IsDefault() &&
 			 (syntaxViewModelLocal.TargetSymbol.SyntaxKind == SyntaxKind.VariableSymbol ||
@@ -61,14 +62,14 @@
 		prefixText = "(symbol)";
 		text = syntaxViewModelLocal.GetTextFromTextSpan(syntaxViewModelLocal.TargetSymbol.TextSpan);
 		textCssClass = "di_variable";
-		variableDeclarationNode = null;
+		variableDeclarationNode = default;
 	}
 	else
 	{
 		prefixText = "(unrecognizable-state)";
 		text = null;
 		textCssClass = "di_variable";
-		variableDeclarationNode = null;
+		variableDeclarationNode = default;
 	}
     
     <span>

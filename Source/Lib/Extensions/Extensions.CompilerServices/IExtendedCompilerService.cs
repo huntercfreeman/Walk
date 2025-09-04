@@ -21,6 +21,10 @@ public interface IExtendedCompilerService : ICompilerService
     public IReadOnlyList<Walk.Extensions.CompilerServices.Syntax.Nodes.GenericParameterEntry> GenericParameterEntryList { get; }
     public IReadOnlyList<Walk.Extensions.CompilerServices.Syntax.Nodes.FunctionParameterEntry> FunctionParameterEntryList { get; }
     public IReadOnlyList<Walk.Extensions.CompilerServices.Syntax.Nodes.FunctionArgumentEntry> FunctionArgumentEntryList { get; }
+    
+    public IReadOnlyList<TypeDefinitionValue> TypeDefinitionValueList { get; }
+    public IReadOnlyList<FunctionDefinitionValue> FunctionDefinitionValueList { get; }
+    public IReadOnlyList<VariableDeclarationValue> VariableDeclarationValueList { get; }
 
     public ISyntaxNode? GetSyntaxNode(int positionIndex, ResourceUri resourceUri, ICompilerServiceResource? compilerServiceResource);
     public SyntaxNodeValue GetDefinitionNodeValue(TextEditorTextSpan textSpan, ResourceUri resourceUri, ICompilerServiceResource compilerServiceResource, Symbol? symbol = null);
