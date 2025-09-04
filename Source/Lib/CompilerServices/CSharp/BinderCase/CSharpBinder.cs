@@ -19,10 +19,6 @@ public class CSharpBinder
     /// TODO: Don't have this be public
     /// </summary>
     public readonly List<NamespaceGroup> _namespaceGroupList = new();
-    /// <summary>
-    /// TODO: Don't have this be public
-    /// </summary>
-    public readonly Dictionary<string, TypeDefinitionNode> _allTypeDefinitions = new();
     private readonly NamespaceStatementNode _topLevelNamespaceStatementNode;
     
     public List<PartialTypeDefinitionEntry> PartialTypeDefinitionList { get; } = new();
@@ -33,7 +29,7 @@ public class CSharpBinder
     /// This is not thread safe to access because 'BindNamespaceStatementNode(...)' will directly modify the NamespaceGroup's List.
     /// </summary>
     public List<NamespaceGroup> NamespaceGroupMap => _namespaceGroupList;
-    public IReadOnlyDictionary<string, TypeDefinitionNode> AllTypeDefinitions => _allTypeDefinitions;
+    public List<TypeDefinitionNode> AllTypeDefinitionList { get; } = new();
     
     /// <summary>
     /// CONFUSING: During a parse the "previous" CSharpCompilationUnit gets read from here...
@@ -78,6 +74,10 @@ public class CSharpBinder
     internal readonly List<SyntaxToken> LEXER_syntaxTokenList = new();
 
     public char[] KeywordCheckBuffer { get; } = new char[10];
+    
+    internal const int POOL_TEMPORARY_LOCAL_VARIABLE_DECLARATION_NODE_MAX_COUNT = 3;
+    /// <summary>This is only safe to use while parsing</summary>
+    public readonly Queue<VariableDeclarationNode> Pool_TemporaryLocalVariableDeclarationNode_Queue = new();
     
     internal const int POOL_BINARY_EXPRESSION_NODE_MAX_COUNT = 3;
     /// <summary>This is only safe to use while parsing</summary>
@@ -162,12 +162,12 @@ public class CSharpBinder
         TextEditorService = textEditorService;
         CSharpCompilerService = cSharpCompilerService;
         
-        _allTypeDefinitions.Add("void", CSharpFacts.Types.Void);
-        _allTypeDefinitions.Add("int", CSharpFacts.Types.Int);
-        _allTypeDefinitions.Add("char", CSharpFacts.Types.Char);
-        _allTypeDefinitions.Add("string", CSharpFacts.Types.String);
-        _allTypeDefinitions.Add("bool", CSharpFacts.Types.Bool);
-        _allTypeDefinitions.Add("var", CSharpFacts.Types.Var);
+        AllTypeDefinitionList.Add(CSharpFacts.Types.Void);
+        AllTypeDefinitionList.Add(CSharpFacts.Types.Int);
+        AllTypeDefinitionList.Add(CSharpFacts.Types.Char);
+        AllTypeDefinitionList.Add(CSharpFacts.Types.String);
+        AllTypeDefinitionList.Add(CSharpFacts.Types.Bool);
+        AllTypeDefinitionList.Add(CSharpFacts.Types.Var);
     
         for (int i = 0; i < POOL_BINARY_EXPRESSION_NODE_MAX_COUNT; i++)
         {
@@ -320,6 +320,36 @@ public class CSharpBinder
         return (default, -1);
     }
 
+    /// <summary>(inclusive, exclusive, this is the index at which you'd insert the text span)</summary>
+    public (int StartIndex, int EndIndex, int InsertionIndex) TypeDefinition_FindRange(TextEditorTextSpan textSpan)
+    {
+        var startIndex = -1;
+        var endIndex = -1;
+        var insertionIndex = AllTypeDefinitionList.Count;
+
+        for (int i = 0; i < AllTypeDefinitionList.Count; i++)
+        {
+            var node = AllTypeDefinitionList[i];
+
+            if (node.TypeIdentifierToken.TextSpan.CharIntSum == textSpan.CharIntSum)
+            {
+                if (startIndex == -1)
+                    startIndex = i;
+            }
+            else if (startIndex != -1)
+            {
+                endIndex = i;
+                insertionIndex = i;
+                break;
+            }
+        }
+
+        if (startIndex != -1 && endIndex == -1)
+            endIndex = AllTypeDefinitionList.Count;
+
+        return (startIndex, endIndex, insertionIndex);
+    }
+    
     /// <summary>(inclusive, exclusive, this is the index at which you'd insert the text span)</summary>
     public (int StartIndex, int EndIndex, int InsertionIndex) NamespaceGroup_FindRange(TextEditorTextSpan textSpan)
     {

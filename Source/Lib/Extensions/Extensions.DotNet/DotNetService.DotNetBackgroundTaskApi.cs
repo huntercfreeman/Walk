@@ -9,6 +9,10 @@ using Walk.Common.RazorLib.FileSystems.Models;
 using Walk.Common.RazorLib.Keys.Models;
 using Walk.Common.RazorLib.Reactives.Models;
 using Walk.Common.RazorLib.TreeViews.Models;
+using Walk.TextEditor.RazorLib;
+using Walk.TextEditor.RazorLib.BackgroundTasks.Models;
+using Walk.TextEditor.RazorLib.CompilerServices;
+using Walk.TextEditor.RazorLib.Lexers.Models;
 using Walk.CompilerServices.DotNetSolution;
 using Walk.CompilerServices.DotNetSolution.Models;
 using Walk.CompilerServices.DotNetSolution.Models.Project;
@@ -20,13 +24,12 @@ using Walk.Extensions.DotNet.DotNetSolutions.Models;
 using Walk.Extensions.DotNet.Namespaces.Models;
 using Walk.Extensions.DotNet.Nugets.Models;
 using Walk.Extensions.DotNet.TestExplorers.Models;
+using Walk.Extensions.CompilerServices.Syntax;
+using Walk.Extensions.CompilerServices.Syntax.Nodes;
+using Walk.Extensions.CompilerServices.Syntax.Nodes.Enums;
 using Walk.CompilerServices.Xml;
 using Walk.Ide.RazorLib;
 using Walk.Ide.RazorLib.Terminals.Models;
-using Walk.TextEditor.RazorLib;
-using Walk.TextEditor.RazorLib.BackgroundTasks.Models;
-using Walk.TextEditor.RazorLib.CompilerServices;
-using Walk.TextEditor.RazorLib.Lexers.Models;
 
 namespace Walk.Extensions.DotNet;
 
@@ -326,13 +329,24 @@ public partial class DotNetService
             {
                 var compilerService = IdeService.TextEditorService.GetCompilerService(CommonFacts.C_SHARP_CLASS);
                 var cSharpCompilerService = compilerService as CSharpCompilerService;
+                
+                if (cSharpCompilerService is null)
+                    return ValueTask.CompletedTask;
 
                 try
                 {
-                    if (cSharpCompilerService is not null)
+                    for (int i = 0; i < 10; i++)
                     {
-                        cSharpCompilerService.__CSharpBinder.ClearAllCompilationUnits();
+                        cSharpCompilerService.__CSharpBinder.Pool_TemporaryLocalVariableDeclarationNode_Queue.Enqueue(
+                            new VariableDeclarationNode(
+                                typeReference: default,
+                                identifierToken: default,
+                                VariableKind.Local,
+                                isInitialized: false,
+                                resourceUri: default));
                     }
+                
+                    cSharpCompilerService.__CSharpBinder.ClearAllCompilationUnits();
 
                     var successParseSolution = ParseSolution(editContext, dotNetSolutionModel.Key, CompilationUnitKind.SolutionWide_DefinitionsOnly, tokenBuilder, formattedBuilder);
                     if (successParseSolution)
@@ -348,22 +362,11 @@ public partial class DotNetService
                         int countScopeList;
                         int countNodeList;
 
-                        if (cSharpCompilerService is not null)
-                        {
-                            countDiagnosticList = cSharpCompilerService.__CSharpBinder.DiagnosticList.Count;
-                            countSymbolList = cSharpCompilerService.__CSharpBinder.SymbolList.Count;
-                            countFunctionInvocationParameterMetadataList = cSharpCompilerService.__CSharpBinder.FunctionInvocationParameterMetadataList.Count;
-                            countScopeList = cSharpCompilerService.__CSharpBinder.ScopeList.Count;
-                            countNodeList = cSharpCompilerService.__CSharpBinder.NodeList.Count;
-                        }
-                        else
-                        {
-                            countDiagnosticList = 0;
-                            countSymbolList = 0;
-                            countFunctionInvocationParameterMetadataList = 0;
-                            countScopeList = 0;
-                            countNodeList = 0;
-                        }
+                        countDiagnosticList = cSharpCompilerService.__CSharpBinder.DiagnosticList.Count;
+                        countSymbolList = cSharpCompilerService.__CSharpBinder.SymbolList.Count;
+                        countFunctionInvocationParameterMetadataList = cSharpCompilerService.__CSharpBinder.FunctionInvocationParameterMetadataList.Count;
+                        countScopeList = cSharpCompilerService.__CSharpBinder.ScopeList.Count;
+                        countNodeList = cSharpCompilerService.__CSharpBinder.NodeList.Count;
 
                         successParseSolution = ParseSolution(editContext, dotNetSolutionModel.Key, CompilationUnitKind.SolutionWide_MinimumLocalsData, tokenBuilder, formattedBuilder);
 
@@ -391,6 +394,14 @@ public partial class DotNetService
                     }
 
                     IdeService.TextEditorService.EditContext_GetText_Clear();
+                    
+                    // Where does the first definitions only parse allocate variable declarations
+                    //
+                    // The clearing is simple because you just do it after every file in the second round of solution wide parsing.
+                    // there is no compilation unit after you so you only have to reposition your length.
+                    //
+                    // If you do the clearing after every file in the first too then you don't have to worry about any odd off variable declarations local
+                    // that get through then you re-use the local node when pooling.
                 }
                 finally
                 {
@@ -400,6 +411,8 @@ public partial class DotNetService
 
                         cSharpCompilerService.Clear_MAIN_StreamReaderTupleCache();
                         cSharpCompilerService.Clear_BACKUP_StreamReaderTupleCache();
+                        
+                        cSharpCompilerService.__CSharpBinder.Pool_TemporaryLocalVariableDeclarationNode_Queue.Clear();
                     }
                 }
                 return ValueTask.CompletedTask;
@@ -923,17 +936,54 @@ public partial class DotNetService
     {
         var fileParsedCount = 0;
 
+        var compilerService = (CSharpCompilerService)IdeService.TextEditorService.GetCompilerService("cs");
+        
         foreach (var file in discoveredFileList)
         {
             var progress = currentProgress + maximumProgressAvailableToProject * (fileParsedCount / (double)discoveredFileList.Count);
             var resourceUri = new ResourceUri(file);
-            var compilerService = IdeService.TextEditorService.GetCompilerService("cs");
-
+            
             compilerService.RegisterResource(
                 resourceUri,
                 shouldTriggerResourceWasModified: false);
 
             compilerService.FastParse(editContext, resourceUri, IdeService.TextEditorService.CommonService.FileSystemProvider, compilationUnitKind);
+            
+            if (compilerService.__CSharpBinder.__CompilationUnitMap.TryGetValue(resourceUri, out var cSharpCompilationUnit))
+            {
+                var removeCount = 0;
+                for (int i = compilerService.__CSharpBinder.NodeList.Count - 1; i >= cSharpCompilationUnit.NodeOffset; i--)
+                {
+                    var node = compilerService.__CSharpBinder.NodeList[i];
+                    if (node.SyntaxKind == SyntaxKind.VariableDeclarationNode)
+                    {
+                        var variableDeclarationNode = (VariableDeclarationNode)node;
+                        if (variableDeclarationNode.VariableKind == VariableKind.Local)
+                        {
+                            removeCount++;
+                            compilerService.__CSharpBinder.NodeList.RemoveAt(i);
+                            
+                            variableDeclarationNode.TypeReference = default;
+                            variableDeclarationNode.IdentifierToken = default;
+                            variableDeclarationNode.VariableKind = VariableKind.Local;
+                            variableDeclarationNode.IsInitialized = false;
+                            variableDeclarationNode.ResourceUri = default;
+                            variableDeclarationNode.HasGetter = default;
+                            variableDeclarationNode.GetterIsAutoImplemented = default;
+                            variableDeclarationNode.HasSetter = default;
+                            variableDeclarationNode.SetterIsAutoImplemented = default;
+                            variableDeclarationNode.ParentScopeSubIndex = default;
+                            variableDeclarationNode._isFabricated = default;
+                            
+                            compilerService.__CSharpBinder.Pool_TemporaryLocalVariableDeclarationNode_Queue.Enqueue(variableDeclarationNode);
+                        }
+                    }
+                }
+                cSharpCompilationUnit.NodeLength -= removeCount;
+                compilerService.__CSharpBinder.__CompilationUnitMap[resourceUri] = cSharpCompilationUnit;
+            }
+            
+            
             fileParsedCount++;
         }
     }
