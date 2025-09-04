@@ -29,7 +29,7 @@
 	else if (!syntaxViewModelLocal.DefinitionNode.IsDefault() && syntaxViewModelLocal.DefinitionNode.SyntaxKind == SyntaxKind.VariableDeclarationNode)
 	{
 		variableDeclarationNode = syntaxViewModelLocal.DefinitionNode;
-		var variableDeclarationMetadata = syntaxViewModelLocal.ExtendedCompilerService.;
+		// var variableDeclarationMetadata = syntaxViewModelLocal.ExtendedCompilerService.;
 		
 		prefixText = string.Empty;
 		text = syntaxViewModelLocal.GetIdentifierText(variableDeclarationNode);
@@ -103,7 +103,7 @@
     	
     	@if (!string.IsNullOrWhiteSpace(text))
     	{
-    		var classCssString = syntaxViewModelLocal.DefinitionNode is null
+    		var classCssString = syntaxViewModelLocal.DefinitionNode.IsDefault()
     			? string.Empty
     			: "di_te_syntax-onclick";
     	

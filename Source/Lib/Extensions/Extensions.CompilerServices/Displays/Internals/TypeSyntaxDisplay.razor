@@ -69,11 +69,11 @@
 		arrayRank = typeClauseNode.ArrayRank;
 		typeKind = typeClauseNode.TypeKind;
 	}
-	else if (!syntaxViewModelLocal.TargetSymbol.IsDefault() && syntaxViewModelLocal.TargetSymbol.Value.SyntaxKind == SyntaxKind.TypeSymbol)
+	else if (!syntaxViewModelLocal.TargetSymbol.IsDefault() && syntaxViewModelLocal.TargetSymbol.SyntaxKind == SyntaxKind.TypeSymbol)
 	{
 		prefixText = "(symbol)";
 		prefixTextCssClass = null;
-		text = syntaxViewModelLocal.GetTextFromTextSpan(syntaxViewModelLocal.TargetSymbol.Value.TextSpan);
+		text = syntaxViewModelLocal.GetTextFromTextSpan(syntaxViewModelLocal.TargetSymbol.TextSpan);
 		syntaxHighlightingClassCssString = "di_type";
 		hasGenericParameterListing = false;
 		hasQuestionMark = null;
@@ -127,7 +127,7 @@
     	
     	@if (!string.IsNullOrWhiteSpace(text))
     	{
-    		var classCssString = syntaxViewModelLocal.DefinitionNode is null
+    		var classCssString = syntaxViewModelLocal.DefinitionNode.IsDefault()
     			? string.Empty
     			: "di_te_syntax-onclick";
     	

@@ -26,7 +26,7 @@
     int countFunctionArgumentEntryList;
 	bool isConstructorInvocation = false;
 	
-	if (syntaxViewModelLocal.DefinitionNode is null && syntaxViewModelLocal.TargetNode is null && syntaxViewModelLocal.TargetSymbol is null)
+	if (syntaxViewModelLocal.DefinitionNode.IsDefault() && syntaxViewModelLocal.TargetNode.IsDefault() && syntaxViewModelLocal.TargetSymbol.IsDefault())
 	{
 		prefixText = "(null)";
 		returnTypeClauseNode = default;
@@ -36,7 +36,7 @@
 		indexFunctionArgumentEntryList = -1;
 		countFunctionArgumentEntryList = 0;
 	}
-	else if (syntaxViewModelLocal.DefinitionNode is not null &&
+	else if (!syntaxViewModelLocal.DefinitionNode.IsDefault() &&
 			 (syntaxViewModelLocal.DefinitionNode.SyntaxKind == SyntaxKind.FunctionDefinitionNode ||
 			  	syntaxViewModelLocal.DefinitionNode.SyntaxKind == SyntaxKind.ConstructorDefinitionNode))
 	{
@@ -72,7 +72,7 @@
     		countFunctionArgumentEntryList = 0;
 		}
 	}
-	else if (syntaxViewModelLocal.TargetNode is not null &&
+	else if (!syntaxViewModelLocal.TargetNode.IsDefault() &&
 			 (syntaxViewModelLocal.TargetNode.SyntaxKind == SyntaxKind.FunctionInvocationNode ||
 			  	syntaxViewModelLocal.TargetNode.SyntaxKind == SyntaxKind.ConstructorInvocationExpressionNode))
 	{
@@ -108,25 +108,25 @@
     		countFunctionArgumentEntryList = 0;
 		}
 	}
-	else if (syntaxViewModelLocal.TargetSymbol is not null &&
-			 (syntaxViewModelLocal.TargetSymbol.Value.SyntaxKind == SyntaxKind.FunctionSymbol ||
-			  	syntaxViewModelLocal.TargetSymbol.Value.SyntaxKind == SyntaxKind.ConstructorSymbol))
+	else if (!syntaxViewModelLocal.TargetSymbol.IsDefault() &&
+			 (syntaxViewModelLocal.TargetSymbol.SyntaxKind == SyntaxKind.FunctionSymbol ||
+			  	syntaxViewModelLocal.TargetSymbol.SyntaxKind == SyntaxKind.ConstructorSymbol))
 	{
 		prefixText = "(symbol)";
 	
-		if (syntaxViewModelLocal.TargetSymbol.Value.SyntaxKind == SyntaxKind.FunctionSymbol)
+		if (syntaxViewModelLocal.TargetSymbol.SyntaxKind == SyntaxKind.FunctionSymbol)
 		{
 			returnTypeClauseNode = default;
 			returnTypeClauseNodeText = null;
-			methodName = syntaxViewModelLocal.GetTextFromTextSpan(syntaxViewModelLocal.TargetSymbol.Value.TextSpan);
+			methodName = syntaxViewModelLocal.GetTextFromTextSpan(syntaxViewModelLocal.TargetSymbol.TextSpan);
 			hasGenericParameterListing = false;
 			indexFunctionArgumentEntryList = -1;
     		countFunctionArgumentEntryList = 0;
 		}
-		else if (syntaxViewModelLocal.TargetSymbol.Value.SyntaxKind == SyntaxKind.ConstructorSymbol)
+		else if (syntaxViewModelLocal.TargetSymbol.SyntaxKind == SyntaxKind.ConstructorSymbol)
 		{
 			returnTypeClauseNode = default;
-			returnTypeClauseNodeText = syntaxViewModelLocal.GetTextFromTextSpan(syntaxViewModelLocal.TargetSymbol.Value.TextSpan);
+			returnTypeClauseNodeText = syntaxViewModelLocal.GetTextFromTextSpan(syntaxViewModelLocal.TargetSymbol.TextSpan);
 			methodName = null;
 			hasGenericParameterListing = false;
 			indexFunctionArgumentEntryList = -1;
@@ -168,9 +168,9 @@
     		    SyntaxViewModel.ExtendedCompilerService,
     		    SyntaxViewModel.TextEditorService,
     		    SyntaxViewModel.ResourceUri,
-    			targetSymbol: null,
-    			targetNode: null,
-    			definitionNode: null,
+    			targetSymbol: default,
+    			targetNode: default,
+    			definitionNode: default,
     			depth: syntaxViewModelLocal.Depth + 1);
     		<TypeSyntaxDisplay SyntaxViewModel="syntaxViewModel" TypeReference="returnTypeClauseNode"/>
     		<text>&nbsp;</text>
@@ -185,7 +185,7 @@
     	
     	@if (!string.IsNullOrWhiteSpace(methodName))
     	{
-    		var classCssString = syntaxViewModelLocal.DefinitionNode is null
+    		var classCssString = syntaxViewModelLocal.DefinitionNode.IsDefault()
     			? string.Empty
     			: "di_te_syntax-onclick";
     	
@@ -201,7 +201,7 @@
     		    SyntaxViewModel.ExtendedCompilerService,
     		    SyntaxViewModel.TextEditorService,
     		    SyntaxViewModel.ResourceUri,
-    			targetSymbol: null,
+    			targetSymbol: default,
     			targetNode: syntaxViewModelLocal.TargetNode,
     			definitionNode: syntaxViewModelLocal.DefinitionNode,
     			depth: syntaxViewModelLocal.Depth + 1);
@@ -280,7 +280,7 @@
         		    SyntaxViewModel.ExtendedCompilerService,
     				SyntaxViewModel.TextEditorService,
     				SyntaxViewModel.ResourceUri,
-    				targetSymbol: null,
+    				targetSymbol: default,
     				targetNode: variableDeclarationNode,
     				definitionNode: variableDeclarationNode,
     				depth: syntaxViewModelLocal.Depth + 1);
