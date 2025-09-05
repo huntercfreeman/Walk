@@ -1977,9 +1977,7 @@ public sealed class CSharpCompilerService : IExtendedCompilerService
     
     public List<AutocompleteEntry>? OBSOLETE_GetAutocompleteEntries(string word, TextEditorTextSpan textSpan, TextEditorVirtualizationResult virtualizationResult)
     {
-        return null;
-    }
-        /*if (word is null || !__CSharpBinder.__CompilationUnitMap.TryGetValue(virtualizationResult.Model.PersistentState.ResourceUri, out var compilationUnit))
+        if (word is null || !__CSharpBinder.__CompilationUnitMap.TryGetValue(virtualizationResult.Model.PersistentState.ResourceUri, out var compilationUnit))
             return null;
             
         var boundScope = __CSharpBinder.GetScope(compilationUnit, textSpan);
@@ -2011,16 +2009,12 @@ public sealed class CSharpCompilerService : IExtendedCompilerService
             if (targetNode is null)
                 return autocompleteEntryList.DistinctBy(x => x.DisplayName).ToList();
         
-            TypeReference typeReference = default;
+            TypeReferenceValue typeReference = default;
     
             if (targetNode.SyntaxKind == SyntaxKind.VariableReferenceNode)
             {
                 var variableReferenceNode = (VariableReferenceNode)targetNode;
-            
-                if (variableReferenceNode.VariableDeclarationNode is not null)
-                {
-                    typeReference = variableReferenceNode.VariableDeclarationNode.TypeReference;
-                }
+                typeReference = variableReferenceNode.TypeReference;
             }
             else if (targetNode.SyntaxKind == SyntaxKind.VariableDeclarationNode)
             {
@@ -2028,7 +2022,7 @@ public sealed class CSharpCompilerService : IExtendedCompilerService
             }
             else if (targetNode.SyntaxKind == SyntaxKind.TypeClauseNode)
             {
-                typeReference = new TypeReference((TypeClauseNode)targetNode);
+                typeReference = new TypeReferenceValue((TypeClauseNode)targetNode);
             }
             else if (targetNode.SyntaxKind == SyntaxKind.TypeDefinitionNode)
             {
@@ -2042,11 +2036,11 @@ public sealed class CSharpCompilerService : IExtendedCompilerService
             if (typeReference.IsDefault())
                 return autocompleteEntryList.DistinctBy(x => x.DisplayName).ToList();
             
-            var maybeTypeDefinitionNode = __CSharpBinder.GetDefinitionNode(virtualizationResult.Model.PersistentState.ResourceUri, (CSharpCompilationUnit)compilerServiceResource.CompilationUnit, typeReference.TypeIdentifierToken.TextSpan, SyntaxKind.TypeClauseNode);
-            if (maybeTypeDefinitionNode is null || maybeTypeDefinitionNode.SyntaxKind != SyntaxKind.TypeDefinitionNode)
+            var maybeTypeDefinitionNode = __CSharpBinder.GetDefinitionNodeValue(virtualizationResult.Model.PersistentState.ResourceUri, (CSharpCompilationUnit)compilerServiceResource.CompilationUnit, typeReference.TypeIdentifierToken.TextSpan, SyntaxKind.TypeClauseNode);
+            if (maybeTypeDefinitionNode.IsDefault() || maybeTypeDefinitionNode.SyntaxKind != SyntaxKind.TypeDefinitionNode)
                 return autocompleteEntryList.DistinctBy(x => x.DisplayName).ToList();
             
-            var typeDefinitionNode = (TypeDefinitionNode)maybeTypeDefinitionNode;
+            var typeDefinitionNode = maybeTypeDefinitionNode;
             var memberList = __CSharpBinder.GetMemberList_TypeDefinitionNode(typeDefinitionNode);
             
             autocompleteEntryList.AddRange(
@@ -2055,18 +2049,18 @@ public sealed class CSharpCompilerService : IExtendedCompilerService
                 {
                     if (node.SyntaxKind == SyntaxKind.VariableDeclarationNode)
                     {
-                        var variableDeclarationNode = (VariableDeclarationNode)node;
+                        var variableDeclarationNode = node;
                         return variableDeclarationNode.IdentifierToken.TextSpan.GetText(virtualizationResult.Model.GetAllText(), _textEditorService);
                     }
                     else if (node.SyntaxKind == SyntaxKind.TypeDefinitionNode)
                     {
-                        var typeDefinitionNode = (TypeDefinitionNode)node;
-                        return typeDefinitionNode.TypeIdentifierToken.TextSpan.GetText(virtualizationResult.Model.GetAllText(), _textEditorService);
+                        var typeDefinitionNode = node;
+                        return typeDefinitionNode.IdentifierToken.TextSpan.GetText(virtualizationResult.Model.GetAllText(), _textEditorService);
                     }
                     else if (node.SyntaxKind == SyntaxKind.FunctionDefinitionNode)
                     {
-                        var functionDefinitionNode = (FunctionDefinitionNode)node;
-                        return functionDefinitionNode.FunctionIdentifierToken.TextSpan.GetText(virtualizationResult.Model.GetAllText(), _textEditorService);
+                        var functionDefinitionNode = node;
+                        return functionDefinitionNode.IdentifierToken.TextSpan.GetText(virtualizationResult.Model.GetAllText(), _textEditorService);
                     }
                     else
                     {
@@ -2123,9 +2117,9 @@ public sealed class CSharpCompilerService : IExtendedCompilerService
                     targetScope = __CSharpBinder.GetScopeByOffset(compilationUnit, targetScope.ParentScopeSubIndex);
             }
         
-            var allTypeDefinitions = __CSharpBinder.AllTypeDefinitionList;
+            /*var allTypeDefinitions = __CSharpBinder.AllTypeDefinitionList;
     
-            /*autocompleteEntryList.AddRange(
+            autocompleteEntryList.AddRange(
                 allTypeDefinitions
                 .Where(x => x.Key.Contains(word, StringComparison.InvariantCulture))
                 .Distinct()
@@ -2136,7 +2130,7 @@ public sealed class CSharpCompilerService : IExtendedCompilerService
                         x.Key,
                         AutocompleteEntryKind.Type,
                         sideEffectFunc: null);
-                }));*//*
+                }));*/
         }
         
         /*foreach (var namespaceGroupKvp in __CSharpBinder.NamespacePrefixTree.__Root.Children.Where(x => x.Key.Contains(word)).Take(5))
@@ -2145,12 +2139,12 @@ public sealed class CSharpCompilerService : IExtendedCompilerService
                 namespaceGroupKvp.Key,
                 AutocompleteEntryKind.Namespace,
                 () => Task.CompletedTask));
-        }*//*
+        }*/
             
         AddSnippets(autocompleteEntryList, word, textSpan, virtualizationResult.Model.PersistentState.ResourceUri);
 
         return autocompleteEntryList.DistinctBy(x => x.DisplayName).ToList();
-    }*/
+    }
     
     private void AddSnippets(List<AutocompleteEntry> autocompleteEntryList, string word, TextEditorTextSpan textSpan, ResourceUri resourceUri)
     {
