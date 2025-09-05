@@ -1,6 +1,6 @@
 using Walk.Extensions.CompilerServices.Syntax.Nodes.Enums;
 
-namespace Walk.Extensions.CompilerServices.Syntax.Nodes;
+namespace Walk.Extensions.CompilerServices.Syntax.Values;
 
 /// <summary>
 /// Used when invoking a function.

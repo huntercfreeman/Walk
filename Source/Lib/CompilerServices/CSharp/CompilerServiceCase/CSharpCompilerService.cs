@@ -13,6 +13,7 @@ using Walk.Extensions.CompilerServices.Displays;
 using Walk.Extensions.CompilerServices.Syntax;
 using Walk.Extensions.CompilerServices.Syntax.Nodes;
 using Walk.Extensions.CompilerServices.Syntax.Nodes.Interfaces;
+using Walk.Extensions.CompilerServices.Syntax.Values;
 using Walk.TextEditor.RazorLib;
 using Walk.TextEditor.RazorLib.Autocompletes.Models;
 using Walk.TextEditor.RazorLib.CompilerServices;

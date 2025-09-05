@@ -115,7 +115,7 @@ public static class ParseExpressions
                         parserModel.ExpressionPrimary = LambdaMergeToken((LambdaExpressionNode)parserModel.ExpressionPrimary, ref parserModel);
                         break;
                     case SyntaxKind.ConstructorInvocationExpressionNode:
-                        parserModel.ExpressionPrimary = ConstructorInvocationMergeToken((ConstructorInvocationExpressionNode)parserModel.ExpressionPrimary, ref parserModel);
+                        parserModel.ExpressionPrimary = ConstructorInvocationMergeToken((ConstructorInvocationNode)parserModel.ExpressionPrimary, ref parserModel);
                         break;
                     case SyntaxKind.WithExpressionNode:
                         parserModel.ExpressionPrimary = WithMergeToken((WithExpressionNode)parserModel.ExpressionPrimary, ref parserModel);
@@ -127,10 +127,10 @@ public static class ParseExpressions
                         parserModel.ExpressionPrimary = TupleMergeToken((TupleExpressionNode)parserModel.ExpressionPrimary, ref parserModel);
                         break;
                     case SyntaxKind.AmbiguousParenthesizedExpressionNode:
-                        parserModel.ExpressionPrimary = AmbiguousParenthesizedMergeToken((AmbiguousParenthesizedExpressionNode)parserModel.ExpressionPrimary, ref parserModel);
+                        parserModel.ExpressionPrimary = AmbiguousParenthesizedMergeToken((AmbiguousParenthesizedNode)parserModel.ExpressionPrimary, ref parserModel);
                         break;
                     case SyntaxKind.AmbiguousIdentifierExpressionNode:
-                        parserModel.ExpressionPrimary = AmbiguousIdentifierMergeToken((AmbiguousIdentifierExpressionNode)parserModel.ExpressionPrimary, ref parserModel);
+                        parserModel.ExpressionPrimary = AmbiguousIdentifierMergeToken((AmbiguousIdentifierNode)parserModel.ExpressionPrimary, ref parserModel);
                         break;
                     case SyntaxKind.VariableReferenceNode:
                         parserModel.ExpressionPrimary = VariableReferenceMergeToken((VariableReferenceNode)parserModel.ExpressionPrimary, ref parserModel);
@@ -273,7 +273,7 @@ public static class ParseExpressions
         {
             parserModel.ExpressionPrimary = ForceDecisionAmbiguousIdentifier(
                 EmptyExpressionNode.Empty,
-                (AmbiguousIdentifierExpressionNode)parserModel.ExpressionPrimary,
+                (AmbiguousIdentifierNode)parserModel.ExpressionPrimary,
                 ref parserModel);
         }
         
@@ -458,7 +458,7 @@ public static class ParseExpressions
         {
             expressionPrimary = ForceDecisionAmbiguousIdentifier(
                 EmptyExpressionNode.Empty,
-                (AmbiguousIdentifierExpressionNode)expressionPrimary,
+                (AmbiguousIdentifierNode)expressionPrimary,
                 ref parserModel);
         }
         
@@ -468,11 +468,11 @@ public static class ParseExpressions
         if (parserModel.TokenWalker.Current.SyntaxKind == SyntaxKind.OpenAngleBracketToken || parserModel.TokenWalker.Current.SyntaxKind == SyntaxKind.CloseAngleBracketToken)
         {
             if (expressionPrimary.SyntaxKind == SyntaxKind.ConstructorInvocationExpressionNode)
-                return ConstructorInvocationMergeToken((ConstructorInvocationExpressionNode)expressionPrimary, ref parserModel);
+                return ConstructorInvocationMergeToken((ConstructorInvocationNode)expressionPrimary, ref parserModel);
             else if (expressionPrimary.SyntaxKind == SyntaxKind.TypeClauseNode)
                 return TypeClauseMergeToken((TypeClauseNode)expressionPrimary, ref parserModel);
             else if (expressionPrimary.SyntaxKind == SyntaxKind.AmbiguousIdentifierExpressionNode)
-                return AmbiguousIdentifierMergeToken((AmbiguousIdentifierExpressionNode)expressionPrimary, ref parserModel);
+                return AmbiguousIdentifierMergeToken((AmbiguousIdentifierNode)expressionPrimary, ref parserModel);
             else if (expressionPrimary.SyntaxKind == SyntaxKind.FunctionInvocationNode)
                 return FunctionInvocationMergeToken((FunctionInvocationNode)expressionPrimary, ref parserModel);
             else if (expressionPrimary.SyntaxKind == SyntaxKind.FunctionDefinitionNode)
@@ -610,7 +610,7 @@ public static class ParseExpressions
     }
 
     public static IExpressionNode AmbiguousParenthesizedMergeToken(
-        AmbiguousParenthesizedExpressionNode ambiguousParenthesizedExpressionNode, ref CSharpParserModel parserModel)
+        AmbiguousParenthesizedNode ambiguousParenthesizedExpressionNode, ref CSharpParserModel parserModel)
     {
         var token = parserModel.TokenWalker.Current;
         
@@ -686,7 +686,7 @@ public static class ParseExpressions
     public static IExpressionNode AmbiguousParenthesizedMergeExpression(
         IExpressionNode expressionSecondary, ref CSharpParserModel parserModel)
     {
-        var ambiguousParenthesizedExpressionNode = (AmbiguousParenthesizedExpressionNode)parserModel.ExpressionPrimary;
+        var ambiguousParenthesizedExpressionNode = (AmbiguousParenthesizedNode)parserModel.ExpressionPrimary;
         
         switch (expressionSecondary.SyntaxKind)
         {
@@ -723,8 +723,8 @@ public static class ParseExpressions
                 
                 if (expressionSecondary.SyntaxKind == SyntaxKind.AmbiguousIdentifierExpressionNode)
                 {
-                    var ambiguousIdentifierExpressionNode = (AmbiguousIdentifierExpressionNode)expressionSecondary;
-                    expressionSecondary = new AmbiguousIdentifierExpressionNode(
+                    var ambiguousIdentifierExpressionNode = (AmbiguousIdentifierNode)expressionSecondary;
+                    expressionSecondary = new AmbiguousIdentifierNode(
                         ambiguousIdentifierExpressionNode.Token,
                         ambiguousIdentifierExpressionNode.OpenAngleBracketToken,
                         ambiguousIdentifierExpressionNode.IndexGenericParameterEntryList,
@@ -765,7 +765,7 @@ public static class ParseExpressions
     }
     
     public static IExpressionNode AmbiguousIdentifierMergeToken(
-        AmbiguousIdentifierExpressionNode ambiguousIdentifierExpressionNode, ref CSharpParserModel parserModel)
+        AmbiguousIdentifierNode ambiguousIdentifierExpressionNode, ref CSharpParserModel parserModel)
     {
         if (ambiguousIdentifierExpressionNode.IsParsingGenericParameters)
         {
@@ -992,7 +992,7 @@ public static class ParseExpressions
     public static IExpressionNode AmbiguousIdentifierMergeExpression(
         IExpressionNode expressionSecondary, ref CSharpParserModel parserModel)
     {
-        var ambiguousIdentifierExpressionNode = (AmbiguousIdentifierExpressionNode)parserModel.ExpressionPrimary;
+        var ambiguousIdentifierExpressionNode = (AmbiguousIdentifierNode)parserModel.ExpressionPrimary;
         
         if (ambiguousIdentifierExpressionNode.IsParsingGenericParameters)
         {
@@ -1081,7 +1081,7 @@ public static class ParseExpressions
     /// </summary>
     public static IExpressionNode ForceDecisionAmbiguousIdentifier(
         IExpressionNode expressionPrimary,
-        AmbiguousIdentifierExpressionNode ambiguousIdentifierExpressionNode,
+        AmbiguousIdentifierNode ambiguousIdentifierExpressionNode,
         ref CSharpParserModel parserModel,
         bool forceVariableReferenceNode = false,
         bool allowFabricatedUndefinedNode = true)
@@ -1473,7 +1473,7 @@ public static class ParseExpressions
         {
             expressionSecondary = ForceDecisionAmbiguousIdentifier(
                 EmptyExpressionNode.Empty,
-                (AmbiguousIdentifierExpressionNode)expressionSecondary,
+                (AmbiguousIdentifierNode)expressionSecondary,
                 ref parserModel);
         }
     
@@ -1678,7 +1678,7 @@ public static class ParseExpressions
             {
                 expressionSecondary = ForceDecisionAmbiguousIdentifier(
                     EmptyExpressionNode.Empty,
-                    (AmbiguousIdentifierExpressionNode)expressionSecondary,
+                    (AmbiguousIdentifierNode)expressionSecondary,
                     ref parserModel);
             }
                 
@@ -1694,7 +1694,7 @@ public static class ParseExpressions
             }
             else if (expressionSecondary.SyntaxKind == SyntaxKind.ConstructorInvocationExpressionNode)
             {
-                parserModel.Return_ConstructorInvocationExpressionNode((ConstructorInvocationExpressionNode)expressionSecondary);
+                parserModel.Return_ConstructorInvocationExpressionNode((ConstructorInvocationNode)expressionSecondary);
             }
             
             return binaryExpressionNode;
@@ -1754,7 +1754,7 @@ public static class ParseExpressions
         }
         else if (expressionSecondary.SyntaxKind == SyntaxKind.ConstructorInvocationExpressionNode)
         {
-            parserModel.Return_ConstructorInvocationExpressionNode((ConstructorInvocationExpressionNode)expressionSecondary);
+            parserModel.Return_ConstructorInvocationExpressionNode((ConstructorInvocationNode)expressionSecondary);
         }
     
         if (collectionInitializationNode.IsClosed)
@@ -1764,7 +1764,7 @@ public static class ParseExpressions
     }
     
     public static IExpressionNode ConstructorInvocationMergeToken(
-        ConstructorInvocationExpressionNode constructorInvocationExpressionNode, ref CSharpParserModel parserModel)
+        ConstructorInvocationNode constructorInvocationExpressionNode, ref CSharpParserModel parserModel)
     {
         SyntaxToken token;
         
@@ -1836,7 +1836,7 @@ public static class ParseExpressions
     public static IExpressionNode ConstructorInvocationMergeExpression(
         IExpressionNode expressionSecondary, ref CSharpParserModel parserModel)
     {
-        var constructorInvocationExpressionNode = (ConstructorInvocationExpressionNode)parserModel.ExpressionPrimary;
+        var constructorInvocationExpressionNode = (ConstructorInvocationNode)parserModel.ExpressionPrimary;
     
         if (constructorInvocationExpressionNode.IsParsingFunctionParameters)
         {
@@ -1848,7 +1848,7 @@ public static class ParseExpressions
         {
             expressionSecondary = ForceDecisionAmbiguousIdentifier(
                 constructorInvocationExpressionNode,
-                (AmbiguousIdentifierExpressionNode)expressionSecondary,
+                (AmbiguousIdentifierNode)expressionSecondary,
                 ref parserModel);
         }
     
@@ -1911,7 +1911,7 @@ public static class ParseExpressions
     /// CurrentToken is to either be 'OpenBraceToken', or 'CommaToken' when invoking this method.
     /// </summary>
     public static IExpressionNode ParseObjectInitialization(
-        ConstructorInvocationExpressionNode constructorInvocationExpressionNode, ref SyntaxToken token, ref CSharpParserModel parserModel)
+        ConstructorInvocationNode constructorInvocationExpressionNode, ref SyntaxToken token, ref CSharpParserModel parserModel)
     {
         // Consume either 'OpenBraceToken', or 'CommaToken'
         _ = parserModel.TokenWalker.Consume();
@@ -2227,7 +2227,7 @@ public static class ParseExpressions
             return EmptyExpressionNode.Empty;
         }
     
-        var ambiguousParenthesizedExpressionNode = new AmbiguousParenthesizedExpressionNode(
+        var ambiguousParenthesizedExpressionNode = new AmbiguousParenthesizedNode(
             token,
             isParserContextKindForceStatementExpression: parserModel.ParserContextKind == CSharpParserContextKind.ForceStatementExpression ||
                 // '(List<(int, bool)>)' required the following hack because the CSharpParserContextKind.ForceStatementExpression enum
@@ -2255,7 +2255,7 @@ public static class ParseExpressions
             case SyntaxKind.IdentifierToken:
                 var expressionNode = ForceDecisionAmbiguousIdentifier(
                     EmptyExpressionNode.Empty,
-                    new AmbiguousIdentifierExpressionNode(
+                    new AmbiguousIdentifierNode(
                         token,
                         openAngleBracketToken: default,
                 		indexGenericParameterEntryList: -1,
@@ -2316,7 +2316,7 @@ public static class ParseExpressions
         {
             ForceDecisionAmbiguousIdentifier(
                 EmptyExpressionNode.Empty,
-                (AmbiguousIdentifierExpressionNode)expressionSecondary,
+                (AmbiguousIdentifierNode)expressionSecondary,
                 ref parserModel);
         }
         
@@ -2355,7 +2355,7 @@ public static class ParseExpressions
         {
             ForceDecisionAmbiguousIdentifier(
                 EmptyExpressionNode.Empty,
-                (AmbiguousIdentifierExpressionNode)expressionSecondary,
+                (AmbiguousIdentifierNode)expressionSecondary,
                 ref parserModel);
         }
         
@@ -2483,7 +2483,7 @@ public static class ParseExpressions
         {
             expressionSecondary = ForceDecisionAmbiguousIdentifier(
                 EmptyExpressionNode.Empty,
-                (AmbiguousIdentifierExpressionNode)expressionSecondary,
+                (AmbiguousIdentifierNode)expressionSecondary,
                 ref parserModel);
         }
         
@@ -2538,7 +2538,7 @@ public static class ParseExpressions
         if (parserModel.TokenWalker.Current.SyntaxKind == SyntaxKind.StringInterpolatedEndToken)
         {
             if (expressionSecondary.SyntaxKind == SyntaxKind.AmbiguousIdentifierExpressionNode)
-                expressionSecondary = ForceDecisionAmbiguousIdentifier(EmptyExpressionNode.Empty, (AmbiguousIdentifierExpressionNode)expressionSecondary, ref parserModel);
+                expressionSecondary = ForceDecisionAmbiguousIdentifier(EmptyExpressionNode.Empty, (AmbiguousIdentifierNode)expressionSecondary, ref parserModel);
 
             interpolatedStringNode.StringInterpolatedEndToken = parserModel.TokenWalker.Current;
             
@@ -2563,7 +2563,7 @@ public static class ParseExpressions
         else if (parserModel.TokenWalker.Current.SyntaxKind == SyntaxKind.StringInterpolatedContinueToken)
         {
             if (expressionSecondary.SyntaxKind == SyntaxKind.AmbiguousIdentifierExpressionNode)
-                expressionSecondary = ForceDecisionAmbiguousIdentifier(EmptyExpressionNode.Empty, (AmbiguousIdentifierExpressionNode)expressionSecondary, ref parserModel);
+                expressionSecondary = ForceDecisionAmbiguousIdentifier(EmptyExpressionNode.Empty, (AmbiguousIdentifierNode)expressionSecondary, ref parserModel);
 
             if (expressionSecondary.SyntaxKind == SyntaxKind.VariableReferenceNode)
             {
@@ -2638,7 +2638,7 @@ public static class ParseExpressions
         }
     
         if (expressionSecondary.SyntaxKind == SyntaxKind.AmbiguousIdentifierExpressionNode)
-            expressionSecondary = ForceDecisionAmbiguousIdentifier(parenthesizedExpressionNode, (AmbiguousIdentifierExpressionNode)expressionSecondary, ref parserModel);
+            expressionSecondary = ForceDecisionAmbiguousIdentifier(parenthesizedExpressionNode, (AmbiguousIdentifierNode)expressionSecondary, ref parserModel);
     
         if (parserModel.TokenWalker.Current.SyntaxKind == SyntaxKind.CommaToken)
         {
@@ -2707,7 +2707,7 @@ public static class ParseExpressions
                 {
                     expressionSecondary = ForceDecisionAmbiguousIdentifier(
                         EmptyExpressionNode.Empty,
-                        (AmbiguousIdentifierExpressionNode)expressionSecondary,
+                        (AmbiguousIdentifierNode)expressionSecondary,
                         ref parserModel);
                 }
                 
@@ -2857,7 +2857,7 @@ public static class ParseExpressions
                             parserModel.TokenWalker.Next.SyntaxKind == SyntaxKind.MemberAccessToken)
                         {
                             parserModel.ParserContextKind = CSharpParserContextKind.None;
-                            var ambiguousExpressionNode = new AmbiguousIdentifierExpressionNode(
+                            var ambiguousExpressionNode = new AmbiguousIdentifierNode(
                                 parserModel.TokenWalker.Current,
                                 openAngleBracketToken: default,
                                 indexGenericParameterEntryList: -1,
@@ -3051,7 +3051,7 @@ public static class ParseExpressions
     
         if (expressionSecondary.SyntaxKind == SyntaxKind.AmbiguousIdentifierExpressionNode)
         {
-            expressionSecondary = ForceDecisionAmbiguousIdentifier(functionInvocationNode, (AmbiguousIdentifierExpressionNode)expressionSecondary, ref parserModel);
+            expressionSecondary = ForceDecisionAmbiguousIdentifier(functionInvocationNode, (AmbiguousIdentifierNode)expressionSecondary, ref parserModel);
         }
     
         switch (expressionSecondary.SyntaxKind)
@@ -3071,7 +3071,7 @@ public static class ParseExpressions
     {
         if (expressionNode.SyntaxKind == SyntaxKind.AmbiguousIdentifierExpressionNode)
         {
-            var token = ((AmbiguousIdentifierExpressionNode)expressionNode).Token;
+            var token = ((AmbiguousIdentifierNode)expressionNode).Token;
             
             if (token.SyntaxKind != SyntaxKind.IdentifierToken)
                 return lambdaExpressionNode;
@@ -3774,7 +3774,7 @@ public static class ParseExpressions
     }
     
     private static IExpressionNode AmbiguousParenthesizedExpressionTransformTo_ParenthesizedExpressionNode(
-        AmbiguousParenthesizedExpressionNode ambiguousParenthesizedExpressionNode, IExpressionNode expressionSecondary, ref CSharpParserModel parserModel)
+        AmbiguousParenthesizedNode ambiguousParenthesizedExpressionNode, IExpressionNode expressionSecondary, ref CSharpParserModel parserModel)
     {
         var parenthesizedExpressionNode = new ParenthesizedExpressionNode(
             ambiguousParenthesizedExpressionNode.OpenParenthesisToken,
@@ -3791,7 +3791,7 @@ public static class ParseExpressions
     }
     
     private static IExpressionNode AmbiguousParenthesizedExpressionTransformTo_TupleExpressionNode(
-        AmbiguousParenthesizedExpressionNode ambiguousParenthesizedExpressionNode, IExpressionNode? expressionSecondary, ref CSharpParserModel parserModel)
+        AmbiguousParenthesizedNode ambiguousParenthesizedExpressionNode, IExpressionNode? expressionSecondary, ref CSharpParserModel parserModel)
     {
         var tupleExpressionNode = new TupleExpressionNode();
             
@@ -3806,7 +3806,7 @@ public static class ParseExpressions
                 {
                     expressionNode = ForceDecisionAmbiguousIdentifier(
                         EmptyExpressionNode.Empty,
-                        (AmbiguousIdentifierExpressionNode)expressionNode,
+                        (AmbiguousIdentifierNode)expressionNode,
                         ref parserModel);
                 }
                 
@@ -3829,13 +3829,13 @@ public static class ParseExpressions
     }
     
     private static IExpressionNode AmbiguousParenthesizedExpressionTransformTo_ExplicitCastNode(
-        AmbiguousParenthesizedExpressionNode ambiguousParenthesizedExpressionNode, IExpressionNode expressionNode, ref SyntaxToken closeParenthesisToken, ref CSharpParserModel parserModel)
+        AmbiguousParenthesizedNode ambiguousParenthesizedExpressionNode, IExpressionNode expressionNode, ref SyntaxToken closeParenthesisToken, ref CSharpParserModel parserModel)
     {
         TypeClauseNode typeClauseNode;
     
         if (expressionNode.SyntaxKind == SyntaxKind.AmbiguousIdentifierExpressionNode)
         {
-            var token = ((AmbiguousIdentifierExpressionNode)expressionNode).Token;
+            var token = ((AmbiguousIdentifierNode)expressionNode).Token;
             
             typeClauseNode = ExplicitCastAndGenericParametersForceType(
                 ref token,
@@ -3864,7 +3864,7 @@ public static class ParseExpressions
     }
     
     private static IExpressionNode AmbiguousParenthesizedExpressionTransformTo_TypeClauseNode(
-        AmbiguousParenthesizedExpressionNode ambiguousParenthesizedExpressionNode, ref SyntaxToken token, ref CSharpParserModel parserModel)
+        AmbiguousParenthesizedNode ambiguousParenthesizedExpressionNode, ref SyntaxToken token, ref CSharpParserModel parserModel)
     {        
         var typeClauseNode = parserModel.Rent_TypeClauseNode();
         
@@ -3886,7 +3886,7 @@ public static class ParseExpressions
     }
     
     private static IExpressionNode AmbiguousParenthesizedExpressionTransformTo_LambdaExpressionNode(
-        AmbiguousParenthesizedExpressionNode ambiguousParenthesizedExpressionNode, ref CSharpParserModel parserModel)
+        AmbiguousParenthesizedNode ambiguousParenthesizedExpressionNode, ref CSharpParserModel parserModel)
     {
         var lambdaExpressionNode = new LambdaExpressionNode(CSharpFacts.Types.Void.ToTypeReference());
                     
@@ -3908,7 +3908,7 @@ public static class ParseExpressions
                 
                     if (node.SyntaxKind == SyntaxKind.AmbiguousIdentifierExpressionNode)
                     {
-                        var token = ((AmbiguousIdentifierExpressionNode)node).Token;
+                        var token = ((AmbiguousIdentifierNode)node).Token;
                         identifierToken = UtilityApi.ConvertToIdentifierToken(ref token, ref parserModel);
                     }
                     else if (node.SyntaxKind == SyntaxKind.TypeClauseNode)
@@ -4225,7 +4225,7 @@ public static class ParseExpressions
         {
             expressionSecondary = ForceDecisionAmbiguousIdentifier(
                 functionDefinitionNode,
-                (AmbiguousIdentifierExpressionNode)expressionSecondary,
+                (AmbiguousIdentifierNode)expressionSecondary,
                 ref parserModel);
         }
         
@@ -4254,7 +4254,7 @@ public static class ParseExpressions
             if (parserModel.TokenWalker.Next.SyntaxKind == SyntaxKind.MemberAccessToken)
             {
                 parserModel.ParserContextKind = CSharpParserContextKind.None;
-                var ambiguousExpressionNode = new AmbiguousIdentifierExpressionNode(
+                var ambiguousExpressionNode = new AmbiguousIdentifierNode(
                     parserModel.TokenWalker.Current,
                     openAngleBracketToken: default,
                     indexGenericParameterEntryList: -1,
@@ -4323,7 +4323,7 @@ public static class ParseExpressions
         }
         else if (expressionSecondary.SyntaxKind == SyntaxKind.AmbiguousIdentifierExpressionNode)
         {
-            var expressionSecondaryTyped = (AmbiguousIdentifierExpressionNode)expressionSecondary;
+            var expressionSecondaryTyped = (AmbiguousIdentifierNode)expressionSecondary;
             
             var token = expressionSecondaryTyped.Token;
             var typeClauseNode = UtilityApi.ConvertTokenToTypeClauseNode(ref token, ref parserModel);

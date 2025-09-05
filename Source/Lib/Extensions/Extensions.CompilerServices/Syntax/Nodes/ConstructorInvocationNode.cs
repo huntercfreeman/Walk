@@ -3,13 +3,13 @@ using Walk.Extensions.CompilerServices.Syntax.Nodes.Enums;
 
 namespace Walk.Extensions.CompilerServices.Syntax.Nodes;
 
-public sealed class ConstructorInvocationExpressionNode : IInvocationNode
+public sealed class ConstructorInvocationNode : IInvocationNode
 {
     /// <summary>
     /// The <see cref="GenericParametersListingNode"/> is located
     /// on the <see cref="TypeClauseNode"/>.
     /// </summary>
-    public ConstructorInvocationExpressionNode(
+    public ConstructorInvocationNode(
         SyntaxToken newKeywordToken,
         TypeReference typeReference,
         SyntaxToken openParenthesisToken,

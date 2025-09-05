@@ -384,14 +384,14 @@ public ref struct CSharpParserModel
     /// - FollowsMemberAccessToken
     /// Thus, the Return_AmbiguousIdentifierExpressionNode(...) method will NOT clear that property's state.
     /// </summary>
-    public readonly AmbiguousIdentifierExpressionNode Rent_AmbiguousIdentifierExpressionNode()
+    public readonly AmbiguousIdentifierNode Rent_AmbiguousIdentifierExpressionNode()
     {
         if (Binder.Pool_AmbiguousIdentifierExpressionNode_Queue.TryDequeue(out var ambiguousIdentifierExpressionNode))
         {
             return ambiguousIdentifierExpressionNode;
         }
         
-        return new AmbiguousIdentifierExpressionNode(
+        return new AmbiguousIdentifierNode(
             token: default,
             openAngleBracketToken: default,
             indexGenericParameterEntryList: -1,
@@ -406,7 +406,7 @@ public ref struct CSharpParserModel
     /// - FollowsMemberAccessToken
     /// Thus, the Return_AmbiguousIdentifierExpressionNode(...) method will NOT clear that property's state.
     /// </summary>
-    public readonly void Return_AmbiguousIdentifierExpressionNode(AmbiguousIdentifierExpressionNode ambiguousIdentifierExpressionNode)
+    public readonly void Return_AmbiguousIdentifierExpressionNode(AmbiguousIdentifierNode ambiguousIdentifierExpressionNode)
     {
         ambiguousIdentifierExpressionNode.OpenAngleBracketToken = default;
         ambiguousIdentifierExpressionNode.IndexGenericParameterEntryList = -1;
@@ -480,14 +480,14 @@ public ref struct CSharpParserModel
     /// - NewKeywordToken
     /// Thus, the Return_ConstructorInvocationExpressionNode(...) method will NOT clear that property's state.
     /// </summary>
-    public readonly ConstructorInvocationExpressionNode Rent_ConstructorInvocationExpressionNode()
+    public readonly ConstructorInvocationNode Rent_ConstructorInvocationExpressionNode()
     {
         if (Binder.Pool_ConstructorInvocationExpressionNode_Queue.TryDequeue(out var constructorInvocationExpressionNode))
         {
             return constructorInvocationExpressionNode;
         }
 
-        return new ConstructorInvocationExpressionNode(
+        return new ConstructorInvocationNode(
             newKeywordToken: default,
             typeReference: default,
             openParenthesisToken: default,
@@ -501,7 +501,7 @@ public ref struct CSharpParserModel
     /// - NewKeywordToken
     /// Thus, the Return_ConstructorInvocationExpressionNode(...) method will NOT clear that property's state.
     /// </summary>
-    public readonly void Return_ConstructorInvocationExpressionNode(ConstructorInvocationExpressionNode constructorInvocationExpressionNode)
+    public readonly void Return_ConstructorInvocationExpressionNode(ConstructorInvocationNode constructorInvocationExpressionNode)
     {
         constructorInvocationExpressionNode.ResultTypeReference = default;
         

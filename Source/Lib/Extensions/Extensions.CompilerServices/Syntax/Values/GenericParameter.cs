@@ -1,4 +1,4 @@
-namespace Walk.Extensions.CompilerServices.Syntax.Nodes;
+namespace Walk.Extensions.CompilerServices.Syntax.Values;
 
 /// <summary>
 /// Used when invoking a syntax which contains a generic type.

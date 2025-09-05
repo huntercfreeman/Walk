@@ -2,9 +2,9 @@ using Walk.Extensions.CompilerServices.Syntax.Nodes.Interfaces;
 
 namespace Walk.Extensions.CompilerServices.Syntax.Nodes;
 
-public sealed class AmbiguousIdentifierExpressionNode : IGenericParameterNode
+public sealed class AmbiguousIdentifierNode : IGenericParameterNode
 {
-    public AmbiguousIdentifierExpressionNode(
+    public AmbiguousIdentifierNode(
         SyntaxToken token,
         SyntaxToken openAngleBracketToken,
         int indexGenericParameterEntryList,
@@ -39,9 +39,9 @@ public sealed class AmbiguousIdentifierExpressionNode : IGenericParameterNode
     
     public bool IsParsingGenericParameters { get; set; }
     
-    public AmbiguousIdentifierExpressionNode GetClone()
+    public AmbiguousIdentifierNode GetClone()
     {
-        return new AmbiguousIdentifierExpressionNode(
+        return new AmbiguousIdentifierNode(
             Token,
             OpenAngleBracketToken,
             IndexGenericParameterEntryList,

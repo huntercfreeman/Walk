@@ -8,6 +8,7 @@ using Walk.Extensions.CompilerServices.Syntax.Nodes.Enums;
 using Walk.CompilerServices.CSharp.Facts;
 using Walk.CompilerServices.CSharp.ParserCase;
 using Walk.CompilerServices.CSharp.CompilerServiceCase;
+using Walk.Extensions.CompilerServices.Syntax.Values;
 
 namespace Walk.CompilerServices.CSharp.BinderCase;
 
@@ -66,8 +67,6 @@ public class CSharpBinder
     public List<Walk.TextEditor.RazorLib.CompilerServices.TextEditorDiagnostic> DiagnosticList { get; } = new();
     public List<Symbol> SymbolList { get; } = new();
     public List<Scope> ScopeList { get; } = new();
-    
-    // Visual Studio refactoring for these last 2 commits
 
     public List<SyntaxNodeValue> NodeList { get; } = new();
     public List<TypeDefinitionTraits> TypeDefinitionTraitsList { get; } = new();
@@ -131,11 +130,11 @@ public class CSharpBinder
     
     internal const int POOL_AMBIGUOUS_IDENTIFIER_EXPRESSION_NODE_MAX_COUNT = 3;
     /// <summary>This is only safe to use while parsing</summary>
-    internal readonly Queue<AmbiguousIdentifierExpressionNode> Pool_AmbiguousIdentifierExpressionNode_Queue = new();
+    internal readonly Queue<AmbiguousIdentifierNode> Pool_AmbiguousIdentifierExpressionNode_Queue = new();
     
     internal const int POOL_CONSTRUCTOR_INVOCATION_EXPRESSION_NODE_MAX_COUNT = 3;
     /// <summary>This is only safe to use while parsing</summary>
-    internal readonly Queue<ConstructorInvocationExpressionNode> Pool_ConstructorInvocationExpressionNode_Queue = new();
+    internal readonly Queue<ConstructorInvocationNode> Pool_ConstructorInvocationExpressionNode_Queue = new();
     
     internal const int POOL_FUNCTION_INVOCATION_NODE_MAX_COUNT = 3;
     /// <summary>This is only safe to use while parsing</summary>
@@ -211,7 +210,7 @@ public class CSharpBinder
         
         for (int i = 0; i < POOL_AMBIGUOUS_IDENTIFIER_EXPRESSION_NODE_MAX_COUNT; i++)
         {
-            Pool_AmbiguousIdentifierExpressionNode_Queue.Enqueue(new AmbiguousIdentifierExpressionNode(
+            Pool_AmbiguousIdentifierExpressionNode_Queue.Enqueue(new AmbiguousIdentifierNode(
                 token: default,
                 openAngleBracketToken: default,
                 indexGenericParameterEntryList: -1,
@@ -237,7 +236,7 @@ public class CSharpBinder
         
         for (int i = 0; i < POOL_CONSTRUCTOR_INVOCATION_EXPRESSION_NODE_MAX_COUNT; i++)
         {
-            Pool_ConstructorInvocationExpressionNode_Queue.Enqueue(new ConstructorInvocationExpressionNode(
+            Pool_ConstructorInvocationExpressionNode_Queue.Enqueue(new ConstructorInvocationNode(
                 newKeywordToken: default,
                 typeReference: default,
                 openParenthesisToken: default,

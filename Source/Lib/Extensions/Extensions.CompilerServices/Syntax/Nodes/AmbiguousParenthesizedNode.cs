@@ -2,9 +2,9 @@ using Walk.Extensions.CompilerServices.Syntax.Nodes.Interfaces;
 
 namespace Walk.Extensions.CompilerServices.Syntax.Nodes;
 
-public sealed class AmbiguousParenthesizedExpressionNode : IExpressionNode
+public sealed class AmbiguousParenthesizedNode : IExpressionNode
 {
-    public AmbiguousParenthesizedExpressionNode(
+    public AmbiguousParenthesizedNode(
         SyntaxToken openParenthesisToken,
         bool isParserContextKindForceStatementExpression)
     {

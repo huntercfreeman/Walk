@@ -82,7 +82,7 @@ public class CSharpStatementBuilder
             case SyntaxKind.ConstructorInvocationExpressionNode:
             {
                 parserModel.Return_ConstructorInvocationExpressionNode(
-                    (Walk.Extensions.CompilerServices.Syntax.Nodes.ConstructorInvocationExpressionNode)MostRecentNode);
+                    (Walk.Extensions.CompilerServices.Syntax.Nodes.ConstructorInvocationNode)MostRecentNode);
                 break;
             }
             case SyntaxKind.BinaryExpressionNode:
