@@ -55,7 +55,7 @@ public partial class CSharpBinder
     public List<FunctionDefinitionTraits> FunctionDefinitionTraitsList { get; } = new();
     public List<ConstructorDefinitionTraits> ConstructorDefinitionTraitsList { get; } = new();
     public List<VariableDeclarationTraits> VariableDeclarationTraitsList { get; } = new();
-    
+
     public TextEditorService TextEditorService { get; set; }
     public CSharpCompilerService CSharpCompilerService { get; set; }
     
