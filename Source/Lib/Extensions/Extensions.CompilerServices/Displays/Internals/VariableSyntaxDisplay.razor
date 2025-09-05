@@ -1,8 +1,7 @@
 @using Walk.Extensions.CompilerServices.Syntax
 @using Walk.Extensions.CompilerServices.Syntax.Enums
 @using Walk.Extensions.CompilerServices.Syntax.NodeValues
-@using Walk.Extensions.CompilerServices.Syntax.Nodes
-@using Walk.Extensions.CompilerServices.Syntax.Values
+@using Walk.Extensions.CompilerServices.Syntax.NodeReferences
 @using Walk.TextEditor.RazorLib.TextEditors.Models.Internals
 
 @*
@@ -97,7 +96,7 @@
     			targetNode: default,
     			definitionNode: default,
     			depth: syntaxViewModelLocal.Depth + 1);
-        	<TypeSyntaxDisplay SyntaxViewModel="syntaxViewModel" TypeReference="variableDeclarationMetadata.ResultTypeReference"/>
+        	<TypeSyntaxDisplay SyntaxViewModel="syntaxViewModel" TypeReference="variableDeclarationMetadata.TypeReference"/>
         	<text>&nbsp;</text>
         }
         else

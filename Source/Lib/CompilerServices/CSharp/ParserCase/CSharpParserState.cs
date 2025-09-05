@@ -74,12 +74,7 @@ public ref partial struct CSharpParserState
             // TODO: This is wrong
             ExternalTypeDefinitionList.Add(
                 new SyntaxNodeValue(
-                    typeDefinitionNode.TypeIdentifierToken,
-                    typeDefinitionNode.ResourceUri,
-                    typeDefinitionNode.IsFabricated,
-                    typeDefinitionNode.SyntaxKind,
-                    typeDefinitionNode.ParentScopeSubIndex,
-                    typeDefinitionNode.SelfScopeSubIndex,
+                    typeDefinitionNode,
                     Binder.TypeDefinitionTraitsList.Count));
         }
         
@@ -360,7 +355,7 @@ public ref partial struct CSharpParserState
         {
             
             var variableReferenceMetadata = Binder.VariableDeclarationTraitsList[variableDeclarationNode.TraitsIndex];
-            typeReference = variableReferenceMetadata.ResultTypeReference;
+            typeReference = variableReferenceMetadata.TypeReference;
             variableKind = variableReferenceMetadata.VariableKind;
         }
         else
@@ -539,56 +534,29 @@ public ref partial struct CSharpParserState
                     var typeDefinitionNode = (TypeDefinitionNode)codeBlockOwner;
                     
                     nodeValue = new SyntaxNodeValue(
-                        typeDefinitionNode.TypeIdentifierToken,
-                        typeDefinitionNode.ResourceUri,
-                        typeDefinitionNode.IsFabricated,
-                        typeDefinitionNode.SyntaxKind,
-                        typeDefinitionNode.ParentScopeSubIndex,
-                        typeDefinitionNode.SelfScopeSubIndex,
+                        typeDefinitionNode,
                         traitsIndex: Binder.TypeDefinitionTraitsList.Count);
-                    Binder.TypeDefinitionTraitsList.Add(new TypeDefinitionTraits(
-                        typeDefinitionNode.IndexPartialTypeDefinition,
-                        typeDefinitionNode.InheritedTypeReference,
-                        typeDefinitionNode.AccessModifierKind,
-                        typeDefinitionNode.StorageModifierKind,
-                        typeDefinitionNode.OpenAngleBracketToken));
+                    Binder.TypeDefinitionTraitsList.Add(new TypeDefinitionTraits(typeDefinitionNode));
                     
                     break;
                 case SyntaxKind.NamespaceStatementNode:
                     var namespaceStatementNode = (NamespaceStatementNode)codeBlockOwner;
                     nodeValue = new SyntaxNodeValue(
-                        namespaceStatementNode.IdentifierToken,
-                        namespaceStatementNode.ResourceUri,
-                        namespaceStatementNode.IsFabricated,
-                        namespaceStatementNode.SyntaxKind,
-                        namespaceStatementNode.ParentScopeSubIndex,
-                        namespaceStatementNode.SelfScopeSubIndex);
+                        namespaceStatementNode,
+                        traitsIndex: -1);
                     break;
                 case SyntaxKind.ConstructorDefinitionNode:
                     var constructorDefinitionNode = (ConstructorDefinitionNode)codeBlockOwner;
                     nodeValue = new SyntaxNodeValue(
-                        constructorDefinitionNode.FunctionIdentifier,
-                        constructorDefinitionNode.ResourceUri,
-                        constructorDefinitionNode.IsFabricated,
-                        constructorDefinitionNode.SyntaxKind,
-                        constructorDefinitionNode.ParentScopeSubIndex,
-                        constructorDefinitionNode.SelfScopeSubIndex);
+                        constructorDefinitionNode,
+                        traitsIndex: -1);
                     break;
                 case SyntaxKind.FunctionDefinitionNode:
                     var functionDefinitionNode = (FunctionDefinitionNode)codeBlockOwner;
                     nodeValue = new SyntaxNodeValue(
-                        functionDefinitionNode.FunctionIdentifierToken,
-                        functionDefinitionNode.ResourceUri,
-                        functionDefinitionNode.IsFabricated,
-                        functionDefinitionNode.SyntaxKind,
-                        functionDefinitionNode.ParentScopeSubIndex,
-                        functionDefinitionNode.SelfScopeSubIndex,
+                        functionDefinitionNode,
                         traitsIndex: Binder.TypeDefinitionTraitsList.Count);
-                    Binder.FunctionDefinitionTraitsList.Add(new FunctionDefinitionTraits(
-                        functionDefinitionNode.ReturnTypeReference,
-                        functionDefinitionNode.OpenAngleBracketToken,
-                        functionDefinitionNode.IndexFunctionArgumentEntryList,
-                        functionDefinitionNode.CountFunctionArgumentEntryList));
+                    Binder.FunctionDefinitionTraitsList.Add(new FunctionDefinitionTraits(functionDefinitionNode));
                     break;
                 default:
                     break;
@@ -1249,19 +1217,10 @@ public ref partial struct CSharpParserState
             variableDeclarationNode.ParentScopeSubIndex = scopeSubIndex;
             
             var variableDeclarationNodeValue = new SyntaxNodeValue(
-                variableDeclarationNode.IdentifierToken,
-                variableDeclarationNode.ResourceUri,
-                variableDeclarationNode.IsFabricated,
-                variableDeclarationNode.SyntaxKind,
-                variableDeclarationNode.ParentScopeSubIndex,
-                -1,
+                variableDeclarationNode,
                 traitsIndex: Binder.VariableDeclarationTraitsList.Count);
             
-            Binder.VariableDeclarationTraitsList.Add(new VariableDeclarationTraits(
-                variableDeclarationNode.VariableKind,
-                variableDeclarationNode.TypeReference,
-                variableDeclarationNode.HasSetter,
-                variableDeclarationNode.HasGetter));
+            Binder.VariableDeclarationTraitsList.Add(new VariableDeclarationTraits(variableDeclarationNode));
             
             Binder.NodeList.Insert(
                 Compilation.NodeOffset + Compilation.NodeLength,
@@ -1305,19 +1264,10 @@ public ref partial struct CSharpParserState
             variableDeclarationNode.ParentScopeSubIndex = scopeSubIndex;
             
             var variableDeclarationNodeValue = new SyntaxNodeValue(
-                variableDeclarationNode.IdentifierToken,
-                variableDeclarationNode.ResourceUri,
-                variableDeclarationNode.IsFabricated,
-                variableDeclarationNode.SyntaxKind,
-                variableDeclarationNode.ParentScopeSubIndex,
-                -1,
+                variableDeclarationNode,
                 matchNode.TraitsIndex);
             
-            Binder.VariableDeclarationTraitsList[matchNode.TraitsIndex] = new VariableDeclarationTraits(
-                variableDeclarationNode.VariableKind,
-                variableDeclarationNode.TypeReference,
-                variableDeclarationNode.HasSetter,
-                variableDeclarationNode.HasGetter);
+            Binder.VariableDeclarationTraitsList[matchNode.TraitsIndex] = new VariableDeclarationTraits(variableDeclarationNode);
             
             Binder.NodeList[index] = variableDeclarationNodeValue;
         }
@@ -1416,12 +1366,9 @@ public ref partial struct CSharpParserState
             Binder.NodeList.Insert(
                 Compilation.NodeOffset + Compilation.NodeLength,
                 new SyntaxNodeValue(
-                    labelDeclarationNode.IdentifierToken,
+                    labelDeclarationNode,
                     ResourceUri,
-                    labelDeclarationNode.IsFabricated,
-                    labelDeclarationNode.SyntaxKind,
-                    labelDeclarationNode.ParentScopeSubIndex,
-                    selfScopeSubIndex: -1));
+                    traitsIndex: -1));
             ++Compilation.NodeLength;
             
             return true;
@@ -1458,12 +1405,9 @@ public ref partial struct CSharpParserState
         {
             labelDeclarationNode.ParentScopeSubIndex = scopeSubIndex;
             Binder.NodeList[index] = new SyntaxNodeValue(
-                labelDeclarationNode.IdentifierToken,
+                labelDeclarationNode,
                 ResourceUri,
-                labelDeclarationNode.IsFabricated,
-                labelDeclarationNode.SyntaxKind,
-                labelDeclarationNode.ParentScopeSubIndex,
-                selfScopeSubIndex: -1);
+                traitsIndex: -1);
         }
     }
     

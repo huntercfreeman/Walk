@@ -1,10 +1,26 @@
 using Walk.Extensions.CompilerServices.Syntax.Enums;
+using Walk.Extensions.CompilerServices.Syntax.NodeReferences;
 
 namespace Walk.Extensions.CompilerServices.Syntax.NodeValues;
 
 public struct FunctionDefinitionTraits
 {
-    public FunctionDefinitionTraits(
+    public FunctionDefinitionTraits(FunctionDefinitionNode functionDefinitionNode)
+    {
+        ReturnTypeReference = functionDefinitionNode.ReturnTypeReference;
+        AccessModifierKind = functionDefinitionNode.AccessModifierKind;
+        OpenAngleBracketToken = functionDefinitionNode.OpenAngleBracketToken;
+        IndexGenericParameterEntryList = functionDefinitionNode.IndexGenericParameterEntryList;
+        CountGenericParameterEntryList = functionDefinitionNode.CountGenericParameterEntryList;
+        CloseAngleBracketToken = functionDefinitionNode.CloseAngleBracketToken;
+        OpenParenthesisToken = functionDefinitionNode.OpenParenthesisToken;
+        IndexFunctionArgumentEntryList = functionDefinitionNode.IndexFunctionArgumentEntryList;
+        CountFunctionArgumentEntryList = functionDefinitionNode.CountFunctionArgumentEntryList;
+        CloseParenthesisToken = functionDefinitionNode.CloseParenthesisToken;
+        IndexMethodOverloadDefinition = functionDefinitionNode.IndexMethodOverloadDefinition;
+    }
+    
+    /*public FunctionDefinitionTraits(
         TypeReferenceValue returnTypeReference,
         AccessModifierKind accessModifierKind,
         SyntaxToken openAngleBracketToken,
@@ -28,7 +44,7 @@ public struct FunctionDefinitionTraits
         CountFunctionArgumentEntryList = countFunctionArgumentEntryList;
         CloseParenthesisToken = closeParenthesisToken;
         IndexMethodOverloadDefinition = indexMethodOverloadDefinition;
-    }
+    }*/
 
     public TypeReferenceValue ReturnTypeReference { get; set; }
 

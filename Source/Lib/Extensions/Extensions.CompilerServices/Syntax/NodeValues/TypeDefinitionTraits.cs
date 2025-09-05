@@ -1,10 +1,30 @@
 using Walk.Extensions.CompilerServices.Syntax.Enums;
+using Walk.Extensions.CompilerServices.Syntax.NodeReferences;
 
 namespace Walk.Extensions.CompilerServices.Syntax.NodeValues;
 
 public struct TypeDefinitionTraits
 {
-    public TypeDefinitionTraits(
+    public TypeDefinitionTraits(TypeDefinitionNode typeDefinitionNode)
+    {
+        IndexPartialTypeDefinition = typeDefinitionNode.IndexPartialTypeDefinition;
+        InheritedTypeReference = typeDefinitionNode.InheritedTypeReference;
+        AccessModifierKind = typeDefinitionNode.AccessModifierKind;
+        StorageModifierKind = typeDefinitionNode.StorageModifierKind;
+        IsKeywordType = typeDefinitionNode.IsKeywordType;
+
+        OpenAngleBracketToken = typeDefinitionNode.OpenAngleBracketToken;
+        IndexGenericParameterEntryList = typeDefinitionNode.IndexGenericParameterEntryList;
+        CountGenericParameterEntryList = typeDefinitionNode.CountGenericParameterEntryList;
+        CloseAngleBracketToken = typeDefinitionNode.CloseAngleBracketToken;
+
+        OpenParenthesisToken = typeDefinitionNode.OpenParenthesisToken;
+        IndexFunctionArgumentEntryList = typeDefinitionNode.IndexFunctionArgumentEntryList;
+        CountFunctionArgumentEntryList = typeDefinitionNode.CountFunctionArgumentEntryList;
+        CloseParenthesisToken = typeDefinitionNode.CloseParenthesisToken;
+    }
+
+    /*public TypeDefinitionTraits(
         int indexPartialTypeDefinition,
         TypeReferenceValue inheritedTypeReference,
         AccessModifierKind accessModifierKind,
@@ -34,7 +54,7 @@ public struct TypeDefinitionTraits
         IndexFunctionArgumentEntryList = indexFunctionArgumentEntryList;
         CountFunctionArgumentEntryList = countFunctionArgumentEntryList;
         CloseParenthesisToken = closeParenthesisToken;
-    }
+    }*/
 
     public int IndexPartialTypeDefinition { get; set; } = -1;
     public TypeReferenceValue InheritedTypeReference { get; set; }

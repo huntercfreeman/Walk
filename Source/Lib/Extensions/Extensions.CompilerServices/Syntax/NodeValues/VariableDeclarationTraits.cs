@@ -1,11 +1,22 @@
 using Walk.Extensions.CompilerServices.Syntax.Enums;
+using Walk.Extensions.CompilerServices.Syntax.NodeReferences;
 using Walk.TextEditor.RazorLib.Lexers.Models;
 
 namespace Walk.Extensions.CompilerServices.Syntax.NodeValues;
 
 public struct VariableDeclarationTraits
 {
-    public VariableDeclarationTraits(
+    public VariableDeclarationTraits(VariableDeclarationNode variableDeclarationNode)
+    {
+        TypeReference = variableDeclarationNode.TypeReference;
+        VariableKind = variableDeclarationNode.VariableKind;
+        IsInitialized = variableDeclarationNode.IsInitialized;
+        ResourceUri = variableDeclarationNode.ResourceUri;
+        HasGetter = variableDeclarationNode.HasGetter;
+        HasSetter = variableDeclarationNode.HasSetter;
+    }
+
+    /*public VariableDeclarationTraits(
         TypeReferenceValue typeReference,
         VariableKind variableKind,
         bool isInitialized,
@@ -19,7 +30,7 @@ public struct VariableDeclarationTraits
         ResourceUri = resourceUri;
         HasGetter = hasGetter;
         HasSetter = hasSetter;
-    }
+    }*/
 
     public TypeReferenceValue TypeReference { get; set; }
 

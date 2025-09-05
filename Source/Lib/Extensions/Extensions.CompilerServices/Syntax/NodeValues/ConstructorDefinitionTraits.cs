@@ -1,8 +1,22 @@
+using Walk.Extensions.CompilerServices.Syntax.NodeReferences;
+
 namespace Walk.Extensions.CompilerServices.Syntax.NodeValues;
 
 public struct ConstructorDefinitionTraits
 {
-    public ConstructorDefinitionTraits(
+    public ConstructorDefinitionTraits(ConstructorDefinitionNode constructorDefinitionNode)
+    {
+        ReturnTypeReference = constructorDefinitionNode.ReturnTypeReference;
+        OpenAngleBracketToken = constructorDefinitionNode.OpenAngleBracketToken;
+        IndexGenericParameterEntryList = constructorDefinitionNode.IndexGenericParameterEntryList;
+        CountGenericParameterEntryList = constructorDefinitionNode.CountGenericParameterEntryList;
+        OpenParenthesisToken = constructorDefinitionNode.OpenParenthesisToken;
+        IndexFunctionArgumentEntryList = constructorDefinitionNode.IndexFunctionArgumentEntryList;
+        CountFunctionArgumentEntryList = constructorDefinitionNode.CountFunctionArgumentEntryList;
+        CloseParenthesisToken = constructorDefinitionNode.CloseParenthesisToken;
+    }
+    
+    /*public ConstructorDefinitionTraits(
         TypeReferenceValue returnTypeReference,
         SyntaxToken openAngleBracketToken,
         int indexGenericParameterEntryList,
@@ -20,7 +34,7 @@ public struct ConstructorDefinitionTraits
         IndexFunctionArgumentEntryList = indexFunctionArgumentEntryList;
         CountFunctionArgumentEntryList = countFunctionArgumentEntryList;
         CloseParenthesisToken = closeParenthesisToken;
-    }
+    }*/
 
     public TypeReferenceValue ReturnTypeReference { get; set; }
 

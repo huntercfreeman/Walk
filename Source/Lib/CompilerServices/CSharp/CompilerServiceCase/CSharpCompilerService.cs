@@ -993,13 +993,13 @@ public sealed class CSharpCompilerService : IExtendedCompilerService
                     {
                         var variableReferenceNode = definitionNode;
                         var variableTraits = __CSharpBinder.VariableDeclarationTraitsList[variableReferenceNode.TraitsIndex];
-                        typeReference = variableTraits.ResultTypeReference;
+                        typeReference = variableTraits.TypeReference;
                     }
                     else if (definitionNode.SyntaxKind == SyntaxKind.VariableDeclarationNode)
                     {
                         var variableDeclarationNode = definitionNode;
                         var variableTraits = __CSharpBinder.VariableDeclarationTraitsList[variableDeclarationNode.TraitsIndex];
-                        typeReference = variableTraits.ResultTypeReference;
+                        typeReference = variableTraits.TypeReference;
                     }
                     else if (definitionNode.SyntaxKind == SyntaxKind.FunctionInvocationNode)
                     {

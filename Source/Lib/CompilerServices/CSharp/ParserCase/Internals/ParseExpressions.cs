@@ -3545,7 +3545,7 @@ public static class ParseExpressions
                 var variableReferenceNode = parserModel.Rent_VariableReferenceNode();
                 variableReferenceNode.VariableIdentifierToken = memberIdentifierToken;
                 var variableDeclarationTraits = parserModel.Binder.VariableDeclarationTraitsList[variableDeclarationNode.TraitsIndex];
-                variableReferenceNode.TypeReference = variableDeclarationTraits.ResultTypeReference;
+                variableReferenceNode.TypeReference = variableDeclarationTraits.TypeReference;
                 var symbolId = parserModel.CreateVariableSymbol(variableReferenceNode.VariableIdentifierToken, variableDeclarationTraits.VariableKind);
                 
                 if (parserModel.Binder.SymbolIdToExternalTextSpanMap.TryGetValue(parserModel.ResourceUri.Value, out var symbolIdToExternalTextSpanMap))
