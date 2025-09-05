@@ -84,17 +84,17 @@
 		if (syntaxViewModelLocal.TargetNode.SyntaxKind == SyntaxKind.FunctionInvocationNode)
 		{
 			var functionInvocationNode = syntaxViewModelLocal.TargetNode;
-			returnTypeClauseNode = functionInvocationNode.ResultTypeReference;
+			returnTypeClauseNode = default;//functionInvocationNode.ResultTypeReference;
 			returnTypeClauseNodeText = null;
-			methodName = syntaxViewModelLocal.GetIdentifierText(functionInvocationNode);
-			hasGenericParameterListing = functionInvocationNode.OpenAngleBracketToken.ConstructorWasInvoked;
+			methodName = syntaxViewModelLocal.GetTextFromTextSpan(functionInvocationNode.IdentifierToken.TextSpan);
+			hasGenericParameterListing = false;//functionInvocationNode.OpenAngleBracketToken.ConstructorWasInvoked;
 			indexFunctionArgumentEntryList = -1;
     		countFunctionArgumentEntryList = 0;
 		}
 		else if (syntaxViewModelLocal.TargetNode.SyntaxKind == SyntaxKind.ConstructorInvocationExpressionNode)
 		{
-			var constructorInvocationNode = (ConstructorInvocationExpressionNode)syntaxViewModelLocal.TargetNode;
-			returnTypeClauseNode = constructorInvocationNode.ResultTypeReference;
+			var constructorInvocationNode = syntaxViewModelLocal.TargetNode;
+			returnTypeClauseNode = default;//constructorInvocationNode.ResultTypeReference;
 			returnTypeClauseNodeText = null;
 			methodName = null;
 			hasGenericParameterListing = false;
@@ -272,7 +272,7 @@
     			    </span>
     			}
     			
-			    var variableDeclarationNode = new VariableDeclarationNode(
+			    /*var variableDeclarationNode = new VariableDeclarationNode(
 			        argumentEntry.TypeReference,
                     argumentEntry.IdentifierToken,
                     argumentEntry.VariableKind,
@@ -287,7 +287,7 @@
     				targetNode: variableDeclarationNode,
     				definitionNode: variableDeclarationNode,
     				depth: syntaxViewModelLocal.Depth + 1);
-    			<VariableSyntaxDisplay SyntaxViewModel="syntaxViewModel"/>
+    			<VariableSyntaxDisplay SyntaxViewModel="syntaxViewModel"/>*/
     			
     			if (argumentEntry.OptionalCompileTimeConstantToken.SyntaxKind != SyntaxKind.NotApplicable)
     			{

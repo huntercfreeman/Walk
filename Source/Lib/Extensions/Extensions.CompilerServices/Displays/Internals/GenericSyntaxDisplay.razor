@@ -16,21 +16,21 @@
     int indexGenericParameterEntryList = -1;
     int countGenericParameterEntryList = 0;
 
-    if (syntaxViewModelLocal.TargetNode is IGenericParameterNode genericParameterNode &&
-        genericParameterNode.IndexGenericParameterEntryList != -1)
-    {
-        indexGenericParameterEntryList = genericParameterNode.IndexGenericParameterEntryList;
-        countGenericParameterEntryList = genericParameterNode.CountGenericParameterEntryList;
-    }
-    else
-    {
+    //if (syntaxViewModelLocal.TargetNode is IGenericParameterNode genericParameterNode &&
+    //    genericParameterNode.IndexGenericParameterEntryList != -1)
+    //{
+    //    indexGenericParameterEntryList = genericParameterNode.IndexGenericParameterEntryList;
+    //    countGenericParameterEntryList = genericParameterNode.CountGenericParameterEntryList;
+    //}
+    //else
+    //{
         if (!TypeReference.IsDefault() &&
             TypeReference.OpenAngleBracketToken.ConstructorWasInvoked)
         {
             indexGenericParameterEntryList = TypeReference.IndexGenericParameterEntryList;
             countGenericParameterEntryList = TypeReference.CountGenericParameterEntryList;
         }
-    }
+    //}
 
     if (indexGenericParameterEntryList != -1 && SyntaxViewModel.ExtendedCompilerService is not null)
     {

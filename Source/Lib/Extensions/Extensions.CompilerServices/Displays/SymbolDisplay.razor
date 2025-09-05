@@ -10,8 +10,8 @@
 
 @{
 	var symbolLocal = Symbol;
-	var targetNode = GetTargetNode(TextEditorService, symbolLocal, ResourceUri);
-	var definitionNode = GetDefinitionNode(TextEditorService, symbolLocal, targetNode, ResourceUri);
+	// var targetNode = GetTargetNode(TextEditorService, symbolLocal, ResourceUri);
+	var definitionNode = GetDefinitionNode(TextEditorService, symbolLocal, default, ResourceUri);
 	
 	ResourceUri resourceUri;
 	
@@ -59,7 +59,7 @@
 	    TextEditorService,
 	    resourceUri,
 		symbolLocal,
-		targetNode,
+		default,
 		definitionNode,
 		depth: 0);
 }

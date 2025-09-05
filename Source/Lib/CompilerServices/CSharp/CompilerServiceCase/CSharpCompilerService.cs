@@ -1942,15 +1942,15 @@ public sealed class CSharpCompilerService : IExtendedCompilerService
     /// The option argument 'symbol' can be provided if available. It might provide additional information to the method's implementation
     /// that is necessary to find certain nodes (ones that are in a separate file are most common to need a symbol to find).
     /// </summary>
-    public SyntaxNodeValue GetDefinitionNode(TextEditorTextSpan textSpan, ResourceUri resourceUri, ICompilerServiceResource compilerServiceResource, Symbol? symbol = null)
+    public SyntaxNodeValue GetDefinitionNodeValue(TextEditorTextSpan textSpan, ResourceUri resourceUri, ICompilerServiceResource compilerServiceResource, Symbol? symbol = null)
     {
         if (symbol is null)
-            return null;
+            return default;
         
         if (__CSharpBinder.__CompilationUnitMap.TryGetValue(resourceUri, out var compilationUnit))
             return __CSharpBinder.GetDefinitionNodeValue(resourceUri, compilationUnit, textSpan, symbol.Value.SyntaxKind, symbol);
         
-        return null;
+        return default;
     }
 
     public (Scope Scope, ICodeBlockOwner? CodeBlockOwner) GetCodeBlockTupleByPositionIndex(ResourceUri resourceUri, int positionIndex)

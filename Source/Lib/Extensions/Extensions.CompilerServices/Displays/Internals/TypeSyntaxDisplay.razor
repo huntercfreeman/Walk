@@ -54,21 +54,21 @@
 	}
 	else if (!syntaxViewModelLocal.TargetNode.IsDefault() && syntaxViewModelLocal.TargetNode.SyntaxKind == SyntaxKind.TypeClauseNode)
 	{
-		var typeClauseNode = (TypeClauseNode)syntaxViewModelLocal.TargetNode;
+		var typeClauseNode = syntaxViewModelLocal.TargetNode;
 	
 		prefixText = "(reference)";
 		prefixTextCssClass = null;
-		text = syntaxViewModelLocal.GetIdentifierText(typeClauseNode);
+		text = syntaxViewModelLocal.GetTextFromTextSpan(typeClauseNode.IdentifierToken.TextSpan);
 		
-		if (typeClauseNode.IsKeywordType)
+		//if (typeClauseNode.IsKeywordType)
 			syntaxHighlightingClassCssString = "di_keyword";
-		else
-			syntaxHighlightingClassCssString = "di_type";
+		//else
+		//	syntaxHighlightingClassCssString = "di_type";
 		
-		hasGenericParameterListing = typeClauseNode.OpenAngleBracketToken.ConstructorWasInvoked;
-		hasQuestionMark = typeClauseNode.HasQuestionMark;
-		arrayRank = typeClauseNode.ArrayRank;
-		typeKind = typeClauseNode.TypeKind;
+		hasGenericParameterListing = false;//typeClauseNode.OpenAngleBracketToken.ConstructorWasInvoked;
+		hasQuestionMark = null;//typeClauseNode.HasQuestionMark;
+		arrayRank = 0;//typeClauseNode.ArrayRank;
+		typeKind = default;//typeClauseNode.TypeKind;
 	}
 	else if (!syntaxViewModelLocal.TargetSymbol.IsDefault() && syntaxViewModelLocal.TargetSymbol.SyntaxKind == SyntaxKind.TypeSymbol)
 	{

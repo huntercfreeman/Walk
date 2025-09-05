@@ -110,11 +110,11 @@ public partial class SymbolDisplay : ComponentBase
     ///
     /// Otherwise, ask the IBinder for the definition node:
     /// </summary>
-    public static SyntaxNodeValue GetDefinitionNode(TextEditorService textEditorService, Symbol symbolLocal, ISyntaxNode targetNode, ResourceUri resourceUri)
+    public static SyntaxNodeValue GetDefinitionNode(TextEditorService textEditorService, Symbol symbolLocal, SyntaxNodeValue targetNode, ResourceUri resourceUri)
     {
         try
         {
-            if (targetNode is not null)
+            if (!targetNode.IsDefault())
             {
                 switch (targetNode.SyntaxKind)
                 {
