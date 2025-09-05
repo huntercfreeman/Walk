@@ -7,9 +7,9 @@ using Walk.TextEditor.RazorLib.TextEditors.Models;
 using Walk.TextEditor.RazorLib.TextEditors.Models.Internals;
 using Walk.TextEditor.RazorLib.TextEditors.Displays.Internals;
 using Walk.Extensions.CompilerServices.Syntax;
-using Walk.Extensions.CompilerServices.Syntax.Nodes;
 using Walk.CompilerServices.CSharp.CompilerServiceCase;
 using Walk.Extensions.CompilerServices.Syntax.Interfaces;
+using Walk.Extensions.CompilerServices.Syntax.NodeReferences;
 
 namespace Walk.CompilerServices.Razor;
 

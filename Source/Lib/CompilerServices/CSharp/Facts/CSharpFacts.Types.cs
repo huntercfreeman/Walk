@@ -2,8 +2,8 @@ using Walk.TextEditor.RazorLib.Lexers.Models;
 using Walk.TextEditor.RazorLib.Decorations.Models;
 using Walk.Extensions.CompilerServices;
 using Walk.Extensions.CompilerServices.Syntax;
-using Walk.Extensions.CompilerServices.Syntax.Nodes;
 using Walk.Extensions.CompilerServices.Syntax.Enums;
+using Walk.Extensions.CompilerServices.Syntax.NodeReferences;
 
 namespace Walk.CompilerServices.CSharp.Facts;
 

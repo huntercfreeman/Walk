@@ -1,6 +1,6 @@
 using Walk.Extensions.CompilerServices.Syntax.Interfaces;
 
-namespace Walk.Extensions.CompilerServices.Syntax.Nodes;
+namespace Walk.Extensions.CompilerServices.Syntax.NodeReferences;
 
 /// <summary>
 /// I just realized as I made this type,

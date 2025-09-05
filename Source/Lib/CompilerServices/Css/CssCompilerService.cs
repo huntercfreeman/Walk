@@ -7,8 +7,8 @@ using Walk.TextEditor.RazorLib.TextEditors.Models.Internals;
 using Walk.TextEditor.RazorLib.TextEditors.Displays.Internals;
 using Walk.TextEditor.RazorLib.Lexers.Models;
 using Walk.Extensions.CompilerServices.Syntax;
-using Walk.Extensions.CompilerServices.Syntax.Nodes;
 using Walk.Extensions.CompilerServices.Syntax.Interfaces;
+using Walk.Extensions.CompilerServices.Syntax.NodeReferences;
 
 namespace Walk.CompilerServices.Css;
 

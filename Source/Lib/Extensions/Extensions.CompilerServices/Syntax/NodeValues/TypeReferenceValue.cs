@@ -1,8 +1,8 @@
 using Walk.TextEditor.RazorLib.Lexers.Models;
-using Walk.Extensions.CompilerServices.Syntax.Nodes;
 using Walk.Extensions.CompilerServices.Syntax.Enums;
+using Walk.Extensions.CompilerServices.Syntax.NodeReferences;
 
-namespace Walk.Extensions.CompilerServices.Syntax.Values;
+namespace Walk.Extensions.CompilerServices.Syntax.NodeValues;
 
 public record struct TypeReferenceValue
 {

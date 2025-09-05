@@ -2,7 +2,7 @@ using Walk.CompilerServices.CSharp.Facts;
 using Walk.Extensions.CompilerServices.Syntax;
 using Walk.Extensions.CompilerServices.Syntax.Enums;
 using Walk.Extensions.CompilerServices.Syntax.Interfaces;
-using Walk.Extensions.CompilerServices.Syntax.Nodes;
+using Walk.Extensions.CompilerServices.Syntax.NodeReferences;
 using Walk.Extensions.CompilerServices.Syntax.Values;
 
 namespace Walk.CompilerServices.CSharp.ParserCase.Internals;

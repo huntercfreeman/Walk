@@ -1,7 +1,7 @@
 using Walk.Extensions.CompilerServices.Syntax.Interfaces;
-using Walk.Extensions.CompilerServices.Syntax.Values;
+using Walk.Extensions.CompilerServices.Syntax.NodeValues;
 
-namespace Walk.Extensions.CompilerServices.Syntax.Nodes;
+namespace Walk.Extensions.CompilerServices.Syntax.NodeReferences;
 
 public sealed class UnaryExpressionNode : IExpressionNode
 {

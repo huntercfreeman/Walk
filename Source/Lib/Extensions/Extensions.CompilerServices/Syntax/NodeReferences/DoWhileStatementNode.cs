@@ -1,6 +1,6 @@
 using Walk.Extensions.CompilerServices.Syntax.Interfaces;
 
-namespace Walk.Extensions.CompilerServices.Syntax.Nodes;
+namespace Walk.Extensions.CompilerServices.Syntax.NodeReferences;
 
 public sealed class DoWhileStatementNode : ICodeBlockOwner
 {

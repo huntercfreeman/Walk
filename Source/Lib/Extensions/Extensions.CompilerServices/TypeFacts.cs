@@ -1,10 +1,10 @@
 using Walk.TextEditor.RazorLib.Decorations.Models;
 using Walk.TextEditor.RazorLib.Lexers.Models;
 using Walk.Extensions.CompilerServices.Syntax;
-using Walk.Extensions.CompilerServices.Syntax.Nodes;
-using Walk.Extensions.CompilerServices.Syntax.Values;
 using Walk.Extensions.CompilerServices.Syntax.Enums;
 using Walk.Extensions.CompilerServices.Syntax.Interfaces;
+using Walk.Extensions.CompilerServices.Syntax.NodeReferences;
+using Walk.Extensions.CompilerServices.Syntax.NodeValues;
 
 namespace Walk.Extensions.CompilerServices;
 

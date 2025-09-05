@@ -3,16 +3,15 @@ using Walk.TextEditor.RazorLib.Decorations.Models;
 using Walk.TextEditor.RazorLib.CompilerServices;
 using Walk.Extensions.CompilerServices;
 using Walk.Extensions.CompilerServices.Syntax;
-using Walk.Extensions.CompilerServices.Syntax.Nodes;
 using Walk.CompilerServices.CSharp.LexerCase;
 using Walk.CompilerServices.CSharp.BinderCase;
 using Walk.CompilerServices.CSharp.Facts;
 using Walk.CompilerServices.CSharp.CompilerServiceCase;
-using Walk.Extensions.CompilerServices.Syntax.Values;
 using Walk.Extensions.CompilerServices.Syntax.Enums;
 using Walk.Extensions.CompilerServices.Syntax.Interfaces;
 using Walk.Extensions.CompilerServices.Syntax.Utility;
 using Walk.Extensions.CompilerServices.Syntax.NodeValues;
+using Walk.Extensions.CompilerServices.Syntax.NodeReferences;
 
 namespace Walk.CompilerServices.CSharp.ParserCase;
 

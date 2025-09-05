@@ -1,5 +1,6 @@
 using Walk.Extensions.CompilerServices.Syntax;
 using Walk.Extensions.CompilerServices.Syntax.Interfaces;
+using Walk.Extensions.CompilerServices.Syntax.NodeReferences;
 
 namespace Walk.CompilerServices.CSharp.ParserCase;
 
@@ -7,13 +8,13 @@ public class CSharpStatementBuilder
 {
     public CSharpStatementBuilder()
     {
-        MostRecentNode = Walk.Extensions.CompilerServices.Syntax.Nodes.EmptyExpressionNode.Empty;
+        MostRecentNode = EmptyExpressionNode.Empty;
         ChildList.Clear();
         ParseLambdaStatementScopeStack.Clear();
     }
     
     public bool StatementIsEmpty => ChildList.Count == 0 &&
-                                    MostRecentNode == Walk.Extensions.CompilerServices.Syntax.Nodes.EmptyExpressionNode.Empty;
+                                    MostRecentNode == EmptyExpressionNode.Empty;
 
     public List<SyntaxToken> ChildList { get; } = new();
     public ISyntaxNode MostRecentNode { get; set; }    /// <summary>
@@ -71,30 +72,30 @@ public class CSharpStatementBuilder
             case SyntaxKind.VariableReferenceNode:
             {
                 parserModel.Return_VariableReferenceNode(
-                    (Walk.Extensions.CompilerServices.Syntax.Nodes.VariableReferenceNode)MostRecentNode);
+                    (VariableReferenceNode)MostRecentNode);
                 break;
             }
             case SyntaxKind.FunctionInvocationNode:
             {
                 parserModel.Return_FunctionInvocationNode(
-                    (Walk.Extensions.CompilerServices.Syntax.Nodes.FunctionInvocationNode)MostRecentNode);
+                    (FunctionInvocationNode)MostRecentNode);
                 break;
             }
             case SyntaxKind.ConstructorInvocationExpressionNode:
             {
                 parserModel.Return_ConstructorInvocationExpressionNode(
-                    (Walk.Extensions.CompilerServices.Syntax.Nodes.ConstructorInvocationNode)MostRecentNode);
+                    (ConstructorInvocationNode)MostRecentNode);
                 break;
             }
             case SyntaxKind.BinaryExpressionNode:
             {
                 parserModel.Return_BinaryExpressionNode(
-                    (Walk.Extensions.CompilerServices.Syntax.Nodes.BinaryExpressionNode)MostRecentNode);
+                    (BinaryExpressionNode)MostRecentNode);
                 break;
             }
         }
     
-        MostRecentNode = Walk.Extensions.CompilerServices.Syntax.Nodes.EmptyExpressionNode.Empty;
+        MostRecentNode = EmptyExpressionNode.Empty;
         ChildList.Clear();
         
         /*if (ParseLambdaStatementScopeStack.Count > 0)

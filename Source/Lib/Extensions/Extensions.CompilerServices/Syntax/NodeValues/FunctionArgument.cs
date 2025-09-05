@@ -1,7 +1,7 @@
 using Walk.Extensions.CompilerServices.Syntax.Enums;
-using Walk.Extensions.CompilerServices.Syntax.Values;
+using Walk.Extensions.CompilerServices.Syntax.NodeReferences;
 
-namespace Walk.Extensions.CompilerServices.Syntax.Nodes;
+namespace Walk.Extensions.CompilerServices.Syntax.NodeValues;
 
 /// <summary>
 /// Used when defining a function.

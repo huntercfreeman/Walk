@@ -1,6 +1,6 @@
 using Microsoft.AspNetCore.Components;
 using Walk.TextEditor.RazorLib;
-using Walk.Extensions.CompilerServices.Syntax.Values;
+using Walk.Extensions.CompilerServices.Syntax.NodeValues;
 
 namespace Walk.Extensions.CompilerServices.Displays.Internals;
 

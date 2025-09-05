@@ -1,7 +1,6 @@
 using Walk.TextEditor.RazorLib.Lexers.Models;
 using Walk.TextEditor.RazorLib.CompilerServices;
 using Walk.Extensions.CompilerServices.Syntax;
-using Walk.Extensions.CompilerServices.Syntax.Values;
 using Walk.Extensions.CompilerServices.Syntax.Interfaces;
 using Walk.Extensions.CompilerServices.Syntax.NodeValues;
 
@@ -22,7 +21,7 @@ public interface IExtendedCompilerService : ICompilerService
 
     public IReadOnlyList<GenericParameter> GenericParameterEntryList { get; }
     public IReadOnlyList<FunctionParameter> FunctionParameterEntryList { get; }
-    public IReadOnlyList<Walk.Extensions.CompilerServices.Syntax.Nodes.FunctionArgument> FunctionArgumentEntryList { get; }
+    public IReadOnlyList<FunctionArgument> FunctionArgumentEntryList { get; }
     
     public IReadOnlyList<TypeDefinitionTraits> TypeDefinitionTraitsList { get; }
     public IReadOnlyList<FunctionDefinitionTraits> FunctionDefinitionTraitsList { get; }

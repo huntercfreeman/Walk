@@ -12,9 +12,7 @@ using Walk.CompilerServices.CSharp.ParserCase;
 using Walk.Extensions.CompilerServices;
 using Walk.Extensions.CompilerServices.Syntax;
 using Walk.Extensions.CompilerServices.Syntax.Interfaces;
-using Walk.Extensions.CompilerServices.Syntax.Nodes;
 using Walk.Extensions.CompilerServices.Syntax.NodeValues;
-using Walk.Extensions.CompilerServices.Syntax.Values;
 using Walk.Extensions.CompilerServices.Displays;
 using Walk.TextEditor.RazorLib;
 using Walk.TextEditor.RazorLib.Autocompletes.Models;
@@ -25,6 +23,7 @@ using Walk.TextEditor.RazorLib.TextEditors.Displays.Internals;
 using Walk.TextEditor.RazorLib.TextEditors.Models;
 using Walk.TextEditor.RazorLib.TextEditors.Models.Internals;
 using Walk.TextEditor.RazorLib.Keymaps.Models.Defaults;
+using Walk.Extensions.CompilerServices.Syntax.NodeReferences;
 
 namespace Walk.CompilerServices.CSharp.CompilerServiceCase;
 

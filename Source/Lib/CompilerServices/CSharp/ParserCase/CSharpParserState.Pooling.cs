@@ -1,7 +1,7 @@
 ﻿using Walk.Extensions.CompilerServices;
 using Walk.Extensions.CompilerServices.Syntax.Enums;
-using Walk.Extensions.CompilerServices.Syntax.Nodes;
-using Walk.Extensions.CompilerServices.Syntax.Values;
+using Walk.Extensions.CompilerServices.Syntax.NodeReferences;
+using Walk.Extensions.CompilerServices.Syntax.NodeValues;
 
 namespace Walk.CompilerServices.CSharp.ParserCase;
 

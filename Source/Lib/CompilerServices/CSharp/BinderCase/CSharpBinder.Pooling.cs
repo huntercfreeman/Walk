@@ -1,7 +1,7 @@
 using Walk.CompilerServices.CSharp.ParserCase;
 using Walk.Extensions.CompilerServices.Syntax;
 using Walk.Extensions.CompilerServices.Syntax.Interfaces;
-using Walk.Extensions.CompilerServices.Syntax.Nodes;
+using Walk.Extensions.CompilerServices.Syntax.NodeReferences;
 using Walk.Extensions.CompilerServices.Syntax.NodeValues;
 using Walk.Extensions.CompilerServices.Syntax.Utility;
 using Walk.TextEditor.RazorLib.Lexers.Models;

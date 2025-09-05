@@ -1,6 +1,6 @@
 using Walk.Extensions.CompilerServices.Syntax.Enums;
 
-namespace Walk.Extensions.CompilerServices.Syntax.Values;
+namespace Walk.Extensions.CompilerServices.Syntax.NodeValues;
 
 public struct VariableDeclarationTraits
 {

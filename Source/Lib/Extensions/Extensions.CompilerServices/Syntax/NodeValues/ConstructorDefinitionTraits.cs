@@ -1,4 +1,4 @@
-namespace Walk.Extensions.CompilerServices.Syntax.Values;
+namespace Walk.Extensions.CompilerServices.Syntax.NodeValues;
 
 public struct ConstructorDefinitionTraits
 {

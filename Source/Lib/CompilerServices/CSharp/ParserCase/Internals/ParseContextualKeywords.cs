@@ -1,3 +1,5 @@
+using Walk.Extensions.CompilerServices.Syntax.NodeReferences;
+
 namespace Walk.CompilerServices.CSharp.ParserCase.Internals;
 
 public class ParseContextualKeywords
@@ -126,11 +128,11 @@ public class ParseContextualKeywords
         
         if (expression.SyntaxKind == Walk.Extensions.CompilerServices.Syntax.SyntaxKind.VariableReferenceNode)
         {
-            parserModel.Return_VariableReferenceNode((Walk.Extensions.CompilerServices.Syntax.Nodes.VariableReferenceNode)expression);
+            parserModel.Return_VariableReferenceNode((VariableReferenceNode)expression);
         }
         else if (expression.SyntaxKind == Walk.Extensions.CompilerServices.Syntax.SyntaxKind.FunctionInvocationNode)
         {
-            parserModel.Return_FunctionInvocationNode((Walk.Extensions.CompilerServices.Syntax.Nodes.FunctionInvocationNode)expression);
+            parserModel.Return_FunctionInvocationNode((FunctionInvocationNode)expression);
         }
     }
 
