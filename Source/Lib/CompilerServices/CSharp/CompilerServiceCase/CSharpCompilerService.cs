@@ -125,10 +125,10 @@ public sealed class CSharpCompilerService : IExtendedCompilerService
     public IReadOnlyList<FunctionParameter> FunctionParameterEntryList => __CSharpBinder.FunctionParameterList;
     public IReadOnlyList<FunctionArgument> FunctionArgumentEntryList => __CSharpBinder.FunctionArgumentList;
     
-    public IReadOnlyList<TypeDefinitionTraits> TypeDefinitionValueList => __CSharpBinder.TypeDefinitionTraitsList;
-    public IReadOnlyList<FunctionDefinitionTraits> FunctionDefinitionValueList => __CSharpBinder.FunctionDefinitionTraitsList;
-    public IReadOnlyList<VariableDeclarationTraits> VariableDeclarationValueList => __CSharpBinder.VariableDeclarationTraitsList;
-    public IReadOnlyList<ConstructorDefinitionTraits> ConstructorDefinitionValueList => __CSharpBinder.ConstructorDefinitionTraitsList;
+    public IReadOnlyList<TypeDefinitionTraits> TypeDefinitionTraitsList => __CSharpBinder.TypeDefinitionTraitsList;
+    public IReadOnlyList<FunctionDefinitionTraits> FunctionDefinitionTraitsList => __CSharpBinder.FunctionDefinitionTraitsList;
+    public IReadOnlyList<VariableDeclarationTraits> VariableDeclarationTraitsList => __CSharpBinder.VariableDeclarationTraitsList;
+    public IReadOnlyList<ConstructorDefinitionTraits> ConstructorDefinitionTraitsList => __CSharpBinder.ConstructorDefinitionTraitsList;
 
     public void RegisterResource(ResourceUri resourceUri, bool shouldTriggerResourceWasModified)
     {
@@ -1551,7 +1551,7 @@ public sealed class CSharpCompilerService : IExtendedCompilerService
             var typeDefinitionNode = definitionNode;
             resourceUriValue = typeDefinitionNode.ResourceUri.Value;
             indexInclusiveStart = typeDefinitionNode.IdentifierToken.TextSpan.StartInclusiveIndex;
-            var typeDefinitionTraits = TypeDefinitionValueList[typeDefinitionNode.MetaIndex];
+            var typeDefinitionTraits = TypeDefinitionTraitsList[typeDefinitionNode.MetaIndex];
             indexPartialTypeDefinition = typeDefinitionTraits.IndexPartialTypeDefinition;
         }
         else if (definitionNode.SyntaxKind == SyntaxKind.VariableDeclarationNode)

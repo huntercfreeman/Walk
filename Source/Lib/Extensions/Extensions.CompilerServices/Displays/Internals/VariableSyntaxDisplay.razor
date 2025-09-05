@@ -33,7 +33,7 @@
 	else if (!syntaxViewModelLocal.DefinitionNode.IsDefault() && syntaxViewModelLocal.DefinitionNode.SyntaxKind == SyntaxKind.VariableDeclarationNode)
 	{
 		variableDeclarationNode = syntaxViewModelLocal.DefinitionNode;
-		variableDeclarationMetadata = syntaxViewModelLocal.ExtendedCompilerService.VariableDeclarationValueList[variableDeclarationNode.MetaIndex];
+		variableDeclarationMetadata = syntaxViewModelLocal.ExtendedCompilerService.VariableDeclarationTraitsList[variableDeclarationNode.MetaIndex];
 		
 		prefixText = string.Empty;
 		text = syntaxViewModelLocal.GetTextFromTextSpan(variableDeclarationNode.IdentifierToken.TextSpan);

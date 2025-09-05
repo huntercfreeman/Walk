@@ -46,7 +46,7 @@
 		if (syntaxViewModelLocal.DefinitionNode.SyntaxKind == SyntaxKind.FunctionDefinitionNode)
 		{
 			var functionDefinitionNode = syntaxViewModelLocal.DefinitionNode;
-			var functionDefinitionMetadata = syntaxViewModelLocal.ExtendedCompilerService.FunctionDefinitionValueList[functionDefinitionNode.MetaIndex];
+			var functionDefinitionMetadata = syntaxViewModelLocal.ExtendedCompilerService.FunctionDefinitionTraitsList[functionDefinitionNode.MetaIndex];
 			
 			returnTypeClauseNode = functionDefinitionMetadata.ReturnTypeReference;
 			returnTypeClauseNodeText = null;
@@ -58,7 +58,7 @@
 		else if (syntaxViewModelLocal.DefinitionNode.SyntaxKind == SyntaxKind.ConstructorDefinitionNode)
 		{
 			var constructorDefinitionNode = syntaxViewModelLocal.DefinitionNode;
-			var constructorDefinitionMetadata = syntaxViewModelLocal.ExtendedCompilerService.ConstructorDefinitionValueList[constructorDefinitionNode.MetaIndex];
+			var constructorDefinitionMetadata = syntaxViewModelLocal.ExtendedCompilerService.ConstructorDefinitionTraitsList[constructorDefinitionNode.MetaIndex];
 			returnTypeClauseNode = constructorDefinitionMetadata.ReturnTypeReference;
 			returnTypeClauseNodeText = null;
 			methodName = null;
