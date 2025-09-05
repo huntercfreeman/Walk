@@ -2,6 +2,10 @@ using System.Text;
 using Walk.Common.RazorLib.FileSystems.Models;
 using Walk.Common.RazorLib.Keys.Models;
 using Walk.Common.RazorLib.Menus.Models;
+using Walk.Common.RazorLib.JavaScriptObjects.Models;
+using Walk.Common.RazorLib.Dropdowns.Models;
+using Walk.Common.RazorLib.Menus.Models;
+using Walk.Common.RazorLib.Menus.Displays;
 using Walk.CompilerServices.CSharp.BinderCase;
 using Walk.CompilerServices.CSharp.LexerCase;
 using Walk.CompilerServices.CSharp.ParserCase;
@@ -11,6 +15,7 @@ using Walk.Extensions.CompilerServices.Syntax.Interfaces;
 using Walk.Extensions.CompilerServices.Syntax.Nodes;
 using Walk.Extensions.CompilerServices.Syntax.NodeValues;
 using Walk.Extensions.CompilerServices.Syntax.Values;
+using Walk.Extensions.CompilerServices.Displays;
 using Walk.TextEditor.RazorLib;
 using Walk.TextEditor.RazorLib.Autocompletes.Models;
 using Walk.TextEditor.RazorLib.CompilerServices;
@@ -19,6 +24,7 @@ using Walk.TextEditor.RazorLib.Lexers.Models;
 using Walk.TextEditor.RazorLib.TextEditors.Displays.Internals;
 using Walk.TextEditor.RazorLib.TextEditors.Models;
 using Walk.TextEditor.RazorLib.TextEditors.Models.Internals;
+using Walk.TextEditor.RazorLib.Keymaps.Models.Defaults;
 
 namespace Walk.CompilerServices.CSharp.CompilerServiceCase;
 
@@ -1505,7 +1511,7 @@ public sealed class CSharpCompilerService : IExtendedCompilerService
         Category category,
         int positionIndex)
     {
-        /*var cursorPositionIndex = positionIndex;
+        var cursorPositionIndex = positionIndex;
 
         var foundMatch = false;
         
@@ -1533,7 +1539,7 @@ public sealed class CSharpCompilerService : IExtendedCompilerService
         var targetNode = SymbolDisplay.GetTargetNodeValue(_textEditorService, symbolLocal, modelModifier.PersistentState.ResourceUri);
         var definitionNode = SymbolDisplay.GetDefinitionNodeValue(_textEditorService, symbolLocal, targetNode, modelModifier.PersistentState.ResourceUri);
         
-        if (definitionNode is null)
+        if (definitionNode.IsDefault())
             return;
             
         string? resourceUriValue = null;
@@ -1542,34 +1548,35 @@ public sealed class CSharpCompilerService : IExtendedCompilerService
         
         if (definitionNode.SyntaxKind == SyntaxKind.TypeDefinitionNode)
         {
-            var typeDefinitionNode = (TypeDefinitionNode)definitionNode;
+            var typeDefinitionNode = definitionNode;
             resourceUriValue = typeDefinitionNode.ResourceUri.Value;
-            indexInclusiveStart = typeDefinitionNode.TypeIdentifierToken.TextSpan.StartInclusiveIndex;
-            indexPartialTypeDefinition = typeDefinitionNode.IndexPartialTypeDefinition;
+            indexInclusiveStart = typeDefinitionNode.IdentifierToken.TextSpan.StartInclusiveIndex;
+            var typeDefinitionTraits = TypeDefinitionValueList[typeDefinitionNode.MetaIndex];
+            indexPartialTypeDefinition = typeDefinitionTraits.IndexPartialTypeDefinition;
         }
         else if (definitionNode.SyntaxKind == SyntaxKind.VariableDeclarationNode)
         {
-            var variableDeclarationNode = (VariableDeclarationNode)definitionNode;
+            var variableDeclarationNode = definitionNode;
             resourceUriValue = variableDeclarationNode.ResourceUri.Value;
             indexInclusiveStart = variableDeclarationNode.IdentifierToken.TextSpan.StartInclusiveIndex;
         }
         else if (definitionNode.SyntaxKind == SyntaxKind.NamespaceStatementNode)
         {
-            var namespaceStatementNode = (NamespaceStatementNode)definitionNode;
+            var namespaceStatementNode = definitionNode;
             resourceUriValue = namespaceStatementNode.ResourceUri.Value;
             indexInclusiveStart = namespaceStatementNode.IdentifierToken.TextSpan.StartInclusiveIndex;
         }
         else if (definitionNode.SyntaxKind == SyntaxKind.FunctionDefinitionNode)
         {
-            var functionDefinitionNode = (FunctionDefinitionNode)definitionNode;
+            var functionDefinitionNode = definitionNode;
             resourceUriValue = functionDefinitionNode.ResourceUri.Value;
-            indexInclusiveStart = functionDefinitionNode.FunctionIdentifierToken.TextSpan.StartInclusiveIndex;
+            indexInclusiveStart = functionDefinitionNode.IdentifierToken.TextSpan.StartInclusiveIndex;
         }
         else if (definitionNode.SyntaxKind == SyntaxKind.ConstructorDefinitionNode)
         {
-            var constructorDefinitionNode = (ConstructorDefinitionNode)definitionNode;
+            var constructorDefinitionNode = definitionNode;
             resourceUriValue = constructorDefinitionNode.ResourceUri.Value;
-            indexInclusiveStart = constructorDefinitionNode.FunctionIdentifier.TextSpan.StartInclusiveIndex;
+            indexInclusiveStart = constructorDefinitionNode.IdentifierToken.TextSpan.StartInclusiveIndex;
         }
         
         if (resourceUriValue is null || indexInclusiveStart == -1)
@@ -1681,7 +1688,7 @@ public sealed class CSharpCompilerService : IExtendedCompilerService
                         
                         if (__CSharpBinder.__CompilationUnitMap.TryGetValue(new ResourceUri(file), out var innerCompilationUnit))
                         {
-                            ISyntaxNode? otherTypeDefinitionNode = null;
+                            SyntaxNodeValue otherTypeDefinitionNode = default;
                             
                             for (int i = innerCompilationUnit.NodeOffset; i < innerCompilationUnit.NodeOffset + innerCompilationUnit.NodeLength; i++)
                             {
@@ -1695,10 +1702,10 @@ public sealed class CSharpCompilerService : IExtendedCompilerService
                                 }
                             }
                             
-                            if (otherTypeDefinitionNode is not null)
+                            if (!otherTypeDefinitionNode.IsDefault())
                             {
-                                var typeDefinitionNode = (TypeDefinitionNode)otherTypeDefinitionNode;
-                                positionIndex = typeDefinitionNode.TypeIdentifierToken.TextSpan.StartInclusiveIndex;
+                                var typeDefinitionNode = otherTypeDefinitionNode;
+                                positionIndex = typeDefinitionNode.IdentifierToken.TextSpan.StartInclusiveIndex;
                             }
                         }
                     
@@ -1784,7 +1791,7 @@ public sealed class CSharpCompilerService : IExtendedCompilerService
         
                 _textEditorService.CommonService.Dropdown_ReduceRegisterAction(dropdownRecord);
             }
-        }*/
+        }
     }
     
     /// <summary>
@@ -1927,9 +1934,9 @@ public sealed class CSharpCompilerService : IExtendedCompilerService
     /// The fallback step is expected to occur due to the global scope being implemented with a null
     /// <see cref="IScope"/>.<see cref="IScope.CodeBlockOwner"/> at the time of this comment.
     /// </summary>
-    public ISyntaxNode? GetSyntaxNode(int positionIndex, ResourceUri resourceUri, ICompilerServiceResource? compilerServiceResource)
+    public SyntaxNodeValue GetSyntaxNode(int positionIndex, ResourceUri resourceUri, ICompilerServiceResource? compilerServiceResource)
     {
-        return null;
+        return default;
         // return __CSharpBinder.GetSyntaxNode(compilationUnit: null, positionIndex, (CSharpCompilationUnit)compilerServiceResource);
     }
     

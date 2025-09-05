@@ -1,4 +1,4 @@
-﻿using Walk.CompilerServices.CSharp.ParserCase;
+using Walk.CompilerServices.CSharp.ParserCase;
 using Walk.Extensions.CompilerServices.Syntax;
 using Walk.Extensions.CompilerServices.Syntax.Interfaces;
 using Walk.Extensions.CompilerServices.Syntax.Nodes;

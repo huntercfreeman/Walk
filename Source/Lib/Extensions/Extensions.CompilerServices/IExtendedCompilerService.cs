@@ -29,7 +29,7 @@ public interface IExtendedCompilerService : ICompilerService
     public IReadOnlyList<VariableDeclarationTraits> VariableDeclarationValueList { get; }
     public IReadOnlyList<ConstructorDefinitionTraits> ConstructorDefinitionValueList { get; }
 
-    public ISyntaxNode? GetSyntaxNode(int positionIndex, ResourceUri resourceUri, ICompilerServiceResource? compilerServiceResource);
+    public SyntaxNodeValue GetSyntaxNode(int positionIndex, ResourceUri resourceUri, ICompilerServiceResource? compilerServiceResource);
     public SyntaxNodeValue GetDefinitionNodeValue(TextEditorTextSpan textSpan, ResourceUri resourceUri, ICompilerServiceResource compilerServiceResource, Symbol? symbol = null);
     public (Scope Scope, ICodeBlockOwner? CodeBlockOwner) GetCodeBlockTupleByPositionIndex(ResourceUri resourceUri, int positionIndex);
     public string GetIdentifierText(ISyntaxNode node, ResourceUri resourceUri);

@@ -1887,10 +1887,8 @@ public partial class CSharpBinder
             // This allows Internal_GetTopLevelTypeDefinitionNodes_NamespaceGroup(...) to "select many".
             _getTopLevelTypeDefinitionNodes.Clear();
         }
-        
-        return _getTopLevelTypeDefinitionNodes;
     
-        /*if (namespaceStatementNode.SelfScopeSubIndex == -1 ||
+        if (namespaceStatementNode.SelfScopeSubIndex == -1 ||
             !__CompilationUnitMap.TryGetValue(namespaceStatementNode.ResourceUri, out var compilationUnit))
         {
             return _getTopLevelTypeDefinitionNodes;
@@ -1901,10 +1899,10 @@ public partial class CSharpBinder
             var node = NodeList[i];
         
             if (node.ParentScopeSubIndex == namespaceStatementNode.SelfScopeSubIndex && node.SyntaxKind == SyntaxKind.TypeDefinitionNode)
-                _getTopLevelTypeDefinitionNodes.Add((TypeDefinitionNode)node);
+                _getTopLevelTypeDefinitionNodes.Add(node);
         }
         
-        return _getTopLevelTypeDefinitionNodes;*/
+        return _getTopLevelTypeDefinitionNodes;
     }
     
     /// <summary>Object-allocation-less version of the public version for internal use.</summary>

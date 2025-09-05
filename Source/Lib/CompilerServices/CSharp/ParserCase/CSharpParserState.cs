@@ -72,6 +72,7 @@ public ref partial struct CSharpParserState
         //ExternalTypeDefinitionList.AddRange(CSharpFacts.Types.TypeDefinitionNodes);
         foreach (var typeDefinitionNode in CSharpFacts.Types.TypeDefinitionNodes)
         {
+            // TODO: This is wrong
             ExternalTypeDefinitionList.Add(
                 new SyntaxNodeValue(
                     typeDefinitionNode.TypeIdentifierToken,

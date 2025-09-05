@@ -81,19 +81,19 @@ public partial class SymbolDisplay : ComponentBase
     ///
     /// The 'targetNode' is whichever node the ISymbol directly mapped to.
     /// </summary>
-    public static ISyntaxNode? GetTargetNodeValue(TextEditorService textEditorService, Symbol symbolLocal, ResourceUri resourceUri)
+    public static SyntaxNodeValue GetTargetNodeValue(TextEditorService textEditorService, Symbol symbolLocal, ResourceUri resourceUri)
     {
         try
         {
             var textEditorModel = textEditorService.Model_GetOrDefault(resourceUri);
             if (textEditorModel is null)
-                return null;
+                return default;
             
             var extendedCompilerService = (IExtendedCompilerService)textEditorModel.PersistentState.CompilerService;
             
             var compilerServiceResource = extendedCompilerService.GetResource(textEditorModel.PersistentState.ResourceUri);
             if (compilerServiceResource is null)
-                return null;
+                return default;
     
             return extendedCompilerService.GetSyntaxNode(
                 symbolLocal.TextSpan.StartInclusiveIndex,
@@ -103,7 +103,7 @@ public partial class SymbolDisplay : ComponentBase
         catch (Exception e)
         {
             Console.WriteLine(e);
-            return null;
+            return default;
         }
     }
     
