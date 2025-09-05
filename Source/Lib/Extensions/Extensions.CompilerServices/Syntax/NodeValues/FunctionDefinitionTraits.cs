@@ -1,6 +1,6 @@
 namespace Walk.Extensions.CompilerServices.Syntax.NodeValues;
 
-public class FunctionDefinitionTraits
+public struct FunctionDefinitionTraits
 {
     public FunctionDefinitionTraits(
         TypeReferenceValue returnTypeReference,
