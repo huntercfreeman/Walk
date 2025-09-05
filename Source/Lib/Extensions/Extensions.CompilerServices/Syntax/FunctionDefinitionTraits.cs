@@ -1,8 +1,8 @@
 namespace Walk.Extensions.CompilerServices.Syntax;
 
-public class FunctionDefinitionValue
+public class FunctionDefinitionTraits
 {
-    public FunctionDefinitionValue(
+    public FunctionDefinitionTraits(
         TypeReference returnTypeReference,
         SyntaxToken openAngleBracketToken,
         int indexFunctionArgumentEntryList,

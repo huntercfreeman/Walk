@@ -1,8 +1,8 @@
 namespace Walk.Extensions.CompilerServices.Syntax;
 
-public struct ConstructorDefinitionValue
+public struct ConstructorDefinitionTraits
 {
-    public ConstructorDefinitionValue(
+    public ConstructorDefinitionTraits(
         TypeReference returnTypeReference,
         int indexFunctionArgumentEntryList,
         int countFunctionArgumentEntryList)

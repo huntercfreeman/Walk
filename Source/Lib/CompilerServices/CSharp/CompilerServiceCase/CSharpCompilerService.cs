@@ -122,10 +122,10 @@ public sealed class CSharpCompilerService : IExtendedCompilerService
     public IReadOnlyList<FunctionParameterEntry> FunctionParameterEntryList => __CSharpBinder.FunctionParameterEntryList;
     public IReadOnlyList<FunctionArgumentEntry> FunctionArgumentEntryList => __CSharpBinder.FunctionArgumentEntryList;
     
-    public IReadOnlyList<TypeDefinitionValue> TypeDefinitionValueList => __CSharpBinder.TypeDefinitionValueList;
-    public IReadOnlyList<FunctionDefinitionValue> FunctionDefinitionValueList => __CSharpBinder.FunctionDefinitionValueList;
-    public IReadOnlyList<VariableDeclarationValue> VariableDeclarationValueList => __CSharpBinder.VariableDeclarationValueList;
-    public IReadOnlyList<ConstructorDefinitionValue> ConstructorDefinitionValueList => __CSharpBinder.ConstructorDefinitionValueList;
+    public IReadOnlyList<TypeDefinitionTraits> TypeDefinitionValueList => __CSharpBinder.TypeDefinitionTraitsList;
+    public IReadOnlyList<FunctionDefinitionTraits> FunctionDefinitionValueList => __CSharpBinder.FunctionDefinitionTraitsList;
+    public IReadOnlyList<VariableDeclarationTraits> VariableDeclarationValueList => __CSharpBinder.VariableDeclarationTraitsList;
+    public IReadOnlyList<ConstructorDefinitionTraits> ConstructorDefinitionValueList => __CSharpBinder.ConstructorDefinitionTraitsList;
 
     public void RegisterResource(ResourceUri resourceUri, bool shouldTriggerResourceWasModified)
     {

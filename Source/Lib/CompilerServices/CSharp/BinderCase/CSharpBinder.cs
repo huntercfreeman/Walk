@@ -68,10 +68,10 @@ public class CSharpBinder
     public List<Scope> ScopeList { get; } = new();
     
     public List<SyntaxNodeValue> NodeList { get; } = new();
-    public List<TypeDefinitionValue> TypeDefinitionValueList { get; } = new();
-    public List<FunctionDefinitionValue> FunctionDefinitionValueList { get; } = new();
-    public List<ConstructorDefinitionValue> ConstructorDefinitionValueList { get; } = new();
-    public List<VariableDeclarationValue> VariableDeclarationValueList { get; } = new();
+    public List<TypeDefinitionTraits> TypeDefinitionTraitsList { get; } = new();
+    public List<FunctionDefinitionTraits> FunctionDefinitionTraitsList { get; } = new();
+    public List<ConstructorDefinitionTraits> ConstructorDefinitionTraitsList { get; } = new();
+    public List<VariableDeclarationTraits> VariableDeclarationTraitsList { get; } = new();
 
     /// <summary>
     /// This list is used within TextEditorEditContext and for the lexers to re-use by clearing it prior to starting the lexing.
@@ -762,7 +762,7 @@ public class CSharpBinder
             if (node.SyntaxKind == SyntaxKind.TypeDefinitionNode)
             {
                 var typeDefinitionNode = node;
-                var typeDefinitionMetadata = TypeDefinitionValueList[typeDefinitionNode.MetaIndex];
+                var typeDefinitionMetadata = TypeDefinitionTraitsList[typeDefinitionNode.MetaIndex];
                 if (typeDefinitionMetadata.IndexPartialTypeDefinition != -1)
                 {
                     int positionExclusive = typeDefinitionMetadata.IndexPartialTypeDefinition;
@@ -911,7 +911,7 @@ public class CSharpBinder
         SyntaxNodeValue typeDefinitionNode,
         out SyntaxNodeValue variableDeclarationNode)
     {
-        var typeMetadata = TypeDefinitionValueList[typeDefinitionNode.MetaIndex];
+        var typeMetadata = TypeDefinitionTraitsList[typeDefinitionNode.MetaIndex];
         
         if (typeMetadata.IndexPartialTypeDefinition != -1)
         {
@@ -1003,7 +1003,7 @@ public class CSharpBinder
             if (!isRecursive && scope.OwnerSyntaxKind == SyntaxKind.TypeDefinitionNode)
             {
                 var typeDefinitionNode = NodeList[compilationUnit.NodeOffset + scope.NodeSubIndex];
-                var typeMetadata = TypeDefinitionValueList[typeDefinitionNode.MetaIndex];
+                var typeMetadata = TypeDefinitionTraitsList[typeDefinitionNode.MetaIndex];
                 if (typeMetadata.IndexPartialTypeDefinition != -1)
                 {
                     if (TryGetVariableDeclarationByPartialType(
@@ -1703,7 +1703,7 @@ public class CSharpBinder
     
     public IEnumerable<SyntaxNodeValue> GetMemberList_TypeDefinitionNode(SyntaxNodeValue typeDefinitionNode)
     {
-        var typeDefinitionMetadata = TypeDefinitionValueList[typeDefinitionNode.MetaIndex];
+        var typeDefinitionMetadata = TypeDefinitionTraitsList[typeDefinitionNode.MetaIndex];
         return GetMemberList_TypeDefinitionNode(typeDefinitionNode.ResourceUri, typeDefinitionNode.SelfScopeSubIndex, typeDefinitionMetadata.IndexPartialTypeDefinition);
     }
     

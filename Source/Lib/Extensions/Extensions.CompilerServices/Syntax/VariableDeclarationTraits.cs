@@ -2,9 +2,9 @@ using Walk.Extensions.CompilerServices.Syntax.Nodes.Enums;
 
 namespace Walk.Extensions.CompilerServices.Syntax;
 
-public struct VariableDeclarationValue
+public struct VariableDeclarationTraits
 {
-    public VariableDeclarationValue(
+    public VariableDeclarationTraits(
         VariableKind variableKind,
         TypeReference resultTypeReference,
         bool hasSetter,

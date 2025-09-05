@@ -2,9 +2,9 @@ using Walk.Extensions.CompilerServices.Syntax.Nodes.Enums;
 
 namespace Walk.Extensions.CompilerServices.Syntax;
 
-public struct TypeDefinitionValue
+public struct TypeDefinitionTraits
 {
-    public TypeDefinitionValue(
+    public TypeDefinitionTraits(
         int indexPartialTypeDefinition,
         TypeReference inheritedTypeReference,
         AccessModifierKind accessModifierKind,

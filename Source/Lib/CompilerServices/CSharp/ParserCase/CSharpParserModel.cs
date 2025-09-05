@@ -78,7 +78,7 @@ public ref struct CSharpParserModel
                     typeDefinitionNode.SyntaxKind,
                     typeDefinitionNode.ParentScopeSubIndex,
                     typeDefinitionNode.SelfScopeSubIndex,
-                    Binder.TypeDefinitionValueList.Count));
+                    Binder.TypeDefinitionTraitsList.Count));
         }
         
         Binder.AmbiguousParenthesizedExpressionNodeChildList.Clear();
@@ -701,7 +701,7 @@ public ref struct CSharpParserModel
                 out var variableDeclarationNode))
         {
             
-            var variableReferenceMetadata = Binder.VariableDeclarationValueList[variableDeclarationNode.MetaIndex];
+            var variableReferenceMetadata = Binder.VariableDeclarationTraitsList[variableDeclarationNode.MetaIndex];
             typeReference = variableReferenceMetadata.ResultTypeReference;
             variableKind = variableReferenceMetadata.VariableKind;
         }
@@ -770,7 +770,7 @@ public ref struct CSharpParserModel
                 functionInvocationNode.FunctionInvocationIdentifierToken.TextSpan,
                 out var functionDefinitionNode))
         {
-            var functionDefinitionMetadata = Binder.FunctionDefinitionValueList[functionDefinitionNode.MetaIndex];
+            var functionDefinitionMetadata = Binder.FunctionDefinitionTraitsList[functionDefinitionNode.MetaIndex];
             functionInvocationNode.ResultTypeReference = functionDefinitionMetadata.ReturnTypeReference;
         }
     }
@@ -890,8 +890,8 @@ public ref struct CSharpParserModel
                         typeDefinitionNode.SyntaxKind,
                         typeDefinitionNode.ParentScopeSubIndex,
                         typeDefinitionNode.SelfScopeSubIndex,
-                        metaIndex: Binder.TypeDefinitionValueList.Count);
-                    Binder.TypeDefinitionValueList.Add(new TypeDefinitionValue(
+                        metaIndex: Binder.TypeDefinitionTraitsList.Count);
+                    Binder.TypeDefinitionTraitsList.Add(new TypeDefinitionTraits(
                         typeDefinitionNode.IndexPartialTypeDefinition,
                         typeDefinitionNode.InheritedTypeReference,
                         typeDefinitionNode.AccessModifierKind,
@@ -928,8 +928,8 @@ public ref struct CSharpParserModel
                         functionDefinitionNode.SyntaxKind,
                         functionDefinitionNode.ParentScopeSubIndex,
                         functionDefinitionNode.SelfScopeSubIndex,
-                        metaIndex: Binder.TypeDefinitionValueList.Count);
-                    Binder.FunctionDefinitionValueList.Add(new FunctionDefinitionValue(
+                        metaIndex: Binder.TypeDefinitionTraitsList.Count);
+                    Binder.FunctionDefinitionTraitsList.Add(new FunctionDefinitionTraits(
                         functionDefinitionNode.ReturnTypeReference,
                         functionDefinitionNode.OpenAngleBracketToken,
                         functionDefinitionNode.IndexFunctionArgumentEntryList,
@@ -1391,7 +1391,7 @@ public ref struct CSharpParserModel
         SyntaxNodeValue typeDefinitionNode,
         out SyntaxNodeValue variableDeclarationNode)
     {
-        var typeDefinitionMetadata = Binder.TypeDefinitionValueList[typeDefinitionNode.MetaIndex];
+        var typeDefinitionMetadata = Binder.TypeDefinitionTraitsList[typeDefinitionNode.MetaIndex];
         int positionExclusive = typeDefinitionMetadata.IndexPartialTypeDefinition;
         while (positionExclusive < Binder.PartialTypeDefinitionList.Count)
         {
@@ -1484,7 +1484,7 @@ public ref struct CSharpParserModel
             if (!isRecursive && scope.OwnerSyntaxKind == SyntaxKind.TypeDefinitionNode)
             {
                 var typeDefinitionNode = Binder.NodeList[declarationCompilationUnit.NodeOffset + scope.NodeSubIndex];
-                var typeDefinitionMetadata = Binder.TypeDefinitionValueList[typeDefinitionNode.MetaIndex];
+                var typeDefinitionMetadata = Binder.TypeDefinitionTraitsList[typeDefinitionNode.MetaIndex];
                 if (typeDefinitionMetadata.IndexPartialTypeDefinition != -1)
                 {
                     if (TryGetVariableDeclarationByPartialType(
@@ -1600,9 +1600,9 @@ public ref struct CSharpParserModel
                 variableDeclarationNode.SyntaxKind,
                 variableDeclarationNode.ParentScopeSubIndex,
                 -1,
-                metaIndex: Binder.VariableDeclarationValueList.Count);
+                metaIndex: Binder.VariableDeclarationTraitsList.Count);
             
-            Binder.VariableDeclarationValueList.Add(new VariableDeclarationValue(
+            Binder.VariableDeclarationTraitsList.Add(new VariableDeclarationTraits(
                 variableDeclarationNode.VariableKind,
                 variableDeclarationNode.TypeReference,
                 variableDeclarationNode.HasSetter,
