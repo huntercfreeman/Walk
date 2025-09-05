@@ -36,7 +36,7 @@ public sealed class AmbiguousIdentifierNode : IGenericParameterNode
 
     public int ParentScopeSubIndex { get; set; }
     public bool IsFabricated { get; init; }
-    public SyntaxKind SyntaxKind => SyntaxKind.AmbiguousIdentifierExpressionNode;
+    public SyntaxKind SyntaxKind => SyntaxKind.AmbiguousIdentifierNode;
     
     public bool IsParsingGenericParameters { get; set; }
     

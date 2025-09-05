@@ -81,7 +81,7 @@ public class CSharpStatementBuilder
                     (FunctionInvocationNode)MostRecentNode);
                 break;
             }
-            case SyntaxKind.ConstructorInvocationExpressionNode:
+            case SyntaxKind.ConstructorInvocationNode:
             {
                 parserModel.Return_ConstructorInvocationExpressionNode(
                     (ConstructorInvocationNode)MostRecentNode);

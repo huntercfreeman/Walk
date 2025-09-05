@@ -49,7 +49,7 @@ public sealed class ConstructorInvocationNode : IInvocationNode
         init => _isFabricated = value;
     }
     
-    public SyntaxKind SyntaxKind => SyntaxKind.ConstructorInvocationExpressionNode;
+    public SyntaxKind SyntaxKind => SyntaxKind.ConstructorInvocationNode;
     
     public bool IsParsingFunctionParameters { get; set; }
 }

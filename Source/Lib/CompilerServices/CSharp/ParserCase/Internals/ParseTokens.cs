@@ -45,7 +45,7 @@ public static class ParseTokens
         parserModel.TryParseExpressionSyntaxKindList.Add(SyntaxKind.TypeClauseNode);
         parserModel.TryParseExpressionSyntaxKindList.Add(SyntaxKind.VariableDeclarationNode);
         parserModel.TryParseExpressionSyntaxKindList.Add(SyntaxKind.VariableReferenceNode);
-        parserModel.TryParseExpressionSyntaxKindList.Add(SyntaxKind.ConstructorInvocationExpressionNode);
+        parserModel.TryParseExpressionSyntaxKindList.Add(SyntaxKind.ConstructorInvocationNode);
         
         if (parserModel.ScopeCurrent.OwnerSyntaxKind != SyntaxKind.TypeDefinitionNode)
         {
@@ -112,7 +112,7 @@ public static class ParseTokens
                 parserModel.StatementBuilder.MostRecentNode = expressionNode;
                 return;
             case SyntaxKind.FunctionInvocationNode:
-            case SyntaxKind.ConstructorInvocationExpressionNode:
+            case SyntaxKind.ConstructorInvocationNode:
                 parserModel.StatementBuilder.MostRecentNode = expressionNode;
                 return;
             default:
@@ -476,7 +476,7 @@ public static class ParseTokens
         
         parserModel.TryParseExpressionSyntaxKindList.Add(SyntaxKind.VariableDeclarationNode);
         parserModel.TryParseExpressionSyntaxKindList.Add(SyntaxKind.TypeClauseNode);
-        parserModel.TryParseExpressionSyntaxKindList.Add(SyntaxKind.AmbiguousParenthesizedExpressionNode);
+        parserModel.TryParseExpressionSyntaxKindList.Add(SyntaxKind.AmbiguousParenthesizedNode);
         
         parserModel.ParserContextKind = CSharpParserContextKind.ForceStatementExpression;
         

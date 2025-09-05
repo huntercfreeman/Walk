@@ -1313,7 +1313,7 @@ public class ParseDefaultKeywords
         {
             parserModel.Return_FunctionInvocationNode((FunctionInvocationNode)expressionNode);
         }
-        else if (expressionNode.SyntaxKind == SyntaxKind.ConstructorInvocationExpressionNode)
+        else if (expressionNode.SyntaxKind == SyntaxKind.ConstructorInvocationNode)
         {
             parserModel.Return_ConstructorInvocationExpressionNode((ConstructorInvocationNode)expressionNode);
         }

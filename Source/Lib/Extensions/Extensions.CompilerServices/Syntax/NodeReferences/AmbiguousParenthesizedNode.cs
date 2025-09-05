@@ -137,6 +137,6 @@ public sealed class AmbiguousParenthesizedNode : IExpressionNode
 
     public int ParentScopeSubIndex { get; set; }
     public bool IsFabricated { get; init; }
-    public SyntaxKind SyntaxKind => SyntaxKind.AmbiguousParenthesizedExpressionNode;
+    public SyntaxKind SyntaxKind => SyntaxKind.AmbiguousParenthesizedNode;
 }
 
