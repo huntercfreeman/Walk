@@ -3,9 +3,9 @@ namespace Walk.Extensions.CompilerServices.Syntax.Nodes;
 /// <summary>
 /// Used when invoking a syntax which contains a generic type.
 /// </summary>
-public struct GenericParameterEntry
+public struct GenericParameter
 {
-    public GenericParameterEntry(TypeReference typeReference)
+    public GenericParameter(TypeReference typeReference)
     {
         TypeReference = typeReference;
     }

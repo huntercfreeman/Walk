@@ -305,7 +305,7 @@ public class ParseFunctions
                 var functionInvocationNode = parserModel.Rent_FunctionInvocationNode();
                 functionInvocationNode.FunctionInvocationIdentifierToken = consumedIdentifierToken;
                 functionInvocationNode.OpenParenthesisToken = openParenthesisToken;
-                functionInvocationNode.IndexFunctionParameterEntryList = parserModel.Binder.FunctionParameterEntryList.Count;
+                functionInvocationNode.IndexFunctionParameterEntryList = parserModel.Binder.FunctionParameterList.Count;
                 
                 functionInvocationNode.IsParsingFunctionParameters = true;
                     
@@ -350,7 +350,7 @@ public class ParseFunctions
         VariableKind variableKind = VariableKind.Local)
     {
         var openParenthesisToken = parserModel.TokenWalker.Consume();
-        var indexFunctionArgumentEntryList = parserModel.Binder.FunctionArgumentEntryList.Count;
+        var indexFunctionArgumentEntryList = parserModel.Binder.FunctionArgumentList.Count;
         var countFunctionArgumentEntryList = 0;
         var openParenthesisCount = 1;
         var corruptState = false;
@@ -467,9 +467,9 @@ public class ParseFunctions
                         optionalCompileTimeConstantToken = new SyntaxToken(SyntaxKind.NotApplicable, textSpan: default);
                     }
                     
-                    parserModel.Binder.FunctionArgumentEntryList.Insert(
+                    parserModel.Binder.FunctionArgumentList.Insert(
                         indexFunctionArgumentEntryList + countFunctionArgumentEntryList,
-                        new FunctionArgumentEntry(
+                        new FunctionArgument(
                             variableDeclarationNode,
                             optionalCompileTimeConstantToken,
                             parserModel.ArgumentModifierKind));

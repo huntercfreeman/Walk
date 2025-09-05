@@ -5,9 +5,9 @@ namespace Walk.Extensions.CompilerServices.Syntax.Nodes;
 /// <summary>
 /// Used when defining a function.
 /// </summary>
-public struct FunctionArgumentEntry
+public struct FunctionArgument
 {
-    public FunctionArgumentEntry(
+    public FunctionArgument(
         VariableDeclarationNode variableDeclarationNode,
         SyntaxToken optionalCompileTimeConstantToken,
         ArgumentModifierKind argumentModifierKind)

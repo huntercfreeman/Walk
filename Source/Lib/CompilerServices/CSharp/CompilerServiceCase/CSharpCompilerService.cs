@@ -118,9 +118,9 @@ public sealed class CSharpCompilerService : IExtendedCompilerService
     
     public IReadOnlyDictionary<string, TypeDefinitionNode> AllTypeDefinitions { get; }
     
-    public IReadOnlyList<GenericParameterEntry> GenericParameterEntryList => __CSharpBinder.GenericParameterEntryList;
-    public IReadOnlyList<FunctionParameterEntry> FunctionParameterEntryList => __CSharpBinder.FunctionParameterEntryList;
-    public IReadOnlyList<FunctionArgumentEntry> FunctionArgumentEntryList => __CSharpBinder.FunctionArgumentEntryList;
+    public IReadOnlyList<GenericParameter> GenericParameterEntryList => __CSharpBinder.GenericParameterList;
+    public IReadOnlyList<FunctionParameter> FunctionParameterEntryList => __CSharpBinder.FunctionParameterList;
+    public IReadOnlyList<FunctionArgument> FunctionArgumentEntryList => __CSharpBinder.FunctionArgumentList;
     
     public IReadOnlyList<TypeDefinitionTraits> TypeDefinitionValueList => __CSharpBinder.TypeDefinitionTraitsList;
     public IReadOnlyList<FunctionDefinitionTraits> FunctionDefinitionValueList => __CSharpBinder.FunctionDefinitionTraitsList;

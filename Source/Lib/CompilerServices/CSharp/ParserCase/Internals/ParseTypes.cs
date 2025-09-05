@@ -19,7 +19,7 @@ public static class ParseTypes
             return (openAngleBracketToken, -1, 0, parserModel.TokenWalker.Consume());
         }
 
-        var indexGenericParameterEntryList = parserModel.Binder.GenericParameterEntryList.Count;
+        var indexGenericParameterEntryList = parserModel.Binder.GenericParameterList.Count;
         var countGenericParameterEntryList = 0;
 
         while (true)
@@ -30,9 +30,9 @@ public static class ParseTypes
             if (typeClauseNode.IsFabricated)
                 break;
 
-            var genericArgumentEntryNode = new GenericParameterEntry(new TypeReference(typeClauseNode));
+            var genericArgumentEntryNode = new GenericParameter(new TypeReference(typeClauseNode));
             parserModel.Return_TypeClauseNode(typeClauseNode);
-            parserModel.Binder.GenericParameterEntryList.Add(genericArgumentEntryNode);
+            parserModel.Binder.GenericParameterList.Add(genericArgumentEntryNode);
             countGenericParameterEntryList++;
 
             if (SyntaxKind.CommaToken == parserModel.TokenWalker.Current.SyntaxKind)

@@ -5,9 +5,9 @@ namespace Walk.Extensions.CompilerServices.Syntax.Nodes;
 /// <summary>
 /// The textspan points to the text that identifies the namespace group that was contributed to.
 /// </summary>
-public struct NamespaceContributionEntry
+public struct NamespaceContribution
 {
-    public NamespaceContributionEntry(TextEditorTextSpan textSpan)
+    public NamespaceContribution(TextEditorTextSpan textSpan)
     {
         TextSpan = textSpan;
     }

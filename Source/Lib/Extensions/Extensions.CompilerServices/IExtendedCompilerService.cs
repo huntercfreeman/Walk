@@ -18,9 +18,9 @@ public interface IExtendedCompilerService : ICompilerService
     /// </summary>
     public string? SafeGetText(string absolutePath, TextEditorTextSpan textSpan);
 
-    public IReadOnlyList<Walk.Extensions.CompilerServices.Syntax.Nodes.GenericParameterEntry> GenericParameterEntryList { get; }
-    public IReadOnlyList<Walk.Extensions.CompilerServices.Syntax.Nodes.FunctionParameterEntry> FunctionParameterEntryList { get; }
-    public IReadOnlyList<Walk.Extensions.CompilerServices.Syntax.Nodes.FunctionArgumentEntry> FunctionArgumentEntryList { get; }
+    public IReadOnlyList<Walk.Extensions.CompilerServices.Syntax.Nodes.GenericParameter> GenericParameterEntryList { get; }
+    public IReadOnlyList<Walk.Extensions.CompilerServices.Syntax.Nodes.FunctionParameter> FunctionParameterEntryList { get; }
+    public IReadOnlyList<Walk.Extensions.CompilerServices.Syntax.Nodes.FunctionArgument> FunctionArgumentEntryList { get; }
     
     public IReadOnlyList<TypeDefinitionTraits> TypeDefinitionValueList { get; }
     public IReadOnlyList<FunctionDefinitionTraits> FunctionDefinitionValueList { get; }

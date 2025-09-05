@@ -570,7 +570,7 @@ public ref struct CSharpParserModel
     
     public readonly void BindNamespaceStatementNode(NamespaceStatementNode namespaceStatementNode)
     {
-        var namespaceContributionEntry = new NamespaceContributionEntry(namespaceStatementNode.IdentifierToken.TextSpan);
+        var namespaceContributionEntry = new NamespaceContribution(namespaceStatementNode.IdentifierToken.TextSpan);
         Binder.NamespaceContributionList.Add(namespaceContributionEntry);
         ++Compilation.NamespaceContributionLength;
 
@@ -968,7 +968,7 @@ public ref struct CSharpParserModel
 
     public readonly void AddNamespaceToCurrentScope(TextEditorTextSpan textSpan)
     {
-        var namespaceContributionEntry = new NamespaceContributionEntry(textSpan);
+        var namespaceContributionEntry = new NamespaceContribution(textSpan);
 
         if (Binder.CheckAlreadyAddedNamespace(
                 ResourceUri,
@@ -1122,7 +1122,7 @@ public ref struct CSharpParserModel
                          i < typeDefinitionNode.IndexGenericParameterEntryList + typeDefinitionNode.CountGenericParameterEntryList;
                          i++)
                     {
-                        var entry = Binder.GenericParameterEntryList[i];
+                        var entry = Binder.GenericParameterList[i];
                         
                         BindTypeDefinitionNode(
                             new TypeDefinitionNode(

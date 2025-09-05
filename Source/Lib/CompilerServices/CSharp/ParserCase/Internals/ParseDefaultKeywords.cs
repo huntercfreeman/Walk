@@ -321,7 +321,7 @@ public class ParseDefaultKeywords
         {
             if (enumerable.ResultTypeReference.CountGenericParameterEntryList == 1)
                 variableDeclarationNode.SetImplicitTypeReference(
-                    parserModel.Binder.GenericParameterEntryList[enumerable.ResultTypeReference.IndexGenericParameterEntryList].TypeReference);
+                    parserModel.Binder.GenericParameterList[enumerable.ResultTypeReference.IndexGenericParameterEntryList].TypeReference);
         }
         
         if (enumerable.SyntaxKind == SyntaxKind.VariableReferenceNode)
@@ -1219,7 +1219,7 @@ public class ParseDefaultKeywords
         {
             parserModel.Binder.PartialTypeDefinitionList.Insert(
                 indexForInsertion,
-                new PartialTypeDefinitionEntry(
+                new PartialTypeDefinition(
                     typeDefinitionNode.ResourceUri,
                     typeDefinitionNode.IndexPartialTypeDefinition,
                     typeDefinitionNode.SelfScopeSubIndex));

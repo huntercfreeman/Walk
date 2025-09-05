@@ -21,8 +21,8 @@ public class CSharpBinder
     public readonly List<NamespaceGroup> _namespaceGroupList = new();
     private readonly NamespaceStatementNode _topLevelNamespaceStatementNode;
     
-    public List<PartialTypeDefinitionEntry> PartialTypeDefinitionList { get; } = new();
-    public List<MethodOverloadDefinitionEntry> MethodOverloadDefinitionList { get; } = new();
+    public List<PartialTypeDefinition> PartialTypeDefinitionList { get; } = new();
+    public List<MethodOverloadDefinition> MethodOverloadDefinitionList { get; } = new();
     public bool MethodOverload_ResourceUri_WasCleared { get; set; }
     
     /// <summary>
@@ -55,13 +55,13 @@ public class CSharpBinder
     /// </summary>
     public List<TextEditorTextSpan> CSharpParserModel_AddedNamespaceList { get; } = new();
     
-    public List<GenericParameterEntry> GenericParameterEntryList { get; } = new();
-    public List<FunctionParameterEntry> FunctionParameterEntryList { get; } = new();
-    public List<FunctionArgumentEntry> FunctionArgumentEntryList { get; } = new();
+    public List<GenericParameter> GenericParameterList { get; } = new();
+    public List<FunctionParameter> FunctionParameterList { get; } = new();
+    public List<FunctionArgument> FunctionArgumentList { get; } = new();
     public List<ISyntaxNode> AmbiguousParenthesizedExpressionNodeChildList { get; } = new();
     public List<VariableDeclarationNode> LambdaExpressionNodeChildList { get; } = new();
     public List<FunctionInvocationParameterMetadata> FunctionInvocationParameterMetadataList { get; } = new();
-    public List<NamespaceContributionEntry> NamespaceContributionList { get; } = new();
+    public List<NamespaceContribution> NamespaceContributionList { get; } = new();
     public Dictionary<string, Dictionary<int, (ResourceUri ResourceUri, int StartInclusiveIndex)>> SymbolIdToExternalTextSpanMap { get; } = new();
     public List<Walk.TextEditor.RazorLib.CompilerServices.TextEditorDiagnostic> DiagnosticList { get; } = new();
     public List<Symbol> SymbolList { get; } = new();
@@ -1385,7 +1385,7 @@ public class CSharpBinder
                              i < variableDeclarationNode.TypeReference.IndexGenericParameterEntryList + variableDeclarationNode.TypeReference.CountGenericParameterEntryList;
                              i++)
                         {
-                            var entry = GenericParameterEntryList[i];
+                            var entry = GenericParameterList[i];
                             
                             if (entry.TypeReference.TypeIdentifierToken.TextSpan.StartInclusiveIndex <= positionIndex &&
                                 entry.TypeReference.TypeIdentifierToken.TextSpan.EndExclusiveIndex >= positionIndex)
