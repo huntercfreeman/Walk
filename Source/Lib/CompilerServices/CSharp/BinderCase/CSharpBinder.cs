@@ -67,6 +67,8 @@ public class CSharpBinder
     public List<Symbol> SymbolList { get; } = new();
     public List<Scope> ScopeList { get; } = new();
     
+    // Visual Studio refactoring for these last 2 commits
+
     public List<SyntaxNodeValue> NodeList { get; } = new();
     public List<TypeDefinitionTraits> TypeDefinitionTraitsList { get; } = new();
     public List<FunctionDefinitionTraits> FunctionDefinitionTraitsList { get; } = new();
