@@ -23,108 +23,134 @@
 		<div title="ICodeBlockOwner">
 			@{
 			    // These change within a background task.
-			    var codeBlockOwnerLocal = _codeBlockOwner;
 			    var syntaxKind = _syntaxKind;
 		    }
 			
-			@if (codeBlockOwnerLocal is null)
-			{
-			    <text>@IconBlankFragment.Render(iconDriver)</text>
-				
-			    switch (syntaxKind)
+			<ErrorBoundary>
+			    @switch (syntaxKind)
 			    {
 			        case SyntaxKind.IfStatementNode:
-			            <text>IfStatementNode</text>
+			            <text>
+			                @IconBlankFragment.Render(iconDriver)
+			                IfStatementNode
+		                </text>
 			            break;
 		            case SyntaxKind.WhileStatementNode:
-		                <text>WhileStatementNode</text>
+		                <text>
+		                    @IconBlankFragment.Render(iconDriver)
+		                    WhileStatementNode
+		                </text>
 		                break;
 		            case SyntaxKind.ForStatementNode:
-		                <text>ForStatementNode</text>
+		                <text>
+		                    @IconBlankFragment.Render(iconDriver)
+		                    ForStatementNode
+		                </text>
 		                break;
 		            case SyntaxKind.ForeachStatementNode:
-		                <text>ForeachStatementNode</text>
+		                <text>
+		                    @IconBlankFragment.Render(iconDriver)
+		                    ForeachStatementNode
+		                </text>
 		                break;
 		            case SyntaxKind.SwitchStatementNode:
-		                <text>SwitchStatementNode</text>
+		                <text>
+		                    @IconBlankFragment.Render(iconDriver)
+		                    SwitchStatementNode
+		                </text>
 		                break;
 		            case SyntaxKind.DoWhileStatementNode:
-		                <text>DoWhileStatementNode</text>
+		                <text>
+		                    @IconBlankFragment.Render(iconDriver)
+		                    DoWhileStatementNode
+		                </text>
 		                break;
 		            case SyntaxKind.TryStatementCatchNode:
-		                <text>TryStatementCatchNode</text>
+		                <text>
+		                    @IconBlankFragment.Render(iconDriver)
+		                    TryStatementCatchNode
+		                </text>
 		                break;
 		            case SyntaxKind.TryStatementFinallyNode:
-		                <text>TryStatementFinallyNode</text>
+		                <text>
+		                    @IconBlankFragment.Render(iconDriver)
+		                    TryStatementFinallyNode
+		                </text>
 		                break;
 		            case SyntaxKind.LockStatementNode:
-		                <text>LockStatementNode</text>
+		                <text>
+		                    @IconBlankFragment.Render(iconDriver)
+		                    LockStatementNode
+		                </text>
 		                break;
 		            case SyntaxKind.TryStatementTryNode:
-		                <text>TryStatementTryNode</text>
+		                <text>
+		                    @IconBlankFragment.Render(iconDriver)
+		                    TryStatementTryNode
+		                </text>
 		                break;
 		            case SyntaxKind.UsingStatementCodeBlockNode:
-		                <text>UsingStatementCodeBlockNode</text>
+		                <text>
+	                        @IconBlankFragment.Render(iconDriver)
+	                        UsingStatementCodeBlockNode
+	                    </text>
 		                break;
 		            case SyntaxKind.LambdaExpressionNode:
-		                <text>LambdaExpressionNode</text>
+		                <text>
+		                    @IconBlankFragment.Render(iconDriver)
+		                    LambdaExpressionNode
+	                    </text>
 		                break;
 		            case SyntaxKind.GetterOrSetterNode:
-		                <text>GetterOrSetterNode</text>
+		                <text>
+		                    @IconBlankFragment.Render(iconDriver)
+		                    GetterOrSetterNode
+	                    </text>
 		                break;
 		            case SyntaxKind.ArbitraryCodeBlockNode:
-		                <text>ArbitraryCodeBlockNode</text>
+		                <text>
+		                    @IconBlankFragment.Render(iconDriver)
+		                    ArbitraryCodeBlockNode
+	                    </text>
 		                break;
 		            case SyntaxKind.GlobalCodeBlockNode:
-		                <text>GlobalCodeBlockNode</text>
+		                <text>
+		                    @IconBlankFragment.Render(iconDriver)
+		                    GlobalCodeBlockNode
+	                    </text>
 		                break;
+		            case SyntaxKind.FunctionDefinitionNode:
+						<text>
+							@IconSymbolMethodFragment.Render(iconDriver)
+							@(GetText(_identifierTextSpan, componentData))(...)
+						</text>
+						break;
+					case SyntaxKind.ConstructorDefinitionNode:
+						<text>
+							@IconBlankFragment.Render(iconDriver)
+							@(GetText(_identifierTextSpan, componentData))(...)
+						</text>
+						break;
+					case SyntaxKind.TypeDefinitionNode:
+						<text>
+							@IconSymbolClassFragment.Render(iconDriver)
+							@GetText(_identifierTextSpan, componentData)
+						</text>
+						break;
+					case SyntaxKind.NamespaceStatementNode:
+						<text>
+							@IconBlankFragment.Render(iconDriver)
+							@GetText(_identifierTextSpan, componentData)
+						</text>
+						break;
 	                default:
-	                    <text>???</text>
+	                    <text>
+	                        @IconBlankFragment.Render(iconDriver)
+	                        ???
+                        </text>
 	                    break;
 			    }
-			}
-			else
-			{
-				<ErrorBoundary>
-					@switch (codeBlockOwnerLocal.SyntaxKind)
-					{
-						case SyntaxKind.FunctionDefinitionNode:
-							var functionDefinitionNode = (FunctionDefinitionNode)codeBlockOwnerLocal;
-							<text>
-								@IconSymbolMethodFragment.Render(iconDriver)
-								@(GetText(functionDefinitionNode.FunctionIdentifierToken.TextSpan, componentData))(...)
-							</text>
-							break;
-						case SyntaxKind.ConstructorDefinitionNode:
-							var constructorDefinitionNode = (ConstructorDefinitionNode)codeBlockOwnerLocal;
-							<text>
-								@IconBlankFragment.Render(iconDriver)
-								@(GetText(constructorDefinitionNode.FunctionIdentifier.TextSpan, componentData))(...)
-							</text>
-							break;
-						case SyntaxKind.TypeDefinitionNode:
-							var typeDefinitionNode = (TypeDefinitionNode)codeBlockOwnerLocal;
-							<text>
-								@IconSymbolClassFragment.Render(iconDriver)
-								@GetText(typeDefinitionNode.TypeIdentifierToken.TextSpan, componentData)
-							</text>
-							break;
-						case SyntaxKind.NamespaceStatementNode:
-							var namespaceStatementNode = (NamespaceStatementNode)codeBlockOwnerLocal;
-							<text>
-								@IconBlankFragment.Render(iconDriver)
-								@GetText(namespaceStatementNode.IdentifierToken.TextSpan, componentData)
-							</text>
-							break;
-						default:
-							<text>
-								@IconBlankFragment.Render(iconDriver)
-								@codeBlockOwnerLocal.SyntaxKind
-							</text>
-							break;
-					}
-				</ErrorBoundary>
-			}
+		    </ErrorBoundary>
 		</div>
 	</div>
 	

@@ -26,8 +26,9 @@ public partial class TextEditorCompilerServiceHeaderDisplay : ComponentBase, ITe
     private int _lineIndexPrevious = -1;
     private int _columnIndexPrevious = -1;
     
-    private ICodeBlockOwner _codeBlockOwner;
+    private int _selfScopeSubIndex;
     private SyntaxKind _syntaxKind = SyntaxKind.GlobalCodeBlockNode;
+    private  TextEditorTextSpan _identifierTextSpan = default;
     private bool _shouldRender = false;
     
     private bool _showDefaultToolbar = false;
@@ -190,10 +191,13 @@ public partial class TextEditorCompilerServiceHeaderDisplay : ComponentBase, ITe
                 var upperLine = modelModifier.GetLineInformation(upperLineIndexInclusive);
             }
             
-            if (_codeBlockOwner != codeBlockTuple.CodeBlockOwner ||
+            if (codeBlockTuple.CodeBlockOwner.IdentifierToken.TextSpan.StartInclusiveIndex != _identifierTextSpan.StartInclusiveIndex ||
+                codeBlockTuple.CodeBlockOwner.IdentifierToken.TextSpan.EndExclusiveIndex != _identifierTextSpan.EndExclusiveIndex ||
+                _selfScopeSubIndex != codeBlockTuple.CodeBlockOwner.SelfScopeSubIndex ||
                 _syntaxKind != codeBlockTuple.Scope.OwnerSyntaxKind)
             {
-                _codeBlockOwner = codeBlockTuple.CodeBlockOwner;
+                _selfScopeSubIndex = codeBlockTuple.CodeBlockOwner.SelfScopeSubIndex;
+                _identifierTextSpan = codeBlockTuple.CodeBlockOwner.IdentifierToken.TextSpan;
                 _syntaxKind = codeBlockTuple.Scope.OwnerSyntaxKind;
                 _shouldRender = true;
             }

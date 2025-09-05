@@ -1957,20 +1957,20 @@ public sealed class CSharpCompilerService : IExtendedCompilerService
         return default;
     }
 
-    public (Scope Scope, ICodeBlockOwner? CodeBlockOwner) GetCodeBlockTupleByPositionIndex(ResourceUri resourceUri, int positionIndex)
+    public (Scope Scope, SyntaxNodeValue CodeBlockOwner) GetCodeBlockTupleByPositionIndex(ResourceUri resourceUri, int positionIndex)
     {
-        /*if (__CSharpBinder.__CompilationUnitMap.TryGetValue(resourceUri, out var compilationUnit))
+        if (__CSharpBinder.__CompilationUnitMap.TryGetValue(resourceUri, out var compilationUnit))
         {
             var scope = __CSharpBinder.GetScopeByPositionIndex(compilationUnit, positionIndex);
             if (scope.NodeSubIndex != -1)
             {
-                return (scope, (ICodeBlockOwner)__CSharpBinder.NodeList[compilationUnit.NodeOffset + scope.NodeSubIndex]);
+                return (scope, __CSharpBinder.NodeList[compilationUnit.NodeOffset + scope.NodeSubIndex]);
             }
             else
             {
-                return (scope, null);
+                return (scope, default);
             }
-        }*/
+        }
         
         return default;
     }
