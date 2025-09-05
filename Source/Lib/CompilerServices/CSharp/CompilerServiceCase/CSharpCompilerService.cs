@@ -640,7 +640,7 @@ public sealed class CSharpCompilerService : IExtendedCompilerService
 
     private MenuRecord? GetAutocompleteMenuPart(TextEditorVirtualizationResult virtualizationResult, AutocompleteMenu autocompleteMenu, int positionIndex)
     {
-        /*var character = '\0';
+        var character = '\0';
         
         var foundMemberAccessToken = false;
         var memberAccessTokenPositionIndex = -1;
@@ -672,7 +672,7 @@ public sealed class CSharpCompilerService : IExtendedCompilerService
             
             switch (character)
             {
-                /* Lowercase Letters *//*
+                /* Lowercase Letters */
                 case 'a':
                 case 'b':
                 case 'c':
@@ -699,7 +699,7 @@ public sealed class CSharpCompilerService : IExtendedCompilerService
                 case 'x':
                 case 'y':
                 case 'z':
-                /* Uppercase Letters *//*
+                /* Uppercase Letters */
                 case 'A':
                 case 'B':
                 case 'C':
@@ -726,7 +726,7 @@ public sealed class CSharpCompilerService : IExtendedCompilerService
                 case 'X':
                 case 'Y':
                 case 'Z':
-                /* Underscore *//*
+                /* Underscore */
                 case '_':
                     if (foundMemberAccessToken)
                     {
@@ -902,7 +902,7 @@ public sealed class CSharpCompilerService : IExtendedCompilerService
                 
                 if (!definitionNode.IsDefault())
                 {
-                    if (definitionNode.SyntaxKind == SyntaxKind.NamespaceClauseNode)
+                    /*if (definitionNode.SyntaxKind == SyntaxKind.NamespaceClauseNode)
                     {
                         var namespaceClauseNode = definitionNode;
                     
@@ -986,32 +986,35 @@ public sealed class CSharpCompilerService : IExtendedCompilerService
                         }
                         
                         return null;
-                    }
+                    }*/
                 
-                    TypeReference typeReference = default;
+                    TypeReferenceValue typeReference = default;
                     
                     if (definitionNode.SyntaxKind == SyntaxKind.VariableReferenceNode)
                     {
                         var variableReferenceNode = definitionNode;
-                        typeReference = variableReferenceNode.TypeReference;
+                        var variableTraits = __CSharpBinder.VariableDeclarationTraitsList[variableReferenceNode.MetaIndex];
+                        typeReference = variableTraits.ResultTypeReference;
                     }
                     else if (definitionNode.SyntaxKind == SyntaxKind.VariableDeclarationNode)
                     {
                         var variableDeclarationNode = definitionNode;
-                        typeReference = variableDeclarationNode.TypeReference;
+                        var variableTraits = __CSharpBinder.VariableDeclarationTraitsList[variableDeclarationNode.MetaIndex];
+                        typeReference = variableTraits.ResultTypeReference;
                     }
                     else if (definitionNode.SyntaxKind == SyntaxKind.FunctionInvocationNode)
                     {
-                        typeReference = definitionNode.ResultTypeReference;
+                        var functionInvocationTraits = __CSharpBinder.FunctionDefinitionTraitsList[definitionNode.MetaIndex];
+                        typeReference = functionInvocationTraits.ReturnTypeReference;
                     }
                     else if (definitionNode.SyntaxKind == SyntaxKind.TypeClauseNode)
                     {
-                        typeReference = new TypeReference(definitionNode);
+                        //typeReference = new TypeReference(definitionNode);
                     }
                     else if (definitionNode.SyntaxKind == SyntaxKind.TypeDefinitionNode)
                     {
-                        var typeDefinitionNode = definitionNode;
-                        typeReference = typeDefinitionNode.ToTypeReference();
+                        //var typeDefinitionNode = definitionNode;
+                        //typeReference = typeDefinitionNode.ToTypeReference();
                     }
                     
                     if (!typeReference.IsDefault())
@@ -1139,7 +1142,7 @@ public sealed class CSharpCompilerService : IExtendedCompilerService
                     return menuOptionRecord;
                 })
                 .ToList());
-        }*/
+        }
         
         return null;
     }
