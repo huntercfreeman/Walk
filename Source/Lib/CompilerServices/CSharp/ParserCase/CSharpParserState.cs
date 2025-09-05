@@ -1283,7 +1283,7 @@ public ref partial struct CSharpParserState
     {
         int scopeSubIndex = ScopeCurrentSubIndex;
         
-        VariableDeclarationNode? matchNode = null;
+        SyntaxNodeValue matchNode = default;
         int index = Compilation.NodeOffset;
         for (; index < Compilation.NodeOffset + Compilation.NodeLength; index++)
         {
@@ -1295,17 +1295,33 @@ public ref partial struct CSharpParserState
                 if (Binder.CSharpCompilerService.SafeCompareTextSpans(
                         ResourceUri.Value, variableIdentifierTextSpan, ResourceUri.Value, node.IdentifierToken.TextSpan))
                 {
-                    // matchNode = node;
+                    matchNode = node;
                     break;
                 }
             }
         }
         
-        /*if (index != -1)
+        if (index != -1)
         {
             variableDeclarationNode.ParentScopeSubIndex = scopeSubIndex;
-            Binder.NodeList[index] = variableDeclarationNode;
-        }*/
+            
+            var variableDeclarationNodeValue = new SyntaxNodeValue(
+                variableDeclarationNode.IdentifierToken,
+                variableDeclarationNode.ResourceUri,
+                variableDeclarationNode.IsFabricated,
+                variableDeclarationNode.SyntaxKind,
+                variableDeclarationNode.ParentScopeSubIndex,
+                -1,
+                matchNode.MetaIndex);
+            
+            Binder.VariableDeclarationTraitsList[matchNode.MetaIndex] = new VariableDeclarationTraits(
+                variableDeclarationNode.VariableKind,
+                variableDeclarationNode.TypeReference,
+                variableDeclarationNode.HasSetter,
+                variableDeclarationNode.HasGetter);
+            
+            Binder.NodeList[index] = variableDeclarationNodeValue;
+        }
     }
     
     public readonly bool TryGetLabelDeclarationHierarchically(
