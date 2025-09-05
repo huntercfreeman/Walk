@@ -18,12 +18,12 @@ public class ParseFunctions
             consumedTypeReference,
             consumedIdentifierToken,
             openAngleBracketToken: default,
-    		indexGenericParameterEntryList: -1,
-            countGenericParameterEntryList: 0,
+    		offsetGenericParameterEntryList: -1,
+            lengthGenericParameterEntryList: 0,
     		closeAngleBracketToken: default,
             openParenthesisToken: default,
-            indexFunctionArgumentEntryList: -1,
-            countFunctionArgumentEntryList: 0,
+            offsetFunctionArgumentEntryList: -1,
+            lengthFunctionArgumentEntryList: 0,
             closeParenthesisToken: default,
             parserModel.ResourceUri);
             
@@ -237,12 +237,12 @@ public class ParseFunctions
             new TypeReferenceValue(typeClauseNode),
             consumedIdentifierToken,
             openAngleBracketToken: default,
-    		indexGenericParameterEntryList: -1,
-            countGenericParameterEntryList: 0,
+    		offsetGenericParameterEntryList: -1,
+            lengthGenericParameterEntryList: 0,
     		closeAngleBracketToken: default,
             openParenthesisToken: default,
-            indexFunctionArgumentEntryList: -1,
-            countFunctionArgumentEntryList: 0,
+            offsetFunctionArgumentEntryList: -1,
+            lengthFunctionArgumentEntryList: 0,
             closeParenthesisToken: default,
             parserModel.ResourceUri);
         
@@ -306,7 +306,7 @@ public class ParseFunctions
                 var functionInvocationNode = parserModel.Rent_FunctionInvocationNode();
                 functionInvocationNode.FunctionInvocationIdentifierToken = consumedIdentifierToken;
                 functionInvocationNode.OpenParenthesisToken = openParenthesisToken;
-                functionInvocationNode.IndexFunctionParameterEntryList = parserModel.Binder.FunctionParameterList.Count;
+                functionInvocationNode.OffsetFunctionParameterEntryList = parserModel.Binder.FunctionParameterList.Count;
                 
                 functionInvocationNode.IsParsingFunctionParameters = true;
                     
@@ -498,8 +498,8 @@ public class ParseFunctions
             closeParenthesisToken = parserModel.TokenWalker.Consume();
         
         functionDefinitionNode.OpenParenthesisToken = openParenthesisToken;
-        functionDefinitionNode.IndexFunctionArgumentEntryList = indexFunctionArgumentEntryList;
-        functionDefinitionNode.CountFunctionArgumentEntryList = countFunctionArgumentEntryList;
+        functionDefinitionNode.OffsetFunctionArgumentEntryList = indexFunctionArgumentEntryList;
+        functionDefinitionNode.LengthFunctionArgumentEntryList = countFunctionArgumentEntryList;
         functionDefinitionNode.CloseParenthesisToken = closeParenthesisToken;
     }
 }

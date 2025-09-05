@@ -14,13 +14,13 @@ public struct TypeDefinitionTraits
         IsKeywordType = typeDefinitionNode.IsKeywordType;
 
         OpenAngleBracketToken = typeDefinitionNode.OpenAngleBracketToken;
-        IndexGenericParameterEntryList = typeDefinitionNode.IndexGenericParameterEntryList;
-        CountGenericParameterEntryList = typeDefinitionNode.CountGenericParameterEntryList;
+        OffsetGenericParameterEntryList = typeDefinitionNode.OffsetGenericParameterEntryList;
+        LengthGenericParameterEntryList = typeDefinitionNode.LengthGenericParameterEntryList;
         CloseAngleBracketToken = typeDefinitionNode.CloseAngleBracketToken;
 
         OpenParenthesisToken = typeDefinitionNode.OpenParenthesisToken;
-        IndexFunctionArgumentEntryList = typeDefinitionNode.IndexFunctionArgumentEntryList;
-        CountFunctionArgumentEntryList = typeDefinitionNode.CountFunctionArgumentEntryList;
+        OffsetFunctionArgumentEntryList = typeDefinitionNode.OffsetFunctionArgumentEntryList;
+        LengthFunctionArgumentEntryList = typeDefinitionNode.LengthFunctionArgumentEntryList;
         CloseParenthesisToken = typeDefinitionNode.CloseParenthesisToken;
     }
 
@@ -63,12 +63,12 @@ public struct TypeDefinitionTraits
     public bool IsKeywordType { get; init; }
 
     public SyntaxToken OpenAngleBracketToken { get; set; }
-    public int IndexGenericParameterEntryList { get; set; }
-    public int CountGenericParameterEntryList { get; set; }
+    public int OffsetGenericParameterEntryList { get; set; }
+    public int LengthGenericParameterEntryList { get; set; }
     public SyntaxToken CloseAngleBracketToken { get; set; }
 
     public SyntaxToken OpenParenthesisToken { get; set; }
-    public int IndexFunctionArgumentEntryList { get; set; }
-    public int CountFunctionArgumentEntryList { get; set; }
+    public int OffsetFunctionArgumentEntryList { get; set; }
+    public int LengthFunctionArgumentEntryList { get; set; }
     public SyntaxToken CloseParenthesisToken { get; set; }
 }

@@ -735,10 +735,10 @@ public ref partial struct CSharpParserState
             
                 var typeDefinitionNode = (TypeDefinitionNode)codeBlockOwner;
                 
-                if (typeDefinitionNode.IndexGenericParameterEntryList != -1)
+                if (typeDefinitionNode.OffsetGenericParameterEntryList != -1)
                 {
-                    for (int i = typeDefinitionNode.IndexGenericParameterEntryList;
-                         i < typeDefinitionNode.IndexGenericParameterEntryList + typeDefinitionNode.CountGenericParameterEntryList;
+                    for (int i = typeDefinitionNode.OffsetGenericParameterEntryList;
+                         i < typeDefinitionNode.OffsetGenericParameterEntryList + typeDefinitionNode.LengthGenericParameterEntryList;
                          i++)
                     {
                         var entry = Binder.GenericParameterList[i];
@@ -750,12 +750,12 @@ public ref partial struct CSharpParserState
                                 StorageModifierKind.Class,
                                 entry.TypeReference.TypeIdentifierToken,
                                 entry.TypeReference.OpenAngleBracketToken,
-                                entry.TypeReference.IndexGenericParameterEntryList,
-                                entry.TypeReference.CountGenericParameterEntryList,
+                                entry.TypeReference.OffsetGenericParameterEntryList,
+                                entry.TypeReference.LengthGenericParameterEntryList,
                                 entry.TypeReference.CloseAngleBracketToken,
                                 openParenthesisToken: default,
-                                indexFunctionArgumentEntryList: -1,
-                                countFunctionArgumentEntryList: 0,
+                                offsetFunctionArgumentEntryList: -1,
+                                lengthFunctionArgumentEntryList: 0,
                                 closeParenthesisToken: default,
                                 inheritedTypeReference: TypeFacts.NotApplicable.ToTypeReference(),
                                 ResourceUri));

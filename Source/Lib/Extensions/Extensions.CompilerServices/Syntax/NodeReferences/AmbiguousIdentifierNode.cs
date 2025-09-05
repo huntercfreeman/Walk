@@ -8,16 +8,16 @@ public sealed class AmbiguousIdentifierNode : IGenericParameterNode
     public AmbiguousIdentifierNode(
         SyntaxToken token,
         SyntaxToken openAngleBracketToken,
-        int indexGenericParameterEntryList,
-        int countGenericParameterEntryList,
+        int offsetGenericParameterEntryList,
+        int lengthGenericParameterEntryList,
         SyntaxToken closeAngleBracketToken,
         TypeReferenceValue resultTypeReference)
     {
         Token = token;
         
         OpenAngleBracketToken = openAngleBracketToken;
-        IndexGenericParameterEntryList = indexGenericParameterEntryList;
-        CountGenericParameterEntryList = countGenericParameterEntryList;
+        OffsetGenericParameterEntryList = offsetGenericParameterEntryList;
+        LengthGenericParameterEntryList = lengthGenericParameterEntryList;
         CloseAngleBracketToken = closeAngleBracketToken;
         
         ResultTypeReference = resultTypeReference;
@@ -26,8 +26,8 @@ public sealed class AmbiguousIdentifierNode : IGenericParameterNode
     public SyntaxToken Token { get; set; }
     
     public SyntaxToken OpenAngleBracketToken { get; set; }
-    public int IndexGenericParameterEntryList { get; set; }
-    public int CountGenericParameterEntryList { get; set; }
+    public int OffsetGenericParameterEntryList { get; set; }
+    public int LengthGenericParameterEntryList { get; set; }
     public SyntaxToken CloseAngleBracketToken { get; set; }
     
     public TypeReferenceValue ResultTypeReference { get; set; }
@@ -45,8 +45,8 @@ public sealed class AmbiguousIdentifierNode : IGenericParameterNode
         return new AmbiguousIdentifierNode(
             Token,
             OpenAngleBracketToken,
-            IndexGenericParameterEntryList,
-            CountGenericParameterEntryList,
+            OffsetGenericParameterEntryList,
+            LengthGenericParameterEntryList,
             CloseAngleBracketToken,
             ResultTypeReference)
         {

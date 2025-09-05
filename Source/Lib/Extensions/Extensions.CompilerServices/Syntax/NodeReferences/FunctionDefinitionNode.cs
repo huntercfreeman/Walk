@@ -15,12 +15,12 @@ public sealed class FunctionDefinitionNode : ICodeBlockOwner, IFunctionDefinitio
         TypeReferenceValue returnTypeReference,
         SyntaxToken functionIdentifierToken,
         SyntaxToken openAngleBracketToken,
-        int indexGenericParameterEntryList,
-        int countGenericParameterEntryList,
+        int offsetGenericParameterEntryList,
+        int lengthGenericParameterEntryList,
         SyntaxToken closeAngleBracketToken,
         SyntaxToken openParenthesisToken,
-        int indexFunctionArgumentEntryList,
-        int countFunctionArgumentEntryList,
+        int offsetFunctionArgumentEntryList,
+        int lengthFunctionArgumentEntryList,
         SyntaxToken closeParenthesisToken,
         ResourceUri resourceUri)
     {
@@ -29,13 +29,13 @@ public sealed class FunctionDefinitionNode : ICodeBlockOwner, IFunctionDefinitio
         FunctionIdentifierToken = functionIdentifierToken;
         
         OpenAngleBracketToken = openAngleBracketToken;
-        IndexGenericParameterEntryList = indexGenericParameterEntryList;
-        CountGenericParameterEntryList = countGenericParameterEntryList;
+        OffsetGenericParameterEntryList = offsetGenericParameterEntryList;
+        LengthGenericParameterEntryList = lengthGenericParameterEntryList;
         CloseAngleBracketToken = closeAngleBracketToken;
         
         OpenParenthesisToken = openParenthesisToken;
-        IndexFunctionArgumentEntryList = indexFunctionArgumentEntryList;
-        CountFunctionArgumentEntryList = countFunctionArgumentEntryList;
+        OffsetFunctionArgumentEntryList = offsetFunctionArgumentEntryList;
+        LengthFunctionArgumentEntryList = lengthFunctionArgumentEntryList;
         CloseParenthesisToken = closeParenthesisToken;
         ResourceUri = resourceUri;
     }
@@ -44,13 +44,13 @@ public sealed class FunctionDefinitionNode : ICodeBlockOwner, IFunctionDefinitio
     public SyntaxToken FunctionIdentifierToken { get; }
     
     public SyntaxToken OpenAngleBracketToken { get; set; }
-    public int IndexGenericParameterEntryList { get; set; }
-    public int CountGenericParameterEntryList { get; set; }
+    public int OffsetGenericParameterEntryList { get; set; }
+    public int LengthGenericParameterEntryList { get; set; }
     public SyntaxToken CloseAngleBracketToken { get; set; }
     
     public SyntaxToken OpenParenthesisToken { get; set; }
-    public int IndexFunctionArgumentEntryList { get; set; }
-    public int CountFunctionArgumentEntryList { get; set; }
+    public int OffsetFunctionArgumentEntryList { get; set; }
+    public int LengthFunctionArgumentEntryList { get; set; }
     public SyntaxToken CloseParenthesisToken { get; set; }
     public ResourceUri ResourceUri { get; set; }
     public int IndexMethodOverloadDefinition { get; set; } = -1;

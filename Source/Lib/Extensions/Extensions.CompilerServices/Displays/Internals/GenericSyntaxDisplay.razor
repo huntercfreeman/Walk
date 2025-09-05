@@ -27,8 +27,8 @@
         if (!TypeReference.IsDefault() &&
             TypeReference.OpenAngleBracketToken.ConstructorWasInvoked)
         {
-            indexGenericParameterEntryList = TypeReference.IndexGenericParameterEntryList;
-            countGenericParameterEntryList = TypeReference.CountGenericParameterEntryList;
+            indexGenericParameterEntryList = TypeReference.OffsetGenericParameterEntryList;
+            countGenericParameterEntryList = TypeReference.LengthGenericParameterEntryList;
         }
     //}
 

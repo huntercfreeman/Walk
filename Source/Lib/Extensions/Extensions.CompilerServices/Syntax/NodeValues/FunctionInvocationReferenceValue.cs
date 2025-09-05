@@ -8,31 +8,27 @@ public record struct FunctionInvocationReferenceValue
 
     public FunctionInvocationReferenceValue(
         SyntaxToken functionInvocationIdentifierToken,
-        
         SyntaxToken openAngleBracketToken,
-        int indexGenericParameterEntryList,
-        int countGenericParameterEntryList,
+        int offsetGenericParameterEntryList,
+        int lengthGenericParameterEntryList,
         SyntaxToken closeAngleBracketToken,
-        
         SyntaxToken openParenthesisToken,
-        int indexFunctionParameterEntryList,
-        int countFunctionParameterEntryList,
+        int offsetFunctionParameterEntryList,
+        int lengthFunctionParameterEntryList,
         SyntaxToken closeParenthesisToken,
-        
-        
         TypeReferenceValue resultTypeReference,
         bool isFabricated)
     {
         FunctionInvocationIdentifierToken = functionInvocationIdentifierToken;
         
         OpenAngleBracketToken = openAngleBracketToken;
-        IndexGenericParameterEntryList = indexGenericParameterEntryList;
-        CountGenericParameterEntryList = countGenericParameterEntryList;
+        OffsetGenericParameterEntryList = offsetGenericParameterEntryList;
+        LengthGenericParameterEntryList = lengthGenericParameterEntryList;
         CloseAngleBracketToken = closeAngleBracketToken;
         
         OpenParenthesisToken = openParenthesisToken;
-        IndexFunctionParameterEntryList = indexFunctionParameterEntryList;
-        CountFunctionParameterEntryList = countFunctionParameterEntryList;
+        OffsetFunctionParameterEntryList = offsetFunctionParameterEntryList;
+        LengthFunctionParameterEntryList = lengthFunctionParameterEntryList;
         CloseParenthesisToken = closeParenthesisToken;
         
         ResultTypeReference = resultTypeReference;
@@ -46,13 +42,13 @@ public record struct FunctionInvocationReferenceValue
         FunctionInvocationIdentifierToken = functionInvocationNode.FunctionInvocationIdentifierToken;
         
         OpenAngleBracketToken = functionInvocationNode.OpenAngleBracketToken;
-        IndexGenericParameterEntryList = functionInvocationNode.IndexGenericParameterEntryList;
-        CountGenericParameterEntryList = functionInvocationNode.CountGenericParameterEntryList;
+        OffsetGenericParameterEntryList = functionInvocationNode.OffsetGenericParameterEntryList;
+        LengthGenericParameterEntryList = functionInvocationNode.LengthGenericParameterEntryList;
         CloseAngleBracketToken = functionInvocationNode.CloseAngleBracketToken;
         
         OpenParenthesisToken = functionInvocationNode.OpenParenthesisToken;
-        IndexFunctionParameterEntryList = functionInvocationNode.IndexFunctionParameterEntryList;
-        CountFunctionParameterEntryList = functionInvocationNode.CountFunctionParameterEntryList;
+        OffsetFunctionParameterEntryList = functionInvocationNode.OffsetFunctionParameterEntryList;
+        LengthFunctionParameterEntryList = functionInvocationNode.LengthFunctionParameterEntryList;
         CloseParenthesisToken = functionInvocationNode.CloseParenthesisToken;
         
         ResultTypeReference = functionInvocationNode.ResultTypeReference;
@@ -61,13 +57,13 @@ public record struct FunctionInvocationReferenceValue
 
     public SyntaxToken FunctionInvocationIdentifierToken { get; set; }
     public SyntaxToken OpenAngleBracketToken { get; }
-    public int IndexGenericParameterEntryList { get; set; }
-    public int CountGenericParameterEntryList { get; set; }
+    public int OffsetGenericParameterEntryList { get; set; }
+    public int LengthGenericParameterEntryList { get; set; }
     public SyntaxToken CloseAngleBracketToken { get; private set; }
     
     public SyntaxToken OpenParenthesisToken { get; set; }
-    public int IndexFunctionParameterEntryList { get; set; }
-    public int CountFunctionParameterEntryList { get; set; }
+    public int OffsetFunctionParameterEntryList { get; set; }
+    public int LengthFunctionParameterEntryList { get; set; }
     public SyntaxToken CloseParenthesisToken { get; set; }
     
     public TypeReferenceValue ResultTypeReference { get; set; }

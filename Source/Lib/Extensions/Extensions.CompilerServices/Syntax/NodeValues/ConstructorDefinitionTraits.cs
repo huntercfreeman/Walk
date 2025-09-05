@@ -8,11 +8,11 @@ public struct ConstructorDefinitionTraits
     {
         ReturnTypeReference = constructorDefinitionNode.ReturnTypeReference;
         OpenAngleBracketToken = constructorDefinitionNode.OpenAngleBracketToken;
-        IndexGenericParameterEntryList = constructorDefinitionNode.IndexGenericParameterEntryList;
-        CountGenericParameterEntryList = constructorDefinitionNode.CountGenericParameterEntryList;
+        OffsetGenericParameterEntryList = constructorDefinitionNode.OffsetGenericParameterEntryList;
+        LengthGenericParameterEntryList = constructorDefinitionNode.LengthGenericParameterEntryList;
         OpenParenthesisToken = constructorDefinitionNode.OpenParenthesisToken;
-        IndexFunctionArgumentEntryList = constructorDefinitionNode.IndexFunctionArgumentEntryList;
-        CountFunctionArgumentEntryList = constructorDefinitionNode.CountFunctionArgumentEntryList;
+        OffsetFunctionArgumentEntryList = constructorDefinitionNode.OffsetFunctionArgumentEntryList;
+        LengthFunctionArgumentEntryList = constructorDefinitionNode.LengthFunctionArgumentEntryList;
         CloseParenthesisToken = constructorDefinitionNode.CloseParenthesisToken;
     }
     
@@ -39,12 +39,12 @@ public struct ConstructorDefinitionTraits
     public TypeReferenceValue ReturnTypeReference { get; set; }
 
     public SyntaxToken OpenAngleBracketToken { get; }
-    public int IndexGenericParameterEntryList { get; set; }
-    public int CountGenericParameterEntryList { get; set; }
+    public int OffsetGenericParameterEntryList { get; set; }
+    public int LengthGenericParameterEntryList { get; set; }
     public SyntaxToken CloseAngleBracketToken { get; private set; }
 
     public SyntaxToken OpenParenthesisToken { get; set; }
-    public int IndexFunctionArgumentEntryList { get; set; }
-    public int CountFunctionArgumentEntryList { get; set; }
+    public int OffsetFunctionArgumentEntryList { get; set; }
+    public int LengthFunctionArgumentEntryList { get; set; }
     public SyntaxToken CloseParenthesisToken { get; set; }
 }

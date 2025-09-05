@@ -316,13 +316,13 @@ public class ParseDefaultKeywords
         parserModel.ParserContextKind = CSharpParserContextKind.None;
         var enumerable = ParseExpressions.ParseExpression(ref parserModel);
         
-        if (enumerable.ResultTypeReference.IndexGenericParameterEntryList != -1 &&
+        if (enumerable.ResultTypeReference.OffsetGenericParameterEntryList != -1 &&
             variableDeclarationNode is not null &&
             parserModel.Binder.CSharpCompilerService.SafeCompareText(parserModel.ResourceUri.Value, "var", variableDeclarationNode.TypeReference.TypeIdentifierToken.TextSpan))
         {
-            if (enumerable.ResultTypeReference.CountGenericParameterEntryList == 1)
+            if (enumerable.ResultTypeReference.LengthGenericParameterEntryList == 1)
                 variableDeclarationNode.SetImplicitTypeReference(
-                    parserModel.Binder.GenericParameterList[enumerable.ResultTypeReference.IndexGenericParameterEntryList].TypeReference);
+                    parserModel.Binder.GenericParameterList[enumerable.ResultTypeReference.OffsetGenericParameterEntryList].TypeReference);
         }
         
         if (enumerable.SyntaxKind == SyntaxKind.VariableReferenceNode)
@@ -965,8 +965,8 @@ public class ParseDefaultKeywords
             genericParameterListing.CountGenericParameterEntryList,
             genericParameterListing.CloseAngleBracketToken,
             openParenthesisToken: default,
-            indexFunctionArgumentEntryList: -1,
-            countFunctionArgumentEntryList: 0,
+            offsetFunctionArgumentEntryList: -1,
+            lengthFunctionArgumentEntryList: 0,
             closeParenthesisToken: default,
             inheritedTypeReference: TypeFacts.NotApplicable.ToTypeReference(),
             parserModel.ResourceUri);

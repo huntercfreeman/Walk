@@ -7,7 +7,7 @@ public interface IFunctionDefinitionNode : IExpressionNode
     /// </summary>
     public SyntaxToken OpenParenthesisToken { get; set; }
     /// <summary>The default value for this needs to be -1 to indicate that there are no entries in the pooled list.</summary>
-    public int IndexFunctionArgumentEntryList { get; set; }
-    public int CountFunctionArgumentEntryList { get; set; }
+    public int OffsetFunctionArgumentEntryList { get; set; }
+    public int LengthFunctionArgumentEntryList { get; set; }
     public SyntaxToken CloseParenthesisToken { get; set; }
 }

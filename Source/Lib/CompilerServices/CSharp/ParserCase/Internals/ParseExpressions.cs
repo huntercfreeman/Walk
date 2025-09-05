@@ -728,8 +728,8 @@ public static class ParseExpressions
                     expressionSecondary = new AmbiguousIdentifierNode(
                         ambiguousIdentifierExpressionNode.Token,
                         ambiguousIdentifierExpressionNode.OpenAngleBracketToken,
-                        ambiguousIdentifierExpressionNode.IndexGenericParameterEntryList,
-                        ambiguousIdentifierExpressionNode.CountGenericParameterEntryList,
+                        ambiguousIdentifierExpressionNode.OffsetGenericParameterEntryList,
+                        ambiguousIdentifierExpressionNode.LengthGenericParameterEntryList,
                         ambiguousIdentifierExpressionNode.CloseAngleBracketToken,
                         ambiguousIdentifierExpressionNode.ResultTypeReference)
                     {
@@ -786,11 +786,11 @@ public static class ParseExpressions
                     
                     functionInvocationNode.FunctionInvocationIdentifierToken = ambiguousIdentifierExpressionNode.Token;
                     functionInvocationNode.OpenAngleBracketToken = ambiguousIdentifierExpressionNode.OpenAngleBracketToken;
-                    functionInvocationNode.IndexGenericParameterEntryList = ambiguousIdentifierExpressionNode.IndexGenericParameterEntryList;
-                    functionInvocationNode.CountGenericParameterEntryList = ambiguousIdentifierExpressionNode.CountGenericParameterEntryList;
+                    functionInvocationNode.OffsetGenericParameterEntryList = ambiguousIdentifierExpressionNode.OffsetGenericParameterEntryList;
+                    functionInvocationNode.LengthGenericParameterEntryList = ambiguousIdentifierExpressionNode.LengthGenericParameterEntryList;
                     functionInvocationNode.CloseAngleBracketToken = ambiguousIdentifierExpressionNode.CloseAngleBracketToken;
                     functionInvocationNode.OpenParenthesisToken = parserModel.TokenWalker.Current;
-                    functionInvocationNode.IndexFunctionParameterEntryList = parserModel.Binder.FunctionParameterList.Count;
+                    functionInvocationNode.OffsetFunctionParameterEntryList = parserModel.Binder.FunctionParameterList.Count;
                     
                     parserModel.BindFunctionInvocationNode(functionInvocationNode);
                     
@@ -1435,10 +1435,10 @@ public static class ParseExpressions
             }
             case SyntaxKind.CloseSquareBracketToken:
             {
-                if (variableReferenceNode.ResultTypeReference.IndexGenericParameterEntryList != -1 &&
-                    variableReferenceNode.ResultTypeReference.CountGenericParameterEntryList == 1)
+                if (variableReferenceNode.ResultTypeReference.OffsetGenericParameterEntryList != -1 &&
+                    variableReferenceNode.ResultTypeReference.LengthGenericParameterEntryList == 1)
                 {
-                    var indexGenericParameterEntryList = variableReferenceNode.ResultTypeReference.IndexGenericParameterEntryList;
+                    var indexGenericParameterEntryList = variableReferenceNode.ResultTypeReference.OffsetGenericParameterEntryList;
                     parserModel.Return_VariableReferenceNode(variableReferenceNode);
                     return new VariableReferenceNode(
                         token,
@@ -1795,8 +1795,8 @@ public static class ParseExpressions
                 goto default;
             case SyntaxKind.OpenParenthesisToken:
                 constructorInvocationExpressionNode.OpenParenthesisToken = parserModel.TokenWalker.Current;
-                constructorInvocationExpressionNode.IndexFunctionParameterEntryList = parserModel.Binder.FunctionParameterList.Count;
-        		constructorInvocationExpressionNode.CountFunctionParameterEntryList = 0;
+                constructorInvocationExpressionNode.OffsetFunctionParameterEntryList = parserModel.Binder.FunctionParameterList.Count;
+        		constructorInvocationExpressionNode.LengthFunctionParameterEntryList = 0;
                 constructorInvocationExpressionNode.CloseParenthesisToken = default;
                 constructorInvocationExpressionNode.ConstructorInvocationStageKind = ConstructorInvocationStageKind.FunctionParameters;
                 
@@ -2262,8 +2262,8 @@ public static class ParseExpressions
                     new AmbiguousIdentifierNode(
                         token,
                         openAngleBracketToken: default,
-                		indexGenericParameterEntryList: -1,
-                        countGenericParameterEntryList: 0,
+                		offsetGenericParameterEntryList: -1,
+                        lengthGenericParameterEntryList: 0,
                 		closeAngleBracketToken: default,
                         resultTypeReference: default),
                         ref parserModel);
@@ -2771,11 +2771,11 @@ public static class ParseExpressions
                     var functionInvocationNode = parserModel.Rent_FunctionInvocationNode();
                     functionInvocationNode.FunctionInvocationIdentifierToken = UtilityApi.ConvertToIdentifierToken(ref typeClauseToken, ref parserModel);
                     functionInvocationNode.OpenAngleBracketToken = typeClauseNode.OpenAngleBracketToken;
-                    functionInvocationNode.IndexGenericParameterEntryList = typeClauseNode.IndexGenericParameterEntryList;
-                    functionInvocationNode.CountGenericParameterEntryList = typeClauseNode.CountGenericParameterEntryList;
+                    functionInvocationNode.OffsetGenericParameterEntryList = typeClauseNode.OffsetGenericParameterEntryList;
+                    functionInvocationNode.LengthGenericParameterEntryList = typeClauseNode.LengthGenericParameterEntryList;
                     functionInvocationNode.CloseAngleBracketToken = typeClauseNode.CloseAngleBracketToken;
                     functionInvocationNode.OpenParenthesisToken = parserModel.TokenWalker.Current;
-                    functionInvocationNode.IndexFunctionParameterEntryList = parserModel.Binder.FunctionParameterList.Count;
+                    functionInvocationNode.OffsetFunctionParameterEntryList = parserModel.Binder.FunctionParameterList.Count;
                         
                     parserModel.BindFunctionInvocationNode(functionInvocationNode);
         
@@ -2864,8 +2864,8 @@ public static class ParseExpressions
                             var ambiguousExpressionNode = new AmbiguousIdentifierNode(
                                 parserModel.TokenWalker.Current,
                                 openAngleBracketToken: default,
-                                indexGenericParameterEntryList: -1,
-                                countGenericParameterEntryList: 0,
+                                offsetGenericParameterEntryList: -1,
+                                lengthGenericParameterEntryList: 0,
                                 closeAngleBracketToken: default,
                                 resultTypeReference: default);
                             var expressionNode = ForceDecisionAmbiguousIdentifier(typeClauseNode, ambiguousExpressionNode, ref parserModel);
@@ -3019,8 +3019,8 @@ public static class ParseExpressions
                     // statements will be here.
                     
                     functionInvocationNode.OpenParenthesisToken = parserModel.TokenWalker.Current;
-                    functionInvocationNode.IndexFunctionParameterEntryList = parserModel.Binder.FunctionParameterList.Count;
-            		functionInvocationNode.CountFunctionParameterEntryList = 0;
+                    functionInvocationNode.OffsetFunctionParameterEntryList = parserModel.Binder.FunctionParameterList.Count;
+            		functionInvocationNode.LengthFunctionParameterEntryList = 0;
                     functionInvocationNode.CloseParenthesisToken = default;
                     
                     return ParseFunctionParameterListing_Start(
@@ -3088,9 +3088,9 @@ public static class ParseExpressions
                 parserModel.ResourceUri);
                 
             parserModel.Binder.LambdaExpressionNodeChildList.Insert(
-                lambdaExpressionNode.IndexLambdaExpressionNodeChildList + lambdaExpressionNode.CountLambdaExpressionNodeChildList,
+                lambdaExpressionNode.OffsetLambdaExpressionNodeChildList + lambdaExpressionNode.LengthLambdaExpressionNodeChildList,
                 variableDeclarationNode);
-            ++lambdaExpressionNode.CountLambdaExpressionNodeChildList;
+            ++lambdaExpressionNode.LengthLambdaExpressionNodeChildList;
         }
         
         return lambdaExpressionNode;
@@ -3206,7 +3206,7 @@ public static class ParseExpressions
         ...you can't clear them during a parse due to the chance of recursive lambdas that each have their own variables.
         But once you've finished parsing a file, you can clear it because this data is being copied to just be a "variable".
         */
-        for (int i = lambdaExpressionNode.IndexLambdaExpressionNodeChildList; i < lambdaExpressionNode.IndexLambdaExpressionNodeChildList + lambdaExpressionNode.CountLambdaExpressionNodeChildList; i++)
+        for (int i = lambdaExpressionNode.OffsetLambdaExpressionNodeChildList; i < lambdaExpressionNode.OffsetLambdaExpressionNodeChildList + lambdaExpressionNode.LengthLambdaExpressionNodeChildList; i++)
         {
             parserModel.BindVariableDeclarationNode(parserModel.Binder.LambdaExpressionNodeChildList[i]);
         }
@@ -3899,9 +3899,9 @@ public static class ParseExpressions
                 if (node.SyntaxKind == SyntaxKind.VariableDeclarationNode)
                 {
                     parserModel.Binder.LambdaExpressionNodeChildList.Insert(
-                        lambdaExpressionNode.IndexLambdaExpressionNodeChildList + lambdaExpressionNode.CountLambdaExpressionNodeChildList,
+                        lambdaExpressionNode.OffsetLambdaExpressionNodeChildList + lambdaExpressionNode.LengthLambdaExpressionNodeChildList,
                         (VariableDeclarationNode)node);
-                    ++lambdaExpressionNode.CountLambdaExpressionNodeChildList;
+                    ++lambdaExpressionNode.LengthLambdaExpressionNodeChildList;
                 }
                 else
                 {
@@ -3935,9 +3935,9 @@ public static class ParseExpressions
                         parserModel.ResourceUri);
                         
                     parserModel.Binder.LambdaExpressionNodeChildList.Insert(
-                        lambdaExpressionNode.IndexLambdaExpressionNodeChildList + lambdaExpressionNode.CountLambdaExpressionNodeChildList,
+                        lambdaExpressionNode.OffsetLambdaExpressionNodeChildList + lambdaExpressionNode.LengthLambdaExpressionNodeChildList,
                         variableDeclarationNode);
-                    ++lambdaExpressionNode.CountLambdaExpressionNodeChildList;
+                    ++lambdaExpressionNode.LengthLambdaExpressionNodeChildList;
                 }
             }
         }
@@ -4075,9 +4075,9 @@ public static class ParseExpressions
                         var functionDefinitionNode = maybeFunctionDefinitionNode;
                         var functionDefinitionTraits = parserModel.Binder.FunctionDefinitionTraitsList[functionDefinitionNode.TraitsIndex];
                     
-                        if (functionDefinitionTraits.CountFunctionArgumentEntryList > invocationNode.CountFunctionParameterEntryList)
+                        if (functionDefinitionTraits.LengthFunctionArgumentEntryList > invocationNode.LengthFunctionParameterEntryList)
                         {
-                            var matchingArgument = parserModel.Binder.FunctionArgumentList[functionDefinitionTraits.IndexFunctionArgumentEntryList + invocationNode.CountFunctionParameterEntryList];
+                            var matchingArgument = parserModel.Binder.FunctionArgumentList[functionDefinitionTraits.OffsetFunctionArgumentEntryList + invocationNode.LengthFunctionParameterEntryList];
                             variableDeclarationNode.SetImplicitTypeReference(matchingArgument.TypeReference);
                         }
                     }
@@ -4088,7 +4088,7 @@ public static class ParseExpressions
         /*parserModel.Binder.FunctionParameterEntryList.Add(
             invocationNode.IndexFunctionParameterEntryList + invocationNode.CountFunctionParameterEntryList,
             new FunctionParameterEntry(parserModel.ParameterModifierKind));*/
-        invocationNode.CountFunctionParameterEntryList++;
+        invocationNode.LengthFunctionParameterEntryList++;
         
         /*if (parserModel.Compilation.CompilationUnitKind == CompilationUnitKind.IndividualFile_AllData)
         {
@@ -4229,7 +4229,7 @@ public static class ParseExpressions
         
         // TODO: Where is this containing-method invoked from?
         parserModel.Binder.FunctionArgumentList.Insert(
-            functionDefinitionNode.IndexFunctionArgumentEntryList + functionDefinitionNode.CountFunctionArgumentEntryList,
+            functionDefinitionNode.OffsetFunctionArgumentEntryList + functionDefinitionNode.LengthFunctionArgumentEntryList,
             new FunctionArgument(
                 variableDeclarationNode: null,
                 optionalCompileTimeConstantToken: new SyntaxToken(SyntaxKind.NotApplicable, textSpan: default),
@@ -4255,8 +4255,8 @@ public static class ParseExpressions
                 var ambiguousExpressionNode = new AmbiguousIdentifierNode(
                     parserModel.TokenWalker.Current,
                     openAngleBracketToken: default,
-                    indexGenericParameterEntryList: -1,
-                    countGenericParameterEntryList: 0,
+                    offsetGenericParameterEntryList: -1,
+                    lengthGenericParameterEntryList: 0,
                     closeAngleBracketToken: default,
                     resultTypeReference: default);
                 var expressionNode = ForceDecisionAmbiguousIdentifier(genericParameterNode, ambiguousExpressionNode, ref parserModel);
@@ -4331,10 +4331,10 @@ public static class ParseExpressions
             parserModel.BindTypeClauseNode(typeClauseNode);
             
             parserModel.Binder.GenericParameterList.Insert(
-                genericParameterNode.IndexGenericParameterEntryList + genericParameterNode.CountGenericParameterEntryList,
+                genericParameterNode.OffsetGenericParameterEntryList + genericParameterNode.LengthGenericParameterEntryList,
                 new GenericParameter(new TypeReferenceValue(typeClauseNode)));
             parserModel.Return_TypeClauseNode(typeClauseNode);
-            genericParameterNode.CountGenericParameterEntryList++;
+            genericParameterNode.LengthGenericParameterEntryList++;
             
             return genericParameterNode;
         }
@@ -4343,10 +4343,10 @@ public static class ParseExpressions
             var typeClauseNode = (TypeClauseNode)expressionSecondary;
         
             parserModel.Binder.GenericParameterList.Insert(
-                genericParameterNode.IndexGenericParameterEntryList + genericParameterNode.CountGenericParameterEntryList,
+                genericParameterNode.OffsetGenericParameterEntryList + genericParameterNode.LengthGenericParameterEntryList,
                 new GenericParameter(new TypeReferenceValue(typeClauseNode)));
             parserModel.Return_TypeClauseNode(typeClauseNode);
-            genericParameterNode.CountGenericParameterEntryList++;
+            genericParameterNode.LengthGenericParameterEntryList++;
             
             return genericParameterNode;
         }
@@ -4363,8 +4363,8 @@ public static class ParseExpressions
         {
             // Idea: 1 listing for the entire file and store the indices at which your parameters lie?
             genericParameterNode.OpenAngleBracketToken = openAngleBracketToken;
-            genericParameterNode.IndexGenericParameterEntryList = parserModel.Binder.GenericParameterList.Count;
-            genericParameterNode.CountGenericParameterEntryList = 0;
+            genericParameterNode.OffsetGenericParameterEntryList = parserModel.Binder.GenericParameterList.Count;
+            genericParameterNode.LengthGenericParameterEntryList = 0;
             genericParameterNode.CloseAngleBracketToken = default;
             genericParameterNode.IsParsingGenericParameters = true;
         }

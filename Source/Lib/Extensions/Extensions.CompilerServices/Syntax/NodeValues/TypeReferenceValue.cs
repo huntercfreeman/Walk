@@ -9,8 +9,8 @@ public record struct TypeReferenceValue
     public TypeReferenceValue(
         SyntaxToken typeIdentifier,
         SyntaxToken openAngleBracketToken,
-        int indexGenericParameterEntryList,
-        int countGenericParameterEntryList,
+        int offsetGenericParameterEntryList,
+        int lengthGenericParameterEntryList,
         SyntaxToken closeAngleBracketToken,
         bool isKeywordType,
         TypeKind typeKind,
@@ -22,8 +22,8 @@ public record struct TypeReferenceValue
         TypeIdentifierToken = typeIdentifier;
         
         OpenAngleBracketToken = openAngleBracketToken;
-        IndexGenericParameterEntryList = indexGenericParameterEntryList;
-        CountGenericParameterEntryList = countGenericParameterEntryList;
+        OffsetGenericParameterEntryList = offsetGenericParameterEntryList;
+        LengthGenericParameterEntryList = lengthGenericParameterEntryList;
         CloseAngleBracketToken = closeAngleBracketToken;
         
         TypeKind = typeKind;
@@ -38,8 +38,8 @@ public record struct TypeReferenceValue
         TypeIdentifierToken = typeClauseNode.TypeIdentifierToken;
         
         OpenAngleBracketToken = typeClauseNode.OpenAngleBracketToken;
-        IndexGenericParameterEntryList = typeClauseNode.IndexGenericParameterEntryList;
-        CountGenericParameterEntryList = typeClauseNode.CountGenericParameterEntryList;
+        OffsetGenericParameterEntryList = typeClauseNode.OffsetGenericParameterEntryList;
+        LengthGenericParameterEntryList = typeClauseNode.LengthGenericParameterEntryList;
         CloseAngleBracketToken = typeClauseNode.CloseAngleBracketToken;
         
         TypeKind = typeClauseNode.TypeKind;
@@ -56,8 +56,8 @@ public record struct TypeReferenceValue
         TypeIdentifierToken = typeDefinitionNode.TypeIdentifierToken;
         
         OpenAngleBracketToken = typeDefinitionNode.OpenAngleBracketToken;
-        IndexGenericParameterEntryList = typeDefinitionNode.IndexGenericParameterEntryList;
-        CountGenericParameterEntryList = typeDefinitionNode.CountGenericParameterEntryList;
+        OffsetGenericParameterEntryList = typeDefinitionNode.OffsetGenericParameterEntryList;
+        LengthGenericParameterEntryList = typeDefinitionNode.LengthGenericParameterEntryList;
         CloseAngleBracketToken = typeDefinitionNode.CloseAngleBracketToken;
         
         IsFabricated = typeDefinitionNode.IsFabricated;
@@ -68,8 +68,8 @@ public record struct TypeReferenceValue
     public SyntaxToken TypeIdentifierToken { get; }
     
     public SyntaxToken OpenAngleBracketToken { get; }
-    public int IndexGenericParameterEntryList { get; set; }
-    public int CountGenericParameterEntryList { get; set; }
+    public int OffsetGenericParameterEntryList { get; set; }
+    public int LengthGenericParameterEntryList { get; set; }
     public SyntaxToken CloseAngleBracketToken { get; private set; }
     
     public bool IsKeywordType { get; }

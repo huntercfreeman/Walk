@@ -36,8 +36,8 @@ public sealed class LambdaExpressionNode : IExpressionNode, ICodeBlockOwner
     /// </summary>
     public bool CodeBlockNodeIsExpression { get; set; } = true;
     public bool HasReadParameters { get; set; }
-    public int IndexLambdaExpressionNodeChildList { get; set; }
-    public int CountLambdaExpressionNodeChildList { get; set; }
+    public int OffsetLambdaExpressionNodeChildList { get; set; }
+    public int LengthLambdaExpressionNodeChildList { get; set; }
 
     public bool IsFabricated { get; init; }
     public SyntaxKind SyntaxKind => SyntaxKind.LambdaExpressionNode;

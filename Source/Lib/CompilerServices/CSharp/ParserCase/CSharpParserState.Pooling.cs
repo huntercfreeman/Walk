@@ -62,8 +62,8 @@ public ref partial struct CSharpParserState
         return new TypeClauseNode(
             typeIdentifier: default,
             openAngleBracketToken: default,
-            indexGenericParameterEntryList: -1,
-            countGenericParameterEntryList: 0,
+            offsetGenericParameterEntryList: -1,
+            lengthGenericParameterEntryList: 0,
             closeAngleBracketToken: default,
             isKeywordType: false);
     }
@@ -76,8 +76,8 @@ public ref partial struct CSharpParserState
     public readonly void Return_TypeClauseNode(TypeClauseNode typeClauseNode)
     {
         typeClauseNode.OpenAngleBracketToken = default;
-        typeClauseNode.IndexGenericParameterEntryList = -1;
-        typeClauseNode.CountGenericParameterEntryList = 0;
+        typeClauseNode.OffsetGenericParameterEntryList = -1;
+        typeClauseNode.LengthGenericParameterEntryList = 0;
         typeClauseNode.CloseAngleBracketToken = default;
         typeClauseNode.IsKeywordType = false;
         typeClauseNode.TypeKind = TypeKind.None;
@@ -225,8 +225,8 @@ public ref partial struct CSharpParserState
         return new AmbiguousIdentifierNode(
             token: default,
             openAngleBracketToken: default,
-            indexGenericParameterEntryList: -1,
-            countGenericParameterEntryList: 0,
+            offsetGenericParameterEntryList: -1,
+            lengthGenericParameterEntryList: 0,
             closeAngleBracketToken: default,
             resultTypeReference: Facts.CSharpFacts.Types.Void.ToTypeReference());
     }
@@ -240,8 +240,8 @@ public ref partial struct CSharpParserState
     public readonly void Return_AmbiguousIdentifierExpressionNode(AmbiguousIdentifierNode ambiguousIdentifierExpressionNode)
     {
         ambiguousIdentifierExpressionNode.OpenAngleBracketToken = default;
-        ambiguousIdentifierExpressionNode.IndexGenericParameterEntryList = -1;
-        ambiguousIdentifierExpressionNode.CountGenericParameterEntryList = 0;
+        ambiguousIdentifierExpressionNode.OffsetGenericParameterEntryList = -1;
+        ambiguousIdentifierExpressionNode.LengthGenericParameterEntryList = 0;
         ambiguousIdentifierExpressionNode.CloseAngleBracketToken = default;
 
         ambiguousIdentifierExpressionNode.ResultTypeReference = Facts.CSharpFacts.Types.Void.ToTypeReference();
@@ -265,12 +265,12 @@ public ref partial struct CSharpParserState
         return new FunctionInvocationNode(
             functionInvocationIdentifierToken: default,
             openAngleBracketToken: default,
-            indexGenericParameterEntryList: -1,
-            countGenericParameterEntryList: 0,
+            offsetGenericParameterEntryList: -1,
+            lengthGenericParameterEntryList: 0,
             closeAngleBracketToken: default,
             openParenthesisToken: default,
-            indexFunctionParameterEntryList: -1,
-            countFunctionParameterEntryList: 0,
+            offsetFunctionParameterEntryList: -1,
+            lengthFunctionParameterEntryList: 0,
             closeParenthesisToken: default,
             resultTypeReference: Facts.CSharpFacts.Types.Void.ToTypeReference());
     }
@@ -283,13 +283,13 @@ public ref partial struct CSharpParserState
     public readonly void Return_FunctionInvocationNode(FunctionInvocationNode functionInvocationNode)
     {
         functionInvocationNode.OpenAngleBracketToken = default;
-        functionInvocationNode.IndexGenericParameterEntryList = -1;
-        functionInvocationNode.CountGenericParameterEntryList = 0;
+        functionInvocationNode.OffsetGenericParameterEntryList = -1;
+        functionInvocationNode.LengthGenericParameterEntryList = 0;
         functionInvocationNode.CloseAngleBracketToken = default;
 
         functionInvocationNode.OpenParenthesisToken = default;
-        functionInvocationNode.IndexFunctionParameterEntryList = -1;
-        functionInvocationNode.CountFunctionParameterEntryList = 0;
+        functionInvocationNode.OffsetFunctionParameterEntryList = -1;
+        functionInvocationNode.LengthFunctionParameterEntryList = 0;
         functionInvocationNode.CloseParenthesisToken = default;
 
         functionInvocationNode.ResultTypeReference = Facts.CSharpFacts.Types.Void.ToTypeReference();
@@ -322,8 +322,8 @@ public ref partial struct CSharpParserState
             newKeywordToken: default,
             typeReference: default,
             openParenthesisToken: default,
-            indexFunctionParameterEntryList: -1,
-            countFunctionParameterEntryList: 0,
+            offsetFunctionParameterEntryList: -1,
+            lengthFunctionParameterEntryList: 0,
             closeParenthesisToken: default);
     }
 
@@ -337,8 +337,8 @@ public ref partial struct CSharpParserState
         constructorInvocationExpressionNode.ResultTypeReference = default;
 
         constructorInvocationExpressionNode.OpenParenthesisToken = default;
-        constructorInvocationExpressionNode.IndexFunctionParameterEntryList = -1;
-        constructorInvocationExpressionNode.CountFunctionParameterEntryList = 0;
+        constructorInvocationExpressionNode.OffsetFunctionParameterEntryList = -1;
+        constructorInvocationExpressionNode.LengthFunctionParameterEntryList = 0;
         constructorInvocationExpressionNode.CloseParenthesisToken = default;
 
         constructorInvocationExpressionNode.ConstructorInvocationStageKind = ConstructorInvocationStageKind.Unset;

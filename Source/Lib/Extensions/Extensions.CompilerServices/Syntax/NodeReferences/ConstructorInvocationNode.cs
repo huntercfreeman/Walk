@@ -14,16 +14,16 @@ public sealed class ConstructorInvocationNode : IInvocationNode
         SyntaxToken newKeywordToken,
         TypeReferenceValue typeReference,
         SyntaxToken openParenthesisToken,
-        int indexFunctionParameterEntryList,
-        int countFunctionParameterEntryList,
+        int offsetFunctionParameterEntryList,
+        int lengthFunctionParameterEntryList,
         SyntaxToken closeParenthesisToken)
     {
         NewKeywordToken = newKeywordToken;
         ResultTypeReference = typeReference;
         
         OpenParenthesisToken = openParenthesisToken;
-        IndexFunctionParameterEntryList = indexFunctionParameterEntryList;
-        CountFunctionParameterEntryList = countFunctionParameterEntryList;
+        OffsetFunctionParameterEntryList = offsetFunctionParameterEntryList;
+        LengthFunctionParameterEntryList = lengthFunctionParameterEntryList;
         CloseParenthesisToken = closeParenthesisToken;
         
     }
@@ -32,8 +32,8 @@ public sealed class ConstructorInvocationNode : IInvocationNode
     public TypeReferenceValue ResultTypeReference { get; set; }
     
     public SyntaxToken OpenParenthesisToken { get; set; }
-    public int IndexFunctionParameterEntryList { get; set; }
-    public int CountFunctionParameterEntryList { get; set; }
+    public int OffsetFunctionParameterEntryList { get; set; }
+    public int LengthFunctionParameterEntryList { get; set; }
     public SyntaxToken CloseParenthesisToken { get; set; }
     
     public int IdentifierStartInclusiveIndex => NewKeywordToken.TextSpan.StartInclusiveIndex;

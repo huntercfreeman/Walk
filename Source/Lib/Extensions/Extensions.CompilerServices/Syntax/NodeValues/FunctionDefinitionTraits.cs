@@ -10,12 +10,12 @@ public struct FunctionDefinitionTraits
         ReturnTypeReference = functionDefinitionNode.ReturnTypeReference;
         AccessModifierKind = functionDefinitionNode.AccessModifierKind;
         OpenAngleBracketToken = functionDefinitionNode.OpenAngleBracketToken;
-        IndexGenericParameterEntryList = functionDefinitionNode.IndexGenericParameterEntryList;
-        CountGenericParameterEntryList = functionDefinitionNode.CountGenericParameterEntryList;
+        OffsetGenericParameterEntryList = functionDefinitionNode.OffsetGenericParameterEntryList;
+        LengthGenericParameterEntryList = functionDefinitionNode.LengthGenericParameterEntryList;
         CloseAngleBracketToken = functionDefinitionNode.CloseAngleBracketToken;
         OpenParenthesisToken = functionDefinitionNode.OpenParenthesisToken;
-        IndexFunctionArgumentEntryList = functionDefinitionNode.IndexFunctionArgumentEntryList;
-        CountFunctionArgumentEntryList = functionDefinitionNode.CountFunctionArgumentEntryList;
+        OffsetFunctionArgumentEntryList = functionDefinitionNode.OffsetFunctionArgumentEntryList;
+        LengthFunctionArgumentEntryList = functionDefinitionNode.LengthFunctionArgumentEntryList;
         CloseParenthesisToken = functionDefinitionNode.CloseParenthesisToken;
         IndexMethodOverloadDefinition = functionDefinitionNode.IndexMethodOverloadDefinition;
     }
@@ -51,13 +51,13 @@ public struct FunctionDefinitionTraits
     public AccessModifierKind AccessModifierKind { get; }
 
     public SyntaxToken OpenAngleBracketToken { get; set; }
-    public int IndexGenericParameterEntryList { get; set; }
-    public int CountGenericParameterEntryList { get; set; }
+    public int OffsetGenericParameterEntryList { get; set; }
+    public int LengthGenericParameterEntryList { get; set; }
     public SyntaxToken CloseAngleBracketToken { get; set; }
 
     public SyntaxToken OpenParenthesisToken { get; set; }
-    public int IndexFunctionArgumentEntryList { get; set; }
-    public int CountFunctionArgumentEntryList { get; set; }
+    public int OffsetFunctionArgumentEntryList { get; set; }
+    public int LengthFunctionArgumentEntryList { get; set; }
     public SyntaxToken CloseParenthesisToken { get; set; }
     
     public int IndexMethodOverloadDefinition { get; set; } = -1;

@@ -100,8 +100,8 @@ public partial class CSharpBinder
             Pool_TypeClauseNode_Queue.Enqueue(new TypeClauseNode(
                 typeIdentifier: default,
                 openAngleBracketToken: default,
-        		indexGenericParameterEntryList: -1,
-                countGenericParameterEntryList: 0,
+        		offsetGenericParameterEntryList: -1,
+                lengthGenericParameterEntryList: 0,
         		closeAngleBracketToken: default,
                 isKeywordType: false));
         }
@@ -124,8 +124,8 @@ public partial class CSharpBinder
             Pool_AmbiguousIdentifierExpressionNode_Queue.Enqueue(new AmbiguousIdentifierNode(
                 token: default,
                 openAngleBracketToken: default,
-                indexGenericParameterEntryList: -1,
-                countGenericParameterEntryList: 0,
+                offsetGenericParameterEntryList: -1,
+                lengthGenericParameterEntryList: 0,
                 closeAngleBracketToken: default,
                 resultTypeReference: CSharpFacts.Types.Void.ToTypeReference()));
         }
@@ -135,12 +135,12 @@ public partial class CSharpBinder
             Pool_FunctionInvocationNode_Queue.Enqueue(new FunctionInvocationNode(
                 functionInvocationIdentifierToken: default,        
                 openAngleBracketToken: default,
-                indexGenericParameterEntryList: -1,
-                countGenericParameterEntryList: 0,
+                offsetGenericParameterEntryList: -1,
+                lengthGenericParameterEntryList: 0,
                 closeAngleBracketToken: default,
                 openParenthesisToken: default,
-                indexFunctionParameterEntryList: -1,
-                countFunctionParameterEntryList: 0,
+                offsetFunctionParameterEntryList: -1,
+                lengthFunctionParameterEntryList: 0,
                 closeParenthesisToken: default,
                 resultTypeReference: CSharpFacts.Types.Void.ToTypeReference()));
         }
@@ -151,8 +151,8 @@ public partial class CSharpBinder
                 newKeywordToken: default,
                 typeReference: default,
                 openParenthesisToken: default,
-                indexFunctionParameterEntryList: -1,
-                countFunctionParameterEntryList: 0,
+                offsetFunctionParameterEntryList: -1,
+                lengthFunctionParameterEntryList: 0,
                 closeParenthesisToken: default));
         }
         
@@ -1293,8 +1293,8 @@ public partial class CSharpBinder
                     }
                     else if (variableDeclarationNode.TypeReference.OpenAngleBracketToken.ConstructorWasInvoked)
                     {
-                        for (int i = variableDeclarationNode.TypeReference.IndexGenericParameterEntryList;
-                             i < variableDeclarationNode.TypeReference.IndexGenericParameterEntryList + variableDeclarationNode.TypeReference.CountGenericParameterEntryList;
+                        for (int i = variableDeclarationNode.TypeReference.OffsetGenericParameterEntryList;
+                             i < variableDeclarationNode.TypeReference.OffsetGenericParameterEntryList + variableDeclarationNode.TypeReference.LengthGenericParameterEntryList;
                              i++)
                         {
                             var entry = GenericParameterList[i];

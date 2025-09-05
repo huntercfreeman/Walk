@@ -6,15 +6,15 @@ public struct MethodOverloadDefinition
 {
     public MethodOverloadDefinition(
         ResourceUri resourceUri,
-        int indexStartGroup,
+        int offsetGroup,
         int scopeIndexKey)
     {
         ResourceUri = resourceUri;
-        IndexStartGroup = indexStartGroup;
+        OffsetGroup = offsetGroup;
         ScopeIndexKey = scopeIndexKey;
     }
 
     public ResourceUri ResourceUri { get; set; }
-    public int IndexStartGroup { get; set; }
+    public int OffsetGroup { get; set; }
     public int ScopeIndexKey { get; set; }
 }

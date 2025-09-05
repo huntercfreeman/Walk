@@ -13,8 +13,8 @@ public sealed class TypeClauseNode : IGenericParameterNode
     public TypeClauseNode(
         SyntaxToken typeIdentifier,
         SyntaxToken openAngleBracketToken,
-        int indexGenericParameterEntryList,
-        int countGenericParameterEntryList,
+        int offsetGenericParameterEntryList,
+        int lengthGenericParameterEntryList,
         SyntaxToken closeAngleBracketToken,
         bool isKeywordType)
     {
@@ -22,8 +22,8 @@ public sealed class TypeClauseNode : IGenericParameterNode
         TypeIdentifierToken = typeIdentifier;
         
         OpenAngleBracketToken = openAngleBracketToken;
-        IndexGenericParameterEntryList = indexGenericParameterEntryList;
-        CountGenericParameterEntryList = countGenericParameterEntryList;
+        OffsetGenericParameterEntryList = offsetGenericParameterEntryList;
+        LengthGenericParameterEntryList = lengthGenericParameterEntryList;
         CloseAngleBracketToken = closeAngleBracketToken;
     }
     
@@ -45,8 +45,8 @@ public sealed class TypeClauseNode : IGenericParameterNode
         TypeIdentifierToken = typeReference.TypeIdentifierToken;
         
         OpenAngleBracketToken = typeReference.OpenAngleBracketToken;
-        IndexGenericParameterEntryList = typeReference.IndexGenericParameterEntryList;
-        CountGenericParameterEntryList = typeReference.CountGenericParameterEntryList;
+        OffsetGenericParameterEntryList = typeReference.OffsetGenericParameterEntryList;
+        LengthGenericParameterEntryList = typeReference.LengthGenericParameterEntryList;
         CloseAngleBracketToken = typeReference.CloseAngleBracketToken;
         
         ExplicitDefinitionTextSpan = typeReference.ExplicitDefinitionTextSpan;
@@ -67,8 +67,8 @@ public sealed class TypeClauseNode : IGenericParameterNode
     /// And: '&lt;int&gt;' is the <see cref="GenericParametersListingNode"/>
     /// </summary>
     public SyntaxToken OpenAngleBracketToken { get; set; }
-    public int IndexGenericParameterEntryList { get; set; }
-    public int CountGenericParameterEntryList { get; set; }
+    public int OffsetGenericParameterEntryList { get; set; }
+    public int LengthGenericParameterEntryList { get; set; }
     public SyntaxToken CloseAngleBracketToken { get; set; }
 
     public bool IsKeywordType { get; set; }

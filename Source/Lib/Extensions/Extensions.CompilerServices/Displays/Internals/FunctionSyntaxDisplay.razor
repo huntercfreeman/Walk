@@ -52,8 +52,8 @@
 			returnTypeClauseNodeText = null;
 			methodName = syntaxViewModelLocal.GetTextFromTextSpan(functionDefinitionNode.IdentifierToken.TextSpan);
 			hasGenericParameterListing = functionDefinitionMetadata.OpenAngleBracketToken.ConstructorWasInvoked;
-			indexFunctionArgumentEntryList = functionDefinitionMetadata.IndexFunctionArgumentEntryList;
-			countFunctionArgumentEntryList = functionDefinitionMetadata.CountFunctionArgumentEntryList;
+			indexFunctionArgumentEntryList = functionDefinitionMetadata.OffsetFunctionArgumentEntryList;
+			countFunctionArgumentEntryList = functionDefinitionMetadata.LengthFunctionArgumentEntryList;
 		}
 		else if (syntaxViewModelLocal.DefinitionNode.SyntaxKind == SyntaxKind.ConstructorDefinitionNode)
 		{
@@ -63,8 +63,8 @@
 			returnTypeClauseNodeText = null;
 			methodName = null;
 			hasGenericParameterListing = false;
-			indexFunctionArgumentEntryList = constructorDefinitionMetadata.IndexFunctionArgumentEntryList;
-			countFunctionArgumentEntryList = constructorDefinitionMetadata.CountFunctionArgumentEntryList;
+			indexFunctionArgumentEntryList = constructorDefinitionMetadata.OffsetFunctionArgumentEntryList;
+			countFunctionArgumentEntryList = constructorDefinitionMetadata.LengthFunctionArgumentEntryList;
 		}
 		else
 		{
