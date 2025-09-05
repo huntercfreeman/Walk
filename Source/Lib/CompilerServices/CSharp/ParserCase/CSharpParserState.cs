@@ -1314,7 +1314,7 @@ public ref partial struct CSharpParserState
         int declarationScopeSubIndex,
         ResourceUri referenceResourceUri,
         TextEditorTextSpan referenceTextSpan,
-        out LabelDeclarationNode? labelDeclarationNode)
+        out SyntaxNodeValue labelDeclarationNode)
     {
         int initialScopeOffset = ScopeCurrentSubIndex;
 
@@ -1339,7 +1339,7 @@ public ref partial struct CSharpParserState
                 localScope = Binder.GetScopeByOffset(Compilation, localScope.ParentScopeSubIndex);
         }
         
-        labelDeclarationNode = null;
+        labelDeclarationNode = default;
         return false;
     }
     
@@ -1349,11 +1349,9 @@ public ref partial struct CSharpParserState
         int declarationScopeSubIndex,
         ResourceUri referenceResourceUri,
         TextEditorTextSpan referenceTextSpan,
-        out LabelDeclarationNode labelDeclarationNode)
+        out SyntaxNodeValue labelDeclarationNode)
     {
-        labelDeclarationNode = null;
-        return false;
-        /*labelDeclarationNode = null;
+        labelDeclarationNode = default;
         for (int i = Compilation.NodeOffset; i < Compilation.NodeOffset + Compilation.NodeLength; i++)
         {
             var node = Binder.NodeList[i];
@@ -1363,16 +1361,16 @@ public ref partial struct CSharpParserState
             {
                 if (Binder.CSharpCompilerService.SafeCompareTextSpans(referenceResourceUri.Value, referenceTextSpan, declarationResourceUri.Value, node.IdentifierToken.TextSpan))
                 {
-                    labelDeclarationNode = (LabelDeclarationNode)node;
+                    labelDeclarationNode = node;
                     break;
                 }
             }
         }
         
-        if (labelDeclarationNode is null)
+        if (labelDeclarationNode.IsDefault())
             return false;
         else
-            return true;*/
+            return true;
     }
     
     public bool TryAddLabelDeclarationNodeByScope(
@@ -1380,8 +1378,7 @@ public ref partial struct CSharpParserState
         TextEditorTextSpan labelIdentifierTextSpan,
         LabelDeclarationNode labelDeclarationNode)
     {
-        return false;
-        /*LabelDeclarationNode? matchNode = null;
+        SyntaxNodeValue matchNode = default;
         for (var i = Compilation.NodeOffset; i < Compilation.NodeOffset + Compilation.NodeLength; i++)
         {
             var node = Binder.NodeList[i];
@@ -1389,21 +1386,27 @@ public ref partial struct CSharpParserState
             if (node.ParentScopeSubIndex == scopeSubIndex &&
                 node.SyntaxKind == SyntaxKind.LabelDeclarationNode)
             {
-                if (Binder.CSharpCompilerService.SafeCompareTextSpans(ResourceUri.Value, labelIdentifierTextSpan, ResourceUri.Value, GetIdentifierTextSpan(node)))
+                if (Binder.CSharpCompilerService.SafeCompareTextSpans(ResourceUri.Value, labelIdentifierTextSpan, ResourceUri.Value, node.IdentifierToken.TextSpan))
                 {
-                    matchNode = (LabelDeclarationNode)node;
+                    matchNode = node;
                     break;
                 }
             }
         }
         
-        if (matchNode is null)
+        if (matchNode.IsDefault())
         {
             labelDeclarationNode.ParentScopeSubIndex = scopeSubIndex;
             
             Binder.NodeList.Insert(
                 Compilation.NodeOffset + Compilation.NodeLength,
-                labelDeclarationNode);
+                new SyntaxNodeValue(
+                    labelDeclarationNode.IdentifierToken,
+                    ResourceUri,
+                    labelDeclarationNode.IsFabricated,
+                    labelDeclarationNode.SyntaxKind,
+                    labelDeclarationNode.ParentScopeSubIndex,
+                    selfScopeSubIndex: -1));
             ++Compilation.NodeLength;
             
             return true;
@@ -1411,7 +1414,7 @@ public ref partial struct CSharpParserState
         else
         {
             return false;
-        }*/
+        }
     }
     
     public readonly void SetLabelDeclarationNodeByScope(
@@ -1419,7 +1422,7 @@ public ref partial struct CSharpParserState
         TextEditorTextSpan referenceTextSpan,
         LabelDeclarationNode labelDeclarationNode)
     {
-        /*LabelDeclarationNode? matchNode = null;
+        SyntaxNodeValue matchNode = default;
         int index = Compilation.NodeOffset;
         for (; index < Compilation.NodeOffset + Compilation.NodeLength; index++)
         {
@@ -1428,9 +1431,9 @@ public ref partial struct CSharpParserState
             if (node.ParentScopeSubIndex == scopeSubIndex &&
                 node.SyntaxKind == SyntaxKind.LabelDeclarationNode)
             {
-                if (Binder.CSharpCompilerService.SafeCompareTextSpans(ResourceUri.Value, referenceTextSpan, ResourceUri.Value, GetIdentifierTextSpan(node)))
+                if (Binder.CSharpCompilerService.SafeCompareTextSpans(ResourceUri.Value, referenceTextSpan, ResourceUri.Value, node.IdentifierToken.TextSpan))
                 {
-                    matchNode = (LabelDeclarationNode)node;
+                    matchNode = node;
                     break;
                 }
             }
@@ -1439,8 +1442,14 @@ public ref partial struct CSharpParserState
         if (index != -1)
         {
             labelDeclarationNode.ParentScopeSubIndex = scopeSubIndex;
-            Binder.NodeList[index] = labelDeclarationNode;
-        }*/
+            Binder.NodeList[index] = new SyntaxNodeValue(
+                labelDeclarationNode.IdentifierToken,
+                ResourceUri,
+                labelDeclarationNode.IsFabricated,
+                labelDeclarationNode.SyntaxKind,
+                labelDeclarationNode.ParentScopeSubIndex,
+                selfScopeSubIndex: -1);
+        }
     }
     
     

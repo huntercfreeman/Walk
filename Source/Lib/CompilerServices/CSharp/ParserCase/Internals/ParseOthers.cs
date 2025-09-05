@@ -14,8 +14,7 @@ public static class ParseOthers
     /// </summary>
     public static SyntaxToken HandleNamespaceIdentifier(ref CSharpParserState parserModel, bool isNamespaceStatement)
     {
-        return default;
-        /*NamespacePrefixNode? namespacePrefixNode = parserModel.Binder.NamespacePrefixTree.__Root;
+        // NamespacePrefixNode? namespacePrefixNode = parserModel.Binder.NamespacePrefixTree.__Root;
 
         TextEditorTextSpan textSpan = default;
         int count = 0;
@@ -43,7 +42,7 @@ public static class ParseOthers
 
                 charIntSum += matchedToken.TextSpan.CharIntSum;
                 
-                if (isNamespaceStatement)
+                /*if (isNamespaceStatement)
                 {
                     var tuple = parserModel.Binder.FindPrefix_WithInsertionIndex(
                         namespacePrefixNode,
@@ -68,7 +67,7 @@ public static class ParseOthers
                         namespacePrefixNode.Children.Insert(tuple.InsertionIndex, newNode);
                         namespacePrefixNode = newNode;
                     }
-                }
+                }*/
 
                 if (parserModel.TokenWalker.Next.SyntaxKind != SyntaxKind.StatementDelimiterToken)
                 {
@@ -118,7 +117,7 @@ public static class ParseOthers
                 textSpan));
         ++parserModel.Compilation.SymbolLength;
 
-        return new SyntaxToken(SyntaxKind.IdentifierToken, textSpan);*/
+        return new SyntaxToken(SyntaxKind.IdentifierToken, textSpan);
     }
     
     /// <summary>
