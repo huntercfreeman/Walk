@@ -1027,8 +1027,10 @@ public static class ParseExpressions
         ref SyntaxToken token,
         ref CSharpParserState parserModel)
     {
-        return parserModel.Rent_TypeClauseNode();
-        /*_ = parserModel.TryGetTypeDefinitionHierarchically(
+        if (token.SyntaxKind == SyntaxKind.NotApplicable)
+            return parserModel.Rent_TypeClauseNode();
+        
+        _ = parserModel.TryGetTypeDefinitionHierarchically(
                 parserModel.ResourceUri,
                 parserModel.Compilation,
                 parserModel.ScopeCurrentSubIndex,
@@ -1074,7 +1076,7 @@ public static class ParseExpressions
             }
         }
         
-        return typeClauseNode;*/
+        return typeClauseNode;
     }
     
     /// <summary>
