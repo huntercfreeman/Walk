@@ -984,7 +984,7 @@ public class ParseDefaultKeywords
                     identifierToken.TextSpan,
                     out SyntaxNodeValue previousTypeDefinitionNode))
             {
-                var typeDefinitionMetadata = parserModel.Binder.TypeDefinitionTraitsList[previousTypeDefinitionNode.MetaIndex];
+                var typeDefinitionMetadata = parserModel.Binder.TypeDefinitionTraitsList[previousTypeDefinitionNode.TraitsIndex];
                 typeDefinitionNode.IndexPartialTypeDefinition = typeDefinitionMetadata.IndexPartialTypeDefinition;
             }
         }
@@ -1066,7 +1066,7 @@ public class ParseDefaultKeywords
                                 if (!previousNode.IsDefault())
                                 {
                                     var previousTypeDefinitionNode = previousNode;
-                                    var previousTypeDefinitionMetadata = parserModel.Binder.TypeDefinitionTraitsList[previousTypeDefinitionNode.MetaIndex];
+                                    var previousTypeDefinitionMetadata = parserModel.Binder.TypeDefinitionTraitsList[previousTypeDefinitionNode.TraitsIndex];
                                     typeDefinitionNode.IndexPartialTypeDefinition = previousTypeDefinitionMetadata.IndexPartialTypeDefinition;
                                 }
                             }
@@ -1243,9 +1243,9 @@ public class ParseDefaultKeywords
                             var innerTypeDefinitionNode = parserModel.Binder.NodeList[
                                 innerCompilationUnit.NodeOffset +
                                 parserModel.Binder.ScopeList[innerCompilationUnit.ScopeOffset + partialTypeDefinitionEntry.ScopeSubIndex].NodeSubIndex];
-                            var innerTypeDefinitionMetadata = parserModel.Binder.TypeDefinitionTraitsList[innerTypeDefinitionNode.MetaIndex];
+                            var innerTypeDefinitionMetadata = parserModel.Binder.TypeDefinitionTraitsList[innerTypeDefinitionNode.TraitsIndex];
                             innerTypeDefinitionMetadata.IndexPartialTypeDefinition = partialTypeDefinitionEntry.IndexStartGroup + 1;
-                            parserModel.Binder.TypeDefinitionTraitsList[innerTypeDefinitionNode.MetaIndex] = innerTypeDefinitionMetadata;
+                            parserModel.Binder.TypeDefinitionTraitsList[innerTypeDefinitionNode.TraitsIndex] = innerTypeDefinitionMetadata;
                         }
                     }
                     

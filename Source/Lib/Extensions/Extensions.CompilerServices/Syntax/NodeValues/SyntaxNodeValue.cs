@@ -27,7 +27,7 @@ public struct SyntaxNodeValue
         SyntaxKind syntaxKind,
         int parentScopeSubIndex,
         int selfScopeSubIndex,
-        int metaIndex)
+        int traitsIndex)
     {
         IdentifierToken = identifierToken;
         ResourceUri = resourceUri;
@@ -35,7 +35,7 @@ public struct SyntaxNodeValue
         SyntaxKind = syntaxKind;
         ParentScopeSubIndex = parentScopeSubIndex;
         SelfScopeSubIndex = selfScopeSubIndex;
-        MetaIndex = metaIndex;
+        TraitsIndex = traitsIndex;
     }
 
     public SyntaxToken IdentifierToken { get; set; }
@@ -44,7 +44,7 @@ public struct SyntaxNodeValue
     public SyntaxKind SyntaxKind { get; set; }
     public int ParentScopeSubIndex { get; set; }
     public int SelfScopeSubIndex { get; set; }
-    public int MetaIndex { get; set; }
+    public int TraitsIndex { get; set; }
     
     public bool IsDefault()
     {

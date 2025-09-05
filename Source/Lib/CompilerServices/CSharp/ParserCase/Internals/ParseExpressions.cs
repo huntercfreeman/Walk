@@ -1118,7 +1118,7 @@ public static class ParseExpressions
                 var token = ambiguousIdentifierExpressionNode.Token;
                 var identifierToken = UtilityApi.ConvertToIdentifierToken(ref token, ref parserModel);
                 
-                var existingVariableDeclarationTraits = parserModel.Binder.VariableDeclarationTraitsList[existingVariableDeclarationNode.MetaIndex];
+                var existingVariableDeclarationTraits = parserModel.Binder.VariableDeclarationTraitsList[existingVariableDeclarationNode.TraitsIndex];
                 var variableReferenceNode = parserModel.ConstructAndBindVariableReferenceNode(identifierToken, shouldCreateSymbol: false);
                 var symbolId = parserModel.CreateVariableSymbol(variableReferenceNode.VariableIdentifierToken, existingVariableDeclarationTraits.VariableKind);
                 
@@ -3545,7 +3545,7 @@ public static class ParseExpressions
                 
                 var variableReferenceNode = parserModel.Rent_VariableReferenceNode();
                 variableReferenceNode.VariableIdentifierToken = memberIdentifierToken;
-                var variableDeclarationTraits = parserModel.Binder.VariableDeclarationTraitsList[variableDeclarationNode.MetaIndex];
+                var variableDeclarationTraits = parserModel.Binder.VariableDeclarationTraitsList[variableDeclarationNode.TraitsIndex];
                 variableReferenceNode.TypeReference = variableDeclarationTraits.ResultTypeReference;
                 var symbolId = parserModel.CreateVariableSymbol(variableReferenceNode.VariableIdentifierToken, variableDeclarationTraits.VariableKind);
                 
@@ -3578,7 +3578,7 @@ public static class ParseExpressions
                 
                 var functionInvocationNode = parserModel.Rent_FunctionInvocationNode();
                 functionInvocationNode.FunctionInvocationIdentifierToken = memberIdentifierToken;
-                var functionDefinitionTraits = parserModel.Binder.FunctionDefinitionTraitsList[functionDefinitionNode.MetaIndex];
+                var functionDefinitionTraits = parserModel.Binder.FunctionDefinitionTraitsList[functionDefinitionNode.TraitsIndex];
                 functionInvocationNode.ResultTypeReference = functionDefinitionTraits.ReturnTypeReference;
                 
                 var symbolId = parserModel.GetNextSymbolId();
@@ -4074,7 +4074,7 @@ public static class ParseExpressions
                         maybeFunctionDefinitionNode.SyntaxKind == SyntaxKind.FunctionDefinitionNode)
                     {
                         var functionDefinitionNode = maybeFunctionDefinitionNode;
-                        var functionDefinitionTraits = parserModel.Binder.FunctionDefinitionTraitsList[functionDefinitionNode.MetaIndex];
+                        var functionDefinitionTraits = parserModel.Binder.FunctionDefinitionTraitsList[functionDefinitionNode.TraitsIndex];
                     
                         if (functionDefinitionTraits.CountFunctionArgumentEntryList > invocationNode.CountFunctionParameterEntryList)
                         {

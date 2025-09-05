@@ -993,18 +993,18 @@ public sealed class CSharpCompilerService : IExtendedCompilerService
                     if (definitionNode.SyntaxKind == SyntaxKind.VariableReferenceNode)
                     {
                         var variableReferenceNode = definitionNode;
-                        var variableTraits = __CSharpBinder.VariableDeclarationTraitsList[variableReferenceNode.MetaIndex];
+                        var variableTraits = __CSharpBinder.VariableDeclarationTraitsList[variableReferenceNode.TraitsIndex];
                         typeReference = variableTraits.ResultTypeReference;
                     }
                     else if (definitionNode.SyntaxKind == SyntaxKind.VariableDeclarationNode)
                     {
                         var variableDeclarationNode = definitionNode;
-                        var variableTraits = __CSharpBinder.VariableDeclarationTraitsList[variableDeclarationNode.MetaIndex];
+                        var variableTraits = __CSharpBinder.VariableDeclarationTraitsList[variableDeclarationNode.TraitsIndex];
                         typeReference = variableTraits.ResultTypeReference;
                     }
                     else if (definitionNode.SyntaxKind == SyntaxKind.FunctionInvocationNode)
                     {
-                        var functionInvocationTraits = __CSharpBinder.FunctionDefinitionTraitsList[definitionNode.MetaIndex];
+                        var functionInvocationTraits = __CSharpBinder.FunctionDefinitionTraitsList[definitionNode.TraitsIndex];
                         typeReference = functionInvocationTraits.ReturnTypeReference;
                     }
                     else if (definitionNode.SyntaxKind == SyntaxKind.TypeClauseNode)
@@ -1554,7 +1554,7 @@ public sealed class CSharpCompilerService : IExtendedCompilerService
             var typeDefinitionNode = definitionNode;
             resourceUriValue = typeDefinitionNode.ResourceUri.Value;
             indexInclusiveStart = typeDefinitionNode.IdentifierToken.TextSpan.StartInclusiveIndex;
-            var typeDefinitionTraits = TypeDefinitionTraitsList[typeDefinitionNode.MetaIndex];
+            var typeDefinitionTraits = TypeDefinitionTraitsList[typeDefinitionNode.TraitsIndex];
             indexPartialTypeDefinition = typeDefinitionTraits.IndexPartialTypeDefinition;
         }
         else if (definitionNode.SyntaxKind == SyntaxKind.VariableDeclarationNode)

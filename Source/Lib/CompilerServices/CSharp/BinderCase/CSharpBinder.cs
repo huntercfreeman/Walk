@@ -675,7 +675,7 @@ public partial class CSharpBinder
             if (node.SyntaxKind == SyntaxKind.TypeDefinitionNode)
             {
                 var typeDefinitionNode = node;
-                var typeDefinitionMetadata = TypeDefinitionTraitsList[typeDefinitionNode.MetaIndex];
+                var typeDefinitionMetadata = TypeDefinitionTraitsList[typeDefinitionNode.TraitsIndex];
                 if (typeDefinitionMetadata.IndexPartialTypeDefinition != -1)
                 {
                     int positionExclusive = typeDefinitionMetadata.IndexPartialTypeDefinition;
@@ -824,7 +824,7 @@ public partial class CSharpBinder
         SyntaxNodeValue typeDefinitionNode,
         out SyntaxNodeValue variableDeclarationNode)
     {
-        var typeMetadata = TypeDefinitionTraitsList[typeDefinitionNode.MetaIndex];
+        var typeMetadata = TypeDefinitionTraitsList[typeDefinitionNode.TraitsIndex];
         
         if (typeMetadata.IndexPartialTypeDefinition != -1)
         {
@@ -916,7 +916,7 @@ public partial class CSharpBinder
             if (!isRecursive && scope.OwnerSyntaxKind == SyntaxKind.TypeDefinitionNode)
             {
                 var typeDefinitionNode = NodeList[compilationUnit.NodeOffset + scope.NodeSubIndex];
-                var typeMetadata = TypeDefinitionTraitsList[typeDefinitionNode.MetaIndex];
+                var typeMetadata = TypeDefinitionTraitsList[typeDefinitionNode.TraitsIndex];
                 if (typeMetadata.IndexPartialTypeDefinition != -1)
                 {
                     if (TryGetVariableDeclarationByPartialType(
@@ -1616,7 +1616,7 @@ public partial class CSharpBinder
     
     public IEnumerable<SyntaxNodeValue> GetMemberList_TypeDefinitionNode(SyntaxNodeValue typeDefinitionNode)
     {
-        var typeDefinitionMetadata = TypeDefinitionTraitsList[typeDefinitionNode.MetaIndex];
+        var typeDefinitionMetadata = TypeDefinitionTraitsList[typeDefinitionNode.TraitsIndex];
         return GetMemberList_TypeDefinitionNode(typeDefinitionNode.ResourceUri, typeDefinitionNode.SelfScopeSubIndex, typeDefinitionMetadata.IndexPartialTypeDefinition);
     }
     
@@ -1755,7 +1755,7 @@ public partial class CSharpBinder
             }
         }*/
         
-        var typeDefinitionTraits = TypeDefinitionTraitsList[typeDefinitionNode.MetaIndex];
+        var typeDefinitionTraits = TypeDefinitionTraitsList[typeDefinitionNode.TraitsIndex];
         if (typeDefinitionTraits.IndexPartialTypeDefinition != -1)
         {
             int positionExclusive = typeDefinitionTraits.IndexPartialTypeDefinition;

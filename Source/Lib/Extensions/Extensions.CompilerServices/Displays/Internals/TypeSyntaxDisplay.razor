@@ -38,7 +38,7 @@
 	else if (!syntaxViewModelLocal.DefinitionNode.IsDefault() && syntaxViewModelLocal.DefinitionNode.SyntaxKind == SyntaxKind.TypeDefinitionNode)
 	{
 		var typeDefinitionNode = syntaxViewModelLocal.DefinitionNode;
-		var typeDefinitionMetadata = syntaxViewModelLocal.ExtendedCompilerService.TypeDefinitionTraitsList[typeDefinitionNode.MetaIndex];
+		var typeDefinitionMetadata = syntaxViewModelLocal.ExtendedCompilerService.TypeDefinitionTraitsList[typeDefinitionNode.TraitsIndex];
 	
 		var prefixBuilder = new StringBuilder();
 		prefixBuilder.Append(typeDefinitionMetadata.AccessModifierKind.ToString().ToLower());
