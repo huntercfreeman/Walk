@@ -26,10 +26,10 @@ using Walk.Extensions.DotNet.Nugets.Models;
 using Walk.Extensions.DotNet.TestExplorers.Models;
 using Walk.Extensions.CompilerServices.Syntax;
 using Walk.Extensions.CompilerServices.Syntax.Nodes;
-using Walk.Extensions.CompilerServices.Syntax.Nodes.Enums;
 using Walk.CompilerServices.Xml;
 using Walk.Ide.RazorLib;
 using Walk.Ide.RazorLib.Terminals.Models;
+using Walk.Extensions.CompilerServices.Syntax.Enums;
 
 namespace Walk.Extensions.DotNet;
 

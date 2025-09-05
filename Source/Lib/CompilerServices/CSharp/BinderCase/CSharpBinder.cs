@@ -1,14 +1,15 @@
 using Walk.TextEditor.RazorLib.Lexers.Models;
 using Walk.TextEditor.RazorLib;
-using Walk.Extensions.CompilerServices.Utility;
 using Walk.Extensions.CompilerServices.Syntax;
 using Walk.Extensions.CompilerServices.Syntax.Nodes;
-using Walk.Extensions.CompilerServices.Syntax.Nodes.Interfaces;
-using Walk.Extensions.CompilerServices.Syntax.Nodes.Enums;
 using Walk.CompilerServices.CSharp.Facts;
 using Walk.CompilerServices.CSharp.ParserCase;
 using Walk.CompilerServices.CSharp.CompilerServiceCase;
 using Walk.Extensions.CompilerServices.Syntax.Values;
+using Walk.Extensions.CompilerServices.Syntax.Enums;
+using Walk.Extensions.CompilerServices.Syntax.Interfaces;
+using Walk.Extensions.CompilerServices.Syntax.Utility;
+using Walk.Extensions.CompilerServices.Syntax.NodeValues;
 
 namespace Walk.CompilerServices.CSharp.BinderCase;
 

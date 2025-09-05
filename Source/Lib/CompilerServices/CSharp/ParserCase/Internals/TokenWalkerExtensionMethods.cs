@@ -1,6 +1,6 @@
 using Walk.TextEditor.RazorLib.CompilerServices;
-using Walk.Extensions.CompilerServices.Utility;
 using Walk.Extensions.CompilerServices.Syntax;
+using Walk.Extensions.CompilerServices.Syntax.Utility;
 
 namespace Walk.CompilerServices.CSharp.ParserCase.Internals;
 

@@ -8,8 +8,8 @@ using Walk.TextEditor.RazorLib.TextEditors.Models.Internals;
 using Walk.TextEditor.RazorLib.TextEditors.Displays.Internals;
 using Walk.Extensions.CompilerServices.Syntax;
 using Walk.Extensions.CompilerServices.Syntax.Nodes;
-using Walk.Extensions.CompilerServices.Syntax.Nodes.Interfaces;
 using Walk.CompilerServices.CSharp.CompilerServiceCase;
+using Walk.Extensions.CompilerServices.Syntax.Interfaces;
 
 namespace Walk.CompilerServices.Razor;
 

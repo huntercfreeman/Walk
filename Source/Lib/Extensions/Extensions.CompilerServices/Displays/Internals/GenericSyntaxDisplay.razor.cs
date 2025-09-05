@@ -1,5 +1,5 @@
 using Microsoft.AspNetCore.Components;
-using Walk.Extensions.CompilerServices.Syntax;
+using Walk.Extensions.CompilerServices.Syntax.Values;
 
 namespace Walk.Extensions.CompilerServices.Displays.Internals;
 
