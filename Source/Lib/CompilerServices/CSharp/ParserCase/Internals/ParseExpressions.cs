@@ -1118,8 +1118,9 @@ public static class ParseExpressions
                 var token = ambiguousIdentifierExpressionNode.Token;
                 var identifierToken = UtilityApi.ConvertToIdentifierToken(ref token, ref parserModel);
                 
+                var existingVariableDeclarationTraits = parserModel.Binder.VariableDeclarationTraitsList[existingVariableDeclarationNode.MetaIndex];
                 var variableReferenceNode = parserModel.ConstructAndBindVariableReferenceNode(identifierToken, shouldCreateSymbol: false);
-                var symbolId = parserModel.CreateVariableSymbol(variableReferenceNode.VariableIdentifierToken, VariableKind.Local/*existingVariableDeclarationNode.VariableKind*/);
+                var symbolId = parserModel.CreateVariableSymbol(variableReferenceNode.VariableIdentifierToken, existingVariableDeclarationTraits.VariableKind);
                 
                 if (parserModel.Binder.SymbolIdToExternalTextSpanMap.TryGetValue(parserModel.ResourceUri.Value, out var symbolIdToExternalTextSpanMap) &&
                     existingVariableDeclarationNode.ResourceUri != parserModel.ResourceUri)
