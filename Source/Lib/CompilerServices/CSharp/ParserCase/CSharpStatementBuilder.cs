@@ -97,7 +97,7 @@ public class CSharpStatementBuilder
         MostRecentNode = Walk.Extensions.CompilerServices.Syntax.Nodes.EmptyExpressionNode.Empty;
         ChildList.Clear();
         
-        if (ParseLambdaStatementScopeStack.Count > 0)
+        /*if (ParseLambdaStatementScopeStack.Count > 0)
         {
             var tuple = ParseLambdaStatementScopeStack.Peek();
             
@@ -107,7 +107,7 @@ public class CSharpStatementBuilder
                 tuple.DeferredChildScope.PrepareMainParserLoop(finishTokenIndex, ref parserModel);
                 return true;
             }
-        }
+        }*/
         
         return false;
     }
