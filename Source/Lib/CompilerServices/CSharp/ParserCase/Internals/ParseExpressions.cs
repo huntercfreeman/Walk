@@ -3625,8 +3625,7 @@ public static class ParseExpressions
     private static IExpressionNode ParseMemberAccessToken_UndefinedNode(
         IExpressionNode expressionPrimary, SyntaxToken memberIdentifierToken, ref CSharpParserState parserModel)
     {
-        return expressionPrimary;
-        /*if (parserModel.TokenWalker.Current.SyntaxKind == SyntaxKind.OpenParenthesisToken ||
+        if (parserModel.TokenWalker.Current.SyntaxKind == SyntaxKind.OpenParenthesisToken ||
             parserModel.TokenWalker.Current.SyntaxKind == SyntaxKind.OpenAngleBracketToken)
         {
             var ambiguousIdentifier = parserModel.Rent_AmbiguousIdentifierExpressionNode();
@@ -3635,7 +3634,7 @@ public static class ParseExpressions
         }
         else
         {
-            if (expressionPrimary.SyntaxKind == SyntaxKind.NamespaceClauseNode)
+            /*if (expressionPrimary.SyntaxKind == SyntaxKind.NamespaceClauseNode)
             {
                 var firstNamespaceClauseNode = (NamespaceClauseNode)expressionPrimary;
                 NamespacePrefixNode? firstNamespacePrefixNode = firstNamespaceClauseNode.NamespacePrefixNode;
@@ -3753,7 +3752,7 @@ public static class ParseExpressions
                     parserModel.Return_NamespaceClauseNode(targetNodeB);
                     targetNodeB = temporaryNode;
                 }
-            }
+            }*/
             
             if (UtilityApi.IsConvertibleToIdentifierToken(parserModel.TokenWalker.Current.SyntaxKind) &&
                 parserModel.TokenWalker.Current.SyntaxKind != SyntaxKind.WithTokenContextualKeyword)
@@ -3766,11 +3765,11 @@ public static class ParseExpressions
             {
                 var variableReferenceNode = parserModel.Rent_VariableReferenceNode();
                 variableReferenceNode.VariableIdentifierToken = memberIdentifierToken;
-                variableReferenceNode.VariableDeclarationNode = null;
+                variableReferenceNode.TypeReference = TypeFacts.Empty.ToTypeReference();
                 _ = parserModel.CreateVariableSymbol(variableReferenceNode.VariableIdentifierToken, VariableKind.Property);
                 return variableReferenceNode;
             }
-        }*/
+        }
     }
     
     private static IExpressionNode AmbiguousParenthesizedExpressionTransformTo_ParenthesizedExpressionNode(
