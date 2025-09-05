@@ -79,7 +79,7 @@ public partial class SymbolDisplay : ComponentBase
     ///
     /// The 'targetNode' is whichever node the ISymbol directly mapped to.
     /// </summary>
-    public static ISyntaxNode? GetTargetNode(TextEditorService textEditorService, Symbol symbolLocal, ResourceUri resourceUri)
+    public static ISyntaxNode? GetTargetNodeValue(TextEditorService textEditorService, Symbol symbolLocal, ResourceUri resourceUri)
     {
         try
         {
@@ -110,7 +110,7 @@ public partial class SymbolDisplay : ComponentBase
     ///
     /// Otherwise, ask the IBinder for the definition node:
     /// </summary>
-    public static SyntaxNodeValue GetDefinitionNode(TextEditorService textEditorService, Symbol symbolLocal, SyntaxNodeValue targetNode, ResourceUri resourceUri)
+    public static SyntaxNodeValue GetDefinitionNodeValue(TextEditorService textEditorService, Symbol symbolLocal, SyntaxNodeValue targetNode, ResourceUri resourceUri)
     {
         try
         {

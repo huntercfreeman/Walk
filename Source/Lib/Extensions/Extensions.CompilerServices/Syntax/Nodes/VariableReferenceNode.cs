@@ -9,7 +9,7 @@ public sealed class VariableReferenceNode : IExpressionNode
         VariableDeclarationNode variableDeclarationNode)
     {
         VariableIdentifierToken = variableIdentifierToken;
-        ResultTypeReference = variableDeclarationNode.TypeReference;
+        //ResultTypeReference = variableDeclarationNode.TypeReference;
     }
     
     public VariableReferenceNode(VariableReference variableReference)

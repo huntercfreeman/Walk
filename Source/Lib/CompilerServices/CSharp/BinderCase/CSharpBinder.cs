@@ -1962,7 +1962,7 @@ public class CSharpBinder
             .SelectMany(GetTopLevelTypeDefinitionNodes_NamespaceStatementNode);
     }
     
-    private readonly List<TypeDefinitionNode> _getTopLevelTypeDefinitionNodes = new();
+    private readonly List<SyntaxNodeValue> _getTopLevelTypeDefinitionNodes = new();
 
     /// <summary>Object-allocation-less version of the public version for internal use.</summary>
     internal List<SyntaxNodeValue> Internal_GetTopLevelTypeDefinitionNodes_NamespaceStatementNode(
@@ -1974,8 +1974,10 @@ public class CSharpBinder
             // This allows Internal_GetTopLevelTypeDefinitionNodes_NamespaceGroup(...) to "select many".
             _getTopLevelTypeDefinitionNodes.Clear();
         }
+        
+        return _getTopLevelTypeDefinitionNodes;
     
-        if (namespaceStatementNode.SelfScopeSubIndex == -1 ||
+        /*if (namespaceStatementNode.SelfScopeSubIndex == -1 ||
             !__CompilationUnitMap.TryGetValue(namespaceStatementNode.ResourceUri, out var compilationUnit))
         {
             return _getTopLevelTypeDefinitionNodes;
@@ -1989,7 +1991,7 @@ public class CSharpBinder
                 _getTopLevelTypeDefinitionNodes.Add((TypeDefinitionNode)node);
         }
         
-        return _getTopLevelTypeDefinitionNodes;
+        return _getTopLevelTypeDefinitionNodes;*/
     }
     
     /// <summary>Object-allocation-less version of the public version for internal use.</summary>
