@@ -3,17 +3,15 @@ using Walk.TextEditor.RazorLib;
 using Walk.Extensions.CompilerServices.Syntax;
 using Walk.Extensions.CompilerServices.Syntax.Nodes;
 using Walk.CompilerServices.CSharp.Facts;
-using Walk.CompilerServices.CSharp.ParserCase;
 using Walk.CompilerServices.CSharp.CompilerServiceCase;
 using Walk.Extensions.CompilerServices.Syntax.Values;
 using Walk.Extensions.CompilerServices.Syntax.Enums;
 using Walk.Extensions.CompilerServices.Syntax.Interfaces;
-using Walk.Extensions.CompilerServices.Syntax.Utility;
 using Walk.Extensions.CompilerServices.Syntax.NodeValues;
 
 namespace Walk.CompilerServices.CSharp.BinderCase;
 
-public class CSharpBinder
+public partial class CSharpBinder
 {
     /// <summary>
     /// This is not thread safe to access because 'BindNamespaceStatementNode(...)' will directly modify the NamespaceGroup's List.
@@ -21,17 +19,17 @@ public class CSharpBinder
     /// TODO: Don't have this be public
     /// </summary>
     public readonly List<NamespaceGroup> _namespaceGroupList = new();
-    private readonly NamespaceStatementNode _topLevelNamespaceStatementNode;
+    //private readonly NamespaceStatementNode _topLevelNamespaceStatementNode;
     
-    public List<PartialTypeDefinition> PartialTypeDefinitionList { get; } = new();
-    public List<MethodOverloadDefinition> MethodOverloadDefinitionList { get; } = new();
-    public bool MethodOverload_ResourceUri_WasCleared { get; set; }
+    public List<PartialTypeDefinitionValue> PartialTypeDefinitionList { get; } = new();
+    //public List<MethodOverloadDefinition> MethodOverloadDefinitionList { get; } = new();
+    //public bool MethodOverload_ResourceUri_WasCleared { get; set; }
     
     /// <summary>
     /// This is not thread safe to access because 'BindNamespaceStatementNode(...)' will directly modify the NamespaceGroup's List.
     /// </summary>
     public List<NamespaceGroup> NamespaceGroupMap => _namespaceGroupList;
-    public List<TypeDefinitionNode> AllTypeDefinitionList { get; } = new();
+    //public List<TypeDefinitionNode> AllTypeDefinitionList { get; } = new();
     
     /// <summary>
     /// CONFUSING: During a parse the "previous" CSharpCompilationUnit gets read from here...
@@ -39,29 +37,13 @@ public class CSharpBinder
     /// </summary>
     public Dictionary<ResourceUri, CSharpCompilationUnit> __CompilationUnitMap { get; } = new();
     
-    public NamespacePrefixTree NamespacePrefixTree { get; } = new();
+    // public NamespacePrefixTree NamespacePrefixTree { get; } = new();
     
-    public NamespaceStatementNode TopLevelNamespaceStatementNode => _topLevelNamespaceStatementNode;
-    
-    public Stack<(int ScopeSubIndex, CSharpDeferredChildScope DeferredChildScope)> CSharpParserModel_ParseChildScopeStack { get; } = new();
-    public List<(SyntaxKind DelimiterSyntaxKind, IExpressionNode? ExpressionNode)> CSharpParserModel_ExpressionList { get; set; } = new();
-    public List<SyntaxKind> CSharpParserModel_TryParseExpressionSyntaxKindList { get; } = new();
-    public HashSet<string> CSharpParserModel_ClearedPartialDefinitionHashSet { get; } = new();
-    public List<SyntaxNodeValue> CSharpParserModel_ExternalTypeDefinitionList { get; } = new();
-    public CSharpStatementBuilder CSharpParserModel_StatementBuilder { get; } = new();
-    
-    public TokenWalker CSharpParserModel_TokenWalker { get; } = new(Array.Empty<SyntaxToken>(), useDeferredParsing: true);
-    
-    /// <summary>
-    /// This is cleared at the start of a new parse, inside the CSharpParserModel constructor.
-    /// </summary>
-    public List<TextEditorTextSpan> CSharpParserModel_AddedNamespaceList { get; } = new();
+    public NamespaceStatementNode TopLevelNamespaceStatementNode { get; private set; }
     
     public List<GenericParameter> GenericParameterList { get; } = new();
     public List<FunctionParameter> FunctionParameterList { get; } = new();
     public List<FunctionArgument> FunctionArgumentList { get; } = new();
-    public List<ISyntaxNode> AmbiguousParenthesizedExpressionNodeChildList { get; } = new();
-    public List<VariableDeclarationNode> LambdaExpressionNodeChildList { get; } = new();
     public List<FunctionInvocationParameterMetadata> FunctionInvocationParameterMetadataList { get; } = new();
     public List<NamespaceContribution> NamespaceContributionList { get; } = new();
     public Dictionary<string, Dictionary<int, (ResourceUri ResourceUri, int StartInclusiveIndex)>> SymbolIdToExternalTextSpanMap { get; } = new();
@@ -74,77 +56,6 @@ public class CSharpBinder
     public List<FunctionDefinitionTraits> FunctionDefinitionTraitsList { get; } = new();
     public List<ConstructorDefinitionTraits> ConstructorDefinitionTraitsList { get; } = new();
     public List<VariableDeclarationTraits> VariableDeclarationTraitsList { get; } = new();
-
-    /// <summary>
-    /// This list is used within TextEditorEditContext and for the lexers to re-use by clearing it prior to starting the lexing.
-    /// </summary>
-    internal readonly List<SyntaxToken> LEXER_syntaxTokenList = new();
-
-    public char[] KeywordCheckBuffer { get; } = new char[10];
-    
-    internal const int POOL_TEMPORARY_LOCAL_VARIABLE_DECLARATION_NODE_MAX_COUNT = 3;
-    /// <summary>This is only safe to use while parsing</summary>
-    public readonly Queue<VariableDeclarationNode> Pool_TemporaryLocalVariableDeclarationNode_Queue = new();
-    
-    internal const int POOL_BINARY_EXPRESSION_NODE_MAX_COUNT = 3;
-    /// <summary>This is only safe to use while parsing</summary>
-    internal readonly Queue<BinaryExpressionNode> Pool_BinaryExpressionNode_Queue = new();
-    
-    internal const int POOL_TYPE_CLAUSE_NODE_MAX_COUNT = 3;
-    /// <summary>This is only safe to use while parsing</summary>
-    internal readonly Queue<TypeClauseNode> Pool_TypeClauseNode_Queue = new();
-    
-    internal const int POOL_VARIABLE_REFERENCE_NODE_MAX_COUNT = 3;
-    /// <summary>This is only safe to use while parsing</summary>
-    internal readonly Queue<VariableReferenceNode> Pool_VariableReferenceNode_Queue = new();
-    
-    // When parsing Walk.sln solution wide:
-    //
-    // Count of 3 => Pool_NamespaceClauseNode_%: 81.5%
-    // Count of 4 => Pool_NamespaceClauseNode_%: 89.9%
-    // Count of 5 => Pool_NamespaceClauseNode_%: 97.9%
-    // Count of 6 => Pool_NamespaceClauseNode_%: 98.0%
-    // Count of 7 => Pool_NamespaceClauseNode_%: 98.1%
-    // Count of 8 => Pool_NamespaceClauseNode_%: 98.2%
-    // Count of 9 => Pool_NamespaceClauseNode_%: 98.2%
-    // Count of 18 => Pool_NamespaceClauseNode_%: 98.8%
-    // Count of 50 => Pool_NamespaceClauseNode_%: 100.0%
-    // Count of 25 => Pool_NamespaceClauseNode_%: 99.3%
-    //
-    // Likely you don't actually have 25 namespace clause nodes one after another.
-    //
-    // Probably just have an edge case that results in no return, but it is occurring so minimally
-    // that you can just increase the count in the pool and observe a % hit increase that is oddly high.
-    //
-    // I don't commonly use explicit namespace qualification.
-    // Thus I would probably pick '5' since that is where the value slows down greatly.
-    //
-    // But, I also might not have a fair measurement of what the impact of '6' would be,
-    // due to me not commonly using explicit namespace qualification.
-    //
-    // Therefore, I'll go 1 higher than what I'd pick.
-    // So, I'd pick '5' thus go 1 higher and pick '6'.
-    // 
-    internal const int POOL_NAMESPACE_CLAUSE_NODE_MAX_COUNT = 6;
-    /// <summary>This is only safe to use while parsing</summary>
-    internal readonly Queue<NamespaceClauseNode> Pool_NamespaceClauseNode_Queue = new();
-    
-    internal const int POOL_AMBIGUOUS_IDENTIFIER_EXPRESSION_NODE_MAX_COUNT = 3;
-    /// <summary>This is only safe to use while parsing</summary>
-    internal readonly Queue<AmbiguousIdentifierNode> Pool_AmbiguousIdentifierExpressionNode_Queue = new();
-    
-    internal const int POOL_CONSTRUCTOR_INVOCATION_EXPRESSION_NODE_MAX_COUNT = 3;
-    /// <summary>This is only safe to use while parsing</summary>
-    internal readonly Queue<ConstructorInvocationNode> Pool_ConstructorInvocationExpressionNode_Queue = new();
-    
-    internal const int POOL_FUNCTION_INVOCATION_NODE_MAX_COUNT = 3;
-    /// <summary>This is only safe to use while parsing</summary>
-    internal readonly Queue<FunctionInvocationNode> Pool_FunctionInvocationNode_Queue = new();
-        
-    public BadExpressionNode Shared_BadExpressionNode { get; } = new BadExpressionNode(
-        CSharpFacts.Types.Void.ToTypeReference(),
-        EmptyExpressionNode.Empty,
-        EmptyExpressionNode.Empty);
     
     public TextEditorService TextEditorService { get; set; }
     public CSharpCompilerService CSharpCompilerService { get; set; }
@@ -153,7 +64,7 @@ public class CSharpBinder
     
     public CSharpBinder(TextEditorService textEditorService, CSharpCompilerService cSharpCompilerService)
     {
-        _topLevelNamespaceStatementNode = new NamespaceStatementNode(
+        TopLevelNamespaceStatementNode = new NamespaceStatementNode(
             new(SyntaxKind.UnrecognizedTokenKeyword, new(0, 0, 0)),
             new(SyntaxKind.IdentifierToken, new(0, 0, 0)),
             ResourceUri.Empty);
@@ -163,18 +74,18 @@ public class CSharpBinder
                 charIntSum: 0,
                 new List<NamespaceStatementNode>
                 {
-                    _topLevelNamespaceStatementNode
+                    TopLevelNamespaceStatementNode
                 }));
 
         TextEditorService = textEditorService;
         CSharpCompilerService = cSharpCompilerService;
         
-        AllTypeDefinitionList.Add(CSharpFacts.Types.Void);
+        /*AllTypeDefinitionList.Add(CSharpFacts.Types.Void);
         AllTypeDefinitionList.Add(CSharpFacts.Types.Int);
         AllTypeDefinitionList.Add(CSharpFacts.Types.Char);
         AllTypeDefinitionList.Add(CSharpFacts.Types.String);
         AllTypeDefinitionList.Add(CSharpFacts.Types.Bool);
-        AllTypeDefinitionList.Add(CSharpFacts.Types.Var);
+        AllTypeDefinitionList.Add(CSharpFacts.Types.Var);*/
     
         for (int i = 0; i < POOL_BINARY_EXPRESSION_NODE_MAX_COUNT; i++)
         {
@@ -257,7 +168,7 @@ public class CSharpBinder
         });*/
     }
     
-    public NamespacePrefixNode? FindPrefix(NamespacePrefixNode start, TextEditorTextSpan textSpan, string absolutePathString)
+    /*public NamespacePrefixNode? FindPrefix(NamespacePrefixNode start, TextEditorTextSpan textSpan, string absolutePathString)
     {
         var findTuple = NamespacePrefixTree.FindRange(
             start,
@@ -277,9 +188,9 @@ public class CSharpBinder
         }
         
         return null;
-    }
+    }*/
     
-    public (NamespacePrefixNode? Node, int InsertionIndex) FindPrefix_WithInsertionIndex(NamespacePrefixNode start, TextEditorTextSpan textSpan, string absolutePathString)
+    /*public (NamespacePrefixNode? Node, int InsertionIndex) FindPrefix_WithInsertionIndex(NamespacePrefixNode start, TextEditorTextSpan textSpan, string absolutePathString)
     {
         var findTuple = NamespacePrefixTree.FindRange(
             start,
@@ -299,7 +210,7 @@ public class CSharpBinder
         }
         
         return (null, findTuple.InsertionIndex);
-    }
+    }*/
     
     public (NamespaceGroup TargetGroup, int GroupIndex) FindNamespaceGroup_Reversed_WithMatchedIndex(
         ResourceUri resourceUri,
@@ -328,7 +239,7 @@ public class CSharpBinder
     }
 
     /// <summary>(inclusive, exclusive, this is the index at which you'd insert the text span)</summary>
-    public (int StartIndex, int EndIndex, int InsertionIndex) TypeDefinition_FindRange(TextEditorTextSpan textSpan)
+    /*public (int StartIndex, int EndIndex, int InsertionIndex) TypeDefinition_FindRange(TextEditorTextSpan textSpan)
     {
         var startIndex = -1;
         var endIndex = -1;
@@ -355,7 +266,7 @@ public class CSharpBinder
             endIndex = AllTypeDefinitionList.Count;
 
         return (startIndex, endIndex, insertionIndex);
-    }
+    }*/
     
     /// <summary>(inclusive, exclusive, this is the index at which you'd insert the text span)</summary>
     public (int StartIndex, int EndIndex, int InsertionIndex) NamespaceGroup_FindRange(TextEditorTextSpan textSpan)
@@ -1263,7 +1174,7 @@ public class CSharpBinder
             }
             case SyntaxKind.NamespaceSymbol:
             {
-                var matchedPrefix = FindPrefix(NamespacePrefixTree.__Root, textSpan, resourceUri.Value);
+                /*var matchedPrefix = FindPrefix(NamespacePrefixTree.__Root, textSpan, resourceUri.Value);
                 if (matchedPrefix is not null)
                 {
                     return default;
@@ -1310,10 +1221,10 @@ public class CSharpBinder
                             /*return new NamespaceClauseNode(
                                 new SyntaxToken(SyntaxKind.IdentifierToken, textSpan),
                                 namespacePrefixNode,
-                                startOfMemberAccessChainPositionIndex: textSpan.StartInclusiveIndex);*/
+                                startOfMemberAccessChainPositionIndex: textSpan.StartInclusiveIndex);*//*
                         }
                     }
-                }
+                }*/
                 break;
             }
         }

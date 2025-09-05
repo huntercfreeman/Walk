@@ -30,7 +30,7 @@ namespace Walk.Extensions.CompilerServices;
 /// </summary>
 public static class TypeFacts
 {
-    private static readonly TypeReference _notApplicableTypeReference = new TypeReference(
+    private static readonly TypeReferenceValue _notApplicableTypeReference = new TypeReferenceValue(
         typeIdentifier: new SyntaxToken(SyntaxKind.IdentifierToken, new TextEditorTextSpan(0, 13, (byte)GenericDecorationKind.None)),
         openAngleBracketToken: default,
 		indexGenericParameterEntryList: -1,

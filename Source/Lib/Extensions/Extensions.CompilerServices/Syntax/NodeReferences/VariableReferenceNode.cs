@@ -13,7 +13,7 @@ public sealed class VariableReferenceNode : IExpressionNode
         //ResultTypeReference = variableDeclarationNode.TypeReference;
     }
     
-    public VariableReferenceNode(VariableReference variableReference)
+    public VariableReferenceNode(VariableReferenceValue variableReference)
     {
         VariableIdentifierToken = variableReference.VariableIdentifierToken;
         IsFabricated = variableReference.IsFabricated;
@@ -23,8 +23,8 @@ public sealed class VariableReferenceNode : IExpressionNode
     public bool _isFabricated;
 
     public SyntaxToken VariableIdentifierToken { get; set; }
-    public TypeReference TypeReference { get; set; }
-    public TypeReference ResultTypeReference { get; set; } = TypeFacts.Empty.ToTypeReference();
+    public TypeReferenceValue TypeReference { get; set; }
+    public TypeReferenceValue ResultTypeReference { get; set; } = TypeFacts.Empty.ToTypeReference();
 
     public bool IsFabricated
     {

@@ -11,7 +11,7 @@ public sealed class AmbiguousIdentifierNode : IGenericParameterNode
         int indexGenericParameterEntryList,
         int countGenericParameterEntryList,
         SyntaxToken closeAngleBracketToken,
-        TypeReference resultTypeReference)
+        TypeReferenceValue resultTypeReference)
     {
         Token = token;
         
@@ -30,7 +30,7 @@ public sealed class AmbiguousIdentifierNode : IGenericParameterNode
     public int CountGenericParameterEntryList { get; set; }
     public SyntaxToken CloseAngleBracketToken { get; set; }
     
-    public TypeReference ResultTypeReference { get; set; }
+    public TypeReferenceValue ResultTypeReference { get; set; }
     public bool FollowsMemberAccessToken { get; set; }
     public bool HasQuestionMark { get; set; }
 

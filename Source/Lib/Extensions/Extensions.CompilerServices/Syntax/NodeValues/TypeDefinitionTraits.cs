@@ -6,7 +6,7 @@ public struct TypeDefinitionTraits
 {
     public TypeDefinitionTraits(
         int indexPartialTypeDefinition,
-        TypeReference inheritedTypeReference,
+        TypeReferenceValue inheritedTypeReference,
         AccessModifierKind accessModifierKind,
         StorageModifierKind storageModifierKind,
         SyntaxToken openAngleBracketToken)
@@ -19,7 +19,7 @@ public struct TypeDefinitionTraits
     }
     
     public int IndexPartialTypeDefinition { get; set; } = -1;
-    public TypeReference InheritedTypeReference { get; set; }
+    public TypeReferenceValue InheritedTypeReference { get; set; }
     public AccessModifierKind AccessModifierKind { get; set; }
     public StorageModifierKind StorageModifierKind { get; set; }
     public SyntaxToken OpenAngleBracketToken { get; set; }

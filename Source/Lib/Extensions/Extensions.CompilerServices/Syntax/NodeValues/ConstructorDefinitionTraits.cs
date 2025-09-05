@@ -3,7 +3,7 @@ namespace Walk.Extensions.CompilerServices.Syntax.Values;
 public struct ConstructorDefinitionTraits
 {
     public ConstructorDefinitionTraits(
-        TypeReference returnTypeReference,
+        TypeReferenceValue returnTypeReference,
         int indexFunctionArgumentEntryList,
         int countFunctionArgumentEntryList)
     {
@@ -12,7 +12,7 @@ public struct ConstructorDefinitionTraits
         CountFunctionArgumentEntryList = countFunctionArgumentEntryList;
     }
     
-    public TypeReference ReturnTypeReference { get; set; }
+    public TypeReferenceValue ReturnTypeReference { get; set; }
     public int IndexFunctionArgumentEntryList { get; set; }
     public int CountFunctionArgumentEntryList { get; set; }
 }

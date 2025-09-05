@@ -20,12 +20,12 @@ namespace Walk.Extensions.CompilerServices.Syntax.Nodes;
 /// </summary>
 public sealed class LambdaExpressionNode : IExpressionNode, ICodeBlockOwner
 {
-    public LambdaExpressionNode(TypeReference resultTypeReference)
+    public LambdaExpressionNode(TypeReferenceValue resultTypeReference)
     {
         ResultTypeReference = resultTypeReference;
     }
 
-    public TypeReference ResultTypeReference { get; }
+    public TypeReferenceValue ResultTypeReference { get; }
 
     /// <summary>
     /// () => "Abc";
@@ -42,7 +42,7 @@ public sealed class LambdaExpressionNode : IExpressionNode, ICodeBlockOwner
     public bool IsFabricated { get; init; }
     public SyntaxKind SyntaxKind => SyntaxKind.LambdaExpressionNode;
 
-    public TypeReference ReturnTypeReference { get; }
+    public TypeReferenceValue ReturnTypeReference { get; }
 
     public int ParentScopeSubIndex { get; set; } = -1;
     public int SelfScopeSubIndex { get; set; } = -1;

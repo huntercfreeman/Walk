@@ -5,7 +5,7 @@ namespace Walk.Extensions.CompilerServices.Syntax.Nodes;
 
 public sealed class TupleExpressionNode : IExpressionNode
 {
-    public TypeReference ResultTypeReference { get; } = TypeFacts.Empty.ToTypeReference();
+    public TypeReferenceValue ResultTypeReference { get; } = TypeFacts.Empty.ToTypeReference();
 
     // public List<IExpressionNode> InnerExpressionList { get; } = new();
 

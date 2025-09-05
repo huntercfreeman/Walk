@@ -4,5 +4,5 @@ namespace Walk.Extensions.CompilerServices.Syntax.Values;
 
 public record struct FunctionInvocationParameterMetadata(
     int IdentifierStartInclusiveIndex,
-    TypeReference TypeReference,
+    TypeReferenceValue TypeReference,
     ParameterModifierKind ParameterModifierKind);

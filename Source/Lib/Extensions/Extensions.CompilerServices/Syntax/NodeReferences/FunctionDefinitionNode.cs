@@ -12,7 +12,7 @@ public sealed class FunctionDefinitionNode : ICodeBlockOwner, IFunctionDefinitio
 {
     public FunctionDefinitionNode(
         AccessModifierKind accessModifierKind,
-        TypeReference returnTypeReference,
+        TypeReferenceValue returnTypeReference,
         SyntaxToken functionIdentifierToken,
         SyntaxToken openAngleBracketToken,
         int indexGenericParameterEntryList,
@@ -63,6 +63,6 @@ public sealed class FunctionDefinitionNode : ICodeBlockOwner, IFunctionDefinitio
     
     public bool IsParsingGenericParameters { get; set; }
     
-    TypeReference IExpressionNode.ResultTypeReference => TypeFacts.Pseudo.ToTypeReference();
-    public TypeReference ReturnTypeReference { get; set; }
+    TypeReferenceValue IExpressionNode.ResultTypeReference => TypeFacts.Pseudo.ToTypeReference();
+    public TypeReferenceValue ReturnTypeReference { get; set; }
 }

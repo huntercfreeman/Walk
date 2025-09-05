@@ -16,7 +16,7 @@ public sealed class FunctionInvocationNode : IInvocationNode, IGenericParameterN
         int indexFunctionParameterEntryList,
         int countFunctionParameterEntryList,
         SyntaxToken closeParenthesisToken,
-        TypeReference resultTypeReference)
+        TypeReferenceValue resultTypeReference)
     {
         FunctionInvocationIdentifierToken = functionInvocationIdentifierToken;
         
@@ -46,7 +46,7 @@ public sealed class FunctionInvocationNode : IInvocationNode, IGenericParameterN
     public int CountFunctionParameterEntryList { get; set; }
     public SyntaxToken CloseParenthesisToken { get; set; }
     
-    public TypeReference ResultTypeReference { get; set; }
+    public TypeReferenceValue ResultTypeReference { get; set; }
     public ResourceUri ResourceUri { get; set; }
     public int IdentifierStartInclusiveIndex => FunctionInvocationIdentifierToken.TextSpan.StartInclusiveIndex;
 

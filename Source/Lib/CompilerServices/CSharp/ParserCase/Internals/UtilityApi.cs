@@ -333,7 +333,7 @@ public static class UtilityApi
         return false;
     }
     
-    public static TypeClauseNode ConvertTokenToTypeClauseNode(ref SyntaxToken token, ref CSharpParserModel parserModel)
+    public static TypeClauseNode ConvertTokenToTypeClauseNode(ref SyntaxToken token, ref CSharpParserState parserModel)
     {
         if (token.SyntaxKind == SyntaxKind.IdentifierToken)
         {
@@ -369,7 +369,7 @@ public static class UtilityApi
         }
     }
     
-    public static TypeClauseNode ConvertNodeToTypeClauseNode(ISyntaxNode node, ref CSharpParserModel parserModel)
+    public static TypeClauseNode ConvertNodeToTypeClauseNode(ISyntaxNode node, ref CSharpParserState parserModel)
     {
         if (node.SyntaxKind == SyntaxKind.TypeClauseNode)
         {
@@ -402,7 +402,7 @@ public static class UtilityApi
     /// So I had to copy the struct anyhow in order to make a variable that could be used as the 'ref'.
     /// I'm just bleh right now idk.
     /// </summary>
-    public static SyntaxToken ConvertToIdentifierToken(ref SyntaxToken token, ref CSharpParserModel parserModel)
+    public static SyntaxToken ConvertToIdentifierToken(ref SyntaxToken token, ref CSharpParserState parserModel)
     {
         if (token.SyntaxKind == SyntaxKind.IdentifierToken)
         {

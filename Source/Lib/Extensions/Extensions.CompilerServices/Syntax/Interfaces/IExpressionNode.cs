@@ -28,5 +28,5 @@ public interface IExpressionNode : ISyntaxNode
     /// in order to access the property. (i.e.: <see cref="GenericParameterEntryNode.TypeClauseNode"/>
     /// is not equal to IExpressionNode.ResultTypeClauseNode).
     /// </summary>
-    public TypeReference ResultTypeReference { get; }
+    public TypeReferenceValue ResultTypeReference { get; }
 }

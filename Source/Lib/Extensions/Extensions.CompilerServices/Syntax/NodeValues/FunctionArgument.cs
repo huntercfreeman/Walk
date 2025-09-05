@@ -21,7 +21,7 @@ public struct FunctionArgument
         ArgumentModifierKind = argumentModifierKind;
     }
 
-    public TypeReference TypeReference { get; }
+    public TypeReferenceValue TypeReference { get; }
     public SyntaxToken IdentifierToken { get; }
     public VariableKind VariableKind { get; }
     public SyntaxToken OptionalCompileTimeConstantToken { get; }

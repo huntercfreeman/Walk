@@ -1,6 +1,7 @@
 using Walk.Extensions.CompilerServices.Syntax;
 using Walk.Extensions.CompilerServices.Syntax.Enums;
 using Walk.Extensions.CompilerServices.Syntax.Nodes;
+using Walk.Extensions.CompilerServices.Syntax.Values;
 
 namespace Walk.CompilerServices.CSharp.ParserCase.Internals;
 
@@ -10,7 +11,7 @@ public static class ParseTypes
     /// TODO: TypeDefinitionNode(s) should use the expression loop to parse the...
     /// ...generic parameters. They currently use 'ParseTypes.HandleGenericParameters(...);'
     /// </summary>
-    public static (SyntaxToken OpenAngleBracketToken, int IndexGenericParameterEntryList, int CountGenericParameterEntryList, SyntaxToken CloseAngleBracketToken) HandleGenericParameters(ref CSharpParserModel parserModel)
+    public static (SyntaxToken OpenAngleBracketToken, int IndexGenericParameterEntryList, int CountGenericParameterEntryList, SyntaxToken CloseAngleBracketToken) HandleGenericParameters(ref CSharpParserState parserModel)
     {
         var openAngleBracketToken = parserModel.TokenWalker.Consume();
     
@@ -30,7 +31,7 @@ public static class ParseTypes
             if (typeClauseNode.IsFabricated)
                 break;
 
-            var genericArgumentEntryNode = new GenericParameter(new TypeReference(typeClauseNode));
+            var genericArgumentEntryNode = new GenericParameter(new TypeReferenceValue(typeClauseNode));
             parserModel.Return_TypeClauseNode(typeClauseNode);
             parserModel.Binder.GenericParameterList.Add(genericArgumentEntryNode);
             countGenericParameterEntryList++;
@@ -54,7 +55,7 @@ public static class ParseTypes
         return (openAngleBracketToken, indexGenericParameterEntryList, countGenericParameterEntryList, closeAngleBracketToken);
     }
 
-    public static TypeClauseNode MatchTypeClause(ref CSharpParserModel parserModel)
+    public static TypeClauseNode MatchTypeClause(ref CSharpParserState parserModel)
     {
         parserModel.TryParseExpressionSyntaxKindList.Add(SyntaxKind.TypeClauseNode);
         if (ParseExpressions.TryParseExpression(ref parserModel, out var expressionNode))
@@ -72,14 +73,14 @@ public static class ParseTypes
 
     public static void HandlePrimaryConstructorDefinition(
         TypeDefinitionNode typeDefinitionNode,
-        ref CSharpParserModel parserModel)
+        ref CSharpParserState parserModel)
     {
         ParseFunctions.HandleFunctionArguments(typeDefinitionNode, ref parserModel, variableKind: VariableKind.Property);
     }
     
     public static void HandleEnumDefinitionNode(
         TypeDefinitionNode typeDefinitionNode,
-        ref CSharpParserModel parserModel)
+        ref CSharpParserState parserModel)
     {
         while (!parserModel.TokenWalker.IsEof)
         {

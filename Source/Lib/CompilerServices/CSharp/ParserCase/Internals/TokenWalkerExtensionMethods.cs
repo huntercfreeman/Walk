@@ -8,7 +8,7 @@ internal static class TokenWalkerExtensionMethods
 {
     public static void DeferParsingOfChildScope(
         this TokenWalker tokenWalker,
-        ref CSharpParserModel parserModel)
+        ref CSharpParserState parserModel)
     {
         // Pop off the 'TypeDefinitionNode', then push it back on when later dequeued.
         var deferredScope = parserModel.ScopeCurrent;

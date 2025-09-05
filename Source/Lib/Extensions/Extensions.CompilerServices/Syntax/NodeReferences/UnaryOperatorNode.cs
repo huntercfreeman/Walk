@@ -6,18 +6,18 @@ namespace Walk.Extensions.CompilerServices.Syntax.Nodes;
 public sealed class UnaryOperatorNode : ISyntaxNode
 {
     public UnaryOperatorNode(
-        TypeReference operandTypeReference,
+        TypeReferenceValue operandTypeReference,
         SyntaxToken operatorToken,
-        TypeReference resultTypeReference)
+        TypeReferenceValue resultTypeReference)
     {
         OperandTypeReference = operandTypeReference;
         OperatorToken = operatorToken;
         ResultTypeReference = resultTypeReference;
     }
 
-    public TypeReference OperandTypeReference { get; }
+    public TypeReferenceValue OperandTypeReference { get; }
     public SyntaxToken OperatorToken { get; }
-    public TypeReference ResultTypeReference { get; }
+    public TypeReferenceValue ResultTypeReference { get; }
 
     public int ParentScopeSubIndex { get; set; }
     public bool IsFabricated { get; init; }

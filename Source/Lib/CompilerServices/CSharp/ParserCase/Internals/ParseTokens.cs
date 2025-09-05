@@ -1,15 +1,15 @@
-using System.Reflection;
 using Walk.CompilerServices.CSharp.Facts;
 using Walk.Extensions.CompilerServices.Syntax;
 using Walk.Extensions.CompilerServices.Syntax.Enums;
 using Walk.Extensions.CompilerServices.Syntax.Interfaces;
 using Walk.Extensions.CompilerServices.Syntax.Nodes;
+using Walk.Extensions.CompilerServices.Syntax.Values;
 
 namespace Walk.CompilerServices.CSharp.ParserCase.Internals;
 
 public static class ParseTokens
 {
-    public static void ParseIdentifierToken(ref CSharpParserModel parserModel)
+    public static void ParseIdentifierToken(ref CSharpParserState parserModel)
     {
         if (parserModel.TokenWalker.Current.TextSpan.Length == 1 &&
             // 95 is ASCII code for '_'
@@ -121,7 +121,7 @@ public static class ParseTokens
         }
     }
     
-    public static void MoveToHandleFunctionDefinition(VariableDeclarationNode variableDeclarationNode, ref CSharpParserModel parserModel)
+    public static void MoveToHandleFunctionDefinition(VariableDeclarationNode variableDeclarationNode, ref CSharpParserState parserModel)
     {
         ParseFunctions.HandleFunctionDefinition(
             variableDeclarationNode.IdentifierToken,
@@ -129,7 +129,7 @@ public static class ParseTokens
             ref parserModel);
     }
     
-    public static void MoveToHandleVariableDeclarationNode(VariableDeclarationNode variableDeclarationNode, ref CSharpParserModel parserModel)
+    public static void MoveToHandleVariableDeclarationNode(VariableDeclarationNode variableDeclarationNode, ref CSharpParserState parserModel)
     {
         var variableKind = VariableKind.Local;
                 
@@ -183,7 +183,7 @@ public static class ParseTokens
         }
     }
     
-    public static void HandleMultiVariableDeclaration(VariableDeclarationNode variableDeclarationNode, ref CSharpParserModel parserModel)
+    public static void HandleMultiVariableDeclaration(VariableDeclarationNode variableDeclarationNode, ref CSharpParserState parserModel)
     {
         var previousTokenIndex = parserModel.TokenWalker.Index;
         
@@ -239,7 +239,7 @@ public static class ParseTokens
         }
     }
     
-    public static void MoveToHandleTypeClauseNode(int originalTokenIndex, TypeClauseNode typeClauseNode, ref CSharpParserModel parserModel)
+    public static void MoveToHandleTypeClauseNode(int originalTokenIndex, TypeClauseNode typeClauseNode, ref CSharpParserState parserModel)
     {
         if (parserModel.TokenWalker.Current.SyntaxKind == SyntaxKind.StatementDelimiterToken ||
             parserModel.TokenWalker.Current.SyntaxKind == SyntaxKind.EndOfFileToken ||
@@ -275,7 +275,7 @@ public static class ParseTokens
         return;
     }
     
-    public static void ParsePropertyDefinition(VariableDeclarationNode variableDeclarationNode, ref CSharpParserModel parserModel)
+    public static void ParsePropertyDefinition(VariableDeclarationNode variableDeclarationNode, ref CSharpParserState parserModel)
     {
         _ = parserModel.TokenWalker.Consume(); // openBraceToken
 
@@ -342,7 +342,7 @@ public static class ParseTokens
     /// This method must consume at least once or an infinite loop in 'ParsePropertyDefinition(...)'
     /// will occur due to the 'bool consumed' variable.
     /// </summary>
-    public static void ParseGetterOrSetter(VariableDeclarationNode variableDeclarationNode, ref CSharpParserModel parserModel)
+    public static void ParseGetterOrSetter(VariableDeclarationNode variableDeclarationNode, ref CSharpParserState parserModel)
     {
         parserModel.TokenWalker.Consume(); // Consume the 'get' or 'set' contextual keyword.
     
@@ -379,13 +379,13 @@ public static class ParseTokens
         }
     }
     
-    public static void ParsePropertyDefinition_ExpressionBound(ref CSharpParserModel parserModel)
+    public static void ParsePropertyDefinition_ExpressionBound(ref CSharpParserState parserModel)
     {
         parserModel.TokenWalker.BacktrackNoReturnValue();
         ParseGetterOrSetter(variableDeclarationNode: null, ref parserModel);
     }
 
-    public static void ParseOpenBraceToken(ref CSharpParserModel parserModel)
+    public static void ParseOpenBraceToken(ref CSharpParserState parserModel)
     {
         var openBraceToken = parserModel.TokenWalker.Consume();
         
@@ -439,7 +439,7 @@ public static class ParseTokens
     /// CloseBraceToken is passed in to the method because it is a protected token,
     /// and is preferably consumed from the main loop so it can be more easily tracked.
     /// </summary>
-    public static void ParseCloseBraceToken(int closeBraceTokenIndex, ref CSharpParserModel parserModel)
+    public static void ParseCloseBraceToken(int closeBraceTokenIndex, ref CSharpParserState parserModel)
     {
         var closeBraceToken = parserModel.TokenWalker.Consume();
     
@@ -470,7 +470,7 @@ public static class ParseTokens
         parserModel.CloseScope(closeBraceToken.TextSpan);
     }
 
-    public static void ParseOpenParenthesisToken(ref CSharpParserModel parserModel)
+    public static void ParseOpenParenthesisToken(ref CSharpParserState parserModel)
     {
         var originalTokenIndex = parserModel.TokenWalker.Index;
         
@@ -510,7 +510,7 @@ public static class ParseTokens
         // else if (expressionNode.SyntaxKind == SyntaxKind.AmbiguousParenthesizedExpressionNode)
     }
 
-    public static void ParseOpenSquareBracketToken(ref CSharpParserModel parserModel)
+    public static void ParseOpenSquareBracketToken(ref CSharpParserState parserModel)
     {
         _ = parserModel.TokenWalker.Consume(); // openSquareBracketToken
 
@@ -556,7 +556,7 @@ public static class ParseTokens
         _ = parserModel.TokenWalker.Match(SyntaxKind.CloseSquareBracketToken);
     }
 
-    public static void ParseEqualsToken(ref CSharpParserModel parserModel)
+    public static void ParseEqualsToken(ref CSharpParserState parserModel)
     {
         var shouldBacktrack = false;
         IExpressionNode backtrackNode = EmptyExpressionNode.Empty;
@@ -575,7 +575,7 @@ public static class ParseTokens
             else if (previousNode.SyntaxKind == SyntaxKind.TypeClauseNode)
             {
                 shouldBacktrack = true;
-                parserModel.MostRecentLeftHandSideAssignmentExpressionTypeClauseNode = new TypeReference((TypeClauseNode)previousNode);
+                parserModel.MostRecentLeftHandSideAssignmentExpressionTypeClauseNode = new TypeReferenceValue((TypeClauseNode)previousNode);
                 parserModel.Return_TypeClauseNode((TypeClauseNode)previousNode);
                 backtrackNode = (TypeClauseNode)previousNode;
             }
@@ -601,7 +601,7 @@ public static class ParseTokens
     /// StatementDelimiterToken is passed in to the method because it is a protected token,
     /// and is preferably consumed from the main loop so it can be more easily tracked.
     /// </summary>
-    public static void ParseStatementDelimiterToken(ref CSharpParserModel parserModel)
+    public static void ParseStatementDelimiterToken(ref CSharpParserState parserModel)
     {
         var statementDelimiterToken = parserModel.TokenWalker.Consume();
     
@@ -625,7 +625,7 @@ public static class ParseTokens
         }
     }
     
-    public static void MoveToExpressionBody(ref CSharpParserModel parserModel)
+    public static void MoveToExpressionBody(ref CSharpParserState parserModel)
     {
         _ = parserModel.TokenWalker.Consume(); // Consume 'EqualsCloseAngleBracketToken'
     
@@ -653,7 +653,7 @@ public static class ParseTokens
         }
     }
 
-    public static void ParseKeywordToken(ref CSharpParserModel parserModel)
+    public static void ParseKeywordToken(ref CSharpParserState parserModel)
     {
         // 'return', 'if', 'get', etc...
         switch (parserModel.TokenWalker.Current.SyntaxKind)
@@ -898,7 +898,7 @@ public static class ParseTokens
         }
     }
 
-    public static void ParseKeywordContextualToken(ref CSharpParserModel parserModel)
+    public static void ParseKeywordContextualToken(ref CSharpParserState parserModel)
     {
         if (parserModel.TokenWalker.Next.SyntaxKind == SyntaxKind.ColonToken)
         {

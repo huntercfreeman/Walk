@@ -23,7 +23,7 @@ public sealed class TypeDefinitionNode : ICodeBlockOwner, IFunctionDefinitionNod
         int indexFunctionArgumentEntryList,
         int countFunctionArgumentEntryList,
         SyntaxToken closeParenthesisToken,
-        TypeReference inheritedTypeReference,
+        TypeReferenceValue inheritedTypeReference,
         ResourceUri resourceUri)
     {
         AccessModifierKind = accessModifierKind;
@@ -76,7 +76,7 @@ public sealed class TypeDefinitionNode : ICodeBlockOwner, IFunctionDefinitionNod
     /// public class Person : IPerson { ... }<br/><br/>
     /// Then: 'IPerson' is the <see cref="InheritedTypeClauseNode"/>
     /// </summary>
-    public TypeReference InheritedTypeReference { get; private set; }
+    public TypeReferenceValue InheritedTypeReference { get; private set; }
     /// <summary>
     /// 'string.Empty' is used as a special case to store language primitives,
     /// since 'string.Empty' is not a valid 'ResourceUri' for the 'TextEditorService'.
@@ -104,7 +104,7 @@ public sealed class TypeDefinitionNode : ICodeBlockOwner, IFunctionDefinitionNod
     public bool IsFabricated { get; init; }
     public SyntaxKind SyntaxKind => SyntaxKind.TypeDefinitionNode;
     
-    TypeReference IExpressionNode.ResultTypeReference => TypeFacts.Pseudo.ToTypeReference();
+    TypeReferenceValue IExpressionNode.ResultTypeReference => TypeFacts.Pseudo.ToTypeReference();
     
     // ICodeBlockOwner properties.
     public ScopeDirectionKind ScopeDirectionKind => ScopeDirectionKind.Both;
@@ -119,14 +119,14 @@ public sealed class TypeDefinitionNode : ICodeBlockOwner, IFunctionDefinitionNod
     /// </summary>
     public bool IsParsingGenericParameters { get; set; }
 
-    public ICodeBlockOwner SetInheritedTypeReference(TypeReference typeReference)
+    public ICodeBlockOwner SetInheritedTypeReference(TypeReferenceValue typeReference)
     {
         InheritedTypeReference = typeReference;
         return this;
     }
     
-    public TypeReference ToTypeReference()
+    public TypeReferenceValue ToTypeReference()
     {
-        return new TypeReference(this);
+        return new TypeReferenceValue(this);
     }
 }

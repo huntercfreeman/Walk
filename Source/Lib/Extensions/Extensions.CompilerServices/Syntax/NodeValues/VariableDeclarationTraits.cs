@@ -6,7 +6,7 @@ public struct VariableDeclarationTraits
 {
     public VariableDeclarationTraits(
         VariableKind variableKind,
-        TypeReference resultTypeReference,
+        TypeReferenceValue resultTypeReference,
         bool hasSetter,
         bool hasGetter)
     {
@@ -17,7 +17,7 @@ public struct VariableDeclarationTraits
     }
 
     public VariableKind VariableKind { get; set; }
-    public TypeReference ResultTypeReference { get; set; }
+    public TypeReferenceValue ResultTypeReference { get; set; }
     public bool HasSetter { get; set; }
     public bool HasGetter { get; set; }
     

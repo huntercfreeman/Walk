@@ -9,5 +9,5 @@ public sealed class SwitchExpressionNode : IExpressionNode
     public bool IsFabricated { get; init; }
     public SyntaxKind SyntaxKind => SyntaxKind.SwitchExpressionNode;
     
-    public TypeReference ResultTypeReference { get; }
+    public TypeReferenceValue ResultTypeReference { get; }
 }

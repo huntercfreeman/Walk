@@ -8,7 +8,7 @@ namespace Walk.Extensions.CompilerServices.Syntax.Nodes;
 public sealed class VariableDeclarationNode : IExpressionNode
 {
     public VariableDeclarationNode(
-        TypeReference typeReference,
+        TypeReferenceValue typeReference,
         SyntaxToken identifierToken,
         VariableKind variableKind,
         bool isInitialized,
@@ -21,7 +21,7 @@ public sealed class VariableDeclarationNode : IExpressionNode
         ResourceUri = resourceUri;
     }
 
-    public TypeReference TypeReference { get; set; }
+    public TypeReferenceValue TypeReference { get; set; }
 
     public SyntaxToken IdentifierToken { get; set; }
     /// <summary>
@@ -47,7 +47,7 @@ public sealed class VariableDeclarationNode : IExpressionNode
     /// </summary>
     public bool SetterIsAutoImplemented { get; set; }
 
-    TypeReference IExpressionNode.ResultTypeReference => TypeFacts.Pseudo.ToTypeReference();
+    TypeReferenceValue IExpressionNode.ResultTypeReference => TypeFacts.Pseudo.ToTypeReference();
 
     public int ParentScopeSubIndex { get; set; }
     public bool _isFabricated;
@@ -58,7 +58,7 @@ public sealed class VariableDeclarationNode : IExpressionNode
     }
     public SyntaxKind SyntaxKind => SyntaxKind.VariableDeclarationNode;
 
-    public VariableDeclarationNode SetImplicitTypeReference(TypeReference typeReference)
+    public VariableDeclarationNode SetImplicitTypeReference(TypeReferenceValue typeReference)
     {
         typeReference.IsImplicit = true;
         TypeReference = typeReference;

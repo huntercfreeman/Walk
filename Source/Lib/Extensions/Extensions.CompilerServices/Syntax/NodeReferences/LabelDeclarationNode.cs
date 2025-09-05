@@ -12,7 +12,7 @@ public sealed class LabelDeclarationNode : IExpressionNode
 
     public SyntaxToken IdentifierToken { get; }
 
-    TypeReference IExpressionNode.ResultTypeReference => TypeFacts.Pseudo.ToTypeReference();
+    TypeReferenceValue IExpressionNode.ResultTypeReference => TypeFacts.Pseudo.ToTypeReference();
 
     public int ParentScopeSubIndex { get; set; }
     public bool IsFabricated { get; init; }

@@ -64,7 +64,7 @@ public class CSharpStatementBuilder
     ///
     /// Returns the result of 'ParseLambdaStatementScopeStack.TryPop(out var deferredChildScope)'.
     /// </summary>
-    public bool FinishStatement(int finishTokenIndex, ref CSharpParserModel parserModel)
+    public bool FinishStatement(int finishTokenIndex, ref CSharpParserState parserModel)
     {
         switch (MostRecentNode.SyntaxKind)
         {

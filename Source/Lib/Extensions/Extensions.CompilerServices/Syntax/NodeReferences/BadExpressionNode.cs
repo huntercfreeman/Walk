@@ -15,7 +15,7 @@ namespace Walk.Extensions.CompilerServices.Syntax.Nodes;
 /// </summary>
 public sealed class BadExpressionNode : IExpressionNode
 {
-    public BadExpressionNode(TypeReference resultTypeReference, ISyntax syntaxPrimary, ISyntax syntaxSecondary)
+    public BadExpressionNode(TypeReferenceValue resultTypeReference, ISyntax syntaxPrimary, ISyntax syntaxSecondary)
     {
         ResultTypeReference = resultTypeReference;
         SyntaxPrimary = syntaxPrimary;
@@ -38,7 +38,7 @@ public sealed class BadExpressionNode : IExpressionNode
     /// </summary>
     public int ClobberCount { get; set; }
 
-    public TypeReference ResultTypeReference { get; }
+    public TypeReferenceValue ResultTypeReference { get; }
 
     public int ParentScopeSubIndex { get; set; }
     public bool IsFabricated { get; init; }

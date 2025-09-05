@@ -10,8 +10,8 @@ public class ParseFunctions
 {
     public static void HandleFunctionDefinition(
         SyntaxToken consumedIdentifierToken,
-        TypeReference consumedTypeReference,
-        ref CSharpParserModel parserModel)
+        TypeReferenceValue consumedTypeReference,
+        ref CSharpParserState parserModel)
     {
         var functionDefinitionNode = new FunctionDefinitionNode(
             AccessModifierKind.Public,
@@ -228,13 +228,13 @@ public class ParseFunctions
     public static void HandleConstructorDefinition(
         SyntaxToken typeDefinitionIdentifierToken,
         SyntaxToken consumedIdentifierToken,
-        ref CSharpParserModel parserModel)
+        ref CSharpParserState parserModel)
     {
         var typeClauseNode = parserModel.Rent_TypeClauseNode();
         typeClauseNode.TypeIdentifierToken = typeDefinitionIdentifierToken;
 
         var constructorDefinitionNode = new ConstructorDefinitionNode(
-            new TypeReference(typeClauseNode),
+            new TypeReferenceValue(typeClauseNode),
             consumedIdentifierToken,
             openAngleBracketToken: default,
     		indexGenericParameterEntryList: -1,
@@ -347,7 +347,7 @@ public class ParseFunctions
     /// <summary>Use this method for function definition, whereas <see cref="HandleFunctionParameters"/> should be used for function invocation.</summary>
     public static void HandleFunctionArguments(
         IFunctionDefinitionNode functionDefinitionNode,
-        ref CSharpParserModel parserModel,
+        ref CSharpParserState parserModel,
         VariableKind variableKind = VariableKind.Local)
     {
         var openParenthesisToken = parserModel.TokenWalker.Consume();

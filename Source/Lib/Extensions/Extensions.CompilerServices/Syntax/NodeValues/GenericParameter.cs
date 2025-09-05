@@ -5,12 +5,12 @@ namespace Walk.Extensions.CompilerServices.Syntax.Values;
 /// </summary>
 public struct GenericParameter
 {
-    public GenericParameter(TypeReference typeReference)
+    public GenericParameter(TypeReferenceValue typeReference)
     {
         TypeReference = typeReference;
     }
 
-    public TypeReference TypeReference { get; }
+    public TypeReferenceValue TypeReference { get; }
     
     public bool ConstructorWasInvoked => !TypeReference.IsDefault();
 }

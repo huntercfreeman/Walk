@@ -2,9 +2,9 @@ using Walk.TextEditor.RazorLib.Lexers.Models;
 
 namespace Walk.Extensions.CompilerServices.Syntax.Values;
 
-public struct PartialTypeDefinition
+public struct PartialTypeDefinitionValue
 {
-    public PartialTypeDefinition(
+    public PartialTypeDefinitionValue(
         ResourceUri resourceUri,
         int indexStartGroup,
         int scopeOffset)

@@ -9,5 +9,5 @@ public partial class GenericSyntaxDisplay : ComponentBase
     public SyntaxViewModel SyntaxViewModel { get; set; } = default!;
     
     [Parameter]
-    public TypeReference TypeReference { get; set; } = default;
+    public TypeReferenceValue TypeReference { get; set; } = default;
 }

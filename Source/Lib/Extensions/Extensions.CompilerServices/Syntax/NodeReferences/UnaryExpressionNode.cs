@@ -15,7 +15,7 @@ public sealed class UnaryExpressionNode : IExpressionNode
 
     public IExpressionNode Expression { get; }
     public UnaryOperatorNode UnaryOperatorNode { get; }
-    public TypeReference ResultTypeReference => UnaryOperatorNode.ResultTypeReference;
+    public TypeReferenceValue ResultTypeReference => UnaryOperatorNode.ResultTypeReference;
 
     public int ParentScopeSubIndex { get; set; }
     public bool IsFabricated { get; init; }

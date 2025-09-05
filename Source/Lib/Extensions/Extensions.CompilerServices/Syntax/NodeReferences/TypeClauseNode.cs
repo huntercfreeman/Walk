@@ -39,7 +39,7 @@ public sealed class TypeClauseNode : IGenericParameterNode
     /// I'm going to use this constructor in the CSharpBinder expression logic temporarily so I can get it build.
     /// But any usage of this kind should probably be removed.
     /// </summary>
-    public TypeClauseNode(TypeReference typeReference)
+    public TypeClauseNode(TypeReferenceValue typeReference)
     {
         IsKeywordType = typeReference.IsKeywordType;
         TypeIdentifierToken = typeReference.TypeIdentifierToken;
@@ -75,7 +75,7 @@ public sealed class TypeClauseNode : IGenericParameterNode
 
     public TypeKind TypeKind { get; set; }
 
-    TypeReference IExpressionNode.ResultTypeReference => TypeFacts.Pseudo.ToTypeReference();
+    TypeReferenceValue IExpressionNode.ResultTypeReference => TypeFacts.Pseudo.ToTypeReference();
 
     public bool HasQuestionMark { get; set; }
     public int ArrayRank { get; set; }

@@ -2,11 +2,11 @@ using Walk.Extensions.CompilerServices.Syntax.Nodes;
 
 namespace Walk.Extensions.CompilerServices.Syntax.Values;
 
-public record struct FunctionInvocationReference
+public record struct FunctionInvocationReferenceValue
 {
-    public static FunctionInvocationReference Empty { get; } = default;
+    public static FunctionInvocationReferenceValue Empty { get; } = default;
 
-    public FunctionInvocationReference(
+    public FunctionInvocationReferenceValue(
         SyntaxToken functionInvocationIdentifierToken,
         
         SyntaxToken openAngleBracketToken,
@@ -20,7 +20,7 @@ public record struct FunctionInvocationReference
         SyntaxToken closeParenthesisToken,
         
         
-        TypeReference resultTypeReference,
+        TypeReferenceValue resultTypeReference,
         bool isFabricated)
     {
         FunctionInvocationIdentifierToken = functionInvocationIdentifierToken;
@@ -39,7 +39,7 @@ public record struct FunctionInvocationReference
         IsFabricated = isFabricated;
     }
     
-    public FunctionInvocationReference(FunctionInvocationNode functionInvocationNode)
+    public FunctionInvocationReferenceValue(FunctionInvocationNode functionInvocationNode)
     {
         // functionInvocationNode.IsBeingUsed = false;
     
@@ -70,6 +70,6 @@ public record struct FunctionInvocationReference
     public int CountFunctionParameterEntryList { get; set; }
     public SyntaxToken CloseParenthesisToken { get; set; }
     
-    public TypeReference ResultTypeReference { get; set; }
+    public TypeReferenceValue ResultTypeReference { get; set; }
     public bool IsFabricated { get; set; }
 }

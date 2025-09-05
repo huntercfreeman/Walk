@@ -5,14 +5,14 @@ namespace Walk.Extensions.CompilerServices.Syntax.Nodes;
 
 public sealed class LiteralExpressionNode : IExpressionNode
 {
-    public LiteralExpressionNode(SyntaxToken literalSyntaxToken, TypeReference typeReference)
+    public LiteralExpressionNode(SyntaxToken literalSyntaxToken, TypeReferenceValue typeReference)
     {
         LiteralSyntaxToken = literalSyntaxToken;
         ResultTypeReference = typeReference;
     }
 
     public SyntaxToken LiteralSyntaxToken { get; }
-    public TypeReference ResultTypeReference { get; }
+    public TypeReferenceValue ResultTypeReference { get; }
 
     public int ParentScopeSubIndex { get; set; }
     public bool IsFabricated { get; init; }

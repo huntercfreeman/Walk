@@ -7,7 +7,7 @@ namespace Walk.Extensions.CompilerServices.Syntax.Nodes;
 public sealed class ConstructorDefinitionNode : ICodeBlockOwner, IFunctionDefinitionNode
 {
     public ConstructorDefinitionNode(
-        TypeReference returnTypeReference,
+        TypeReferenceValue returnTypeReference,
         SyntaxToken functionIdentifier,
         SyntaxToken openAngleBracketToken,
         int indexGenericParameterEntryList,
@@ -53,6 +53,6 @@ public sealed class ConstructorDefinitionNode : ICodeBlockOwner, IFunctionDefini
     public bool IsFabricated { get; init; }
     public SyntaxKind SyntaxKind => SyntaxKind.ConstructorDefinitionNode;
     
-    TypeReference IExpressionNode.ResultTypeReference => TypeFacts.Pseudo.ToTypeReference();
-    public TypeReference ReturnTypeReference { get; set; }
+    TypeReferenceValue IExpressionNode.ResultTypeReference => TypeFacts.Pseudo.ToTypeReference();
+    public TypeReferenceValue ReturnTypeReference { get; set; }
 }

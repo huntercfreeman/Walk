@@ -2,13 +2,13 @@ using Walk.Extensions.CompilerServices.Syntax.Nodes;
 
 namespace Walk.Extensions.CompilerServices.Syntax.Values;
 
-public record struct VariableReference
+public record struct VariableReferenceValue
 {
-    public static VariableReference Empty { get; } = default;
+    public static VariableReferenceValue Empty { get; } = default;
 
-    public VariableReference(
+    public VariableReferenceValue(
         SyntaxToken variableIdentifierToken,
-        TypeReference resultTypeReference,
+        TypeReferenceValue resultTypeReference,
         bool isFabricated)
     {
         VariableIdentifierToken = variableIdentifierToken;
@@ -16,7 +16,7 @@ public record struct VariableReference
         IsFabricated = isFabricated;
     }
     
-    public VariableReference(VariableReferenceNode variableReferenceNode)
+    public VariableReferenceValue(VariableReferenceNode variableReferenceNode)
     {
         VariableIdentifierToken = variableReferenceNode.VariableIdentifierToken;
         ResultTypeReference = variableReferenceNode.ResultTypeReference;
@@ -24,6 +24,6 @@ public record struct VariableReference
     }
 
     public SyntaxToken VariableIdentifierToken { get; }
-    public TypeReference ResultTypeReference { get; }
+    public TypeReferenceValue ResultTypeReference { get; }
     public bool IsFabricated { get; }
 }

@@ -21,7 +21,7 @@ public sealed class InterpolatedStringNode : IExpressionNode
         SyntaxToken stringInterpolatedStartToken,
         SyntaxToken stringInterpolatedEndToken,
         IExpressionNode? toBeExpressionPrimary,
-        TypeReference resultTypeReference)
+        TypeReferenceValue resultTypeReference)
     {
         StringInterpolatedStartToken = stringInterpolatedStartToken;
         StringInterpolatedEndToken = stringInterpolatedEndToken;
@@ -37,7 +37,7 @@ public sealed class InterpolatedStringNode : IExpressionNode
     /// </summary>
     public IExpressionNode? ToBeExpressionPrimary { get; }
 
-    public TypeReference ResultTypeReference { get; }
+    public TypeReferenceValue ResultTypeReference { get; }
 
     public int ParentScopeSubIndex { get; set; }
     public bool IsFabricated { get; init; }

@@ -31,7 +31,7 @@ public static class CSharpParser
         		ownerSyntaxKind: SyntaxKind.GlobalCodeBlockNode));
         ++compilationUnit.ScopeLength;
         
-        var parserModel = new CSharpParserModel(
+        var parserModel = new CSharpParserState(
             binder,
             resourceUri,
             ref compilationUnit,

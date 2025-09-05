@@ -6,11 +6,11 @@ namespace Walk.Extensions.CompilerServices.Syntax.Nodes;
 public sealed class BinaryExpressionNode : IExpressionNode
 {
     public BinaryExpressionNode(
-        TypeReference leftOperandTypeReference,
+        TypeReferenceValue leftOperandTypeReference,
         SyntaxToken operatorToken,
-        TypeReference rightOperandTypeReference,
-        TypeReference resultTypeReference,
-        TypeReference rightExpressionResultTypeReference)
+        TypeReferenceValue rightOperandTypeReference,
+        TypeReferenceValue resultTypeReference,
+        TypeReferenceValue rightExpressionResultTypeReference)
     {
         LeftOperandTypeReference = leftOperandTypeReference;
         OperatorToken = operatorToken;
@@ -20,10 +20,10 @@ public sealed class BinaryExpressionNode : IExpressionNode
     }
 
     public BinaryExpressionNode(
-        TypeReference leftOperandTypeReference,
+        TypeReferenceValue leftOperandTypeReference,
         SyntaxToken operatorToken,
-        TypeReference rightOperandTypeReference,
-        TypeReference resultTypeReference)
+        TypeReferenceValue rightOperandTypeReference,
+        TypeReferenceValue resultTypeReference)
     {
         LeftOperandTypeReference = leftOperandTypeReference;
         OperatorToken = operatorToken;
@@ -31,16 +31,16 @@ public sealed class BinaryExpressionNode : IExpressionNode
         ResultTypeReference = resultTypeReference;
     }
 
-    public TypeReference _rightExpressionResultTypeReference;
+    public TypeReferenceValue _rightExpressionResultTypeReference;
     
     public bool _isFabricated;
 
-    public TypeReference LeftOperandTypeReference { get; set; }
+    public TypeReferenceValue LeftOperandTypeReference { get; set; }
     public SyntaxToken OperatorToken { get; set; }
-    public TypeReference RightOperandTypeReference { get; set; }
-    public TypeReference ResultTypeReference { get; set; }
+    public TypeReferenceValue RightOperandTypeReference { get; set; }
+    public TypeReferenceValue ResultTypeReference { get; set; }
     
-    public TypeReference RightExpressionResultTypeReference
+    public TypeReferenceValue RightExpressionResultTypeReference
     {
         get => _rightExpressionResultTypeReference;
         set

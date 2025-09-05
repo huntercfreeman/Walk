@@ -12,9 +12,10 @@ public static class ParseOthers
     ///
     /// 'isNamespaceStatement' refers to 'namespace Walk.CompilerServices;'
     /// </summary>
-    public static SyntaxToken HandleNamespaceIdentifier(ref CSharpParserModel parserModel, bool isNamespaceStatement)
+    public static SyntaxToken HandleNamespaceIdentifier(ref CSharpParserState parserModel, bool isNamespaceStatement)
     {
-        NamespacePrefixNode? namespacePrefixNode = parserModel.Binder.NamespacePrefixTree.__Root;
+        return default;
+        /*NamespacePrefixNode? namespacePrefixNode = parserModel.Binder.NamespacePrefixTree.__Root;
 
         TextEditorTextSpan textSpan = default;
         int count = 0;
@@ -117,14 +118,14 @@ public static class ParseOthers
                 textSpan));
         ++parserModel.Compilation.SymbolLength;
 
-        return new SyntaxToken(SyntaxKind.IdentifierToken, textSpan);
+        return new SyntaxToken(SyntaxKind.IdentifierToken, textSpan);*/
     }
     
     /// <summary>
     /// parserModel.TokenWalker.Current is a NameableToken
     /// parserModel.TokenWalker.Next is a ColonToken
     /// </summary>
-    public static void HandleLabelDeclaration(ref CSharpParserModel parserModel)
+    public static void HandleLabelDeclaration(ref CSharpParserState parserModel)
     {
         parserModel.BindLabelDeclarationNode(new LabelDeclarationNode(parserModel.TokenWalker.Current));
         parserModel.TokenWalker.Consume(); // Consume 'NameableToken'

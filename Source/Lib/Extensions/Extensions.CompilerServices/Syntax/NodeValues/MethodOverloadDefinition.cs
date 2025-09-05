@@ -2,7 +2,7 @@ using Walk.TextEditor.RazorLib.Lexers.Models;
 
 namespace Walk.Extensions.CompilerServices.Syntax.Values;
 
-public class MethodOverloadDefinition
+public struct MethodOverloadDefinition
 {
     public MethodOverloadDefinition(
         ResourceUri resourceUri,

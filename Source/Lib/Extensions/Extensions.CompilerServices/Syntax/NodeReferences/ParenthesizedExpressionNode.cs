@@ -15,7 +15,7 @@ public sealed class ParenthesizedExpressionNode : IExpressionNode
         CloseParenthesisToken = closeParenthesisToken;
     }
 
-    public ParenthesizedExpressionNode(SyntaxToken openParenthesisToken, TypeReference typeReference)
+    public ParenthesizedExpressionNode(SyntaxToken openParenthesisToken, TypeReferenceValue typeReference)
         : this(openParenthesisToken, EmptyExpressionNode.Empty, default)
     {
     }
@@ -23,7 +23,7 @@ public sealed class ParenthesizedExpressionNode : IExpressionNode
     public SyntaxToken OpenParenthesisToken { get; }
     public IExpressionNode InnerExpression { get; set; }
     public SyntaxToken CloseParenthesisToken { get; set; }
-    public TypeReference ResultTypeReference => InnerExpression.ResultTypeReference;
+    public TypeReferenceValue ResultTypeReference => InnerExpression.ResultTypeReference;
 
     public int ParentScopeSubIndex { get; set; }
     public bool IsFabricated { get; init; }

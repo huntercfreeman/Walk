@@ -27,12 +27,12 @@ public sealed class EmptyExpressionNode : IExpressionNode
         FollowsMemberAccessToken = true
     };
 
-    public EmptyExpressionNode(TypeReference typeReference)
+    public EmptyExpressionNode(TypeReferenceValue typeReference)
     {
         ResultTypeReference = typeReference;
     }
 
-    public TypeReference ResultTypeReference { get; }
+    public TypeReferenceValue ResultTypeReference { get; }
     public bool FollowsMemberAccessToken { get; init; }
 
     public int ParentScopeSubIndex { get; set; }

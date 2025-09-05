@@ -13,7 +13,7 @@ public sealed class KeywordFunctionOperatorNode : IExpressionNode
 
     public SyntaxToken KeywordToken { get; }
     public IExpressionNode ExpressionNodeToMakePrimary { get; set; }
-    public TypeReference ResultTypeReference => ExpressionNodeToMakePrimary.ResultTypeReference;
+    public TypeReferenceValue ResultTypeReference => ExpressionNodeToMakePrimary.ResultTypeReference;
 
     public int ParentScopeSubIndex { get; set; }
     public bool IsFabricated { get; init; }

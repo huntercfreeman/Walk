@@ -5,14 +5,14 @@ namespace Walk.Extensions.CompilerServices.Syntax.Nodes;
 
 public sealed class WithExpressionNode : IExpressionNode
 {
-    public WithExpressionNode(VariableReference variableReference)
+    public WithExpressionNode(VariableReferenceValue variableReference)
     {
         VariableReference = variableReference;
         ResultTypeReference = variableReference.ResultTypeReference;
     }
 
-    public VariableReference VariableReference { get; }
-    public TypeReference ResultTypeReference { get; }
+    public VariableReferenceValue VariableReference { get; }
+    public TypeReferenceValue ResultTypeReference { get; }
 
     public int ParentScopeSubIndex { get; set; }
     public bool IsFabricated { get; init; }

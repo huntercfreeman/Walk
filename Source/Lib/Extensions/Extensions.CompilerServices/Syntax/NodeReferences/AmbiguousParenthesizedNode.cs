@@ -54,7 +54,7 @@ public sealed class AmbiguousParenthesizedNode : IExpressionNode
 
     public SyntaxToken OpenParenthesisToken { get; }
     public bool IsParserContextKindForceStatementExpression { get; }
-    public TypeReference ResultTypeReference => TypeFacts.Pseudo.ToTypeReference();
+    public TypeReferenceValue ResultTypeReference => TypeFacts.Pseudo.ToTypeReference();
 
     /// <summary>
     /// This class is a "builder" class of sorts.

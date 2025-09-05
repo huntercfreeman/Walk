@@ -9,7 +9,7 @@ public sealed class CollectionInitializationNode : IExpressionNode
     public bool IsFabricated { get; init; }
     public SyntaxKind SyntaxKind => SyntaxKind.CollectionInitializationNode;
     
-    public TypeReference ResultTypeReference { get; }
+    public TypeReferenceValue ResultTypeReference { get; }
     
     public bool IsClosed { get; set; }
 }

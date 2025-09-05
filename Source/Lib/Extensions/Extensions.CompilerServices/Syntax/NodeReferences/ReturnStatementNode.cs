@@ -15,7 +15,7 @@ public sealed class ReturnStatementNode : IExpressionNode
 
     public SyntaxToken KeywordToken { get; }
     // public IExpressionNode ExpressionNode { get; set; }
-    public TypeReference ResultTypeReference { get; }
+    public TypeReferenceValue ResultTypeReference { get; }
 
     public int ParentScopeSubIndex { get; set; }
     public bool IsFabricated { get; init; }

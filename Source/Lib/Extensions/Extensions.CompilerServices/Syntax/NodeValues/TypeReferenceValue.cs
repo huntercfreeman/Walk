@@ -4,9 +4,9 @@ using Walk.Extensions.CompilerServices.Syntax.Enums;
 
 namespace Walk.Extensions.CompilerServices.Syntax.Values;
 
-public record struct TypeReference
+public record struct TypeReferenceValue
 {
-    public TypeReference(
+    public TypeReferenceValue(
         SyntaxToken typeIdentifier,
         SyntaxToken openAngleBracketToken,
         int indexGenericParameterEntryList,
@@ -32,7 +32,7 @@ public record struct TypeReference
         IsFabricated = isFabricated;
     }
     
-    public TypeReference(TypeClauseNode typeClauseNode)
+    public TypeReferenceValue(TypeClauseNode typeClauseNode)
     {
         IsKeywordType = typeClauseNode.IsKeywordType;
         TypeIdentifierToken = typeClauseNode.TypeIdentifierToken;
@@ -50,7 +50,7 @@ public record struct TypeReference
         ExplicitDefinitionResourceUri = typeClauseNode.ExplicitDefinitionResourceUri;
     }
     
-    public TypeReference(TypeDefinitionNode typeDefinitionNode)
+    public TypeReferenceValue(TypeDefinitionNode typeDefinitionNode)
     {
         IsKeywordType = typeDefinitionNode.IsKeywordType;
         TypeIdentifierToken = typeDefinitionNode.TypeIdentifierToken;

@@ -12,7 +12,7 @@ public sealed class ConstructorInvocationNode : IInvocationNode
     /// </summary>
     public ConstructorInvocationNode(
         SyntaxToken newKeywordToken,
-        TypeReference typeReference,
+        TypeReferenceValue typeReference,
         SyntaxToken openParenthesisToken,
         int indexFunctionParameterEntryList,
         int countFunctionParameterEntryList,
@@ -29,7 +29,7 @@ public sealed class ConstructorInvocationNode : IInvocationNode
     }
 
     public SyntaxToken NewKeywordToken { get; set; }
-    public TypeReference ResultTypeReference { get; set; }
+    public TypeReferenceValue ResultTypeReference { get; set; }
     
     public SyntaxToken OpenParenthesisToken { get; set; }
     public int IndexFunctionParameterEntryList { get; set; }
