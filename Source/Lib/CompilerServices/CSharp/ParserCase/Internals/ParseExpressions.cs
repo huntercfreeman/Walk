@@ -1,14 +1,16 @@
-using Walk.CompilerServices.CSharp.Facts;
+using Walk.TextEditor.RazorLib.CompilerServices;
+using Walk.TextEditor.RazorLib.Decorations.Models;
+using Walk.TextEditor.RazorLib.Exceptions;
+using Walk.TextEditor.RazorLib.Lexers.Models;
 using Walk.Extensions.CompilerServices;
 using Walk.Extensions.CompilerServices.Syntax;
 using Walk.Extensions.CompilerServices.Syntax.Enums;
 using Walk.Extensions.CompilerServices.Syntax.Interfaces;
 using Walk.Extensions.CompilerServices.Syntax.Nodes;
+using Walk.Extensions.CompilerServices.Syntax.NodeValues;
 using Walk.Extensions.CompilerServices.Syntax.Values;
-using Walk.TextEditor.RazorLib.CompilerServices;
-using Walk.TextEditor.RazorLib.Decorations.Models;
-using Walk.TextEditor.RazorLib.Exceptions;
-using Walk.TextEditor.RazorLib.Lexers.Models;
+using Walk.CompilerServices.CSharp.CompilerServiceCase;
+using Walk.CompilerServices.CSharp.Facts;
 
 namespace Walk.CompilerServices.CSharp.ParserCase.Internals;
 
@@ -3279,7 +3281,7 @@ public static class ParseExpressions
         IExpressionNode expressionPrimary, ref SyntaxToken tokenIn, ref CSharpParserState parserModel)
     {
         return expressionPrimary;
-        /*var token = tokenIn;
+        var token = tokenIn;
         var loopIteration = 0;
         
         while (!parserModel.TokenWalker.IsEof)
@@ -3313,7 +3315,7 @@ public static class ParseExpressions
             
             if (expressionPrimary.SyntaxKind == SyntaxKind.AmbiguousIdentifierExpressionNode)
             {
-                var ambiguousIdentifierExpressionNode = (AmbiguousIdentifierExpressionNode)expressionPrimary;
+                var ambiguousIdentifierExpressionNode = (AmbiguousIdentifierNode)expressionPrimary;
                 if (!ambiguousIdentifierExpressionNode.FollowsMemberAccessToken)
                 {
                     expressionPrimary = ForceDecisionAmbiguousIdentifier(
@@ -3323,15 +3325,13 @@ public static class ParseExpressions
                 }
             }
         
-            TypeReference typeReference = default;
+            TypeReferenceValue typeReference = default;
             // TextEditorTextSpan explicitDefinitionTextSpan = default;
             // ResourceUri explicitDefinitionResourceUri = default;
         
             if (expressionPrimary.SyntaxKind == SyntaxKind.VariableReferenceNode)
             {
-                var variableReferenceNode = (VariableReferenceNode)expressionPrimary;
-                if (variableReferenceNode.VariableDeclarationNode is not null)
-                    typeReference = variableReferenceNode.VariableDeclarationNode.TypeReference;
+                typeReference = ((VariableReferenceNode)expressionPrimary).TypeReference;
             }
             else if (expressionPrimary.SyntaxKind == SyntaxKind.FunctionInvocationNode)
             {
@@ -3342,7 +3342,7 @@ public static class ParseExpressions
                 var typeClauseNode = (TypeClauseNode)expressionPrimary;
                 // explicitDefinitionTextSpan = typeClauseNode.ExplicitDefinitionTextSpan;
                 // explicitDefinitionResourceUri = typeClauseNode.ExplicitDefinitionResourceUri;
-                typeReference = new TypeReference(typeClauseNode);
+                typeReference = new TypeReferenceValue(typeClauseNode);
                 parserModel.Return_TypeClauseNode(typeClauseNode);
             }
             else if (expressionPrimary.SyntaxKind == SyntaxKind.TypeDefinitionNode)
@@ -3365,7 +3365,7 @@ public static class ParseExpressions
                 continue;
             }
             
-            TypeDefinitionNode? typeDefinitionNode;
+            SyntaxNodeValue typeDefinitionNode;
             
             CSharpCompilationUnit innerCompilationUnit;
             ResourceUri innerResourceUri;
@@ -3385,8 +3385,7 @@ public static class ParseExpressions
                                 scope.SelfScopeSubIndex,
                                 innerResourceUri,
                                 typeReference.ExplicitDefinitionTextSpan,
-                                out var innerTypeDefinitionNode) &&
-                            innerTypeDefinitionNode is not null)
+                                out var innerTypeDefinitionNode))
                         {
                             typeDefinitionNode = innerTypeDefinitionNode;
                             
@@ -3396,21 +3395,21 @@ public static class ParseExpressions
                         }
                         else
                         {
-                            typeDefinitionNode = null;
+                            typeDefinitionNode = default;
                             innerCompilationUnit = parserModel.Compilation;
                             innerResourceUri = parserModel.ResourceUri;
                         }
                     }
                     else
                     {
-                        typeDefinitionNode = null;
+                        typeDefinitionNode = default;
                         innerCompilationUnit = parserModel.Compilation;
                         innerResourceUri = parserModel.ResourceUri;
                     }
                 }
                 else
                 {
-                    typeDefinitionNode = null;
+                    typeDefinitionNode = default;
                     innerCompilationUnit = parserModel.Compilation;
                     innerResourceUri = parserModel.ResourceUri;
                 }
@@ -3427,8 +3426,7 @@ public static class ParseExpressions
                             scope.SelfScopeSubIndex,
                             parserModel.ResourceUri,
                             typeReference.TypeIdentifierToken.TextSpan,
-                            out var innerTypeDefinitionNode) &&
-                        innerTypeDefinitionNode is not null)
+                            out var innerTypeDefinitionNode))
                     {
                         typeDefinitionNode = innerTypeDefinitionNode;
                         innerCompilationUnit = parserModel.Compilation;
@@ -3436,20 +3434,20 @@ public static class ParseExpressions
                     }
                     else
                     {
-                        typeDefinitionNode = null;
+                        typeDefinitionNode = default;
                         innerCompilationUnit = parserModel.Compilation;
                         innerResourceUri = parserModel.ResourceUri;
                     }
                 }
                 else
                 {
-                    typeDefinitionNode = null;
+                    typeDefinitionNode = default;
                     innerCompilationUnit = parserModel.Compilation;
                     innerResourceUri = parserModel.ResourceUri;
                 }
             }
             
-            if (typeDefinitionNode is null)
+            if (typeDefinitionNode.IsDefault())
             {
                 if (expressionPrimary.SyntaxKind == SyntaxKind.VariableReferenceNode)
                 {
@@ -3464,13 +3462,13 @@ public static class ParseExpressions
             }
 
             var memberList = parserModel.Binder.Internal_GetMemberList_TypeDefinitionNode(typeDefinitionNode);
-            ISyntaxNode? foundDefinitionNode = null;
+            SyntaxNodeValue foundDefinitionNode = default;
             
             foreach (var node in memberList)
             {
                 if (node.SyntaxKind == SyntaxKind.VariableDeclarationNode)
                 {
-                    var variableDeclarationNode = (VariableDeclarationNode)node;
+                    var variableDeclarationNode = node;
                     if (!variableDeclarationNode.IdentifierToken.ConstructorWasInvoked)
                         continue;
                     
@@ -3497,8 +3495,8 @@ public static class ParseExpressions
                 else if (node.SyntaxKind == SyntaxKind.FunctionDefinitionNode)
                 {
                     // TODO: Create a Binder.Main method that takes a node and returns its identifier?
-                    var functionDefinitionNode = (FunctionDefinitionNode)node;
-                    if (!functionDefinitionNode.FunctionIdentifierToken.ConstructorWasInvoked)
+                    var functionDefinitionNode = node;
+                    if (!functionDefinitionNode.IdentifierToken.ConstructorWasInvoked)
                         continue;
 
                     string resourceUriValue;
@@ -3515,7 +3513,7 @@ public static class ParseExpressions
                         resourceUriValue = innerResourceUri.Value;
                     }
                     
-                    if (parserModel.Binder.CSharpCompilerService.SafeCompareTextSpans(parserModel.ResourceUri.Value, memberIdentifierToken.TextSpan, resourceUriValue, functionDefinitionNode.FunctionIdentifierToken.TextSpan))
+                    if (parserModel.Binder.CSharpCompilerService.SafeCompareTextSpans(parserModel.ResourceUri.Value, memberIdentifierToken.TextSpan, resourceUriValue, functionDefinitionNode.IdentifierToken.TextSpan))
                     {
                         foundDefinitionNode = functionDefinitionNode;
                         break;
@@ -3524,7 +3522,7 @@ public static class ParseExpressions
                 // TODO: Nested type definitions needs to be added here.
             }
             
-            if (foundDefinitionNode is null)
+            if (foundDefinitionNode.IsDefault())
             {
                 if (expressionPrimary.SyntaxKind == SyntaxKind.VariableReferenceNode)
                 {
@@ -3540,12 +3538,13 @@ public static class ParseExpressions
 
             if (foundDefinitionNode.SyntaxKind == SyntaxKind.VariableDeclarationNode)
             {
-                var variableDeclarationNode = (VariableDeclarationNode)foundDefinitionNode;
+                var variableDeclarationNode = foundDefinitionNode;
                 
                 var variableReferenceNode = parserModel.Rent_VariableReferenceNode();
                 variableReferenceNode.VariableIdentifierToken = memberIdentifierToken;
-                variableReferenceNode.VariableDeclarationNode = variableDeclarationNode;
-                var symbolId = parserModel.CreateVariableSymbol(variableReferenceNode.VariableIdentifierToken, variableDeclarationNode.VariableKind);
+                var variableDeclarationTraits = parserModel.Binder.VariableDeclarationTraitsList[variableDeclarationNode.MetaIndex];
+                variableReferenceNode.TypeReference = variableDeclarationTraits.ResultTypeReference;
+                var symbolId = parserModel.CreateVariableSymbol(variableReferenceNode.VariableIdentifierToken, variableDeclarationTraits.VariableKind);
                 
                 if (parserModel.Binder.SymbolIdToExternalTextSpanMap.TryGetValue(parserModel.ResourceUri.Value, out var symbolIdToExternalTextSpanMap))
                 {
@@ -3567,7 +3566,7 @@ public static class ParseExpressions
             }
             else if (foundDefinitionNode.SyntaxKind == SyntaxKind.FunctionDefinitionNode)
             {
-                var functionDefinitionNode = (FunctionDefinitionNode)foundDefinitionNode;
+                var functionDefinitionNode = foundDefinitionNode;
                 
                 // TODO: Method group node?
                 // TODO: Don't store a reference to definitons.
@@ -3576,7 +3575,8 @@ public static class ParseExpressions
                 
                 var functionInvocationNode = parserModel.Rent_FunctionInvocationNode();
                 functionInvocationNode.FunctionInvocationIdentifierToken = memberIdentifierToken;
-                functionInvocationNode.ResultTypeReference = functionDefinitionNode.ReturnTypeReference;
+                var functionDefinitionTraits = parserModel.Binder.FunctionDefinitionTraitsList[functionDefinitionNode.MetaIndex];
+                functionInvocationNode.ResultTypeReference = functionDefinitionTraits.ReturnTypeReference;
                 
                 var symbolId = parserModel.GetNextSymbolId();
                 
@@ -3595,10 +3595,10 @@ public static class ParseExpressions
                 {
                     symbolIdToExternalTextSpanMap.TryAdd(
                         symbolId,
-                        (functionDefinitionNode.ResourceUri, functionDefinitionNode.FunctionIdentifierToken.TextSpan.StartInclusiveIndex));
+                        (functionDefinitionNode.ResourceUri, functionDefinitionNode.IdentifierToken.TextSpan.StartInclusiveIndex));
                 }
                 
-                functionInvocationNode.ExplicitDefinitionTextSpan = functionDefinitionNode.FunctionIdentifierToken.TextSpan;
+                functionInvocationNode.ExplicitDefinitionTextSpan = functionDefinitionNode.IdentifierToken.TextSpan;
                 
                 // TODO: Transition from 'FunctionInvocationNode' to GenericParameters / FunctionParameters
                 // TODO: Method group if next token is not '<' or '('
@@ -3619,7 +3619,7 @@ public static class ParseExpressions
         // TODO: Method group if next token is not '<' or '('
         // TODO: return new Aaa.Bbb(); // is a very good test case.
         
-        return expressionPrimary;*/
+        return expressionPrimary;
     }
     
     private static IExpressionNode ParseMemberAccessToken_UndefinedNode(

@@ -1723,7 +1723,7 @@ public partial class CSharpBinder
     
     private readonly List<SyntaxNodeValue> _getMemberList = new();
     
-    internal List<SyntaxNodeValue> Internal_GetMemberList_TypeDefinitionNode(TypeDefinitionNode typeDefinitionNode)
+    internal List<SyntaxNodeValue> Internal_GetMemberList_TypeDefinitionNode(SyntaxNodeValue typeDefinitionNode)
     {
         _getMemberList.Clear();
     
@@ -1755,12 +1755,13 @@ public partial class CSharpBinder
             }
         }*/
         
-        if (typeDefinitionNode.IndexPartialTypeDefinition != -1)
+        var typeDefinitionTraits = TypeDefinitionTraitsList[typeDefinitionNode.MetaIndex];
+        if (typeDefinitionTraits.IndexPartialTypeDefinition != -1)
         {
-            int positionExclusive = typeDefinitionNode.IndexPartialTypeDefinition;
+            int positionExclusive = typeDefinitionTraits.IndexPartialTypeDefinition;
             while (positionExclusive < PartialTypeDefinitionList.Count)
             {
-                if (PartialTypeDefinitionList[positionExclusive].IndexStartGroup == typeDefinitionNode.IndexPartialTypeDefinition)
+                if (PartialTypeDefinitionList[positionExclusive].IndexStartGroup == typeDefinitionTraits.IndexPartialTypeDefinition)
                 {
                     CSharpCompilationUnit innerCompilationUnit;
                     ResourceUri innerResourceUri;
