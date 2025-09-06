@@ -1,0 +1,23 @@
+using Walk.Extensions.CompilerServices.Syntax.Interfaces;
+using Walk.Extensions.CompilerServices.Syntax.NodeValues;
+
+namespace Walk.Extensions.CompilerServices.Syntax.NodeReferences;
+
+public sealed class ReturnStatementNode : IExpressionNode
+{
+    public ReturnStatementNode(SyntaxToken keywordToken, IExpressionNode expressionNode)
+    {
+        KeywordToken = keywordToken;
+        // ExpressionNode = expressionNode;
+        
+        ResultTypeReference = expressionNode.ResultTypeReference;
+    }
+
+    public SyntaxToken KeywordToken { get; }
+    // public IExpressionNode ExpressionNode { get; set; }
+    public TypeReferenceValue ResultTypeReference { get; }
+
+    public int ParentScopeSubIndex { get; set; }
+    public bool IsFabricated { get; init; }
+    public SyntaxKind SyntaxKind => SyntaxKind.ReturnStatementNode;
+}

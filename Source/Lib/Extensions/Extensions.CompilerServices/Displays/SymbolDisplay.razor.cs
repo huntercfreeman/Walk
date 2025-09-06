@@ -4,6 +4,8 @@ using Walk.TextEditor.RazorLib;
 using Walk.TextEditor.RazorLib.Lexers.Models;
 using Walk.TextEditor.RazorLib.TextEditors.Models;
 using Walk.Extensions.CompilerServices.Syntax;
+using Walk.Extensions.CompilerServices.Syntax.Interfaces;
+using Walk.Extensions.CompilerServices.Syntax.NodeValues;
 
 namespace Walk.Extensions.CompilerServices.Displays;
 
@@ -79,19 +81,19 @@ public partial class SymbolDisplay : ComponentBase
     ///
     /// The 'targetNode' is whichever node the ISymbol directly mapped to.
     /// </summary>
-    public static ISyntaxNode? GetTargetNode(TextEditorService textEditorService, Symbol symbolLocal, ResourceUri resourceUri)
+    public static SyntaxNodeValue GetTargetNodeValue(TextEditorService textEditorService, Symbol symbolLocal, ResourceUri resourceUri)
     {
         try
         {
             var textEditorModel = textEditorService.Model_GetOrDefault(resourceUri);
             if (textEditorModel is null)
-                return null;
+                return default;
             
             var extendedCompilerService = (IExtendedCompilerService)textEditorModel.PersistentState.CompilerService;
             
             var compilerServiceResource = extendedCompilerService.GetResource(textEditorModel.PersistentState.ResourceUri);
             if (compilerServiceResource is null)
-                return null;
+                return default;
     
             return extendedCompilerService.GetSyntaxNode(
                 symbolLocal.TextSpan.StartInclusiveIndex,
@@ -101,7 +103,7 @@ public partial class SymbolDisplay : ComponentBase
         catch (Exception e)
         {
             Console.WriteLine(e);
-            return null;
+            return default;
         }
     }
     
@@ -110,11 +112,11 @@ public partial class SymbolDisplay : ComponentBase
     ///
     /// Otherwise, ask the IBinder for the definition node:
     /// </summary>
-    public static ISyntaxNode? GetDefinitionNode(TextEditorService textEditorService, Symbol symbolLocal, ISyntaxNode targetNode, ResourceUri resourceUri)
+    public static SyntaxNodeValue GetDefinitionNodeValue(TextEditorService textEditorService, Symbol symbolLocal, SyntaxNodeValue targetNode, ResourceUri resourceUri)
     {
         try
         {
-            if (targetNode is not null)
+            if (!targetNode.IsDefault())
             {
                 switch (targetNode.SyntaxKind)
                 {
@@ -131,12 +133,12 @@ public partial class SymbolDisplay : ComponentBase
             var extendedCompilerService = (IExtendedCompilerService)textEditorModel.PersistentState.CompilerService;
             var compilerServiceResource = extendedCompilerService.GetResource(textEditorModel.PersistentState.ResourceUri);
     
-            return extendedCompilerService.GetDefinitionNode(symbolLocal.TextSpan, textEditorModel.PersistentState.ResourceUri, compilerServiceResource, symbolLocal);
+            return extendedCompilerService.GetDefinitionNodeValue(symbolLocal.TextSpan, textEditorModel.PersistentState.ResourceUri, compilerServiceResource, symbolLocal);
         }
         catch (Exception e)
         {
             Console.WriteLine(e);
-            return null;
+            return default;
         }
     }
 }

@@ -1,7 +1,8 @@
 using Walk.Extensions.CompilerServices.Syntax;
-using Walk.Extensions.CompilerServices.Syntax.Nodes;
-using Walk.Extensions.CompilerServices.Syntax.Nodes.Interfaces;
-using Walk.Extensions.CompilerServices.Syntax.Nodes.Enums;
+using Walk.Extensions.CompilerServices.Syntax.Enums;
+using Walk.Extensions.CompilerServices.Syntax.Interfaces;
+using Walk.Extensions.CompilerServices.Syntax.NodeReferences;
+using Walk.Extensions.CompilerServices.Syntax.NodeValues;
 
 namespace Walk.CompilerServices.CSharp.ParserCase.Internals;
 
@@ -9,20 +10,20 @@ public class ParseFunctions
 {
     public static void HandleFunctionDefinition(
         SyntaxToken consumedIdentifierToken,
-        TypeReference consumedTypeReference,
-        ref CSharpParserModel parserModel)
+        TypeReferenceValue consumedTypeReference,
+        ref CSharpParserState parserModel)
     {
         var functionDefinitionNode = new FunctionDefinitionNode(
             AccessModifierKind.Public,
             consumedTypeReference,
             consumedIdentifierToken,
             openAngleBracketToken: default,
-    		indexGenericParameterEntryList: -1,
-            countGenericParameterEntryList: 0,
+    		offsetGenericParameterEntryList: -1,
+            lengthGenericParameterEntryList: 0,
     		closeAngleBracketToken: default,
             openParenthesisToken: default,
-            indexFunctionArgumentEntryList: -1,
-            countFunctionArgumentEntryList: 0,
+            offsetFunctionArgumentEntryList: -1,
+            lengthFunctionArgumentEntryList: 0,
             closeParenthesisToken: default,
             parserModel.ResourceUri);
             
@@ -225,23 +226,23 @@ public class ParseFunctions
     }*/
 
     public static void HandleConstructorDefinition(
-        TypeDefinitionNode typeDefinitionNodeCodeBlockOwner,
+        SyntaxToken typeDefinitionIdentifierToken,
         SyntaxToken consumedIdentifierToken,
-        ref CSharpParserModel parserModel)
+        ref CSharpParserState parserModel)
     {
         var typeClauseNode = parserModel.Rent_TypeClauseNode();
-        typeClauseNode.TypeIdentifierToken = typeDefinitionNodeCodeBlockOwner.TypeIdentifierToken;
+        typeClauseNode.TypeIdentifierToken = typeDefinitionIdentifierToken;
 
         var constructorDefinitionNode = new ConstructorDefinitionNode(
-            new TypeReference(typeClauseNode),
+            new TypeReferenceValue(typeClauseNode),
             consumedIdentifierToken,
             openAngleBracketToken: default,
-    		indexGenericParameterEntryList: -1,
-            countGenericParameterEntryList: 0,
+    		offsetGenericParameterEntryList: -1,
+            lengthGenericParameterEntryList: 0,
     		closeAngleBracketToken: default,
             openParenthesisToken: default,
-            indexFunctionArgumentEntryList: -1,
-            countFunctionArgumentEntryList: 0,
+            offsetFunctionArgumentEntryList: -1,
+            lengthFunctionArgumentEntryList: 0,
             closeParenthesisToken: default,
             parserModel.ResourceUri);
         
@@ -305,7 +306,7 @@ public class ParseFunctions
                 var functionInvocationNode = parserModel.Rent_FunctionInvocationNode();
                 functionInvocationNode.FunctionInvocationIdentifierToken = consumedIdentifierToken;
                 functionInvocationNode.OpenParenthesisToken = openParenthesisToken;
-                functionInvocationNode.IndexFunctionParameterEntryList = parserModel.Binder.FunctionParameterEntryList.Count;
+                functionInvocationNode.OffsetFunctionParameterEntryList = parserModel.Binder.FunctionParameterList.Count;
                 
                 functionInvocationNode.IsParsingFunctionParameters = true;
                     
@@ -346,11 +347,11 @@ public class ParseFunctions
     /// <summary>Use this method for function definition, whereas <see cref="HandleFunctionParameters"/> should be used for function invocation.</summary>
     public static void HandleFunctionArguments(
         IFunctionDefinitionNode functionDefinitionNode,
-        ref CSharpParserModel parserModel,
+        ref CSharpParserState parserModel,
         VariableKind variableKind = VariableKind.Local)
     {
         var openParenthesisToken = parserModel.TokenWalker.Consume();
-        var indexFunctionArgumentEntryList = parserModel.Binder.FunctionArgumentEntryList.Count;
+        var indexFunctionArgumentEntryList = parserModel.Binder.FunctionArgumentList.Count;
         var countFunctionArgumentEntryList = 0;
         var openParenthesisCount = 1;
         var corruptState = false;
@@ -467,9 +468,9 @@ public class ParseFunctions
                         optionalCompileTimeConstantToken = new SyntaxToken(SyntaxKind.NotApplicable, textSpan: default);
                     }
                     
-                    parserModel.Binder.FunctionArgumentEntryList.Insert(
+                    parserModel.Binder.FunctionArgumentList.Insert(
                         indexFunctionArgumentEntryList + countFunctionArgumentEntryList,
-                        new FunctionArgumentEntry(
+                        new FunctionArgument(
                             variableDeclarationNode,
                             optionalCompileTimeConstantToken,
                             parserModel.ArgumentModifierKind));
@@ -497,8 +498,8 @@ public class ParseFunctions
             closeParenthesisToken = parserModel.TokenWalker.Consume();
         
         functionDefinitionNode.OpenParenthesisToken = openParenthesisToken;
-        functionDefinitionNode.IndexFunctionArgumentEntryList = indexFunctionArgumentEntryList;
-        functionDefinitionNode.CountFunctionArgumentEntryList = countFunctionArgumentEntryList;
+        functionDefinitionNode.OffsetFunctionArgumentEntryList = indexFunctionArgumentEntryList;
+        functionDefinitionNode.LengthFunctionArgumentEntryList = countFunctionArgumentEntryList;
         functionDefinitionNode.CloseParenthesisToken = closeParenthesisToken;
     }
 }

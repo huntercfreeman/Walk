@@ -3,19 +3,18 @@
 @using Walk.TextEditor.RazorLib.CompilerServices
 @using Walk.TextEditor.RazorLib.Lexers.Models
 @using Walk.Extensions.CompilerServices.Syntax
-@using Walk.Extensions.CompilerServices.Syntax.Nodes
-@using Walk.Extensions.CompilerServices.Syntax.Nodes.Interfaces
-@using Walk.Extensions.CompilerServices.Syntax.Nodes.Enums
+@using Walk.Extensions.CompilerServices.Syntax.NodeValues
+@using Walk.Extensions.CompilerServices.Syntax.NodeReferences
 @using Walk.Extensions.CompilerServices.Displays.Internals
 
 @{
 	var symbolLocal = Symbol;
-	var targetNode = GetTargetNode(TextEditorService, symbolLocal, ResourceUri);
-	var definitionNode = GetDefinitionNode(TextEditorService, symbolLocal, targetNode, ResourceUri);
+	// var targetNode = GetTargetNode(TextEditorService, symbolLocal, ResourceUri);
+	var definitionNode = GetDefinitionNodeValue(TextEditorService, symbolLocal, default, ResourceUri);
 	
 	ResourceUri resourceUri;
 	
-	if (definitionNode is null)
+	if (definitionNode.IsDefault())
 	{
     	resourceUri = ResourceUri;
 	}
@@ -24,15 +23,15 @@
 	    switch (definitionNode.SyntaxKind)
     	{
     	    case SyntaxKind.VariableDeclarationNode:
-            	var variableDeclarationNode = (VariableDeclarationNode)definitionNode;
+            	var variableDeclarationNode = definitionNode;
             	resourceUri = variableDeclarationNode.ResourceUri;
             	break;
             case SyntaxKind.FunctionDefinitionNode:
-            	var functionDefinitionNode = (FunctionDefinitionNode)definitionNode;
+            	var functionDefinitionNode = definitionNode;
             	resourceUri = functionDefinitionNode.ResourceUri;
             	break;
             case SyntaxKind.TypeDefinitionNode:
-            	var innerTypeDefinitionNode = (TypeDefinitionNode)definitionNode;
+            	var innerTypeDefinitionNode = definitionNode;
             	resourceUri = innerTypeDefinitionNode.ResourceUri;
             	break;
     	    default:
@@ -59,7 +58,7 @@
 	    TextEditorService,
 	    resourceUri,
 		symbolLocal,
-		targetNode,
+		default,
 		definitionNode,
 		depth: 0);
 }

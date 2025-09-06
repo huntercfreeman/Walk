@@ -1,7 +1,7 @@
 using Microsoft.AspNetCore.Components;
 using Walk.TextEditor.RazorLib;
 using Walk.TextEditor.RazorLib.Lexers.Models;
-using Walk.Extensions.CompilerServices.Syntax;
+using Walk.Extensions.CompilerServices.Syntax.Interfaces;
 
 namespace Walk.Extensions.CompilerServices.Displays.Internals;
 

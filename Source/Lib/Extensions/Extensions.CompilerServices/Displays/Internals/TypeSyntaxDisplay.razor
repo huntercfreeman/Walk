@@ -1,8 +1,9 @@
 @using System.Text
-@using Walk.TextEditor.RazorLib.TextEditors.Models.Internals
 @using Walk.Extensions.CompilerServices.Syntax
-@using Walk.Extensions.CompilerServices.Syntax.Nodes
-@using Walk.Extensions.CompilerServices.Syntax.Nodes.Enums
+@using Walk.Extensions.CompilerServices.Syntax.Enums
+@using Walk.Extensions.CompilerServices.Syntax.NodeValues
+@using Walk.Extensions.CompilerServices.Syntax.NodeReferences
+@using Walk.TextEditor.RazorLib.TextEditors.Models.Internals
 
 @*
     I'm making changes to the C# Compiler Service storage.
@@ -24,7 +25,7 @@
 	int arrayRank;
 	TypeKind typeKind = TypeKind.ArrayJagged;
 	
-	if (syntaxViewModelLocal.DefinitionNode is null && syntaxViewModelLocal.TargetNode is null && syntaxViewModelLocal.TargetSymbol is null && TypeReference.IsDefault())
+	if (syntaxViewModelLocal.DefinitionNode.IsDefault() && syntaxViewModelLocal.TargetNode.IsDefault() && syntaxViewModelLocal.TargetSymbol.IsDefault() && TypeReference.IsDefault())
 	{
 		prefixText = "(null)";
 		prefixTextCssClass = null;
@@ -34,46 +35,47 @@
 		hasQuestionMark = null;
 		arrayRank = 0;
 	}
-	else if (syntaxViewModelLocal.DefinitionNode is not null && syntaxViewModelLocal.DefinitionNode.SyntaxKind == SyntaxKind.TypeDefinitionNode)
+	else if (!syntaxViewModelLocal.DefinitionNode.IsDefault() && syntaxViewModelLocal.DefinitionNode.SyntaxKind == SyntaxKind.TypeDefinitionNode)
 	{
-		var typeDefinitionNode = (TypeDefinitionNode)syntaxViewModelLocal.DefinitionNode;
+		var typeDefinitionNode = syntaxViewModelLocal.DefinitionNode;
+		var typeDefinitionMetadata = syntaxViewModelLocal.ExtendedCompilerService.TypeDefinitionTraitsList[typeDefinitionNode.TraitsIndex];
 	
 		var prefixBuilder = new StringBuilder();
-		prefixBuilder.Append(typeDefinitionNode.AccessModifierKind.ToString().ToLower());
+		prefixBuilder.Append(typeDefinitionMetadata.AccessModifierKind.ToString().ToLower());
 		prefixBuilder.Append(' ');
-		prefixBuilder.Append(typeDefinitionNode.StorageModifierKind.ToString().ToLower());
+		prefixBuilder.Append(typeDefinitionMetadata.StorageModifierKind.ToString().ToLower());
 		
 		prefixText = prefixBuilder.ToString();
 		prefixTextCssClass = "di_keyword";
-		text = syntaxViewModelLocal.GetIdentifierText(typeDefinitionNode);
+		text = syntaxViewModelLocal.GetTextFromTextSpan(typeDefinitionNode.IdentifierToken.TextSpan);
 		syntaxHighlightingClassCssString = "di_type";
-		hasGenericParameterListing = typeDefinitionNode.OpenAngleBracketToken.ConstructorWasInvoked;
+		hasGenericParameterListing = typeDefinitionMetadata.OpenAngleBracketToken.ConstructorWasInvoked;
 		hasQuestionMark = null;
 		arrayRank = 0;
 	}
-	else if (syntaxViewModelLocal.TargetNode is not null && syntaxViewModelLocal.TargetNode.SyntaxKind == SyntaxKind.TypeClauseNode)
+	else if (!syntaxViewModelLocal.TargetNode.IsDefault() && syntaxViewModelLocal.TargetNode.SyntaxKind == SyntaxKind.TypeClauseNode)
 	{
-		var typeClauseNode = (TypeClauseNode)syntaxViewModelLocal.TargetNode;
+		var typeClauseNode = syntaxViewModelLocal.TargetNode;
 	
 		prefixText = "(reference)";
 		prefixTextCssClass = null;
-		text = syntaxViewModelLocal.GetIdentifierText(typeClauseNode);
+		text = syntaxViewModelLocal.GetTextFromTextSpan(typeClauseNode.IdentifierToken.TextSpan);
 		
-		if (typeClauseNode.IsKeywordType)
+		//if (typeClauseNode.IsKeywordType)
 			syntaxHighlightingClassCssString = "di_keyword";
-		else
-			syntaxHighlightingClassCssString = "di_type";
+		//else
+		//	syntaxHighlightingClassCssString = "di_type";
 		
-		hasGenericParameterListing = typeClauseNode.OpenAngleBracketToken.ConstructorWasInvoked;
-		hasQuestionMark = typeClauseNode.HasQuestionMark;
-		arrayRank = typeClauseNode.ArrayRank;
-		typeKind = typeClauseNode.TypeKind;
+		hasGenericParameterListing = false;//typeClauseNode.OpenAngleBracketToken.ConstructorWasInvoked;
+		hasQuestionMark = null;//typeClauseNode.HasQuestionMark;
+		arrayRank = 0;//typeClauseNode.ArrayRank;
+		typeKind = default;//typeClauseNode.TypeKind;
 	}
-	else if (syntaxViewModelLocal.TargetSymbol is not null && syntaxViewModelLocal.TargetSymbol.Value.SyntaxKind == SyntaxKind.TypeSymbol)
+	else if (!syntaxViewModelLocal.TargetSymbol.IsDefault() && syntaxViewModelLocal.TargetSymbol.SyntaxKind == SyntaxKind.TypeSymbol)
 	{
 		prefixText = "(symbol)";
 		prefixTextCssClass = null;
-		text = syntaxViewModelLocal.GetTextFromTextSpan(syntaxViewModelLocal.TargetSymbol.Value.TextSpan);
+		text = syntaxViewModelLocal.GetTextFromTextSpan(syntaxViewModelLocal.TargetSymbol.TextSpan);
 		syntaxHighlightingClassCssString = "di_type";
 		hasGenericParameterListing = false;
 		hasQuestionMark = null;
@@ -127,7 +129,7 @@
     	
     	@if (!string.IsNullOrWhiteSpace(text))
     	{
-    		var classCssString = syntaxViewModelLocal.DefinitionNode is null
+    		var classCssString = syntaxViewModelLocal.DefinitionNode.IsDefault()
     			? string.Empty
     			: "di_te_syntax-onclick";
     	
@@ -145,9 +147,9 @@
         		    SyntaxViewModel.ExtendedCompilerService,
     			    SyntaxViewModel.TextEditorService,
     			    SyntaxViewModel.ResourceUri,
-    				targetSymbol: null,
-    				targetNode: null,
-    				definitionNode: null,
+    				targetSymbol: default,
+    				targetNode: default,
+    				definitionNode: default,
     				depth: syntaxViewModelLocal.Depth + 1);
     			<GenericSyntaxDisplay SyntaxViewModel="syntaxViewModel" TypeReference="TypeReference" />
     		}
@@ -157,7 +159,7 @@
         		    SyntaxViewModel.ExtendedCompilerService,
     			    SyntaxViewModel.TextEditorService,
     			    SyntaxViewModel.ResourceUri,
-    				targetSymbol: null,
+    				targetSymbol: default,
     				targetNode: syntaxViewModelLocal.TargetNode,
     				definitionNode: syntaxViewModelLocal.DefinitionNode,
     				depth: syntaxViewModelLocal.Depth + 1);

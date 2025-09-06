@@ -1,7 +1,8 @@
 using Walk.TextEditor.RazorLib.Lexers.Models;
 using Walk.TextEditor.RazorLib.CompilerServices;
 using Walk.Extensions.CompilerServices.Syntax;
-using Walk.Extensions.CompilerServices.Syntax.Nodes.Interfaces;
+using Walk.Extensions.CompilerServices.Syntax.Interfaces;
+using Walk.Extensions.CompilerServices.Syntax.NodeValues;
 
 namespace Walk.Extensions.CompilerServices;
 
@@ -18,12 +19,17 @@ public interface IExtendedCompilerService : ICompilerService
     /// </summary>
     public string? SafeGetText(string absolutePath, TextEditorTextSpan textSpan);
 
-    public IReadOnlyList<Walk.Extensions.CompilerServices.Syntax.Nodes.GenericParameterEntry> GenericParameterEntryList { get; }
-    public IReadOnlyList<Walk.Extensions.CompilerServices.Syntax.Nodes.FunctionParameterEntry> FunctionParameterEntryList { get; }
-    public IReadOnlyList<Walk.Extensions.CompilerServices.Syntax.Nodes.FunctionArgumentEntry> FunctionArgumentEntryList { get; }
+    public IReadOnlyList<GenericParameter> GenericParameterEntryList { get; }
+    public IReadOnlyList<FunctionParameter> FunctionParameterEntryList { get; }
+    public IReadOnlyList<FunctionArgument> FunctionArgumentEntryList { get; }
+    
+    public IReadOnlyList<TypeDefinitionTraits> TypeDefinitionTraitsList { get; }
+    public IReadOnlyList<FunctionDefinitionTraits> FunctionDefinitionTraitsList { get; }
+    public IReadOnlyList<VariableDeclarationTraits> VariableDeclarationTraitsList { get; }
+    public IReadOnlyList<ConstructorDefinitionTraits> ConstructorDefinitionTraitsList { get; }
 
-    public ISyntaxNode? GetSyntaxNode(int positionIndex, ResourceUri resourceUri, ICompilerServiceResource? compilerServiceResource);
-    public ISyntaxNode? GetDefinitionNode(TextEditorTextSpan textSpan, ResourceUri resourceUri, ICompilerServiceResource compilerServiceResource, Symbol? symbol = null);
-    public (Scope Scope, ICodeBlockOwner? CodeBlockOwner) GetCodeBlockTupleByPositionIndex(ResourceUri resourceUri, int positionIndex);
+    public SyntaxNodeValue GetSyntaxNode(int positionIndex, ResourceUri resourceUri, ICompilerServiceResource? compilerServiceResource);
+    public SyntaxNodeValue GetDefinitionNodeValue(TextEditorTextSpan textSpan, ResourceUri resourceUri, ICompilerServiceResource compilerServiceResource, Symbol? symbol = null);
+    public (Scope Scope, SyntaxNodeValue CodeBlockOwner) GetCodeBlockTupleByPositionIndex(ResourceUri resourceUri, int positionIndex);
     public string GetIdentifierText(ISyntaxNode node, ResourceUri resourceUri);
 }

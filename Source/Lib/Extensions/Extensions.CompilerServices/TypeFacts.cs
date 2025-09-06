@@ -1,8 +1,10 @@
 using Walk.TextEditor.RazorLib.Decorations.Models;
 using Walk.TextEditor.RazorLib.Lexers.Models;
 using Walk.Extensions.CompilerServices.Syntax;
-using Walk.Extensions.CompilerServices.Syntax.Nodes;
-using Walk.Extensions.CompilerServices.Syntax.Nodes.Enums;
+using Walk.Extensions.CompilerServices.Syntax.Enums;
+using Walk.Extensions.CompilerServices.Syntax.Interfaces;
+using Walk.Extensions.CompilerServices.Syntax.NodeReferences;
+using Walk.Extensions.CompilerServices.Syntax.NodeValues;
 
 namespace Walk.Extensions.CompilerServices;
 
@@ -28,11 +30,11 @@ namespace Walk.Extensions.CompilerServices;
 /// </summary>
 public static class TypeFacts
 {
-    private static readonly TypeReference _notApplicableTypeReference = new TypeReference(
+    private static readonly TypeReferenceValue _notApplicableTypeReference = new TypeReferenceValue(
         typeIdentifier: new SyntaxToken(SyntaxKind.IdentifierToken, new TextEditorTextSpan(0, 13, (byte)GenericDecorationKind.None)),
         openAngleBracketToken: default,
-		indexGenericParameterEntryList: -1,
-        countGenericParameterEntryList: 0,
+		offsetGenericParameterEntryList: -1,
+        lengthGenericParameterEntryList: 0,
 		closeAngleBracketToken: default,
         isKeywordType: false,
         typeKind: TypeKind.None,
@@ -57,12 +59,12 @@ public static class TypeFacts
             SyntaxKind.IdentifierToken,
             new TextEditorTextSpan(0, 13, (byte)GenericDecorationKind.None, byteIndex: 0, charIntSum: 1310)),
         openAngleBracketToken: default,
-		indexGenericParameterEntryList: -1,
-        countGenericParameterEntryList: 0,
+		offsetGenericParameterEntryList: -1,
+        lengthGenericParameterEntryList: 0,
 		closeAngleBracketToken: default,
         openParenthesisToken: default,
-        indexFunctionArgumentEntryList: -1,
-        countFunctionArgumentEntryList: 0,
+        offsetFunctionArgumentEntryList: -1,
+        lengthFunctionArgumentEntryList: 0,
         closeParenthesisToken: default,
         inheritedTypeReference: _notApplicableTypeReference,
         ResourceUri.Empty
@@ -84,12 +86,12 @@ public static class TypeFacts
             SyntaxKind.IdentifierToken,
             new TextEditorTextSpan(14, 19, (byte)GenericDecorationKind.None, byteIndex: 0, charIntSum: 559)),
         openAngleBracketToken: default,
-		indexGenericParameterEntryList: -1,
-        countGenericParameterEntryList: 0,
+		offsetGenericParameterEntryList: -1,
+        lengthGenericParameterEntryList: 0,
 		closeAngleBracketToken: default,
         openParenthesisToken: default,
-        indexFunctionArgumentEntryList: -1,
-        countFunctionArgumentEntryList: 0,
+        offsetFunctionArgumentEntryList: -1,
+        lengthFunctionArgumentEntryList: 0,
         closeParenthesisToken: default,
         inheritedTypeReference: _notApplicableTypeReference,
         ResourceUri.Empty
@@ -128,12 +130,12 @@ public static class TypeFacts
             SyntaxKind.IdentifierToken,
             new TextEditorTextSpan(14, 19, (byte)GenericDecorationKind.None, byteIndex: 0, charIntSum: 624)),
         openAngleBracketToken: default,
-		indexGenericParameterEntryList: -1,
-        countGenericParameterEntryList: 0,
+		offsetGenericParameterEntryList: -1,
+        lengthGenericParameterEntryList: 0,
 		closeAngleBracketToken: default,
         openParenthesisToken: default,
-        indexFunctionArgumentEntryList: -1,
-        countFunctionArgumentEntryList: 0,
+        offsetFunctionArgumentEntryList: -1,
+        lengthFunctionArgumentEntryList: 0,
         closeParenthesisToken: default,
         inheritedTypeReference: _notApplicableTypeReference,
         ResourceUri.Empty

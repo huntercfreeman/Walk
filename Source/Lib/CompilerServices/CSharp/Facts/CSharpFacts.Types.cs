@@ -2,8 +2,8 @@ using Walk.TextEditor.RazorLib.Lexers.Models;
 using Walk.TextEditor.RazorLib.Decorations.Models;
 using Walk.Extensions.CompilerServices;
 using Walk.Extensions.CompilerServices.Syntax;
-using Walk.Extensions.CompilerServices.Syntax.Nodes;
-using Walk.Extensions.CompilerServices.Syntax.Nodes.Enums;
+using Walk.Extensions.CompilerServices.Syntax.Enums;
+using Walk.Extensions.CompilerServices.Syntax.NodeReferences;
 
 namespace Walk.CompilerServices.CSharp.Facts;
 
@@ -42,12 +42,12 @@ public partial class CSharpFacts
                 SyntaxKind.IdentifierToken,
                 new TextEditorTextSpan(20, 24, (byte)GenericDecorationKind.None, byteIndex: 0, charIntSum: 434)),
             openAngleBracketToken: default,
-    		indexGenericParameterEntryList: -1,
-            countGenericParameterEntryList: 0,
+    		offsetGenericParameterEntryList: -1,
+            lengthGenericParameterEntryList: 0,
     		closeAngleBracketToken: default,
             openParenthesisToken: default,
-            indexFunctionArgumentEntryList: -1,
-            countFunctionArgumentEntryList: 0,
+            offsetFunctionArgumentEntryList: -1,
+            lengthFunctionArgumentEntryList: 0,
             closeParenthesisToken: default,
             TypeFacts.NotApplicable.ToTypeReference(),
             ResourceUri.Empty)
@@ -63,12 +63,12 @@ public partial class CSharpFacts
                 SyntaxKind.IdentifierToken,
                 new TextEditorTextSpan(25, 28, (byte)GenericDecorationKind.None, byteIndex:0, charIntSum: 331)),
             openAngleBracketToken: default,
-    		indexGenericParameterEntryList: -1,
-            countGenericParameterEntryList: 0,
+    		offsetGenericParameterEntryList: -1,
+            lengthGenericParameterEntryList: 0,
     		closeAngleBracketToken: default,
             openParenthesisToken: default,
-            indexFunctionArgumentEntryList: -1,
-            countFunctionArgumentEntryList: 0,
+            offsetFunctionArgumentEntryList: -1,
+            lengthFunctionArgumentEntryList: 0,
             closeParenthesisToken: default,
             TypeFacts.NotApplicable.ToTypeReference(),
             ResourceUri.Empty)
@@ -84,12 +84,12 @@ public partial class CSharpFacts
                 SyntaxKind.IdentifierToken,
                 new TextEditorTextSpan(29, 33, (byte)GenericDecorationKind.None, byteIndex:0, charIntSum: 414)),
             openAngleBracketToken: default,
-    		indexGenericParameterEntryList: -1,
-            countGenericParameterEntryList: 0,
+    		offsetGenericParameterEntryList: -1,
+            lengthGenericParameterEntryList: 0,
     		closeAngleBracketToken: default,
             openParenthesisToken: default,
-            indexFunctionArgumentEntryList: -1,
-            countFunctionArgumentEntryList: 0,
+            offsetFunctionArgumentEntryList: -1,
+            lengthFunctionArgumentEntryList: 0,
             closeParenthesisToken: default,
             TypeFacts.NotApplicable.ToTypeReference(),
             ResourceUri.Empty)
@@ -105,12 +105,12 @@ public partial class CSharpFacts
                 SyntaxKind.IdentifierToken,
                 new TextEditorTextSpan(34, 40, (byte)GenericDecorationKind.None, byteIndex:0, charIntSum: 663)),
             openAngleBracketToken: default,
-    		indexGenericParameterEntryList: -1,
-            countGenericParameterEntryList: 0,
+    		offsetGenericParameterEntryList: -1,
+            lengthGenericParameterEntryList: 0,
     		closeAngleBracketToken: default,
             openParenthesisToken: default,
-            indexFunctionArgumentEntryList: -1,
-            countFunctionArgumentEntryList: 0,
+            offsetFunctionArgumentEntryList: -1,
+            lengthFunctionArgumentEntryList: 0,
             closeParenthesisToken: default,
             TypeFacts.NotApplicable.ToTypeReference(),
             ResourceUri.Empty)
@@ -126,12 +126,12 @@ public partial class CSharpFacts
                 SyntaxKind.IdentifierToken,
                 new TextEditorTextSpan(41, 45, (byte)GenericDecorationKind.None, byteIndex:0, charIntSum: 428)),
             openAngleBracketToken: default,
-    		indexGenericParameterEntryList: -1,
-            countGenericParameterEntryList: 0,
+    		offsetGenericParameterEntryList: -1,
+            lengthGenericParameterEntryList: 0,
     		closeAngleBracketToken: default,
             openParenthesisToken: default,
-            indexFunctionArgumentEntryList: -1,
-            countFunctionArgumentEntryList: 0,
+            offsetFunctionArgumentEntryList: -1,
+            lengthFunctionArgumentEntryList: 0,
             closeParenthesisToken: default,
             TypeFacts.NotApplicable.ToTypeReference(),
             ResourceUri.Empty)
@@ -147,12 +147,12 @@ public partial class CSharpFacts
                 SyntaxKind.IdentifierToken,
                 new TextEditorTextSpan(46, 49, (byte)GenericDecorationKind.None, byteIndex:0, charIntSum: 329)),
             openAngleBracketToken: default,
-    		indexGenericParameterEntryList: -1,
-            countGenericParameterEntryList: 0,
+    		offsetGenericParameterEntryList: -1,
+            lengthGenericParameterEntryList: 0,
     		closeAngleBracketToken: default,
             openParenthesisToken: default,
-            indexFunctionArgumentEntryList: -1,
-            countFunctionArgumentEntryList: 0,
+            offsetFunctionArgumentEntryList: -1,
+            lengthFunctionArgumentEntryList: 0,
             closeParenthesisToken: default,
             TypeFacts.NotApplicable.ToTypeReference(),
             ResourceUri.Empty)

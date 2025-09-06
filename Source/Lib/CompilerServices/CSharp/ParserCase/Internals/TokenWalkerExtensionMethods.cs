@@ -1,6 +1,6 @@
 using Walk.TextEditor.RazorLib.CompilerServices;
-using Walk.Extensions.CompilerServices.Utility;
 using Walk.Extensions.CompilerServices.Syntax;
+using Walk.Extensions.CompilerServices.Syntax.Utility;
 
 namespace Walk.CompilerServices.CSharp.ParserCase.Internals;
 
@@ -8,7 +8,7 @@ internal static class TokenWalkerExtensionMethods
 {
     public static void DeferParsingOfChildScope(
         this TokenWalker tokenWalker,
-        ref CSharpParserModel parserModel)
+        ref CSharpParserState parserModel)
     {
         // Pop off the 'TypeDefinitionNode', then push it back on when later dequeued.
         var deferredScope = parserModel.ScopeCurrent;

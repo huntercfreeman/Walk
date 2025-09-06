@@ -1,7 +1,8 @@
-@using Walk.TextEditor.RazorLib.TextEditors.Models.Internals
 @using Walk.Extensions.CompilerServices.Syntax
-@using Walk.Extensions.CompilerServices.Syntax.Nodes
-@using Walk.Extensions.CompilerServices.Syntax.Nodes.Enums
+@using Walk.Extensions.CompilerServices.Syntax.Enums
+@using Walk.Extensions.CompilerServices.Syntax.NodeValues
+@using Walk.Extensions.CompilerServices.Syntax.NodeReferences
+@using Walk.TextEditor.RazorLib.TextEditors.Models.Internals
 
 @*
     I'm making changes to the C# Compiler Service storage.
@@ -17,7 +18,7 @@
 	string? prefixText;
 	
 	// Hacky addition of 'string? returnTypeClauseNodeText' due to a ConstructorSymbol just being the identifier, not a node.
-	TypeReference returnTypeClauseNode;
+	TypeReferenceValue returnTypeClauseNode;
 	string? returnTypeClauseNodeText;
 	
 	string? methodName;
@@ -26,7 +27,7 @@
     int countFunctionArgumentEntryList;
 	bool isConstructorInvocation = false;
 	
-	if (syntaxViewModelLocal.DefinitionNode is null && syntaxViewModelLocal.TargetNode is null && syntaxViewModelLocal.TargetSymbol is null)
+	if (syntaxViewModelLocal.DefinitionNode.IsDefault() && syntaxViewModelLocal.TargetNode.IsDefault() && syntaxViewModelLocal.TargetSymbol.IsDefault())
 	{
 		prefixText = "(null)";
 		returnTypeClauseNode = default;
@@ -36,7 +37,7 @@
 		indexFunctionArgumentEntryList = -1;
 		countFunctionArgumentEntryList = 0;
 	}
-	else if (syntaxViewModelLocal.DefinitionNode is not null &&
+	else if (!syntaxViewModelLocal.DefinitionNode.IsDefault() &&
 			 (syntaxViewModelLocal.DefinitionNode.SyntaxKind == SyntaxKind.FunctionDefinitionNode ||
 			  	syntaxViewModelLocal.DefinitionNode.SyntaxKind == SyntaxKind.ConstructorDefinitionNode))
 	{
@@ -44,23 +45,26 @@
 		
 		if (syntaxViewModelLocal.DefinitionNode.SyntaxKind == SyntaxKind.FunctionDefinitionNode)
 		{
-			var functionDefinitionNode = (FunctionDefinitionNode)syntaxViewModelLocal.DefinitionNode;
-			returnTypeClauseNode = functionDefinitionNode.ReturnTypeReference;
+			var functionDefinitionNode = syntaxViewModelLocal.DefinitionNode;
+			var functionDefinitionMetadata = syntaxViewModelLocal.ExtendedCompilerService.FunctionDefinitionTraitsList[functionDefinitionNode.TraitsIndex];
+			
+			returnTypeClauseNode = functionDefinitionMetadata.ReturnTypeReference;
 			returnTypeClauseNodeText = null;
-			methodName = syntaxViewModelLocal.GetIdentifierText(functionDefinitionNode);
-			hasGenericParameterListing = functionDefinitionNode.OpenAngleBracketToken.ConstructorWasInvoked;
-			indexFunctionArgumentEntryList = functionDefinitionNode.IndexFunctionArgumentEntryList;
-			countFunctionArgumentEntryList = functionDefinitionNode.CountFunctionArgumentEntryList;
+			methodName = syntaxViewModelLocal.GetTextFromTextSpan(functionDefinitionNode.IdentifierToken.TextSpan);
+			hasGenericParameterListing = functionDefinitionMetadata.OpenAngleBracketToken.ConstructorWasInvoked;
+			indexFunctionArgumentEntryList = functionDefinitionMetadata.OffsetFunctionArgumentEntryList;
+			countFunctionArgumentEntryList = functionDefinitionMetadata.LengthFunctionArgumentEntryList;
 		}
 		else if (syntaxViewModelLocal.DefinitionNode.SyntaxKind == SyntaxKind.ConstructorDefinitionNode)
 		{
-			var constructorDefinitionNode = (ConstructorDefinitionNode)syntaxViewModelLocal.DefinitionNode;
-			returnTypeClauseNode = constructorDefinitionNode.ReturnTypeReference;
+			var constructorDefinitionNode = syntaxViewModelLocal.DefinitionNode;
+			var constructorDefinitionMetadata = syntaxViewModelLocal.ExtendedCompilerService.ConstructorDefinitionTraitsList[constructorDefinitionNode.TraitsIndex];
+			returnTypeClauseNode = constructorDefinitionMetadata.ReturnTypeReference;
 			returnTypeClauseNodeText = null;
 			methodName = null;
 			hasGenericParameterListing = false;
-			indexFunctionArgumentEntryList = constructorDefinitionNode.IndexFunctionArgumentEntryList;
-			countFunctionArgumentEntryList = constructorDefinitionNode.CountFunctionArgumentEntryList;
+			indexFunctionArgumentEntryList = constructorDefinitionMetadata.OffsetFunctionArgumentEntryList;
+			countFunctionArgumentEntryList = constructorDefinitionMetadata.LengthFunctionArgumentEntryList;
 		}
 		else
 		{
@@ -72,26 +76,26 @@
     		countFunctionArgumentEntryList = 0;
 		}
 	}
-	else if (syntaxViewModelLocal.TargetNode is not null &&
+	else if (!syntaxViewModelLocal.TargetNode.IsDefault() &&
 			 (syntaxViewModelLocal.TargetNode.SyntaxKind == SyntaxKind.FunctionInvocationNode ||
-			  	syntaxViewModelLocal.TargetNode.SyntaxKind == SyntaxKind.ConstructorInvocationExpressionNode))
+			  	syntaxViewModelLocal.TargetNode.SyntaxKind == SyntaxKind.ConstructorInvocationNode))
 	{
 		prefixText = "(reference)";
 		
 		if (syntaxViewModelLocal.TargetNode.SyntaxKind == SyntaxKind.FunctionInvocationNode)
 		{
-			var functionInvocationNode = (FunctionInvocationNode)syntaxViewModelLocal.TargetNode;
-			returnTypeClauseNode = functionInvocationNode.ResultTypeReference;
+			var functionInvocationNode = syntaxViewModelLocal.TargetNode;
+			returnTypeClauseNode = default;//functionInvocationNode.ResultTypeReference;
 			returnTypeClauseNodeText = null;
-			methodName = syntaxViewModelLocal.GetIdentifierText(functionInvocationNode);
-			hasGenericParameterListing = functionInvocationNode.OpenAngleBracketToken.ConstructorWasInvoked;
+			methodName = syntaxViewModelLocal.GetTextFromTextSpan(functionInvocationNode.IdentifierToken.TextSpan);
+			hasGenericParameterListing = false;//functionInvocationNode.OpenAngleBracketToken.ConstructorWasInvoked;
 			indexFunctionArgumentEntryList = -1;
     		countFunctionArgumentEntryList = 0;
 		}
-		else if (syntaxViewModelLocal.TargetNode.SyntaxKind == SyntaxKind.ConstructorInvocationExpressionNode)
+		else if (syntaxViewModelLocal.TargetNode.SyntaxKind == SyntaxKind.ConstructorInvocationNode)
 		{
-			var constructorInvocationNode = (ConstructorInvocationExpressionNode)syntaxViewModelLocal.TargetNode;
-			returnTypeClauseNode = constructorInvocationNode.ResultTypeReference;
+			var constructorInvocationNode = syntaxViewModelLocal.TargetNode;
+			returnTypeClauseNode = default;//constructorInvocationNode.ResultTypeReference;
 			returnTypeClauseNodeText = null;
 			methodName = null;
 			hasGenericParameterListing = false;
@@ -108,25 +112,25 @@
     		countFunctionArgumentEntryList = 0;
 		}
 	}
-	else if (syntaxViewModelLocal.TargetSymbol is not null &&
-			 (syntaxViewModelLocal.TargetSymbol.Value.SyntaxKind == SyntaxKind.FunctionSymbol ||
-			  	syntaxViewModelLocal.TargetSymbol.Value.SyntaxKind == SyntaxKind.ConstructorSymbol))
+	else if (!syntaxViewModelLocal.TargetSymbol.IsDefault() &&
+			 (syntaxViewModelLocal.TargetSymbol.SyntaxKind == SyntaxKind.FunctionSymbol ||
+			  	syntaxViewModelLocal.TargetSymbol.SyntaxKind == SyntaxKind.ConstructorSymbol))
 	{
 		prefixText = "(symbol)";
 	
-		if (syntaxViewModelLocal.TargetSymbol.Value.SyntaxKind == SyntaxKind.FunctionSymbol)
+		if (syntaxViewModelLocal.TargetSymbol.SyntaxKind == SyntaxKind.FunctionSymbol)
 		{
 			returnTypeClauseNode = default;
 			returnTypeClauseNodeText = null;
-			methodName = syntaxViewModelLocal.GetTextFromTextSpan(syntaxViewModelLocal.TargetSymbol.Value.TextSpan);
+			methodName = syntaxViewModelLocal.GetTextFromTextSpan(syntaxViewModelLocal.TargetSymbol.TextSpan);
 			hasGenericParameterListing = false;
 			indexFunctionArgumentEntryList = -1;
     		countFunctionArgumentEntryList = 0;
 		}
-		else if (syntaxViewModelLocal.TargetSymbol.Value.SyntaxKind == SyntaxKind.ConstructorSymbol)
+		else if (syntaxViewModelLocal.TargetSymbol.SyntaxKind == SyntaxKind.ConstructorSymbol)
 		{
 			returnTypeClauseNode = default;
-			returnTypeClauseNodeText = syntaxViewModelLocal.GetTextFromTextSpan(syntaxViewModelLocal.TargetSymbol.Value.TextSpan);
+			returnTypeClauseNodeText = syntaxViewModelLocal.GetTextFromTextSpan(syntaxViewModelLocal.TargetSymbol.TextSpan);
 			methodName = null;
 			hasGenericParameterListing = false;
 			indexFunctionArgumentEntryList = -1;
@@ -168,9 +172,9 @@
     		    SyntaxViewModel.ExtendedCompilerService,
     		    SyntaxViewModel.TextEditorService,
     		    SyntaxViewModel.ResourceUri,
-    			targetSymbol: null,
-    			targetNode: null,
-    			definitionNode: null,
+    			targetSymbol: default,
+    			targetNode: default,
+    			definitionNode: default,
     			depth: syntaxViewModelLocal.Depth + 1);
     		<TypeSyntaxDisplay SyntaxViewModel="syntaxViewModel" TypeReference="returnTypeClauseNode"/>
     		<text>&nbsp;</text>
@@ -185,7 +189,7 @@
     	
     	@if (!string.IsNullOrWhiteSpace(methodName))
     	{
-    		var classCssString = syntaxViewModelLocal.DefinitionNode is null
+    		var classCssString = syntaxViewModelLocal.DefinitionNode.IsDefault()
     			? string.Empty
     			: "di_te_syntax-onclick";
     	
@@ -201,7 +205,7 @@
     		    SyntaxViewModel.ExtendedCompilerService,
     		    SyntaxViewModel.TextEditorService,
     		    SyntaxViewModel.ResourceUri,
-    			targetSymbol: null,
+    			targetSymbol: default,
     			targetNode: syntaxViewModelLocal.TargetNode,
     			definitionNode: syntaxViewModelLocal.DefinitionNode,
     			depth: syntaxViewModelLocal.Depth + 1);
@@ -269,7 +273,7 @@
     			    </span>
     			}
     			
-			    var variableDeclarationNode = new VariableDeclarationNode(
+			    /*var variableDeclarationNode = new VariableDeclarationNode(
 			        argumentEntry.TypeReference,
                     argumentEntry.IdentifierToken,
                     argumentEntry.VariableKind,
@@ -280,11 +284,11 @@
         		    SyntaxViewModel.ExtendedCompilerService,
     				SyntaxViewModel.TextEditorService,
     				SyntaxViewModel.ResourceUri,
-    				targetSymbol: null,
+    				targetSymbol: default,
     				targetNode: variableDeclarationNode,
     				definitionNode: variableDeclarationNode,
     				depth: syntaxViewModelLocal.Depth + 1);
-    			<VariableSyntaxDisplay SyntaxViewModel="syntaxViewModel"/>
+    			<VariableSyntaxDisplay SyntaxViewModel="syntaxViewModel"/>*/
     			
     			if (argumentEntry.OptionalCompileTimeConstantToken.SyntaxKind != SyntaxKind.NotApplicable)
     			{

@@ -1,5 +1,5 @@
 using Walk.Extensions.CompilerServices.Syntax;
-using Walk.Extensions.CompilerServices.Syntax.Nodes;
+using Walk.Extensions.CompilerServices.Syntax.NodeReferences;
 using Walk.TextEditor.RazorLib.CompilerServices;
 using Walk.TextEditor.RazorLib.Lexers.Models;
 
@@ -12,9 +12,9 @@ public static class ParseOthers
     ///
     /// 'isNamespaceStatement' refers to 'namespace Walk.CompilerServices;'
     /// </summary>
-    public static SyntaxToken HandleNamespaceIdentifier(ref CSharpParserModel parserModel, bool isNamespaceStatement)
+    public static SyntaxToken HandleNamespaceIdentifier(ref CSharpParserState parserModel, bool isNamespaceStatement)
     {
-        NamespacePrefixNode? namespacePrefixNode = parserModel.Binder.NamespacePrefixTree.__Root;
+        // NamespacePrefixNode? namespacePrefixNode = parserModel.Binder.NamespacePrefixTree.__Root;
 
         TextEditorTextSpan textSpan = default;
         int count = 0;
@@ -42,7 +42,7 @@ public static class ParseOthers
 
                 charIntSum += matchedToken.TextSpan.CharIntSum;
                 
-                if (isNamespaceStatement)
+                /*if (isNamespaceStatement)
                 {
                     var tuple = parserModel.Binder.FindPrefix_WithInsertionIndex(
                         namespacePrefixNode,
@@ -67,7 +67,7 @@ public static class ParseOthers
                         namespacePrefixNode.Children.Insert(tuple.InsertionIndex, newNode);
                         namespacePrefixNode = newNode;
                     }
-                }
+                }*/
 
                 if (parserModel.TokenWalker.Next.SyntaxKind != SyntaxKind.StatementDelimiterToken)
                 {
@@ -124,7 +124,7 @@ public static class ParseOthers
     /// parserModel.TokenWalker.Current is a NameableToken
     /// parserModel.TokenWalker.Next is a ColonToken
     /// </summary>
-    public static void HandleLabelDeclaration(ref CSharpParserModel parserModel)
+    public static void HandleLabelDeclaration(ref CSharpParserState parserModel)
     {
         parserModel.BindLabelDeclarationNode(new LabelDeclarationNode(parserModel.TokenWalker.Current));
         parserModel.TokenWalker.Consume(); // Consume 'NameableToken'

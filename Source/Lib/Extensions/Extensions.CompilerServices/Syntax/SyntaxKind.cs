@@ -6,6 +6,8 @@ namespace Walk.Extensions.CompilerServices.Syntax;
 public enum SyntaxKind : byte
 {
     // Used to avoid nullable SyntaxToken(s).
+    //
+    // Keep NotApplicable at 0
     NotApplicable,
     NotProvided,
 
@@ -202,10 +204,10 @@ public enum SyntaxKind : byte
     // Nodes
     LiteralExpressionNode,
     InterpolatedStringNode,
-    AmbiguousParenthesizedExpressionNode,
+    AmbiguousParenthesizedNode,
     ParenthesizedExpressionNode,
     EmptyExpressionNode,
-    AmbiguousIdentifierExpressionNode,
+    AmbiguousIdentifierNode,
     PreprocessorLibraryReferenceStatementNode,
     TypeDefinitionNode,
     EmptyCodeBlockOwner,
@@ -219,7 +221,7 @@ public enum SyntaxKind : byte
     FieldDefinitionNode,
     CollectionInitializationNode,
     ConstructorDefinitionNode,
-    ConstructorInvocationExpressionNode,
+    ConstructorInvocationNode,
     FunctionDefinitionNode,
     FunctionArgumentsListingNode,
     FunctionInvocationNode,

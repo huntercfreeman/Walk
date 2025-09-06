@@ -1,6 +1,6 @@
 using Microsoft.AspNetCore.Components;
 using Walk.TextEditor.RazorLib;
-using Walk.Extensions.CompilerServices.Syntax;
+using Walk.Extensions.CompilerServices.Syntax.NodeValues;
 
 namespace Walk.Extensions.CompilerServices.Displays.Internals;
 
@@ -13,5 +13,5 @@ public partial class TypeSyntaxDisplay : ComponentBase
     public SyntaxViewModel SyntaxViewModel { get; set; } = default!;
     
     [Parameter]
-    public TypeReference TypeReference { get; set; } = default;
+    public TypeReferenceValue TypeReference { get; set; } = default;
 }

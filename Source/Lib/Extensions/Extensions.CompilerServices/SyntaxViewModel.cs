@@ -3,6 +3,8 @@ using Walk.TextEditor.RazorLib;
 using Walk.TextEditor.RazorLib.Lexers.Models;
 using Walk.TextEditor.RazorLib.TextEditors.Models;
 using Walk.Extensions.CompilerServices.Syntax;
+using Walk.Extensions.CompilerServices.Syntax.Interfaces;
+using Walk.Extensions.CompilerServices.Syntax.NodeValues;
 
 namespace Walk.Extensions.CompilerServices;
 
@@ -32,9 +34,9 @@ public struct SyntaxViewModel
         IExtendedCompilerService extendedCompilerService,
         TextEditorService textEditorService,
         ResourceUri resourceUri,
-        Symbol? targetSymbol,
-        ISyntaxNode? targetNode,
-        ISyntaxNode? definitionNode,
+        Symbol targetSymbol,
+        SyntaxNodeValue targetNode,
+        SyntaxNodeValue definitionNode,
         int depth)
     {
         ExtendedCompilerService = extendedCompilerService;
@@ -56,7 +58,7 @@ public struct SyntaxViewModel
     /// The user interface gesture is to hover a symbol in the text editor.
     /// Other than a UI event, it is unlikely this property is non-null.
     /// </summary>
-    public Symbol? TargetSymbol { get; }
+    public Symbol TargetSymbol { get; }
     
     /// <summary>
     /// The user interface provided an 'ITextEditorSymbol',
@@ -66,7 +68,7 @@ public struct SyntaxViewModel
     /// Therefore, the symbol is mapped to its corresponding node,
     /// so that more information can be displayed on the UI.
     /// </summary>
-    public ISyntaxNode? TargetNode { get; }
+    public SyntaxNodeValue TargetNode { get; }
     
     /// <summary>
     /// The user interface goes from an ISymbol to an ISyntaxNode,
@@ -80,7 +82,7 @@ public struct SyntaxViewModel
     /// the text is hovered, it should show an underline and be clickable.
     /// This click will then 'goto definition' to that node.
     /// </summary>
-    public ISyntaxNode? DefinitionNode { get; }
+    public SyntaxNodeValue DefinitionNode { get; }
     
     /// <summary>
     /// The 'TypeSyntaxDisplay' is used recursively because a 'TypeClauseNode'
@@ -97,7 +99,7 @@ public struct SyntaxViewModel
     
     public Task HandleOnClick(TextEditorService textEditorService, SyntaxKind syntaxKindExpected)
     {
-        if (DefinitionNode is null || DefinitionNode.SyntaxKind != syntaxKindExpected)
+        if (DefinitionNode.IsDefault() || DefinitionNode.SyntaxKind != syntaxKindExpected)
             return Task.CompletedTask;
         
         var resourceUri = ResourceUri;

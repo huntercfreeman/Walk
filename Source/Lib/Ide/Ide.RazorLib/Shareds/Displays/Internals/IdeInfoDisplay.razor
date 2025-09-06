@@ -158,10 +158,12 @@
         Recent Changes:
 		<div>
 		    <div>
-                <div>v <em class="di_em">83.0.0 </em> (2025-09-04)</div>
+                <div>v <em class="di_em">84.0.0 </em> (2025-09-06)</div>
                 <ul>
                     <li>
-                        VariableDeclarationNode optimizations
+                        I rewrote a great deal of the C# parser to avoid storing objects long term.
+                        Some features have broken but I'm going to fix them very quickly.
+                        There's even more objects that I can avoid, I'm not fully pooling every node during a parse.
                     </li>
                 </ul>
             </div>

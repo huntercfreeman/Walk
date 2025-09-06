@@ -24,12 +24,11 @@ using Walk.Extensions.DotNet.DotNetSolutions.Models;
 using Walk.Extensions.DotNet.Namespaces.Models;
 using Walk.Extensions.DotNet.Nugets.Models;
 using Walk.Extensions.DotNet.TestExplorers.Models;
-using Walk.Extensions.CompilerServices.Syntax;
-using Walk.Extensions.CompilerServices.Syntax.Nodes;
-using Walk.Extensions.CompilerServices.Syntax.Nodes.Enums;
 using Walk.CompilerServices.Xml;
 using Walk.Ide.RazorLib;
 using Walk.Ide.RazorLib.Terminals.Models;
+using Walk.Extensions.CompilerServices.Syntax.Enums;
+using Walk.Extensions.CompilerServices.Syntax.NodeReferences;
 
 namespace Walk.Extensions.DotNet;
 
@@ -949,7 +948,7 @@ public partial class DotNetService
 
             compilerService.FastParse(editContext, resourceUri, IdeService.TextEditorService.CommonService.FileSystemProvider, compilationUnitKind);
             
-            if (compilerService.__CSharpBinder.__CompilationUnitMap.TryGetValue(resourceUri, out var cSharpCompilationUnit))
+            /*if (compilerService.__CSharpBinder.__CompilationUnitMap.TryGetValue(resourceUri, out var cSharpCompilationUnit))
             {
                 var removeCount = 0;
                 for (int i = compilerService.__CSharpBinder.NodeList.Count - 1; i >= cSharpCompilationUnit.NodeOffset; i--)
@@ -981,7 +980,7 @@ public partial class DotNetService
                 }
                 cSharpCompilationUnit.NodeLength -= removeCount;
                 compilerService.__CSharpBinder.__CompilationUnitMap[resourceUri] = cSharpCompilationUnit;
-            }
+            }*/
             
             
             fileParsedCount++;

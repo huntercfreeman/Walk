@@ -1,5 +1,5 @@
 using Microsoft.AspNetCore.Components;
-using Walk.Extensions.CompilerServices.Syntax;
+using Walk.Extensions.CompilerServices.Syntax.NodeValues;
 
 namespace Walk.Extensions.CompilerServices.Displays.Internals;
 
@@ -9,5 +9,5 @@ public partial class GenericSyntaxDisplay : ComponentBase
     public SyntaxViewModel SyntaxViewModel { get; set; } = default!;
     
     [Parameter]
-    public TypeReference TypeReference { get; set; } = default;
+    public TypeReferenceValue TypeReference { get; set; } = default;
 }

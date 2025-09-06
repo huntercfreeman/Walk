@@ -4,6 +4,7 @@ using Walk.CompilerServices.CSharp.LexerCase;
 using Walk.CompilerServices.CSharp.ParserCase.Internals;
 using Walk.CompilerServices.CSharp.BinderCase;
 using Walk.CompilerServices.CSharp.CompilerServiceCase;
+using Walk.Extensions.CompilerServices.Syntax.Enums;
 
 namespace Walk.CompilerServices.CSharp.ParserCase;
 
@@ -17,7 +18,7 @@ public static class CSharpParser
         binder.ScopeList.Insert(
             compilationUnit.ScopeOffset + compilationUnit.ScopeLength,
             new Scope(
-        		Walk.Extensions.CompilerServices.Syntax.Nodes.Enums.ScopeDirectionKind.Both,
+        		ScopeDirectionKind.Both,
         		scope_StartInclusiveIndex: 0,
         		scope_EndExclusiveIndex: -1,
         		codeBlock_StartInclusiveIndex: -1,
@@ -30,7 +31,7 @@ public static class CSharpParser
         		ownerSyntaxKind: SyntaxKind.GlobalCodeBlockNode));
         ++compilationUnit.ScopeLength;
         
-        var parserModel = new CSharpParserModel(
+        var parserModel = new CSharpParserState(
             binder,
             resourceUri,
             ref compilationUnit,
