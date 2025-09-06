@@ -3282,7 +3282,6 @@ public static class ParseExpressions
     public static IExpressionNode ParseMemberAccessToken(
         IExpressionNode expressionPrimary, ref SyntaxToken tokenIn, ref CSharpParserState parserModel)
     {
-        return expressionPrimary;
         var token = tokenIn;
         var loopIteration = 0;
         
